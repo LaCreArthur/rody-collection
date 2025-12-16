@@ -177,6 +177,16 @@ public static class RM_SaveLoad {
         return (b)?"1":"0";
     }
 
+    /// <summary>
+    /// Loads scene data as a structured SceneData object.
+    /// Preferred over LoadSceneTxt for new code.
+    /// </summary>
+    public static SceneData LoadSceneData(int scene)
+    {
+        string[] raw = LoadSceneTxt(scene);
+        return SceneDataParser.Parse(raw);
+    }
+
     public static string[] LoadSceneTxt(int scene)
     {
         // Debug.Log("LoadSceneTxt gamePath : "+PathManager.GamePath);
