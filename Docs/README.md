@@ -28,6 +28,7 @@ Assets/
 | [Inspector Wiring](INSPECTOR_WIRING.md) | **Important!** Understanding serialized logic |
 | [Third-Party Plugins](THIRD_PARTY.md) | External dependencies |
 | [Migration Notes](MIGRATION_2022.md) | Unity 2019 → 2022.3 changes |
+| [Development Log](DEVLOG.md) | Session history and progress tracking |
 
 ## Key Concepts
 
