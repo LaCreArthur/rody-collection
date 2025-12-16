@@ -116,3 +116,9 @@ UserSettings/
 
 # Firebase logs
 firebase-debug.log
+
+# Paid plugins (do not commit to public repo)
+Assets/Plugins/Sirenix/
+Assets/Plugins/Sirenix.meta
+Assets/Plugins/Demigiant/
+Assets/Plugins/Demigiant.meta
