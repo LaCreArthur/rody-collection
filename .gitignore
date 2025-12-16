@@ -110,3 +110,9 @@ $RECYCLE.BIN/
 # studio code files
 .vscode/
 /Assets/DOOM/Externals/
+
+# User-specific settings
+UserSettings/
+
+# Firebase logs
+firebase-debug.log
