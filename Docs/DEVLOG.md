@@ -120,6 +120,34 @@ Split monolithic documentation into multiple meaningful files, then create git c
 
 ---
 
+### [2024-12-16 22:45] Cross-Platform Path Fix (Windows to macOS)
+
+**Request**:
+Fix FileNotFoundException errors when running the project on macOS after migrating from Windows. Unity was reporting backslashes in file names which are not supported.
+
+**Actions**:
+- Fixed path separators in `RM_SaveLoad.cs` - replaced `\\` with `Path.DirectorySeparatorChar` and `Path.Combine()`
+- Fixed hardcoded backslash paths in:
+  - `Title.cs` (line 41) - sprite loading path
+  - `SceneLoading.cs` (line 47) - gamePath comparison
+  - `MenuManager.cs` (line 34) - spritePath construction
+  - `RM_MainLayout.cs` (lines 26-27) - path and spritePath construction
+- Cleaned up StreamingAssets files that had literal backslashes in their filenames
+- Updated `.gitignore` to exclude `UserSettings/` and `firebase-debug.log`
+
+**Learnings**:
+- Windows allows backslashes in paths, macOS/Linux do not
+- When code writes files using backslash paths on macOS, it creates files with literal backslashes *in the filename* rather than subdirectories
+- Unity's AssetDatabase scanner explicitly rejects files with backslashes in names
+- `Path.Combine()` and `Path.DirectorySeparatorChar` are the correct cross-platform solutions
+- The RodyMaker game was creating these malformed files on every play session because `gamePath` + `\\Sprites\\` was being used to construct save paths
+
+**Root Cause**:
+The original Windows development used hardcoded `\\` for path concatenation. On macOS, this created files with names like `Rody Et Mastico\Sprites\0.png` instead of proper directory structures.
+
+---
+
+
 ## Quick Reference
 
 ### Key Files Modified This Session
