@@ -15,13 +15,15 @@
 ### Cross-Platform Fix (Windows → macOS)
 - **Root cause**: Hardcoded `\\` paths created literal backslash filenames on macOS
 - **Solution**: `Path.Combine()` and `Path.DirectorySeparatorChar` throughout
-- Fixed: `RM_SaveLoad.cs`, `Title.cs`, `MenuManager.cs`, `RM_MainLayout.cs`
-- Cleaned StreamingAssets files with malformed names
 
 ### Refactoring Completed
 1. **PathManager** - Centralized path construction (`Assets/Scripts/Utils/`)
 2. **SceneData** - Typed model replacing magic indices (`Assets/Scripts/Models/`)
 3. **IStoryProvider** - Firebase-ready abstraction (`Assets/Scripts/Providers/`)
+
+### Git Cleanup
+- Removed paid plugins (Odin, DOTween) from git history using `git-filter-repo`
+- Plugins added to `.gitignore` - exist locally but not in public repo
 
 ---
 
