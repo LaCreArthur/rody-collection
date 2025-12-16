@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityReusables.Events;
+using UnityReusables.ScriptableObjects.Events;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerWeaponsManager : MonoBehaviour
@@ -60,7 +60,7 @@ public class PlayerWeaponsManager : MonoBehaviour
     [Tooltip("Layer to set FPS weapon gameObjects to")]
     public LayerMask FPSWeaponLayer;
 
-    public BetterEvenSO fireEvent;
+    public SimpleEventSO fireEvent;
     public TMP_Text[] currentAmmoTexts;
 
     public bool isAiming { get; private set; }

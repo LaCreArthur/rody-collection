@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+namespace DOOM.FPS
 {
-    public AudioMixer audioMixer;
+    public class AudioManager : MonoBehaviour
+    {
+        public AudioMixer audioMixer;
+    }
 }

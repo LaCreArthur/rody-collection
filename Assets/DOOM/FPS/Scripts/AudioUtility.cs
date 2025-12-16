@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DOOM.FPS;
+using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioUtility
