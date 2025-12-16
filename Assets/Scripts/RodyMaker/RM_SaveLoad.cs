@@ -19,7 +19,7 @@ public static class RM_SaveLoad {
 			PlayerPrefs.SetInt("scenesCount", scene); 
         }
 
-        string path = PlayerPrefs.GetString("gamePath") + "\\";
+        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         string newPath = "";
         
         /***
@@ -98,7 +98,7 @@ public static class RM_SaveLoad {
 	private static void SaveSprite(Texture2D tex, string path, string scene, int width = 320, int height = 130) {
         RM_TextureScale.Point(tex, width, height);
         var bytes = tex.EncodeToPNG();
-        string spritePath = path + "\\Sprites\\";
+        string spritePath = Path.Combine(path, "Sprites") + Path.DirectorySeparatorChar;
         if (!Directory.Exists(spritePath))
             Directory.CreateDirectory(spritePath);
     
@@ -179,7 +179,7 @@ public static class RM_SaveLoad {
 
     public static string[] LoadSceneTxt(int scene)
     {
-        string path = PlayerPrefs.GetString("gamePath") + "\\";
+        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         // Debug.Log("LoadSceneTxt gamePath : "+path);
         string[] sceneStr = new string[26];
         try
@@ -225,7 +225,7 @@ public static class RM_SaveLoad {
     }
 
     public static int CountScenesTxt() {
-        string path = PlayerPrefs.GetString("gamePath") + "\\";
+        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         int count = 0;
         try
         {   
@@ -263,13 +263,13 @@ public static class RM_SaveLoad {
     {
         List<Sprite> sceneSprites = new List<Sprite>();
 
-        string path = PlayerPrefs.GetString("gamePath") + "\\";
-        string spritesPath = path + "Sprites\\" + scene.ToString();
+        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
+        string spritesPath = Path.Combine(path, "Sprites", scene.ToString());
 
         Debug.Log("(LoadSceneSprites) path : " + spritesPath);
 
         // search the number of frames
-		DirectoryInfo dir = new DirectoryInfo(path + "Sprites\\");
+		DirectoryInfo dir = new DirectoryInfo(Path.Combine(path, "Sprites"));
         var files = dir.GetFiles(scene + ".*.png");
 
         for (int i = 1; i < files.Length + 1; i++) // frames index start at 1 not 0
@@ -298,11 +298,11 @@ public static class RM_SaveLoad {
                 // else load the default sprite
                 else {
                     Debug.Log("(LoadSprite) file does not exist : " + file + ", loading base sprite instead");
-                    File.Copy(PlayerPrefs.GetString("gamePath") + "\\Sprites\\base.png", file);
+                    File.Copy(Path.Combine(PlayerPrefs.GetString("gamePath"), "Sprites", "base.png"), file);
                 }
             }
             else {
-                File.Copy(PlayerPrefs.GetString("gamePath") + "\\Sprites\\base.png", file);
+                File.Copy(Path.Combine(PlayerPrefs.GetString("gamePath"), "Sprites", "base.png"), file);
             }
         }
 
@@ -391,7 +391,7 @@ public static class RM_SaveLoad {
     public static void DeleteScene(int scene) {
         Debug.Log("(DeleteScene) Erase level " + scene + ", scenes count : " + PlayerPrefs.GetInt("scenesCount"));
         
-        string path = PlayerPrefs.GetString("gamePath") + "\\";
+        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         // Debug.Log("(DeleteScene) Deleting scene " + scene + " sprites ...");
         // for (int i=0; i < 5; ++i){
         //     File.Delete(path + "Sprites\\" + scene + "." + i + ".png" );
@@ -453,7 +453,7 @@ public static class RM_SaveLoad {
 
         public static void LoadCredits(Text title, Text credits)
     {
-        string path = PlayerPrefs.GetString("gamePath") + "\\credits.txt";
+        string path = Path.Combine(PlayerPrefs.GetString("gamePath"), "credits.txt");
         Debug.Log("Read Credits at " + path);
         // Debug.Log("LoadSceneTxt gamePath : "+path);
         try
