@@ -20,12 +20,22 @@ Assets/
 
 ## Documentation Index
 
+### Core Documentation
 | Document | Description |
 |----------|-------------|
+| [Project Overview](PROJECT_OVERVIEW.md) | **Start here!** Game concept, Atari ST heritage, phoneme TTS system |
 | [Architecture](ARCHITECTURE.md) | Patterns, namespaces, and design philosophy |
+| [Inspector Wiring](INSPECTOR_WIRING.md) | **Important!** Understanding serialized logic |
+
+### Sub-Projects
+| Document | Description |
+|----------|-------------|
 | [UnityReusables Library](UNITY_REUSABLES.md) | Reusable components and systems |
 | [DOOM FPS Module](DOOM_FPS.md) | FPS minigame documentation |
-| [Inspector Wiring](INSPECTOR_WIRING.md) | **Important!** Understanding serialized logic |
+
+### Reference
+| Document | Description |
+|----------|-------------|
 | [Third-Party Plugins](THIRD_PARTY.md) | External dependencies |
 | [Migration Notes](MIGRATION_2022.md) | Unity 2019 → 2022.3 changes |
 | [Development Log](DEVLOG.md) | Session history and progress tracking |
