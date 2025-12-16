@@ -20,25 +20,37 @@ Created data model layer in `Assets/Scripts/Models/`:
 
 ---
 
-## Priority 2: Architecture Preparation
+## Completed
 
-### IStoryProvider Interface
-**Status:** Planned
+### PathManager (2024-12-16)
+Centralized all path construction in `Assets/Scripts/Utils/PathManager.cs`:
+- `GamePath` - Root story folder
+- `SpritesPath` - Sprites subfolder
+- `LevelsFile` - levels.rody path
+- `CreditsFile` - credits.txt path
+- `GetSpritePath()` - Individual sprite paths
 
-Create abstraction layer for story loading (local-first, Firebase-ready):
+### SceneData Model (2024-12-16)
+Created data model layer in `Assets/Scripts/Models/`:
+- `SceneData.cs` - Structured scene data (replaces magic string arrays)
+- `SceneDataParser.cs` - Centralizes index constants and parsing
+- Added `RM_SaveLoad.LoadSceneData()` for structured loading
 
+### IStoryProvider Interface (2024-12-16)
+Created abstraction layer in `Assets/Scripts/Providers/`:
+- `IStoryProvider.cs` - Interface + StoryMetadata/StoryData classes
+- `LocalStoryProvider.cs` - Full StreamingAssets implementation
+- `StoryProviderManager.cs` - Singleton accessor with provider switching
+
+**Usage:**
 ```csharp
-public interface IStoryProvider {
-    List<StoryMetadata> GetStories();
-    SceneData LoadScene(string storyId, int sceneIndex);
-    Texture2D LoadSprite(string storyId, string spriteName);
-    void SaveStory(StoryData story);
-}
-```
+// Access via singleton
+var stories = StoryProviderManager.Provider.GetStories();
+var scene = StoryProviderManager.Provider.LoadScene("Rody Et Mastico", 1);
 
-- [ ] Create `IStoryProvider` interface
-- [ ] Implement `LocalStoryProvider` using StreamingAssets
-- [ ] Refactor `RM_SaveLoad` to use provider
+// Future: Switch to Firebase
+StoryProviderManager.SetProvider(new FirebaseStoryProvider());
+```
 
 ---
 
