@@ -31,7 +31,7 @@ public class MenuManager : MonoBehaviour {
 	}
 	
 	IEnumerator init() {
-		string spritePath = System.IO.Path.Combine(gamePath, "Sprites") + System.IO.Path.DirectorySeparatorChar;
+		string spritePath = PathManager.SpritesPath + System.IO.Path.DirectorySeparatorChar;
 
 		for (int i = 0; i<16; i++) { //TODO if scrollable menu : change 16 to dynamic number
 			GameObject image = scenes[i].transform.GetChild(0).gameObject;

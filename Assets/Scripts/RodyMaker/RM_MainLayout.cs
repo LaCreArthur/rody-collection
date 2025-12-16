@@ -23,8 +23,7 @@ public class RM_MainLayout : RM_Layout
 
     public void LoadSprites()
     {
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
-        string spritePath = Path.Combine(path, "Sprites") + Path.DirectorySeparatorChar;
+        string spritePath = PathManager.SpritesPath + Path.DirectorySeparatorChar;
         int i;
         // Debug.Log("LoadSprites spritePath : " + spritePath);
            

@@ -19,8 +19,8 @@ public static class RM_SaveLoad {
 			PlayerPrefs.SetInt("scenesCount", scene); 
         }
 
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
-        string newPath = "";
+        string path = PathManager.GamePath + Path.DirectorySeparatorChar;
+        string newPath = path;
         
         /***
         // chose the destination of the game folder in which the scene will be saved
@@ -65,7 +65,7 @@ public static class RM_SaveLoad {
                     SaveSprite(frame.texture, newPath, scene+"."+(j+2));
             }
 
-        string oldTxtPath = path + "levels.rody";
+        string oldTxtPath = PathManager.LevelsFile;
         string newTxtPath = newPath + "levels.rody";
         
         // cancel chosing file 
@@ -179,12 +179,11 @@ public static class RM_SaveLoad {
 
     public static string[] LoadSceneTxt(int scene)
     {
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
-        // Debug.Log("LoadSceneTxt gamePath : "+path);
+        // Debug.Log("LoadSceneTxt gamePath : "+PathManager.GamePath);
         string[] sceneStr = new string[26];
         try
         {   // Open the text file using a stream reader.
-            using (StreamReader sr = new StreamReader(path + "levels.rody"))
+            using (StreamReader sr = new StreamReader(PathManager.LevelsFile))
             {
                 string line;
 
@@ -225,11 +224,10 @@ public static class RM_SaveLoad {
     }
 
     public static int CountScenesTxt() {
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         int count = 0;
         try
         {   
-            using (StreamReader sr = new StreamReader(path + "levels.rody"))
+            using (StreamReader sr = new StreamReader(PathManager.LevelsFile))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -263,13 +261,12 @@ public static class RM_SaveLoad {
     {
         List<Sprite> sceneSprites = new List<Sprite>();
 
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
-        string spritesPath = Path.Combine(path, "Sprites", scene.ToString());
+        string spritesPath = PathManager.GetSceneSpritesBasePath(scene);
 
         Debug.Log("(LoadSceneSprites) path : " + spritesPath);
 
         // search the number of frames
-		DirectoryInfo dir = new DirectoryInfo(Path.Combine(path, "Sprites"));
+		DirectoryInfo dir = new DirectoryInfo(PathManager.SpritesPath);
         var files = dir.GetFiles(scene + ".*.png");
 
         for (int i = 1; i < files.Length + 1; i++) // frames index start at 1 not 0
@@ -390,8 +387,6 @@ public static class RM_SaveLoad {
 
     public static void DeleteScene(int scene) {
         Debug.Log("(DeleteScene) Erase level " + scene + ", scenes count : " + PlayerPrefs.GetInt("scenesCount"));
-        
-        string path = PlayerPrefs.GetString("gamePath") + Path.DirectorySeparatorChar;
         // Debug.Log("(DeleteScene) Deleting scene " + scene + " sprites ...");
         // for (int i=0; i < 5; ++i){
         //     File.Delete(path + "Sprites\\" + scene + "." + i + ".png" );
@@ -400,11 +395,11 @@ public static class RM_SaveLoad {
         Debug.Log("(DeleteScene) Deleting text ...");
         int currentScene=0;
         int currentLine=0;
-        string[] lines = File.ReadAllLines(path + "levels.rody");
+        string[] lines = File.ReadAllLines(PathManager.LevelsFile);
 
         try
         {   // Open the text file using a stream writer.
-            using (TextWriter sw = new StreamWriter(path + "levels.rody"))
+            using (TextWriter sw = new StreamWriter(PathManager.LevelsFile))
             {
                 for (int i = 1; i<scene; i++) {
                     for (int j = currentLine; lines[j] != "~"; j++) {
@@ -453,7 +448,7 @@ public static class RM_SaveLoad {
 
         public static void LoadCredits(Text title, Text credits)
     {
-        string path = Path.Combine(PlayerPrefs.GetString("gamePath"), "credits.txt");
+        string path = PathManager.CreditsFile;
         Debug.Log("Read Credits at " + path);
         // Debug.Log("LoadSceneTxt gamePath : "+path);
         try
