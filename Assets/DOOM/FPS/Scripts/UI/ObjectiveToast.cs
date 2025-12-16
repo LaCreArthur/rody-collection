@@ -55,7 +55,6 @@ public class ObjectiveToast : MonoBehaviour
     bool m_IsDisplay;
     AudioSource m_AudioSource;
     RectTransform m_RectTransform;
-    private float _timeSinceDisplayStarted = 0f;
 
     public void Initialize(string titleText, string descText, string counterText, bool isOptionnal, float delay, bool waitForShow = false)
     {
