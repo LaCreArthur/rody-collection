@@ -38,7 +38,7 @@ public class Title : MonoBehaviour {
 			PlayerPrefs.SetInt("scenesCount", RM_SaveLoad.CountScenesTxt());
 			Debug.Log("scenes in this game folder : " + PlayerPrefs.GetInt("scenesCount"));
 		
-			titleImage.sprite = RM_SaveLoad.LoadSprite(gamePath+"\\Sprites\\0.png",0,320,200);
+			titleImage.sprite = RM_SaveLoad.LoadSprite(Path.Combine(gamePath, "Sprites", "0.png"),0,320,200);
 			Cursor.visible = false;
 		}
 		else {

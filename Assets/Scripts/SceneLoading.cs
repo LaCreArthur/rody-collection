@@ -44,7 +44,7 @@ public class SceneLoading : MonoBehaviour {
 		gm.b_repeat.SetActive (true);
 		yield return new WaitForSeconds(0.05f);
 
-		if (zambla != null && PlayerPrefs.GetString("gamePath") == Application.dataPath + "\\RodyAIbiza") {
+		if (zambla != null && PlayerPrefs.GetString("gamePath") == System.IO.Path.Combine(Application.dataPath, "RodyAIbiza")) {
 			zambla.SetActive(true);
 			yield return new WaitForSeconds(0.05f);
 		}
