@@ -147,6 +147,31 @@ The original Windows development used hardcoded `\\` for path concatenation. On 
 
 ---
 
+### [2024-12-16 23:15] Refactoring Session: PathManager & SceneData
+
+**Request**:
+Analyze codebase for refactoring opportunities and implement quick wins while documenting future improvements.
+
+**Actions**:
+- Created `PathManager.cs` - centralized path construction utility
+- Created `SceneData.cs` - 6 model classes replacing magic string arrays
+- Created `SceneDataParser.cs` - centralizes index constants  
+- Refactored 4 files to use PathManager
+- Added `LoadSceneData()` method for structured loading
+- Created `REFACTORING_ROADMAP.md` for tracking future work
+
+**Architecture Decisions**:
+- Prefer observable pattern over ScriptableObject variables
+- Explicit code over Inspector wiring
+- Local-first design with Firebase preparation
+
+**Future Plans Documented**:
+- IStoryProvider interface (Firebase preparation)
+- Phoneme dictionary system (natural language → phonemes)
+- ML exploration using existing phoneme corpus
+
+---
+
 
 ## Quick Reference
 

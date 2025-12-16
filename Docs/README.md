@@ -36,6 +36,7 @@ Assets/
 ### Reference
 | Document | Description |
 |----------|-------------|
+| [Refactoring Roadmap](REFACTORING_ROADMAP.md) | Current and planned improvements |
 | [Third-Party Plugins](THIRD_PARTY.md) | External dependencies |
 | [Migration Notes](MIGRATION_2022.md) | Unity 2019 → 2022.3 changes |
 | [Development Log](DEVLOG.md) | Session history and progress tracking |
