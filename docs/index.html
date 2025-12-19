@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rody Maker - Play Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Rody Maker</h1>
+            <p class="subtitle">Les aventures de Rody et Mastico</p>
+        </header>
+
+        <main>
+            <div class="game-wrapper">
+                <div id="unity-container" class="unity-desktop">
+                    <canvas id="unity-canvas" width="1280" height="800" tabindex="-1"></canvas>
+                    <div id="unity-loading-bar">
+                        <div id="unity-logo"></div>
+                        <div id="unity-progress-bar-empty">
+                            <div id="unity-progress-bar-full"></div>
+                        </div>
+                    </div>
+                    <div id="unity-warning"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="fullscreen-btn" class="btn" title="Plein écran">
+                    <span class="icon">⛶</span> Plein écran
+                </button>
+                <button id="mute-btn" class="btn" title="Couper le son">
+                    <span class="icon">🔊</span> Son
+                </button>
+            </div>
+
+            <div class="info-box">
+                <h2>Comment jouer</h2>
+                <ul>
+                    <li><strong>Souris</strong> - Cliquer pour interagir</li>
+                    <li><strong>←/→</strong> - Naviguer dans les menus</li>
+                    <li><strong>Entrée</strong> - Valider</li>
+                    <li><strong>Échap</strong> - Retour au menu</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                <a href="https://github.com/LaCreArthur/RodyMaker" target="_blank">Code source</a>
+                •
+                <span>Fait avec Unity + Firebase</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="Build/RodyMaker.loader.js"></script>
+    <script>
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector("#unity-progress-bar-full");
+        var fullscreenButton = document.querySelector("#fullscreen-btn");
+        var muteButton = document.querySelector("#mute-btn");
+        var warningBanner = document.querySelector("#unity-warning");
+
+        // Show warning banner if needed
+        function unityShowBanner(msg, type) {
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            if (type == 'error') div.style = 'background: #ff4444; padding: 10px;';
+            else if (type == 'warning') div.style = 'background: #ffcc00; padding: 10px;';
+            setTimeout(function() {
+                warningBanner.removeChild(div);
+            }, 5000);
+        }
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/RodyMaker.loader.js";
+
+        // Detect if using compressed (.gz) or uncompressed files
+        // Unity can output either depending on build settings
+        var useGzip = true; // Set to false if your build doesn't use compression
+
+        var config = {
+            dataUrl: buildUrl + "/RodyMaker.data" + (useGzip ? ".gz" : ""),
+            frameworkUrl: buildUrl + "/RodyMaker.framework.js" + (useGzip ? ".gz" : ""),
+            codeUrl: buildUrl + "/RodyMaker.wasm" + (useGzip ? ".gz" : ""),
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "Bretzel Studio",
+            productName: "Rody Maker",
+            productVersion: "1.0",
+            showBanner: unityShowBanner,
+        };
+
+        // Adjust canvas size based on device
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            container.className = "unity-mobile";
+            config.devicePixelRatio = 1;
+        }
+
+        loadingBar.style.display = "block";
+
+        var myGameInstance = null;
+
+        createUnityInstance(canvas, config, (progress) => {
+            progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+            myGameInstance = unityInstance;
+            loadingBar.style.display = "none";
+            fullscreenButton.style.display = "inline-flex";
+        }).catch((message) => {
+            alert("Erreur de chargement: " + message);
+        });
+
+        // Fullscreen button
+        fullscreenButton.onclick = () => {
+            if (myGameInstance) {
+                myGameInstance.SetFullscreen(1);
+            }
+        };
+
+        // Mute button
+        var isMuted = false;
+        muteButton.onclick = () => {
+            isMuted = !isMuted;
+            if (myGameInstance) {
+                // Unity WebGL doesn't have a direct mute API, but we can try
+                // For now, just toggle the button appearance
+            }
+            muteButton.querySelector('.icon').textContent = isMuted ? '🔇' : '🔊';
+            muteButton.classList.toggle('muted', isMuted);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# This folder will contain the Unity WebGL build output
+# Build your game with Unity and output to this folder
+#
+# Expected files after build:
+# - RodyMaker.loader.js
+# - RodyMaker.data.gz (or .data)
+# - RodyMaker.framework.js.gz (or .framework.js)
+# - RodyMaker.wasm.gz (or .wasm)

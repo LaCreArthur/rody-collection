@@ -6,6 +6,8 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+# Exception for WebGL build in docs folder (GitHub Pages)
+!docs/Build/
 [Ss]creenshot/
 [Ss]creenshots/
 [Ll]ogs/
