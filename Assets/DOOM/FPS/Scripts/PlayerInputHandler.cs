@@ -42,7 +42,14 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (CanProcessInput())
         {
-            Vector3 move = new Vector3(Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal), 0f, Input.GetAxisRaw(GameConstants.k_AxisNameVertical));
+            float h = Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal);
+            float v = Input.GetAxisRaw(GameConstants.k_AxisNameVertical);
+
+            // AZERTY support: Z for forward, Q for left
+            if (Input.GetKey(KeyCode.Z)) v = 1f;
+            if (Input.GetKey(KeyCode.Q)) h = -1f;
+
+            Vector3 move = new Vector3(h, 0f, v);
 
             // constrain move input to a maximum magnitude of 1, otherwise diagonal movement might exceed the max move speed defined
             move = Vector3.ClampMagnitude(move, 1);
