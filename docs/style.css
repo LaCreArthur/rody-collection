@@ -1,4 +1,7 @@
-/* Rody Maker - WebGL Page Styles */
+/* Rody Collection - WebGL Page Styles
+   Theme: Retro Atari ST aesthetic */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
 * {
     margin: 0;
@@ -7,23 +10,28 @@
 }
 
 :root {
-    --bg-dark: #1a1a2e;
-    --bg-medium: #16213e;
-    --accent: #e94560;
-    --accent-light: #ff6b6b;
-    --text: #eaeaea;
-    --text-muted: #a0a0a0;
+    /* Atari ST color palette */
+    --bg-dark: #2a2631;
+    --bg-darker: #1f1c24;
+    --bg-panel: #3a3542;
+    --accent-pink: #ff6b9d;
+    --accent-coral: #ff8a80;
+    --accent-cyan: #00d4ff;
+    --accent-orange: #d97020;
+    --text: #f0e8e0;
+    --text-muted: #9a9a9a;
+    --scanline: rgba(0, 0, 0, 0.03);
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 100%);
+    font-family: 'VT323', monospace;
+    background: var(--bg-darker);
     min-height: 100vh;
     color: var(--text);
     overflow-x: hidden;
 }
 
-/* Pixel art background pattern */
+/* CRT scanline effect */
 body::before {
     content: '';
     position: fixed;
@@ -31,11 +39,28 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image:
-        radial-gradient(circle at 25% 25%, rgba(233, 69, 96, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(233, 69, 96, 0.05) 0%, transparent 50%);
+    background: repeating-linear-gradient(
+        0deg,
+        var(--scanline) 0px,
+        var(--scanline) 1px,
+        transparent 1px,
+        transparent 3px
+    );
     pointer-events: none;
-    z-index: -1;
+    z-index: 9998;
+}
+
+/* Subtle vignette */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: 9997;
 }
 
 .container {
@@ -50,22 +75,31 @@ body::before {
 /* Header */
 header {
     text-align: center;
-    padding: 30px 0;
+    padding: 20px 0 15px;
 }
 
 header h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--accent);
-    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--accent-pink);
+    text-shadow: 
+        2px 2px 0 rgba(0,0,0,0.5),
+        0 0 20px rgba(255, 107, 157, 0.3);
     letter-spacing: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    /* Pixelated border effect like game title */
+    display: inline-block;
+    padding: 10px 30px;
+    border: 2px solid var(--accent-pink);
+    background: linear-gradient(180deg, rgba(255,107,157,0.1) 0%, transparent 100%);
 }
 
 header .subtitle {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: var(--text-muted);
-    font-style: italic;
+    margin-top: 12px;
+    letter-spacing: 1px;
 }
 
 /* Main content */
@@ -77,15 +111,16 @@ main {
     gap: 20px;
 }
 
-/* Game wrapper */
+/* Game wrapper - Atari ST monitor frame */
 .game-wrapper {
-    background: #000;
-    border-radius: 12px;
-    padding: 8px;
+    background: linear-gradient(180deg, #4a4452 0%, #3a3542 50%, #2a2631 100%);
+    border-radius: 8px;
+    padding: 12px;
     box-shadow:
-        0 0 0 2px var(--accent),
-        0 10px 40px rgba(0,0,0,0.5),
-        0 0 100px rgba(233, 69, 96, 0.1);
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 4px 20px rgba(0,0,0,0.5),
+        0 0 60px rgba(255, 107, 157, 0.05);
+    border: 3px solid #5a5462;
 }
 
 #unity-container {
@@ -93,8 +128,10 @@ main {
     height: 600px;
     position: relative;
     background: #000;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
+    /* Inner shadow for CRT depth effect */
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
 }
 
 #unity-container.unity-mobile {
@@ -127,7 +164,6 @@ main {
 
 /* Scale to fit while maintaining aspect ratio */
 @media (min-aspect-ratio: 16/10) {
-    /* Screen is wider than game - height constrained */
     #unity-container.unity-fullscreen #unity-canvas {
         height: 100vh;
         width: calc(100vh * 16 / 10);
@@ -135,7 +171,6 @@ main {
 }
 
 @media (max-aspect-ratio: 16/10) {
-    /* Screen is taller than game - width constrained */
     #unity-container.unity-fullscreen #unity-canvas {
         width: 100vw;
         height: calc(100vw * 10 / 16);
@@ -163,26 +198,26 @@ main {
 }
 
 #unity-logo {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     margin: 0 auto 20px;
     background: url('TemplateData/unity-logo-dark.png') no-repeat center;
     background-size: contain;
+    opacity: 0.7;
 }
 
 #unity-progress-bar-empty {
-    width: 200px;
-    height: 12px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 6px;
+    width: 240px;
+    height: 16px;
+    background: var(--bg-panel);
+    border: 2px solid var(--accent-pink);
     overflow: hidden;
 }
 
 #unity-progress-bar-full {
     width: 0%;
     height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-light));
-    border-radius: 6px;
+    background: linear-gradient(90deg, var(--accent-pink), var(--accent-coral));
     transition: width 0.2s;
 }
 
@@ -192,62 +227,85 @@ main {
     left: 10px;
     right: 10px;
     text-align: center;
+    font-family: 'VT323', monospace;
 }
 
-/* Controls */
+/* Controls - styled like Atari ST keyboard keys */
 .controls {
     display: flex;
     gap: 15px;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 5px;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
     color: var(--text);
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
+    background: linear-gradient(180deg, #5a5462 0%, #4a4452 50%, #3a3542 100%);
+    border: 2px solid #6a6472;
+    border-bottom-color: #2a2631;
+    border-right-color: #2a2631;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .btn:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    transform: translateY(-2px);
+    background: linear-gradient(180deg, #6a6472 0%, #5a5462 50%, #4a4452 100%);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    border-top-color: #2a2631;
+    border-left-color: #2a2631;
+    border-bottom-color: #6a6472;
+    border-right-color: #6a6472;
 }
 
 .btn .icon {
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .btn.muted {
-    opacity: 0.6;
+    opacity: 0.5;
+    color: var(--text-muted);
 }
 
-/* Info box */
+/* Info box - retro terminal style */
 .info-box {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
+    background: var(--bg-panel);
+    border: 2px solid #5a5462;
     padding: 20px 30px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
+    position: relative;
+}
+
+/* Orange accent bar at top like game UI */
+.info-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-orange);
 }
 
 .info-box h2 {
-    font-size: 1.1rem;
-    color: var(--accent);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--accent-pink);
     margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -257,34 +315,45 @@ main {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .info-box li {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .info-box li strong {
-    color: var(--text);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+    color: var(--accent-cyan);
+    background: var(--bg-darker);
+    padding: 4px 8px;
+    border: 1px solid #5a5462;
+    min-width: 50px;
+    text-align: center;
 }
 
 /* Footer */
 footer {
     text-align: center;
-    padding: 30px 0;
+    padding: 25px 0 15px;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 1.2rem;
 }
 
 footer a {
-    color: var(--accent);
+    color: var(--accent-pink);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: all 0.2s;
 }
 
 footer a:hover {
-    color: var(--accent-light);
+    color: var(--accent-cyan);
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 /* Responsive */
@@ -301,7 +370,8 @@ footer a:hover {
     }
 
     header h1 {
-        font-size: 2rem;
+        font-size: 1rem;
+        padding: 8px 20px;
     }
 
     .info-box ul {
@@ -315,11 +385,16 @@ footer a:hover {
     }
 
     header {
-        padding: 15px 0;
+        padding: 10px 0;
     }
 
     header h1 {
-        font-size: 1.5rem;
+        font-size: 0.7rem;
+        padding: 6px 15px;
+    }
+
+    header .subtitle {
+        font-size: 1.1rem;
     }
 
     .controls {
@@ -329,5 +404,20 @@ footer a:hover {
     .btn {
         flex: 1;
         justify-content: center;
+        font-size: 0.5rem;
+        padding: 8px 12px;
+    }
+
+    .btn .icon {
+        font-size: 0.8rem;
+    }
+
+    .info-box {
+        padding: 15px 20px;
+    }
+
+    .info-box li strong {
+        font-size: 0.45rem;
+        min-width: 40px;
     }
 }

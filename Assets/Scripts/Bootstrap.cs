@@ -31,6 +31,15 @@ public class Bootstrap : MonoBehaviour
             go.AddComponent<StoryProviderManager>();
             DontDestroyOnLoad(go);
         }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // Create WebGL resize handler to fix canvas size after scene loads
+        if (FindObjectOfType<WebGLResizeHandler>() == null)
+        {
+            var resizeHandler = new GameObject("WebGLResizeHandler");
+            resizeHandler.AddComponent<WebGLResizeHandler>();
+        }
+#endif
     }
 
     private void Start()
