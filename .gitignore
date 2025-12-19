@@ -7,8 +7,8 @@
 [Bb]uild/
 [Bb]uilds/
 # Exception for WebGL build in docs folder (GitHub Pages)
-!docs/Build/
-!WebGL/**/Build/
+# Exception for WebGL build in docs folder (GitHub Pages)
+!build/webgl/
 [Ss]creenshot/
 [Ss]creenshots/
 [Ll]ogs/
