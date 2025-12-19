@@ -44,7 +44,10 @@ public class SceneLoading : MonoBehaviour {
 		gm.b_repeat.SetActive (true);
 		yield return new WaitForSeconds(0.05f);
 
-		if (zambla != null && PlayerPrefs.GetString("gamePath") == System.IO.Path.Combine(Application.dataPath, "RodyAIbiza")) {
+		// Show Zambla for the Ibiza story
+		string currentGame = PlayerPrefs.GetString("gamePath");
+		bool isIbiza = currentGame.Contains("Ibiza") || currentGame == "Rody Et Mastico A Ibiza";
+		if (zambla != null && isIbiza) {
 			zambla.SetActive(true);
 			yield return new WaitForSeconds(0.05f);
 		}

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -19,9 +19,12 @@ public class RA_ScrollView : MonoBehaviour {
 	public Transform slotNewGamePrefab;
 	public Transform slotLoadGamePrefab;
 
+	[Header("WebGL")]
+	public GameObject loadingUI;
+
 	static ScrollRect scrollRect;
 	static float t = 0.0f;
-	
+
 	List<GameObject> slots;
 	List<GameObject> slotTitles;
 	List<Image> slotImages;
@@ -36,9 +39,158 @@ public class RA_ScrollView : MonoBehaviour {
 	bool isScrollViewDisabled = true;
 
 	void Start () {
+#if UNITY_WEBGL && !UNITY_EDITOR
+		StartCoroutine(InitWebGL());
+#else
 		Init();
+#endif
 	}
-	
+
+	/// <summary>
+	/// WebGL initialization - waits for Firebase, then loads from provider.
+	/// </summary>
+	IEnumerator InitWebGL()
+	{
+		if (loadingUI != null) loadingUI.SetActive(true);
+
+		// Wait for provider to be ready
+		if (!StoryProviderManager.IsReady)
+		{
+			StoryProviderManager.Initialize();
+			while (!StoryProviderManager.IsReady)
+			{
+				yield return null;
+			}
+		}
+
+		if (loadingUI != null) loadingUI.SetActive(false);
+		InitFromProvider();
+	}
+
+	/// <summary>
+	/// Initialize from StoryProvider (used on WebGL).
+	/// No file system access - gets stories from Firebase.
+	/// </summary>
+	void InitFromProvider()
+	{
+		PlayerPrefs.SetInt("rodyMakerFirstTime", 1);
+		slots = new List<GameObject>();
+		slotTitles = new List<GameObject>();
+		int slotIndex = 0;
+
+		var stories = StoryProviderManager.Provider.GetStories();
+		Debug.Log($"[RA_ScrollView] Loaded {stories.Count} stories from provider");
+
+		// Order stories (same logic as OrderGameFolder but for metadata)
+		var orderedStories = OrderStories(stories);
+
+		foreach (var story in orderedStories)
+		{
+			if (story.id == "Rody0") continue; // Skip base template
+
+			// Instantiate a slot
+			GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
+			slot.name = story.id;
+			slot.GetComponentInChildren<Text>().text = story.title;
+
+			// Load cover async on WebGL
+			LoadCoverAsync(slot, story.id);
+
+			slots.Add(slot);
+			slotIndex++;
+		}
+
+		// On WebGL, don't show Load Game / New Game (requires file system)
+		// Just finalize the UI
+		FinalizeSlots(slotIndex, false);
+	}
+
+	List<StoryMetadata> OrderStories(List<StoryMetadata> stories)
+	{
+		var ordered = new List<StoryMetadata>();
+		var remaining = new List<StoryMetadata>(stories);
+
+		string[] preferredOrder = {
+			"Rody Et Mastico",
+			"Rody Et Mastico II",
+			"Rody Et Mastico III",
+			"Rody Noël",
+			"Rody Et Mastico V",
+			"Rody Et Mastico VI",
+			"Rody Et Mastico A Ibiza"
+		};
+
+		foreach (var name in preferredOrder)
+		{
+			var found = remaining.Find(s => s.id == name);
+			if (found != null)
+			{
+				ordered.Add(found);
+				remaining.Remove(found);
+			}
+		}
+
+		ordered.AddRange(remaining);
+		return ordered;
+	}
+
+	void LoadCoverAsync(GameObject slot, string storyId)
+	{
+		var provider = StoryProviderManager.FirebaseProvider;
+		if (provider != null)
+		{
+			provider.LoadSpriteAsync(storyId, "cover.png",
+				sprite => {
+					if (slot != null && sprite != null)
+					{
+						var img = slot.transform.GetChild(0).GetComponent<Image>();
+						if (img != null) img.sprite = sprite;
+					}
+				},
+				error => Debug.LogWarning($"[RA_ScrollView] Failed to load cover for {storyId}: {error}")
+			);
+		}
+	}
+
+	void FinalizeSlots(int slotCount, bool includeFileSystemSlots)
+	{
+		if (includeFileSystemSlots)
+		{
+			// SLOT LOAD GAME
+			GameObject loadGameSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
+			loadGameSlot.name = "loadGame";
+			slots.Add(loadGameSlot);
+			// SLOT NEW GAME
+			GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
+			newGameSlot.name = "newGame";
+			slots.Add(newGameSlot);
+			slotCount += 2;
+		}
+
+		content.GetComponent<RectTransform>().sizeDelta = new Vector2(slotCount * 100, 100);
+
+		slotImages = new List<Image>();
+		slotButtons = new List<Button>();
+		for (int i = 0; i < slots.Count; i++)
+		{
+			slotImages.Add(slots[i].GetComponent<Image>());
+			slots[i].GetComponent<Button>().onClick.AddListener(OnClick);
+			slotButtons.Add(slots[i].GetComponent<Button>());
+			GameObject title = slots[i].transform.Find("Title").gameObject;
+			slotTitles.Add(title);
+			title.SetActive(false);
+		}
+
+		step = 1.0f / (slots.Count - 1);
+		Debug.Log("slots count : " + slots.Count);
+		scrollRect = GetComponent<ScrollRect>();
+		scrollRect.onValueChanged.AddListener(OnValueChanged);
+		selectedButton = middleSlot = slots.Count / 2;
+		scrollRect.horizontalNormalizedPosition = selectedButton * step;
+		slotImages[selectedButton].GetComponent<Image>().sprite = selected;
+		slotTitles[selectedButton].SetActive(true);
+	}
+
 	void Init() {
 		// set rodyMakerFirstTime to true at application launch
 		PlayerPrefs.SetInt("rodyMakerFirstTime", 1);
@@ -119,7 +271,11 @@ public class RA_ScrollView : MonoBehaviour {
 		slotTitles.Clear();
 		slotImages.Clear();
 		slotButtons.Clear();
+#if UNITY_WEBGL && !UNITY_EDITOR
+		InitFromProvider();
+#else
 		Init();
+#endif
 	}
 
 	// Update is called once per frame
@@ -276,14 +432,26 @@ public class RA_ScrollView : MonoBehaviour {
 	IEnumerator LoadFolder(int index) {
 		PlayerPrefs.SetInt("customGame",1);
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+		// On WebGL, no loadGame/newGame slots - all slots are stories
+		while(menu.pix.BlockCount > 32) {
+			menu.pix.enabled = true;
+			menu.pix.BlockCount -= (menu.pixAcceleration * menu.pix.BlockCount / 100);
+			Debug.Log(menu.pix.BlockCount);
+			yield return new WaitForEndOfFrame();
+		}
+		Debug.Log("[RA] Set game path : " + getGamePath(index));
+		PlayerPrefs.SetString("gamePath", getGamePath(index));
+		SceneManager.LoadScene(1); // load the intro scene
+#else
 		// new empty game
-		if (index == content.transform.childCount - 1) { 
+		if (index == content.transform.childCount - 1) {
 			newGamePanel.SetActive(true);
-		} 
+		}
 		// load a game folder
-		else if (index == content.transform.childCount - 2) { 
+		else if (index == content.transform.childCount - 2) {
 			ngScript.IG_OnUploadClick();
-		} 
+		}
 		// Load the selected game
 		else {
 			while(menu.pix.BlockCount > 32) {
@@ -296,12 +464,18 @@ public class RA_ScrollView : MonoBehaviour {
 			PlayerPrefs.SetString("gamePath", getGamePath(index));
 			SceneManager.LoadScene(1); // load the intro scene
 		}
+#endif
 
 		yield return null;
 	}
 
 	string getGamePath(int index) {
+#if UNITY_WEBGL && !UNITY_EDITOR
+		// On WebGL, just return the story ID (slot name) - Firebase provider uses IDs
+		return content.transform.GetChild(index).name;
+#else
 		return System.IO.Path.Combine(Application.streamingAssetsPath, content.transform.GetChild(index).name);
+#endif
 	}
 
 	bool isGameFolder(string folderPath) {

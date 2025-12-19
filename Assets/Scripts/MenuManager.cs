@@ -27,16 +27,20 @@ public class MenuManager : MonoBehaviour {
 		gamePath = PlayerPrefs.GetString("gamePath");
 		Debug.Log("Menu : gamePath : " + gamePath);
 		PlayerPrefs.SetInt("currentScene", 1);
+#if UNITY_WEBGL && !UNITY_EDITOR
+		StartCoroutine(InitWebGL());
+#else
 		StartCoroutine(init());
+#endif
 	}
-	
+
 	IEnumerator init() {
 		string spritePath = PathManager.SpritesPath + System.IO.Path.DirectorySeparatorChar;
 
 		for (int i = 0; i<16; i++) { //TODO if scrollable menu : change 16 to dynamic number
 			GameObject image = scenes[i].transform.GetChild(0).gameObject;
 			//Debug.Log("load miniature : " + spritePath + (i+1) + ".1.png");
-			image.GetComponent<Image>().sprite = 
+			image.GetComponent<Image>().sprite =
 			RM_SaveLoad.LoadSprite(spritePath + (i+1) , 1, 61, 25);
             //Debug.Log(spritePath+i+".1.png");
         }
@@ -66,6 +70,60 @@ public class MenuManager : MonoBehaviour {
 			yield return new WaitForSeconds(0.2f);
 			scene.SetActive (true);
 		}
+		Cursor.visible = true;
+	}
+
+	IEnumerator InitWebGL() {
+		// Load scene thumbnails asynchronously from Firebase
+		int loadedCount = 0;
+		int totalToLoad = 16;
+
+		for (int i = 0; i < 16; i++) {
+			int sceneIndex = i + 1;
+			GameObject image = scenes[i].transform.GetChild(0).gameObject;
+			string spriteName = $"{sceneIndex}.1.png";
+
+			RM_SaveLoad.LoadSpriteAsync(spriteName,
+				sprite => {
+					if (sprite != null && image != null)
+						image.GetComponent<Image>().sprite = sprite;
+					loadedCount++;
+				},
+				error => {
+					Debug.LogWarning($"[MenuManager] Failed to load thumbnail {spriteName}: {error}");
+					loadedCount++;
+				}
+			);
+		}
+
+		// Wait for all thumbnails to load (or fail)
+		while (loadedCount < totalToLoad)
+			yield return null;
+
+		// Animate buttons appearing
+		foreach (GameObject button in buttons) {
+			yield return new WaitForSeconds(0.2f);
+			button.SetActive(true);
+		}
+
+		// Animate scenes appearing (same pattern as desktop)
+		for (int i = 3; i < 16; i += 4) {
+			yield return new WaitForSeconds(0.2f);
+			scenes[i].SetActive(true);
+		}
+		for (int i = 14; i > 0; i -= 4) {
+			yield return new WaitForSeconds(0.2f);
+			scenes[i].SetActive(true);
+		}
+		for (int i = 1; i < 14; i += 4) {
+			yield return new WaitForSeconds(0.2f);
+			scenes[i].SetActive(true);
+		}
+		for (int i = 12; i >= 0; i -= 4) {
+			yield return new WaitForSeconds(0.2f);
+			scenes[i].SetActive(true);
+		}
+
 		Cursor.visible = true;
 	}
 

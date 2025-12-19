@@ -41,21 +41,143 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         // init the good dial for the current scene
         currentScene = PlayerPrefs.GetInt("currentScene");
-		
-		if (currentScene <= PlayerPrefs.GetInt("scenesCount")) {
-			InitScene (currentScene);
 
+		if (currentScene <= PlayerPrefs.GetInt("scenesCount")) {
+#if UNITY_WEBGL && !UNITY_EDITOR
+			StartCoroutine(InitSceneWebGL(currentScene));
+#else
+			InitScene(currentScene);
 			// init variables
 			introOver = false;
 			objOver = false;
-			
 			// start the sequence of events
-			StartCoroutine (Play());
+			StartCoroutine(Play());
+#endif
 		}
 		else { // try to load a non existing scene
 			Debug.Log("How dare you do that !");
 			SceneManager.LoadScene(5);
 		}
+	}
+
+	/// <summary>
+	/// WebGL async initialization - loads scene data from Firebase.
+	/// </summary>
+	IEnumerator InitSceneWebGL(int scene)
+	{
+		bool dataLoaded = false;
+		bool spritesLoaded = false;
+		string[] sceneStr = null;
+		List<Sprite> loadedSprites = null;
+
+		// Load scene text data
+		RM_SaveLoad.LoadSceneTxtAsync(scene,
+			data => {
+				sceneStr = data;
+				dataLoaded = true;
+			},
+			error => {
+				Debug.LogError($"[GameManager] Failed to load scene data: {error}");
+				dataLoaded = true; // Continue anyway to avoid infinite loop
+			}
+		);
+
+		// Load scene sprites
+		RM_SaveLoad.LoadSceneSpritesAsync(scene,
+			sprites => {
+				loadedSprites = sprites;
+				spritesLoaded = true;
+			},
+			error => {
+				Debug.LogError($"[GameManager] Failed to load sprites: {error}");
+				spritesLoaded = true; // Continue anyway
+			}
+		);
+
+		// Wait for both to complete
+		while (!dataLoaded || !spritesLoaded)
+			yield return null;
+
+		if (sceneStr != null && loadedSprites != null)
+		{
+			// Apply loaded data
+			ApplySceneData(sceneStr);
+			sceneSprites = loadedSprites;
+
+			Debug.Log($"[GameManager] WebGL: Loaded {sceneSprites.Count} sprites");
+			sceneAnimator.baseFrame = sceneSprites[0];
+			sceneAnimator.frames = new List<Sprite>(sceneSprites);
+			sceneAnimator.frames.RemoveAt(0);
+
+			// Calculate dial counts
+			if (!sm.isMastico1) sceneAnimator.sumDial++;
+			if (getDial(2).Count > 0 && !sm.isMastico2) sceneAnimator.sumDial++;
+			if (getDial(6).Count > 0 && !sm.isMastico3) sceneAnimator.sumDial++;
+			sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1;
+
+			// init variables
+			introOver = false;
+			objOver = false;
+
+			// start the sequence of events
+			StartCoroutine(Play());
+		}
+		else
+		{
+			Debug.LogError("[GameManager] Failed to load scene - returning to menu");
+			SceneManager.LoadScene(2);
+		}
+	}
+
+	/// <summary>
+	/// Applies scene data from string array (used by WebGL path).
+	/// </summary>
+	void ApplySceneData(string[] sceneStr)
+	{
+		// Load musics from data
+		source.clip = sm.getMusic(sceneStr[11].Split(',')[0]);
+		intro.sceneMusic.clip = sm.getMusic(sceneStr[11].Split(',')[1]);
+
+		// Load pitchs
+		string[] pitchs = sceneStr[12].Split(',');
+		sm.pitch1 = float.Parse(pitchs[0]);
+		sm.pitch2 = float.Parse(pitchs[1]);
+		sm.pitch3 = float.Parse(pitchs[2]);
+
+		// Load mastico/zambla isSpeaking
+		string[] booleans = sceneStr[13].Split(',');
+		sm.isMastico1 = booleans[0] == "1";
+		sm.isMastico2 = booleans[1] == "1";
+		sm.isMastico3 = booleans[2] == "1";
+		sm.isZambla = booleans[3] == "1";
+
+		introDial1 = sceneStr[0];
+		introDial2 = sceneStr[1];
+		introDial3 = sceneStr[2];
+		objDial = sceneStr[3];
+		ngpDial = sceneStr[4];
+		fswDial = sceneStr[5];
+		titleText = sceneStr[6];
+		introText = sceneStr[7];
+		objText = sceneStr[8];
+		ngpText = sceneStr[9];
+		fswText = sceneStr[10];
+
+		objNear = RM_SaveLoad.ReadObjects("objNear", sceneStr[16], sceneStr[17], true);
+		ngpNear = RM_SaveLoad.ReadObjects("ngpNear", sceneStr[20], sceneStr[21], true);
+		fswNear = RM_SaveLoad.ReadObjects("fswNear", sceneStr[24], sceneStr[25], true);
+
+		obj = RM_SaveLoad.ReadObjects("obj", sceneStr[14], sceneStr[15]);
+		ngp = RM_SaveLoad.ReadObjects("ngp", sceneStr[18], sceneStr[19]);
+		fsw = RM_SaveLoad.ReadObjects("fsw", sceneStr[22], sceneStr[23]);
+
+		List<List<GameObject>> zonesList = new List<List<GameObject>> { objNear, ngpNear, fswNear };
+		foreach (List<GameObject> zones in zonesList)
+			foreach (GameObject zone in zones)
+				zone.SetActive(false);
+
+		objNearTemplate.SetActive(false);
+		objTemplate.SetActive(false);
 	}
 	
 	IEnumerator Play() {

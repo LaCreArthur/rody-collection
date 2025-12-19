@@ -20,6 +20,19 @@ public class Title : MonoBehaviour {
 	void Start () {
 		Screen.SetResolution(1280, 800, false);
 		isTitle = (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 1)? true:false;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+		StartCoroutine(InitWebGL());
+#else
+		InitDesktop();
+#endif
+
+		StartCoroutine(music());
+		StartCoroutine(appear());
+	}
+
+	void InitDesktop()
+	{
 		if (isTitle) {
 			int customGame = PlayerPrefs.GetInt("customGame");
 			string gamePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Rody7");
@@ -37,7 +50,7 @@ public class Title : MonoBehaviour {
 
 			PlayerPrefs.SetInt("scenesCount", RM_SaveLoad.CountScenesTxt());
 			Debug.Log("scenes in this game folder : " + PlayerPrefs.GetInt("scenesCount"));
-		
+
 			titleImage.sprite = RM_SaveLoad.LoadSprite(PathManager.GetSpritePath("0.png"),0,320,200);
 			Cursor.visible = false;
 		}
@@ -46,9 +59,64 @@ public class Title : MonoBehaviour {
 			Debug.Log("CREDITS ROLL");
 			RM_SaveLoad.LoadCredits(GameObject.Find("Title").GetComponent<Text>(),GameObject.Find("Credits").GetComponent<Text>());
 		}
-	
-		StartCoroutine(music());
-		StartCoroutine(appear());
+	}
+
+	IEnumerator InitWebGL()
+	{
+		if (isTitle) {
+			// gamePath is already set by RA_ScrollView (it's the story ID)
+			string storyId = PlayerPrefs.GetString("gamePath");
+			Debug.Log($"[Title] WebGL: Loading story '{storyId}'");
+
+			// Get scene count from provider
+			var provider = StoryProviderManager.Provider;
+			var stories = provider.GetStories();
+			var story = stories.Find(s => s.id == storyId);
+
+			if (story != null)
+			{
+				PlayerPrefs.SetInt("scenesCount", story.sceneCount);
+				Debug.Log($"[Title] WebGL: Story has {story.sceneCount} scenes");
+			}
+			else
+			{
+				Debug.LogWarning($"[Title] WebGL: Story '{storyId}' not found, using default scene count");
+				PlayerPrefs.SetInt("scenesCount", 10);
+			}
+
+			// Load title image asynchronously
+			bool spriteLoaded = false;
+			RM_SaveLoad.LoadSpriteAsync("0.png",
+				sprite => {
+					if (sprite != null && titleImage != null)
+						titleImage.sprite = sprite;
+					spriteLoaded = true;
+				},
+				error => {
+					Debug.LogWarning($"[Title] WebGL: Failed to load title sprite: {error}");
+					spriteLoaded = true;
+				}
+			);
+
+			while (!spriteLoaded)
+				yield return null;
+
+			Cursor.visible = false;
+		}
+		else {
+			Cursor.visible = true;
+			Debug.Log("CREDITS ROLL (WebGL)");
+			// Load credits asynchronously
+			RM_SaveLoad.LoadCreditsAsync(
+				(title, credits) => {
+					var titleText = GameObject.Find("Title")?.GetComponent<Text>();
+					var creditsText = GameObject.Find("Credits")?.GetComponent<Text>();
+					if (titleText != null) titleText.text = title;
+					if (creditsText != null) creditsText.text = credits;
+				},
+				error => Debug.LogWarning($"[Title] WebGL: Failed to load credits: {error}")
+			);
+		}
 	}
 
 	void Update() {
