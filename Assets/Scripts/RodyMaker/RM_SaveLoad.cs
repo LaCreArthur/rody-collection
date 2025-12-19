@@ -3,11 +3,179 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public static class RM_SaveLoad {
 
     public static bool CustomFolder = false;
+
+    #region WebGL Async Methods
+
+    /// <summary>
+    /// Loads scene text data asynchronously from StoryProvider (for WebGL).
+    /// </summary>
+    public static void LoadSceneTxtAsync(int scene, Action<string[]> onSuccess, Action<string> onError = null)
+    {
+        string storyId = PathManager.GamePath; // On WebGL, this is the story ID
+        var provider = StoryProviderManager.Provider;
+
+        provider.LoadSceneAsync(storyId, scene,
+            sceneData => {
+                // Convert SceneData back to string array format for compatibility
+                string[] sceneStr = SceneDataToStringArray(sceneData);
+                onSuccess?.Invoke(sceneStr);
+            },
+            error => {
+                Debug.LogError($"[RM_SaveLoad] Failed to load scene {scene}: {error}");
+                onError?.Invoke(error);
+            }
+        );
+    }
+
+    /// <summary>
+    /// Loads scene sprites asynchronously from StoryProvider (for WebGL).
+    /// </summary>
+    public static void LoadSceneSpritesAsync(int scene, Action<List<Sprite>> onSuccess, Action<string> onError = null)
+    {
+        string storyId = PathManager.GamePath;
+        var provider = StoryProviderManager.FirebaseProvider;
+
+        if (provider == null)
+        {
+            onError?.Invoke("Firebase provider not available");
+            return;
+        }
+
+        // First load the base frame (scene.1.png)
+        List<Sprite> sprites = new List<Sprite>();
+        int loadedCount = 0;
+        int expectedCount = 4; // Start with 4 frames, will expand if more found
+        bool hasError = false;
+
+        // Load frames 1-4 initially
+        for (int i = 1; i <= 4; i++)
+        {
+            int frameIndex = i;
+            string spritePath = $"Sprites/{scene}.{frameIndex}.png";
+
+            provider.LoadSpriteAsync(storyId, spritePath,
+                sprite => {
+                    if (hasError) return;
+
+                    // Ensure list is large enough
+                    while (sprites.Count < frameIndex)
+                        sprites.Add(null);
+                    sprites[frameIndex - 1] = sprite;
+
+                    loadedCount++;
+                    if (loadedCount >= expectedCount)
+                    {
+                        // Remove any trailing nulls
+                        while (sprites.Count > 0 && sprites[sprites.Count - 1] == null)
+                            sprites.RemoveAt(sprites.Count - 1);
+                        onSuccess?.Invoke(sprites);
+                    }
+                },
+                error => {
+                    // Frame doesn't exist - that's okay, just count it
+                    loadedCount++;
+                    if (loadedCount >= expectedCount && !hasError)
+                    {
+                        while (sprites.Count > 0 && sprites[sprites.Count - 1] == null)
+                            sprites.RemoveAt(sprites.Count - 1);
+                        if (sprites.Count > 0)
+                            onSuccess?.Invoke(sprites);
+                        else
+                        {
+                            hasError = true;
+                            onError?.Invoke($"No sprites found for scene {scene}");
+                        }
+                    }
+                }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Loads a single sprite asynchronously from StoryProvider (for WebGL).
+    /// </summary>
+    public static void LoadSpriteAsync(string spriteName, Action<Sprite> onSuccess, Action<string> onError = null)
+    {
+        string storyId = PathManager.GamePath;
+        var provider = StoryProviderManager.FirebaseProvider;
+
+        if (provider == null)
+        {
+            onError?.Invoke("Firebase provider not available");
+            return;
+        }
+
+        string spritePath = $"Sprites/{spriteName}";
+        provider.LoadSpriteAsync(storyId, spritePath, onSuccess, onError);
+    }
+
+    /// <summary>
+    /// Loads credits asynchronously from StoryProvider (for WebGL).
+    /// </summary>
+    public static void LoadCreditsAsync(Action<string, string> onSuccess, Action<string> onError = null)
+    {
+        string storyId = PathManager.GamePath;
+        var provider = StoryProviderManager.Provider;
+
+        var stories = provider.GetStories();
+        var story = stories.Find(s => s.id == storyId);
+
+        if (story != null)
+        {
+            // Parse credits from story metadata or load from Firebase
+            // For now, return the story title as title and empty credits
+            onSuccess?.Invoke(story.title, "");
+        }
+        else
+        {
+            onError?.Invoke($"Story not found: {storyId}");
+        }
+    }
+
+    /// <summary>
+    /// Converts SceneData back to the string array format used by the game.
+    /// </summary>
+    private static string[] SceneDataToStringArray(SceneData data)
+    {
+        string[] arr = new string[26];
+
+        arr[0] = data.introDial1 ?? "";
+        arr[1] = data.introDial2 ?? "";
+        arr[2] = data.introDial3 ?? "";
+        arr[3] = data.objDial ?? "";
+        arr[4] = data.ngpDial ?? "";
+        arr[5] = data.fswDial ?? "";
+        arr[6] = data.titleText ?? "";
+        arr[7] = data.introText ?? "";
+        arr[8] = data.objText ?? "";
+        arr[9] = data.ngpText ?? "";
+        arr[10] = data.fswText ?? "";
+        arr[11] = $"{data.musicIntro},{data.musicLoop}";
+        arr[12] = $"{data.pitch1},{data.pitch2},{data.pitch3}";
+        arr[13] = $"{(data.isMastico1 ? "1" : "0")},{(data.isMastico2 ? "1" : "0")},{(data.isMastico3 ? "1" : "0")},{(data.isZambla ? "1" : "0")}";
+        arr[14] = data.objPosition ?? "";
+        arr[15] = data.objSize ?? "";
+        arr[16] = data.objNearPosition ?? "";
+        arr[17] = data.objNearSize ?? "";
+        arr[18] = data.ngpPosition ?? "";
+        arr[19] = data.ngpSize ?? "";
+        arr[20] = data.ngpNearPosition ?? "";
+        arr[21] = data.ngpNearSize ?? "";
+        arr[22] = data.fswPosition ?? "";
+        arr[23] = data.fswSize ?? "";
+        arr[24] = data.fswNearPosition ?? "";
+        arr[25] = data.fswNearSize ?? "";
+
+        return arr;
+    }
+
+    #endregion
 
 	public static void SaveGame (RM_GameManager gm)
     {
