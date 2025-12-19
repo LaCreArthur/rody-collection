@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rody Collection - Play Online</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="icon" type="image/x-icon" href="TemplateData/favicon.ico">
 </head>
 <body>
@@ -17,7 +17,7 @@
         <main>
             <div class="game-wrapper">
                 <div id="unity-container" class="unity-desktop">
-                    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+                    <canvas id="unity-canvas" width=960 height=540 tabindex="-1"></canvas>
                     <div id="unity-loading-bar">
                         <div id="unity-logo"></div>
                         <div id="unity-progress-bar-empty">
@@ -82,17 +82,14 @@
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/RodyCollection.loader.js";
-
-        // Using Brotli compression with decompression fallback for GitHub Pages
-        // Unity outputs .unityweb files which include JS decompression
         var config = {
             dataUrl: buildUrl + "/RodyCollection.data.unityweb",
             frameworkUrl: buildUrl + "/RodyCollection.framework.js.unityweb",
             codeUrl: buildUrl + "/RodyCollection.wasm.unityweb",
             streamingAssetsUrl: "StreamingAssets",
-            companyName: "Bretzel Studio",
+            companyName: "BretzelStudio",
             productName: "Rody Collection",
-            productVersion: "1.0",
+            productVersion: "4.2",
             showBanner: unityShowBanner,
         };
 
