@@ -166,7 +166,7 @@ main {
     width: 120px;
     height: 120px;
     margin: 0 auto 20px;
-    background: url('logo.png') no-repeat center;
+    background: url('Build/RodyCollection/TemplateData/unity-logo-dark.png') no-repeat center;
     background-size: contain;
 }
 
