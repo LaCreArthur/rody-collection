@@ -1,0 +1,799 @@
+#######################
+###### scene 1 ########
+#######################
+## phonems
+s_et_t_u_n_in_v_i_t_a_s_i_on_d_u_p_ai_r_n_o_ai_l_._p_r_et_p_a_r_t_et_v_a_l_i_z_,_r_o_d_i_._n_ou_z_a_l_on_l_u_i_r_an_d_r_v_i_z_i_t_
+
+
+m_on_t_r_l_a_s_i_gn_a_t_u_r_d_u_p_ai_r_n_o_ai_l_
+ou_et_l_a_v_oi_t_u_r_f_a_c_t_eu_r_
+v_oi_t_u_l_e_m_a_n_s_p_r_ai_d_i_gn_d_e_l_ou_r_s_on
+## texts [string]
+LA LETTRE DU PERE-NOEL
+"C'est une invitation du père-noël. Prépare tes valises, Rody. Nous allons lui rendre visite"
+Montre la signature du père-noël!
+Où est la voiture facteur?
+Vois-tu le man-spreading de l'ourson?
+## musics [i1..i3 | l1..l15]
+l1,l1
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-13.4, -7.9);
+## obj size
+(43.8, 30.5);
+## objNear position
+(-98.3, 2.6);
+## objNear size
+(118.5, 114.8);
+## NGP position
+(6.6, 16.6);
+## NGP size
+(24.8, 18.0);
+## NgpNear position
+(50.3, 22.1);
+## NgpNear size
+(150.5, 85.8);
+## FSW position
+(12.3, -24.8);
+## FSW size
+(33.8, 14.8);
+## fswNear position
+(105.6, -30.9);
+## fswNear size
+(106.3, 67.3);
+~
+#######################
+###### scene 2 ########
+#######################
+## phonems
+b_on_v_oi_y_a_j_r_o_d_i_._j_e_t_e_c_on_f_i_m_et_d_et_c_o_r_a_s_i_on_,_l_et_b_ou_l_,_l_et_g_i_r_l_an_d_,_l_et_b_ou_j_i_._ai_l_z_on_t_in_p_ou_v_oi_r_m_a_j_i_c_
+
+
+c_ai_l_et_l_a_p_l_u_g_r_o_s_b_ouu_l_
+l_e_c_a_l_an_d_r_i_et_ai_t_a_l_a_d_a_t_d_u_v_in_t_d_e_d_et_s_an_b_r_._l_a_t_u_r_e_m_a_r_c_et_
+ai_d__l_ou_r_s_on_a_t_e_n_i_r_l_a_c_e_d_u_ch_a_c_i_et_s_ai_d_e_s_an_f_u_i_r_p_ou_r_s_a_v_i_
+## texts [string]
+LE SAPIN DE NOEL
+"Bon voyage, Rody. Je te confie mes décorations: les boules, les guirlandes, les bougies. Elles ont un pouvoir magique." 
+Quelle est la plus grosse boule?
+Le calendrier est à la date du 22 décembre. L'as-tu remarqué?
+Aide l'ourson a tenir la queue du chat qui essaie de s'enfuire pour sa vie
+## musics [i1..i3 | l1..l15]
+l2,l2
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-4.6, 3.5);
+## obj size
+(15.5, 12.0);
+## objNear position
+(-17.1, 19.5);
+## objNear size
+(95.3, 66.5);
+## NGP position
+(4.1, 8.0);
+## NGP size
+(15.8, 11.0);
+## NgpNear position
+(32.8, 39.8);
+## NgpNear size
+(82.0, 49.5);
+## FSW position
+(-16.6, -9.0);
+## FSW size
+(21.8, 7.0);
+## fswNear position
+(-37.5, -40.3);
+## fswNear size
+(119.0, 47.0);
+~
+#######################
+###### scene 3 ########
+#######################
+## phonems
+s_e_ch_e_v_a_l_t_r_an_s_f_oh_r_m_a_b_l__et_l_a_n_ou_v_ai_l_in_v_an_s_i_on_d_u_p_r_o_f_ai_s_eu_r_g_o_b_i_n_o_._i_l_v_a_t_e_p_ai_r_m_ai_t_r_d_e_t_e_r_an_d_r_t_r_ai_r_a_p_i_d_e_m_an_o_p_et_i_d_u_p_ai_r_n_o_ai_l_
+
+
+ou_r_o_d_i_v_a_t_i_l_s_a_s_ou_oi_r_
+m_on_t_r_l_et_c_r_an_d_e_c_on_t_r_o_l_
+g_r_a_s_a_t_oi_,_l_ou_r_s_on_a_r_et_u_s_i_s_on_n_a_f_ai_r_._v_oi_t_u_c_oh_m_i_l_et_t_e_r_e_
+## texts [string]
+LE CHEVAL TRANSFORMABLE
+"Ce cheval transformable est la nouvelle invention du professeur Gobino. Il va te permettre de te rendre très rapidement au pays du père-noël."
+Où Rody va-t-il s'asseoir?
+Montre l'écran de contrôle.
+Grâce à toi, l'ourson à réussi son affaire. Vois-tu comme il est heureux?
+## musics [i1..i3 | l1..l15]
+i1,i1
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-10.9, 7.4);
+## obj size
+(31.0, 15.8);
+## objNear position
+(-43.9, -4.8);
+## objNear size
+(126.8, 60.5);
+## NGP position
+(-1.6, 2.3);
+## NGP size
+(26.3, 12.5);
+## NgpNear position
+(-27.0, 5.8);
+## NgpNear size
+(94.0, 56.5);
+## FSW position
+(22.9, 0.9);
+## FSW size
+(19.8, 28.3);
+## fswNear position
+(120.8, 36.8);
+## fswNear size
+(76.0, 50.0);
+~
+#######################
+###### scene 4 ########
+#######################
+## phonems
+t_r_a_v_ai_r_s_on_l_a_v_oi_l_a_c_t_et_._s_et_t_in_v_r_ai_l_a_b_i_r_in_t_._n_ou_d_e_v_on_t_r_ou_v_et_l_a_p_oh_r_t_m_a_j_i_c_._m_ai_z_a_t_an_s_i_on_o_z_et_c_l_ai_r_._s_ai_t_o_r_a_j_d_e_g_r_ai_l_et_s_u_r_p_r_e_n_an__a_s_ai_t_et_p_oh_c_d_e_l_a_n_et_
+
+
+ou_et_l_a_p_oh_r_t_m_a_j_i_c_
+c_ai_l_ch_e_m_in_r_o_d_i_v_a_t_i_l_p_r_an_d_r_._m_on_t_r_l_et_d_i_f_et_r_an_t_et_t_a_p_
+t_r_ou_v_r_o_d_i__a_v_an_c_i_l_n_e_m_eu_r_,_s_an_s_c_a_f_an_d_r_d_an_l_et_s_p_a_s_
+## texts [string]
+LA VOIE LACTEE
+"Traversons la voie lactée. C'est un vrai labyrinthe! Nous devons trouver la porte magique... Mais attention aux éclairs. Cet orage de grêle est surprenant à cette époque de l'année!"
+Où est la porte magique?
+Quel chemin Rody va-t-il prendre? Montre les différentes étapes.
+Trouve Rody avant qu'il ne meurt, sans scaphandre dans l'espace.
+## musics [i1..i3 | l1..l15]
+i2,l3
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-7.1, 11.8);
+## obj size
+(38.3, 16.0);
+## objNear position
+(10.8, 35.5);
+## objNear size
+(126.0, 55.0);
+## NGP position
+(1.4, 0.0);(0.1, -0.4);(0.8, -0.9);(-1.1, 2.6);
+## NGP size
+(11.0, 10.8);(13.3, 11.8);(9.8, 12.3);(8.5, 10.3);
+## NgpNear position
+(-3.6, -50.6);(-124.8, -49.0);(-110.9, -16.5);(-34.1, 9.8);
+## NgpNear size
+(54.3, 27.8);(67.0, 30.0);(71.8, 42.5);(70.8, 36.0);
+## FSW position
+(47.6, -15.3);
+## FSW size
+(12.5, 14.5);
+## fswNear position
+(52.6, -33.8);
+## fswNear size
+(136.3, 61.5);
+~
+#######################
+###### scene 5 ########
+#######################
+## phonems
+n_ou_z_y_v_oi_l_a_._l_et_b_ou_j_i_d_u_s_a_p_in_v_on_n_ou_s_ai_r_v_i_r_._ai_l_b_r_u_l_e_r_on_l_et_l_i_in_c_i_t_i_ai_n_s_ai_t_p_oh_r_t_f_ai_r_m_et_
+
+
+t_r_ou_v_l_a_b_oi_t_o_l_ai_t_r_d_u_p_ai_r_n_o_ai_l_
+ou_d_oi_t_on_p_l_a_s_et_l_u_n_d_et_b_ou_j_i_
+j_ai_p_ai_r_d_u_l_a_b_ouu_l_,_r_a_m_a_s_l_a_p_ou_r_m_oi_r_o_d_i_
+## texts [string]
+LA PORTE MAGIQUE
+"Nous y voilà. Les bougies du sapin vont nous servir. Elles brûlerons les liens qui tiennent cette porte fermée."
+Trouve la boite aux lettres du père-noël.
+Où doit-on placer l'une des bougies?
+J'ai perdu la boule, ramasse-la pour moi Rody.
+## musics [i1..i3 | l1..l15]
+l4,l4
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-2.6, 1.1);
+## obj size
+(19.3, 10.0);
+## objNear position
+(-1.3, 3.4);
+## objNear size
+(64.0, 45.3);
+## NGP position
+(-10.4, -5.3);
+## NGP size
+(11.8, 10.8);
+## NgpNear position
+(-39.5, -2.9);
+## NgpNear size
+(73.0, 67.8);
+## FSW position
+(3.4, -1.4);
+## FSW size
+(15.8, 14.8);
+## fswNear position
+(-40.8, -43.3);
+## fswNear size
+(86.0, 40.0);
+~
+#######################
+###### scene 6 ########
+#######################
+## phonems
+d_e_p_u_i_p_l_u_s_i_eu_r_n_u_i_,_d_et_z_et_c_l_ai_r_s_i_y_oh_n_l_e_s_i_ai_l_et_an_p_ai_ch_l_et_z_et_t_oi_l_d_e_d_oh_r_m_i_r_._m_et_n_u_a_j_s_on_p_l_in_d_e_g_r_ai_l_._l_e_p_r_in_s_d_et_z_o_r_a_j_et_t_an_c_o_l_ai_r_._c_i_o_r_a_l_e_c_ou_r_a_j_d_e_l_a_f_r_on_t_et
+
+
+g_r_a_s_a_c_ai_l_o_b_j_et_,_l_e_j_et_n_i_f_a_b_r_i_c_ti_i_l_s_et_n_u_a_j_
+in_l_u_t_in_et_p_ai_r_ch_et_s_u_r_in_n_u_a_j_._l_e_v_oi_t_u_
+ou_ai_l_a_g_o_l_s_u_r_s_ai_t_i_m_a_j_
+## texts [string]
+LE GENIE DES NUAGES
+"Depuis plusieurs nuits, des éclairs sillonnent le ciel et empêchent les étoiles de dormir. Mes nuages sont pleins de grêle. Le prince des orages est en colère. Qui aura le courage de l'affronter?"
+Grâce à quel objet, le génie fabrique-t-il ses nuages?
+Un lutin est perché sur un nuage? le vois-tu?
+Où est la Gaule sur cette image?
+## musics [i1..i3 | l1..l15]
+l5,l6
+## pitch [float]
+1.1,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-3.8, 8.3);
+## obj size
+(15.3, 13.8);
+## objNear position
+(-44.6, 4.9);
+## objNear size
+(81.8, 67.8);
+## NGP position
+(14.4, 5.9);
+## NGP size
+(21.5, 26.5);
+## NgpNear position
+(127.9, 21.1);
+## NgpNear size
+(64.3, 84.8);
+## FSW position
+(2.3, -2.0);
+## FSW size
+(9.3, 10.5);
+## fswNear position
+(42.4, -5.3);
+## fswNear size
+(127.8, 103.5);
+~
+#######################
+###### scene 7 ########
+#######################
+## phonems
+n_ou_v_oi_l_a_d_an_l_an_t_r_e_p_o_d_e_j_ou_et_d_u_p_ai_r_n_o_ai_l_._n_e_v_oi_t_u_r_i_in_d_e_s_u_r_p_r_e_n_an_,_r_o_d_i_._s_et_j_ou_et_s_on_d_i_f_oh_r_m_._t_r_ou_v_on_v_i_t_l_e_p_ai_r_n_o_ai_l_._i_l_et_s_u_r_e_m_an_t_a_l_u_z_i_n_
+
+
+ou_et_l_an_t_r_et_d_e_l_u_z_i_n_
+l_in_d_et_j_ou_et_ai_t_et_p_a_r_gn_i_et_p_a_r_l_e_m_a_l_eu_r_._l_e_c_ai_l_
+on_n_e_f_ai_p_a_s_a_an_p_u_b_l_i_c_,_t_ou_ch_l_e_
+## texts [string]
+L'ENTREPOT DE JOUETS
+"Nous voilà dans l'entrepôt de jouets du père-noël. Ne vois-tu rien de surprenant, Rody? Ces jouets sont difformes! Trouvons vite le père-noël. Il est sûrement à l'usine."
+Où est l'entrée de l'usine?
+L'un des jouets est épargné par le malheur. Lequel?
+On ne fait pas ça en public, touche le!
+## musics [i1..i3 | l1..l15]
+l8,l8
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(6.4, -2.4);
+## obj size
+(19.8, 36.5);
+## objNear position
+(129.8, 18.9);
+## objNear size
+(58.0, 70.8);
+## NGP position
+(-1.6, 11.9);
+## NGP size
+(9.5, 23.0);
+## NgpNear position
+(57.4, 14.1);
+## NgpNear size
+(118.8, 85.3);
+## FSW position
+(-23.9, 12.6);
+## FSW size
+(14.8, 34.8);
+## fswNear position
+(-127.5, 4.8);
+## fswNear size
+(63.5, 101.0);
+~
+#######################
+###### scene 8 ########
+#######################
+## phonems
+v_ou_v_ou_l_et_s_a_v_oi_r_s_e_c_i_a_r_i_v_,_l_a_n_u_i_s_u_r_l_et_n_u_a_j_,_l_et_r_ai_v_d_et_z_et_t_oi_l_s_e_t_r_an_s_f_oh_r_m_an_j_ou_et_._m_ai_s_et_z_o_r_a_j_d_e_g_r_ai_l_l_et_d_et_r_an_j_,_v_oi_l_a_s_e_c_e_n_ou_t_r_ou_v_on_d_an_l_et_n_u_a_j_
+
+
+m_on_t_r_l_e_t_a_p_i_r_ou_l_an_
+v_oi_t_u_l_a_ch_o_v_s_ou_r_i_
+d_i_s_t_in_g_t_u_l_e_n_u_a_j_l_an_g_i_s_an_
+## texts [string]
+L'USINE
+"Vous voulez savoir ce qui arrive: la nuit sur les nuages, les rêves des étoiles se transforment en jouets. Mais ces orages de grêle les dérangent: voilà ce que nous trouvons dans les nuages..."
+Montre le tapis roulant.
+Vois-tu la chauve-souris?
+Distingues-tu le nuage languissant? 
+## musics [i1..i3 | l1..l15]
+l9,l9
+## pitch [float]
+1.3,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(8.9, 1.0);
+## obj size
+(228.0, 23.8);
+## objNear position
+(15.4, 8.1);
+## objNear size
+(267.3, 79.3);
+## NGP position
+(-24.4, -6.9);
+## NGP size
+(13.5, 24.8);
+## NgpNear position
+(-126.9, -27.5);
+## NgpNear size
+(64.3, 55.0);
+## FSW position
+(-0.6, 3.1);
+## FSW size
+(44.3, 23.5);
+## fswNear position
+(21.0, 18.4);
+## fswNear size
+(121.5, 59.8);
+~
+#######################
+###### scene 9 ########
+#######################
+## phonems
+j_e_s_u_i_m_a_l_e_r_e_._m_a_d_i_s_t_r_i_b_u_s_i_on_d_e_j_ou_et_a_l_i_e_d_e_m_in_s_oi_r_._j_o_r_ai_on_t_d_e_l_et_z_o_f_r_i_r_d_an_s_ai_t_et_t_a_._o_,_l_a_,_l_a_._c_e_f_ai_r_._s_eu_l_,_l_a_p_r_in_s_ai_s_d_et_n_ai_j_p_e_p_e_t_ai_t_r_t_ou_t_a_r_an_j_et_
+
+
+c_e_p_r_an_l_e_p_ai_r_n_o_ai_l_p_ou_r_s_et_ch_et_s_et_l_a_r_m_
+a_ti_u_r_e_m_a_r_c_et_l_a_s_ou_r_i_
+m_on_t_r_e_m_oi_l_ou_r_s_on_d_an_s_et_j_oi_y_e_z_et_b_a_
+## texts [string]
+LE PERE-NOEL
+"Je suis malheureux. Ma distribution de jouets a lieu demain soir. J'aurai honte de les offrir dans cet état. Oh! la! la! Que faire? Seule, la princesse des neiges peut peut-être tout arranger."
+Que prend le père-noël pour sécher ses larmes?
+As-tu remarqué la souris?
+Montre-moi l'ourson dans ses joyeux ébats.
+## musics [i1..i3 | l1..l15]
+l7,l6
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-0.3, 7.0);
+## obj size
+(18.5, 23.5);
+## objNear position
+(-3.0, 24.8);
+## objNear size
+(68.5, 72.5);
+## NGP position
+(12.6, -4.6);
+## NGP size
+(20.0, 19.3);
+## NgpNear position
+(130.6, -8.5);
+## NgpNear size
+(56.3, 100.5);
+## FSW position
+(-1.1, -6.0);
+## FSW size
+(25.5, 24.0);
+## fswNear position
+(-124.1, -21.5);
+## fswNear size
+(70.3, 75.0);
+~
+#######################
+###### scene 10 ########
+#######################
+## phonems
+s_u_r_l_et_c_r_an_d_e_c_on_t_r_o_l_,_j_e_v_oi_l_e_t_r_o_n_d_e_l_a_p_r_in_s_ai_s_d_et_n_ai_j_._i_l_et_v_i_d_._ai_l_s_an_b_l_p_a_r_t_i_t_r_ai_l_ou_in_d_an_l_u_n_i_v_ai_r_._t_on_ch_e_v_a_l_t_r_an_s_f_oh_r_m_et_an_f_u_z_et_t_an_m_ai_n_e_r_a_v_i_t_j_u_s_c_a__ai_l
+
+
+ou_ai_l_an_t_r_et_d_e_l_a_f_u_z_et_
+m_on_t_r_e_l_u_n_d_et_p_a_r_t_i_d_u_ch_e_v_a_l_c_i_n_ai_p_a_t_r_an_s_f_oh_r_m_et_
+a_ti_u_r_e_m_a_r_c_et_c_e_l_e_p_r_o_ch_in__a_s_e_t_r_an_s_f_oh_r_m_et__n_et_p_a_r_a_s_u_r_et_
+## texts [string]
+LE CHEVAL-FUSEE
+"Sur l'écran de contrôle, je vois le trône de la princesse des neiges. Il est vide. Elle semble partie très loin dans l'univers. Ton cheval transformé en fusée t'emmènera vite jusqu'à elle."	
+Où est l'entrée de la fusée?
+Montre l'une des parties du cheval qui n'est pas encore transformée.
+As-tu remarqué que le prochain a se transformer n'est pas rassuré!
+## musics [i1..i3 | l1..l15]
+l10,l10
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-7.4, 4.6);
+## obj size
+(20.8, 17.5);
+## objNear position
+(-28.8, -9.1);
+## objNear size
+(78.5, 69.3);
+## NGP position
+(-6.4, -8.3);
+## NGP size
+(27.8, 33.3);
+## NgpNear position
+(-62.3, -18.9);
+## NgpNear size
+(109.0, 79.3);
+## FSW position
+(-18.8, -18.6);
+## FSW size
+(15.0, 24.0);
+## fswNear position
+(-122.8, -24.9);
+## fswNear size
+(72.5, 77.3);
+~
+#######################
+###### scene 11 ########
+#######################
+## phonems
+o_s_e_c_ou_r_._j_an_t_an_l_a_m_u_z_i_c_d_u_m_on_s_t_r_d_e_l_i_v_ai_r_._j_e_d_oi_d_on_c_r_an_t_r_et_t_r_ai_v_i_t_._m_et_m_on_s_i_gn_et_b_l_ai_s_et_._i_l_a_eu_r_t_et_u_n_et_t_oi_l_f_i_l_an_t_._ai_d_et_m_oi_
+
+
+ou_l_e_s_i_gn_et_t_i_l_b_l_et_s_et_
+p_ou_r_f_a_b_r_i_c_et_l_a_n_ai_j_,_l_a_p_r_in_s_ai_s_d_oi_j_ou_et_d_e_l_a_f_l_u_t_._v_oi_t_u_s_ai_t_in_s_t_r_u_m_an_
+p_r_o_f_i_t_d_u_ch_a_u_p_ou_r_s_u_b_ti_i_l_i_z_et_l_e_s_a_c_a_m_in_r_o_d_i_
+## texts [string]
+LA PRINCESSE DES NEIGES 
+"Au secours! J'entends la musique du monstre de l'hiver. Je dois donc rentrer très vite. Mais mon cygne est blessé. Il a heurté une étoile filante. Aidez-moi!"
+Où le cygne est-il blessé?
+Pour fabriquer la neige, la princesse doit jouer de la flûte. Vois-tu cet instrument?
+Profite du chahut pour subtiliser le sac à main Rody!
+## musics [i1..i3 | l1..l15]
+l5,l6
+## pitch [float]
+1.2,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(3.1, -17.3);
+## obj size
+(10.3, 23.0);
+## objNear position
+(38.3, -31.0);
+## objNear size
+(69.5, 67.5);
+## NGP position
+(1.1, -6.8);
+## NGP size
+(16.3, 17.3);
+## NgpNear position
+(42.0, 9.4);
+## NgpNear size
+(73.0, 71.3);
+## FSW position
+(17.3, -13.1);
+## FSW size
+(20.8, 20.5);
+## fswNear position
+(114.6, -27.4);
+## fswNear size
+(81.8, 74.3);
+~
+#######################
+###### scene 12 ########
+#######################
+## phonems
+s_et_g_i_r_l_an_d_s_on_m_a_j_i_c_._ai_l_v_on_n_ou_p_ai_r_m_ai_t_r_d_e_t_i_r_et_l_e_s_i_gn
+v_ou_d_i_t_c_e_l_e_p_r_in_s_d_et_z_o_r_a_j_an_p_l_i_l_et_n_u_a_j_d_e_g_r_ai_l_._p_a_s_on_p_a_r_s_on_d_o_m_ai_n_._l_an_t_r_et_ai_d_ai_r_i_ai_r_l_et_t_oi_l_p_o_l_ai_r_
+
+ou_et_t_ai_r_an_j_et_l_et_g_i_r_l_an_d_
+ou_ai_l_et_t_oi_l_p_o_l_ai_r
+a_t_r_a_p_in_p_e_d_e_s_an_d_e_l_et_t_oi_l_f_i_l_an_t_,_r_o_d_i_,_s_a_v_o_in_b_on_p_r_i_
+## texts [string]
+LE SAUVETAGE DE LA PRINCESSE
+"Ces guirlandes sont magiques. Elles vont nous permettre de tirer le cygne" "Vous dites que le prince des orages emplit les nuages de grêle. Passons par son domaine. L'entrée est derrière l'étoile polaire"
+Où étaient rangées les guirlandes?
+Où est l'étoile polaire?
+Attrape un peu de sang de l'étoile filante, Rody. Ca vaut un bon prix!
+## musics [i1..i3 | l1..l15]
+i3,l11
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-4.8, 1.9);
+## obj size
+(31.0, 18.3);
+## objNear position
+(-119.8, -18.8);
+## objNear size
+(73.0, 61.5);
+## NGP position
+(3.9, 13.5);
+## NGP size
+(17.3, 12.8);
+## NgpNear position
+(78.8, 41.6);
+## NgpNear size
+(89.0, 46.8);
+## FSW position
+(7.3, -4.8);
+## FSW size
+(11.0, 10.3);
+## fswNear position
+(-26.3, -33.6);
+## fswNear size
+(80.0, 60.8);
+~
+#######################
+###### scene 13 ########
+#######################
+## phonems
+l_e_m_on_s_t_r_d_e_l_i_v_ai_r_a_j_ou_et_s_i_f_oh_r_c_i_l_m_a_r_et_v_ai_i_y_et_._m_in_t_e_n_an_,_j_e_s_u_i_z_an_c_o_l_ai_r_._j_e_n_a_r_i_v_p_l_u_z_a_m_e_r_an_d_o_r_m_i_r_
+s_et_t_ai_p_ou_r_m_a_p_e_l_et_._j_et_t_ai_r_e_t_e_n_u_c_ai_l_c_e_p_a_r_d_an_l_u_n_i_v_ai_r_,_l_ai_s_et_m_oi_f_oh_r_m_et_m_a_n_ai_j_m_in_t_e_n_an_
+
+d_ou_s_oh_r_t_l_ai_g_r_ai_l_on
+v_oi_t_u_l_et_p_et_d_u_p_r_in_s_
+l_a_p_r_in_s_ai_s_a_d_e_l_a_r_j_z_et_p_o_l_._a_t_u_v_u_s_a_b_ou_r_s_
+## texts [string]
+LE PRINCE DES ORAGES
+"Le monstre de l'hiver a joué si fort qu'il m'a réveillé. Maintenant, je suis en colère. Je n'arrive plus à me rendormir." "C'était pour m'appeler. J'étais retenue quelquepart dans l'univers laissez-moi former ma neige maintenant."
+D'où sortent les grêlons?
+Vois-tu l'épée du prince?
+La princesse a de larges épaules. As-tu vu sa bourse?
+## musics [i1..i3 | l1..l15]
+l13,l12
+## pitch [float]
+0.8,1.2,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-0.3, 8.5);
+## obj size
+(18.8, 13.3);
+## objNear position
+(43.4, 23.9);
+## objNear size
+(58.3, 62.8);
+## NGP position
+(1.5, -0.6);
+## NGP size
+(36.3, 31.0);
+## NgpNear position
+(69.1, -24.6);
+## NgpNear size
+(90.8, 73.3);
+## FSW position
+(3.3, -1.6);
+## FSW size
+(11.5, 14.5);
+## fswNear position
+(-123.0, -16.1);
+## fswNear size
+(51.5, 51.8);
+~
+#######################
+###### scene 14 ########
+#######################
+## phonems
+n_ou_d_e_v_on_c_a_l_m_et_l_e_p_r_in_s_._c_a_ch_l_et_b_ou_l_m_a_j_i_c_d_u_s_a_p_in_d_an_s_e_n_u_a_j_,_r_o_d_i_._ai_l_v_on_t_i_r_et_p_an_d_r__d_e_l_a_p_ou_d_r_d_e_s_o_m_ai_i_y_._v_i_t_,_l_e_p_r_in_s_v_a_b_i_in_t_o_l_a_t_r_a_p_et_
+
+
+d_an_c_ai_l_n_u_a_j_,_r_o_d_i_v_a_t_i_l_m_ai_t_r__l_et_b_ou_l_m_a_j_i_c_
+m_on_t_r_l_e_d_oi_d_u_p_r_in_s_c_i_s_a_p_ai_l__l_o_r_i_c_u_l_ai_r_
+v_oi_ti_u_l_e_r_on_._ou_i_._t_u_a_p_ai_r_d_u_
+## texts [string]
+LA POURDRE DE SOMMEIL
+"Nous devons calmer le prince. Cache les boules magiques du sapin dans ce nuage, Rody. Elles vont y répandre de la pourdre de sommeil. Vite, le prince va bientôt l'attraper..."
+Dans quel nuage, Rody va-t-il mettre les boules magiques?
+Montre le doigt du prince qui s'appelle l'auriculaire?
+Vois-tu le rond? Oui? Tu as perdu!
+## musics [i1..i3 | l1..l15]
+l13,l11
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(7.8, -13.3);
+## obj size
+(65.0, 44.8);
+## objNear position
+(12.8, -3.4);
+## objNear size
+(168.5, 109.3);
+## NGP position
+(4.8, 14.3);
+## NGP size
+(33.0, 13.8);
+## NgpNear position
+(-38.0, 29.6);
+## NgpNear size
+(91.0, 67.8);
+## FSW position
+(-3.6, -8.1);
+## FSW size
+(42.3, 34.8);
+## fswNear position
+(-36.0, 3.8);
+## fswNear size
+(126.0, 106.5);
+~
+#######################
+###### scene 15 ########
+#######################
+## phonems
+b_r_a_v_o_r_o_d_i_._l_e_p_r_in_s_et_t_an_d_oh_r_m_i_._m_in_t_e_n_an_,_l_a_p_r_in_s_ai_s_p_e_an_p_l_i_r_l_et_n_u_a_j_d_e_n_ai_j_,_t_r_an_c_i_l_e_m_an_
+
+
+v_oi_ti_u_l_a_p_ou_d_r_d_e_s_o_m_ai_y_
+on_n_a_p_ai_r_s_oi_l_e_m_on_s_t_r_d_e_l_i_v_ai_r_._m_on_t_r_e_l_e_
+a_t_u_r_e_m_a_r_c_et_c_e_l_e_p_r_in_s_a_d_e_l_a_c_on_p_a_n_i_._c_ai_l_c_o_c_in
+## texts [string]
+LE PRINCE ENDORMI
+"Bravo Rody. Le prince est endormi. Maintenant, la princesse peut emplir les nuages de neige, tranquillement."
+Vois-tu la poudre de sommeil?
+On apercoit le monstre de l'hiver. Montre-le?
+As-tu remarqué que le prince à de la compagnie? Quel coquin!
+## musics [i1..i3 | l1..l15]
+i1,i1
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(3.8, 7.4);
+## obj size
+(18.8, 32.8);
+## objNear position
+(-96.9, 30.8);
+## objNear size
+(67.8, 67.0);
+## NGP position
+(-2.1, 24.3);
+## NGP size
+(58.3, 34.8);
+## NgpNear position
+(69.3, 21.6);
+## NgpNear size
+(120.5, 85.8);
+## FSW position
+(1.6, 1.3);
+## FSW size
+(21.8, 32.3);
+## fswNear position
+(-61.3, -6.4);
+## fswNear size
+(67.0, 57.3);
+~
+#######################
+###### scene 16 ########
+#######################
+## phonems
+l_et_z_et_t_oi_l_d_oh_r_m_p_ai_z_i_b_l_e_m_an_._l_et_n_u_a_j_s_e_g_a_r_n_i_s_d_e_b_o_j_ou_et_._r_o_d_i_,_j_e_t_e_r_e_m_ai_r_s_i_p_ou_r_l_a_s_e_g_on_d_f_oi_._v_e_t_u_f_ai_r_in_t_ou_r_d_e_t_r_ai_n_o_._j_e_t_an_m_ai_n_a_v_ai_c_m_oi_d_i_s_t_r_i_b_u_et_l_et_j_ou_et_d_e_n_o_ai_l_
+
+
+m_on_t_r_e_l_et_r_ai_n_c_e_ti_i_in_l_e_p_ai_r_n_o_ai_l_
+c_ai_l_et_l_e_p_l_u_p_e_t_i_r_ai_n_
+c_ai_s_e_c_e_j_e_f_ai_s_u_r_l_i_m_a_j_an_m_ai_m_t_an_c_e_r_o_d_i_._j_e_s_u_i_d_an_s_a_t_ai_t__n_oh_r_m_a_l_e_m_an_._ou_s_u_i_j__
+## texts [string]
+LE PERE-NOEL ET SES RENNES
+"Les étoiles dorment paisiblement. Les nuages se garnissent de beaux jouets. Rody, Je te remercie pour la seconde fois. Veux-tu faire un tour de traîneau? Je t'emmène avec moi distribuer les jouets de Noël."
+Montre les rênes que tient le père-noël.
+Quel est le plus petit renne?
+Qu'est ce que je fais sur l'image en même temps que Rody? Je suis dans sa tête normalement. Où suis-je?
+## musics [i1..i3 | l1..l15]
+l14,l14
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-4.9, 7.5);
+## obj size
+(26.3, 18.0);
+## objNear position
+(18.3, 8.3);
+## objNear size
+(132.5, 69.0);
+## NGP position
+(-3.5, 1.9);
+## NGP size
+(15.3, 18.5);
+## NgpNear position
+(1.6, -15.1);
+## NgpNear size
+(64.8, 54.8);
+## FSW position
+(-3.5, 7.8);
+## FSW size
+(20.8, 18.8);
+## fswNear position
+(-67.4, 29.4);
+## fswNear size
+(70.3, 59.8);
+~
+#######################
+###### scene 17 ########
+#######################
+## phonems
+et_m_oi_,_j_e_s_e_r_ai_l_e_c_a_d_o_d_e_n_o_ai_l__d_e_t_ou_l_et_p_e_t_i_r_o_d_i_d_e_l_a_t_ai_r_
+
+
+
+
+
+## texts [string]
+MASTICO, LE CADEAU!
+"Et moi, je serai le cadeau de Noël de tous les petits Rody de la terre."
+
+
+
+## musics [i1..i3 | l1..l15]
+l15,l15
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(0.0, 0.0);
+## obj size
+(0.0, 0.0);
+## objNear position
+(0.0, 0.0);
+## objNear size
+(0.0, 0.0);
+## NGP position
+(0.0, 0.0);
+## NGP size
+(0.0, 0.0);
+## NgpNear position
+(0.0, 0.0);
+## NgpNear size
+(0.0, 0.0);
+## FSW position
+(0.0, 0.0);
+## FSW size
+(0.0, 0.0);
+## fswNear position
+(0.0, 0.0);
+## fswNear size
+(0.0, 0.0);
+~
