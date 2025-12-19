@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rody Maker - Play Online</title>
+    <title>Rody Collection - Play Online</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Rody Maker</h1>
+            <h1>Rody Collection</h1>
             <p class="subtitle">Les aventures de Rody et Mastico</p>
         </header>
 
@@ -50,14 +50,14 @@
 
         <footer>
             <p>
-                <a href="https://github.com/LaCreArthur/RodyMaker" target="_blank">Code source</a>
+                <a href="https://github.com/LaCreArthur/rody-collection" target="_blank">Code source</a>
                 •
                 <span>Fait avec Unity + Firebase</span>
             </p>
         </footer>
     </div>
 
-    <script src="Build/RodyMaker.loader.js"></script>
+    <script src="Build/RodyCollection.loader.js"></script>
     <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -80,19 +80,19 @@
         }
 
         var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/RodyMaker.loader.js";
+        var loaderUrl = buildUrl + "/RodyCollection.loader.js";
 
         // Detect if using compressed (.gz) or uncompressed files
         // Unity can output either depending on build settings
         var useGzip = true; // Set to false if your build doesn't use compression
 
         var config = {
-            dataUrl: buildUrl + "/RodyMaker.data" + (useGzip ? ".gz" : ""),
-            frameworkUrl: buildUrl + "/RodyMaker.framework.js" + (useGzip ? ".gz" : ""),
-            codeUrl: buildUrl + "/RodyMaker.wasm" + (useGzip ? ".gz" : ""),
+            dataUrl: buildUrl + "/RodyCollection.data" + (useGzip ? ".gz" : ""),
+            frameworkUrl: buildUrl + "/RodyCollection.framework.js" + (useGzip ? ".gz" : ""),
+            codeUrl: buildUrl + "/RodyCollection.wasm" + (useGzip ? ".gz" : ""),
             streamingAssetsUrl: "StreamingAssets",
             companyName: "Bretzel Studio",
-            productName: "Rody Maker",
+            productName: "Rody Collection",
             productVersion: "1.0",
             showBanner: unityShowBanner,
         };

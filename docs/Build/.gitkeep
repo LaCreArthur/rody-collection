@@ -2,7 +2,7 @@
 # Build your game with Unity and output to this folder
 #
 # Expected files after build:
-# - RodyMaker.loader.js
-# - RodyMaker.data.gz (or .data)
-# - RodyMaker.framework.js.gz (or .framework.js)
-# - RodyMaker.wasm.gz (or .wasm)
+# - RodyCollection.loader.js
+# - RodyCollection.data.gz (or .data)
+# - RodyCollection.framework.js.gz (or .framework.js)
+# - RodyCollection.wasm.gz (or .wasm)
