@@ -4,10 +4,11 @@
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
+# Builds
 [Bb]uild/
 [Bb]uilds/
-# Exception for WebGL build in docs folder (GitHub Pages)
-# Exception for WebGL build in docs folder (GitHub Pages)
+
+# GitHub Pages - WebGL Build Exception
 !build/
 build/*
 !build/webgl/
