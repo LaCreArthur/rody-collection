@@ -1,0 +1,1128 @@
+#######################
+###### scene 1 ########
+#######################
+## phonems
+r_o_d_i m_a_m_an_a_ou_v_ai_r_d_ou_s_e_m_an_l_a_p_oh_r_t_d_e_t_a_ch_an_b_r et_s_a_p_r_ai_t_a_d_et_p_o_z_et_un_b_ai_z_et_s_u_r_t_on_f_r_on . m_ai ai_l_n_e_t_e_t_r_ou_v_e_r_a_p_a . v_i_in_v_i_t_._l_e_p_r_o_f_ai_s_eu_r_g_o_b_i_n_o_n_ou_z_a_t_an_
+
+
+j_e_s_u_i_m_a_s_t_i_c_o_._l_e_r_o_b_o_._m_e_v_oi_t_u_s_u_r_l_et_c_r_an . et_r_o_d_i_,_l_e_v_oi_t_u . t_r_ou_v_l_e_,_et_d_et_p_l_a_s_m_oi_j_u_s_c_a_s_a_m_in
+ou_r_o_d_i_,_a_t_i_l_r_an_j_et_s_et_ch_o_s_u_r_
+n_ou_s_oh_m_a_l_et_s_u_r_l_a_l_u_n_,_t_e_r_a_p_ai_l_t_u_c_o_m_an_
+## texts [string]
+DANS LA CHAMBRE DE RODY
+"Rody, maman a ouvert doucement la porte de ta chambre et s'apprête à déposer un baiser sur ton front. Mais... elle ne te trouvera pas! Viens vite, le professeur Gobino nous attend."
+Je suis Mastico, le robot. Me vois-tu sur l'écran?... Et Rody, le vois-tu?... Trouve-le et déplace-moi jusqu'à sa main!
+Où Rody a-t-il rangé ses chaussures?
+Nous sommes allez sur la lune, te rapelles-tu comment?
+## musics [i1..i3 | l1..l15]
+l14,l2
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-1.8, 0.0);
+## obj size
+(13.5, 14.0);
+## objNear position
+(115.3, -36.0);
+## objNear size
+(62.5, 47.0);
+## NGP position
+(5.8, -2.8);
+## NGP size
+(20.5, 17.0);
+## NgpNear position
+(-17.0, 24.3);
+## NgpNear size
+(73.5, 65.0);
+## FSW position
+(-7.5, -17.6);
+## FSW size
+(18.3, 26.8);
+## fswNear position
+(-90.6, -27.0);
+## fswNear size
+(131.8, 75.0);
+~
+#######################
+###### scene 2 ########
+#######################
+## phonems
+b_on_j_ou_r_p_r_o_f_ai_s_eu_r_g_o_b_i_n_o_,_v_ou_d_i_ti_c_e_v_oh_t_r_m_a_ch_i_n_a_ch_e_ou_i_n_g_oh_m_ai_t_an_p_a_n_,_ca_r_l_et_t_oi_l_m_u_l_t_i_c_o_l_oh_r_c_i_l_a_f_e_z_ai_f_on_c_s_i_o_n_et_,_a_d_i_s_p_a_r_u . r_o_d_i_et_m_oi_,_m_a_s_t_i_c_o_,_p_a_r_t_on_p_ou_r_l_e_p_et_i_d_et_m_i_l_c_ou_l_eu_r_,_n_ou_r_e_t_r_ou_v_e_r_on_s_ai_t_et_t_oi_l_
+.
+.
+a_c_ai_l_an_d_r_oi_l_ai_ch_e_ou_i_n_g_oh_m_s_oh_r_t_e_t_i_l_d_e_l_a_m_a_ch_i_n
+ai_d_e_m_oi___a_r_e_p_ai_r_et_l_an_d_r_oi_d_e_l_a_m_a_ch_i_n___ou_et_t_ai_a_c_r_o_ch_et_l_et_t_oi_l
+r_o_d_i_s_e_d_e_m_an_d_ou_l_e_p_r_o_f_et_s_eu_r_g_o_b_i_n_o___a_t_i_l_c_ou_in_s_et_s_on_ou_ti_y_._ai_d_l_e
+## texts [string]
+LE LABORATOIRE PROFESSEUR GOBINO
+"Bonjour, professeur Gobino. Vous dites que votre machine à chewing-gum est en panne car l'étoile multicolore qui la faisait fonctionner, a disparu. Rody et moi, Mastico, partons pour le pays des mille couleurs. Nous retrouverons cette étoile." 
+A quel endroit les chewing-gums sortent-ils de la machine?
+Aide-moi à repérer l'endroit de la machine où était accrochée l'étoile.
+Rody se demande où le professeur Gobino a-t-il coincé son outil. Aide-le!
+## musics [i1..i3 | l1..l15]
+l9,l9
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(-0.5, -10.6);
+## obj size
+(18.8, 13.8);
+## objNear position
+(-107.4, -34.8);
+## objNear size
+(100.3, 58.0);
+## NGP position
+(1.1, -1.6);
+## NGP size
+(24.8, 27.0);
+## NgpNear position
+(-85.8, -18.4);
+## NgpNear size
+(75.5, 73.8);
+## FSW position
+(-3.8, -7.8);
+## FSW size
+(17.8, 15.8);
+## fswNear position
+(77.6, -11.4);
+## fswNear size
+(74.8, 90.8);
+~
+#######################
+###### scene 3 ########
+#######################
+## phonems
+p_r_o_f_i_t_on_d_e_n_oh_t_r_e_p_a_s_a_j_d_e_v_an_s_e_m_a_g_a_z_in_p_ou_r_a_ch_e_t_et_c_ai_l_c_e_f_r_u_i_._n_ou_d_e_v_on_z_an_m_e_n_et_d_et_p_r_o_v_i_z_i_on_p_ou_r_l_e_v_oi_y_a_j_._n_ou_z_an_n_o_r_on_b_e_z_ou_in
+
+
+d_an_c_oi_r_o_d_i_v_a_t_i_l_an_p_oh_r_t_et_s_et_p_r_o_v_i_z_i_on_
+p_o_z_m_oi_s_u_r_ch_a_c_f_r_u_i_c_e_r_o_d_i_a_ch_oi_z_i_d_an_l_oh_r_d_r_e_c_e_j_e_t_e_d_oh_n_._s_e_r_i_z_,_o_r_an_j_,_b_a_n_a_n_,_p_oi_r_,_p_r_u_n_,_r_ai_z_in_,_
+j_e_v_e_l_a_c_ai_s_d_u_m_a_g_a_z_un_,_t_r_ou_v_l_a_
+## texts [string]
+LE MARCHAND DE FRUITS
+"Profitons de notre passage devant ce magasin pour acheter quelques fruits. Nous devons emmener des provisions pour le voyage. Nous en aurons besoin"
+Dans quoi Rody va-t-il emporter ses provisions?
+Pose-moi sur chaque fruit que Rody a choisi dans l'ordre que je te donne : Cerise, Orange, Banane, Poires, Prunes, Raisins
+Je veux la caisse du magasin. Trouve la.
+## musics [i1..i3 | l1..l15]
+l1,l3
+## pitch [float]
+1,1.3,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-4.8, -10.4);
+## obj size
+(19.0, 19.3);
+## objNear position
+(-46.3, -44.8);
+## objNear size
+(119.0, 40.5);
+## NGP position
+(4.0, -7.8);(-15.8, -5.6);(-17.9, 4.5);(14.3, 1.3);(-9.5, -4.6);(16.6, -5.9);
+## NGP size
+(39.5, 29.8);(26.5, 29.5);(26.8, 34.8);(25.8, 35.8);(32.3, 22.3);(34.5, 26.8);
+## NgpNear position
+(84.0, -11.4);(-130.3, -17.4);(-128.0, 5.9);(112.6, 23.4);(-111.6, -11.0);(109.9, -21.8);
+## NgpNear size
+(113.0, 107.8);(59.0, 84.8);(63.5, 100.8);(90.8, 76.8);(90.8, 86.0);(97.3, 75.5);
+## FSW position
+(-0.9, 2.4);
+## FSW size
+(20.3, 17.8);
+## fswNear position
+(-39.8, -0.8);
+## fswNear size
+(94.0, 91.5);
+~
+#######################
+###### scene 4 ########
+#######################
+## phonems
+n_ou_s_oh_m_s_oh_r_ti_i_d_e_l_a_v_i_l_._l_e_s_o_l_ai_y_s_e_l_ai_v_et_n_ou_f_ai_in_c_l_in_d_eu_y_._i_l_v_eu_n_ou_p_a_r_l_et_._et_c_ou_t
+m_a_r_ch_et_j_u_s_c_a_l_a_r_i_v_i_ai_r_an_ch_an_t_et_et_m_on_t_et_d_an_l_e_b_a_t_o_c_i_a_l_e_p_l_u_g_r_an_n_on_b_r_d_e_u_b_l_o_._b_oh_n_ch_an_s
+
+an_m_ai_n_e_m_oi_o_b_ou_d_u_r_ai_y_on_d_e_s_o_l_ai_y_c_i_ai_l_e_p_l_u_l_on_._s_et_l_a_c_e_c_ou_l_e_l_a_r_i_v_i_ai_r_an_ch_an_t_et
+o_l_ou_in__on_a_p_ai_r_s_oi_l_a_v_i_l_,_d_e_v_i_n_d_an_c_ai_l_i_m_eu_b_l__a_b_i_t_r_o_d_i
+l_e_m_a_r_ch_an_d_e_f_r_u_i_n_ou_z_a_s_u_i_v_i_._ou_s_e_c_a_ch_t_i_l
+## texts [string]
+A LA SORTIE DE LA VILLE
+"Nous sommes sortis de la ville. Le soleil se lève et nous fait un clin d'oeil. Il veut nous parler. Ecoute :" "Marchez jusqu'a la rivière enchantée et montez dans le bateau qui a le plus grand nombre de hublots. Bonne chance !"
+Emmène-moi au bout du rayon de soleil qui est le plus long. C'est là que coule la rivière enchantée!
+Au loin on aperçoit la ville: devine dans quel immeuble habite Rody.
+Le marchand de fruits nous a suivit. Où se cache t'il ?
+## musics [i1..i3 | l1..l15]
+i2,l2
+## pitch [float]
+1,0.9,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(0.1, 0.9);
+## obj size
+(20.5, 6.0);
+## objNear position
+(-3.6, 30.6);
+## objNear size
+(78.8, 36.8);
+## NGP position
+(-16.1, 0.4);
+## NGP size
+(10.8, 24.0);
+## NgpNear position
+(-130.3, -10.1);
+## NgpNear size
+(57.5, 83.3);
+## FSW position
+(-10.4, -2.1);
+## FSW size
+(8.5, 16.3);
+## fswNear position
+(-112.9, -30.0);
+## fswNear size
+(64.8, 39.5);
+~
+#######################
+###### scene 5 ########
+#######################
+## phonems
+n_ou_v_ou_a_l_a_o_b_oh_r_d_e_l_a_r_i_v_i_ai_r_._c_e_d_e_b_a_t_o_._m_on_t_on_d_an_s_e_l_u_i_c_e_l_e_s_o_l_ai_y_n_ou_z_a_in_d_i_c_et_._et_an_n_a_v_an_p_ou_r_l_a_v_an_t_u_r_
+
+
+ch_ai_r_ch_l_e_b_a_t_o_c_i_a_l_e_p_l_u_s_e_d_e_u_b_l_o_et_p_ai_r_ch_m_oi_s_u_r_s_on_p_a_v_i_y_on
+a_t_on_n_a_v_i_ou_s_e_t_r_ou_v_l_e_g_ou_v_ai_r_n_a_y_d_u_b_a_t_o_c_e_r_o_d_i_v_a_c_on_d_u_i_r
+l_et_ch_e_u_y_g_oh_m_in_c_o_l_oh_r_d_u_p_r_o_f_ai_s_eu_r_on_c_on_t_a_m_i_n_et_l_et_c_i_p_a_j_d_un_b_a_t_o__,_i_l_et_t_an_c_a_r_an_t_ai_n_._l_e_c_ai_l
+## texts [string]
+AU BORD DE LA RIVIERE
+"Nous voilà au bord de la rivière. Que de bateaux! Montons dans celui que le soleil nous a indiqué. Et en avant pour l'aventure..."
+Cherche le bateau qui a le plus de hublots et perche-moi sur son pavillon.
+A ton avis où se trouve le gouvernail du bateau que Rody va conduire ?
+Les chewing-gums incolores du professeur ont contaminé l'équipage d'un bateau, il est en quarantaine. Lequel ?
+## musics [i1..i3 | l1..l15]
+l5,l6
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(19.8, 6.5);
+## obj size
+(34.8, 13.3);
+## objNear position
+(82.9, 6.4);
+## objNear size
+(154.3, 62.3);
+## NGP position
+(-1.8, -4.4);
+## NGP size
+(7.3, 5.8);
+## NgpNear position
+(93.4, 5.0);
+## NgpNear size
+(69.3, 32.0);
+## FSW position
+(1.1, -4.5);
+## FSW size
+(91.0, 31.3);
+## fswNear position
+(-36.1, 13.9);
+## fswNear size
+(244.3, 98.3);
+~
+#######################
+###### scene 6 ########
+#######################
+## phonems
+l_a_r_i_v_i_ai_r_d_e_v_i_in_in_t_o_r_an_._n_ou_d_e_v_on_c_i_t_et_l_e_b_a_t_o_._t_i_in_t_oi_b_i_in_a_l_a_c_oh_r_d__r_o_d_i_._j_e_v_ai_l_a_t_a_ch_et_z_a_un_a_r_b_r_s_u_r_l_a_b_ai_r_j_
+
+
+j_e_d_oi_t_r_ou_v_et_u_n_b_r_an_ch_b_i_in_s_o_l_i_d_._l_a_c_ai_l_m_e_c_on_s_ai_y_t_u_
+a_c_ai_l_an_d_r_oi_l_e_b_a_t_o_v_a_t_i_l_b_a_s_c_u_l_et_d_an_l_a_c_a_s_c_a_d_
+v_oi_t_u_l_a_b_i_t_e_d_u_b_a_t_o_._t_ou_ch_l_a_
+## texts [string]
+LE BATEAU AU BORD DE LA CASCADE
+"La rivière devient un torrent. Nous devons quitter le bateau. Tiens-toi bien à la corde, Rody. Je vais l'attacher à un arbre sur la berge"
+Je dois trouver une branche bien solide. Laquelle me conseilles-tu?
+A quel endroit le bateau va-t-il basculer dans la cascade?
+Vois tu la bitte du bateau ? Touche la.
+## musics [i1..i3 | l1..l15]
+i3,l11
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,1,0,0
+## obj position
+(-29.3, 19.8);
+## obj size
+(34.8, 12.0);
+## objNear position
+(-65.4, 31.0);
+## objNear size
+(173.8, 66.0);
+## NGP position
+(-24.0, 3.5);
+## NGP size
+(60.5, 26.0);
+## NgpNear position
+(-101.8, -8.8);
+## NgpNear size
+(115.5, 62.0);
+## FSW position
+(16.0, -15.5);
+## FSW size
+(15.5, 14.3);
+## fswNear position
+(126.5, -32.6);
+## fswNear size
+(65.5, 63.8);
+~
+#######################
+###### scene 7 ########
+#######################
+## phonems
+b_r_a_v_o__r_o_d_i_._n_ou_v_oi_l_a_s_ou_l_a_c_a_s_c_a_d_._r_e_g_a_r_d__un_n_et_s_c_a_l_i_et__et_c_r_e_z_et_d_an_l_a_r_oh_ch_._m_on_t_on_l_et_m_a_r_ch_._c_a_l_on_n_ou_t_r_ou_v_et_d_ai_r_i_ai_r_s_ai_t_p_oh_r_t__
+
+
+c_e_d_e_b_ou_t_on_s_u_r_s_ai_t_p_oh_r_t_._m_ai_m_oi_s_u_r_s_e_l_u_i_c_i_p_ai_r_m_ai_d_e_l_ou_v_r_i_r_
+ouu_et_l_a_c_oh_r_d_e_c_i_a_s_o_v_et_r_o_d_i__
+t_ou_l_e_m_on_d__n_a_p_a_z_et_t_et_s_o_v_et_p_a_r_l_a_c_oh_r_d_._ou_et_l_e_m_a_r_ch_an__
+## texts [string]
+SOUS LA CASCADE
+"Bravo, Rody. Nous voilà sous la cascade. Regarde, un escalier est creusé dans la roche. Montons les marches. Qu'allons-nous trouver derrière cette porte?"
+Que de boutons sur cette porte! Mets-moi sur celui qui permet de l'ouvrir.
+Où est la corde qui a sauvé Rody?
+Tout le monde n'a pas été sauvé par la corde. Où est le marchant ?
+## musics [i1..i3 | l1..l15]
+i2,l10
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-3.5, -3.1);
+## obj size
+(7.0, 6.5);
+## objNear position
+(88.5, 36.6);
+## objNear size
+(26.0, 40.8);
+## NGP position
+(0.9, 4.8);
+## NGP size
+(3.8, 100.0);
+## NgpNear position
+(-97.3, 8.8);
+## NgpNear size
+(28.5, 110.5);
+## FSW position
+(-2.4, -6.4);
+## FSW size
+(49.8, 22.3);
+## fswNear position
+(-119.0, -40.8);
+## fswNear size
+(80.5, 47.0);
+~
+#######################
+###### scene 8 ########
+#######################
+## phonems
+_a__a__a__a__._j_e_s_u_i_l_e_r_oi_d_et_t_et_n_ai_b_r_._j_e_r_ai_v_d_e_d_et_t_r_u_i_r_l_et_c_ou_l_eu_r_d_u_m_on_d_._l_et_t_oi_l_m_u_t_i_c_o_l_oh_r_et_m_a_p_r_i_z_o_n_i_ai_r_._a__a__a__a__._et_c_an_l_a_r_c_an_s_i_ai_l_a_p_a_r_ai_t_r_a___ai_l_m_e_c_on_d_u_i_r_a_z_o_p_et_i_d_et_m_i_l_c_ou_l_eu_r_
+
+
+p_ai_r_ch_m_oi_s_u_r_l_a_c_ou_r_oh_n_d_u_r_oi_d_et_t_et_n_ai_b_r_
+d_e_v_i_n_d_e_c_ai_l_an_d_r_oi_s_oh_r_t_ou_t_e_s_ai_t_f_u_m_et_c_i_an_v_a_i_l_a_g_r_oh_t_
+l_e_r_oi_d_et_t_et_n_ai_b_r_in_d_i_c_a_r_o_d_i_d_e_s_e_r_a_p_r_o_ch_et_._a_c_ai_l_an_d_r_oi_et_g_z_a_c_t_e_m_an
+## texts [string]
+LA GROTTE
+"Ah! Ah! Ah! Ah! Je suis le roi des ténèbres. Je rêve de détruire les couleurs du monde. L'étoile multicolore est ma prisonnière. Ah! Ah! Ah! Ah! Et quand l'arc-en-ciel apparaitra, elle me conduira au pays des mille couleurs."
+Perche-moi sur la couronne du roi des ténèbres.
+Devine de quel endroit sort toute cette fumée qui envahit la grotte.
+Le roi des ténèbres indique à Rody de se rapprocher. A quel endroit exactement ?
+## musics [i1..i3 | l1..l15]
+l5,l6
+## pitch [float]
+0.8,1.2,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(1.3, 18.4);
+## obj size
+(32.0, 11.5);
+## objNear position
+(-2.8, 32.9);
+## objNear size
+(156.5, 63.8);
+## NGP position
+(29.6, -1.3);
+## NGP size
+(50.5, 23.3);
+## NgpNear position
+(-3.9, -33.6);
+## NgpNear size
+(177.3, 52.8);
+## FSW position
+(-4.1, -2.6);
+## FSW size
+(29.3, 16.5);
+## fswNear position
+(-10.0, -39.1);
+## fswNear size
+(154.5, 51.8);
+~
+#######################
+###### scene 9 ########
+#######################
+## phonems
+r_u_z_on_r_o_d_y_._oh_f_r_e_l_u_i_t_et_p_r_o_v_i_z_i_on_._p_an_d_an_c_i_l_l_et_m_an_j_e_r_a__n_ou_p_a_r_t_i_r_on_a_l_a_r_e_ch_ai_r_ch_d_e_l_et_t_oi_l_._j_ai_r_e_p_ai_r_et_l_an_t_r_et_d_u_t_u_n_ai_l_o_f_on_d_e_l_a_g_r_oh_t_
+
+
+ou_s_e_t_r_ou_v_l_an_t_r_et_d_u_t_u_n_ai_l_
+ou_r_o_d_i_v_a_t_i_l_p_o_z_et_s_et_p_r_o_v_i_z_i_on_
+c_e_r_e_g_a_r_d_l_e_r_oi_d_et_t_et_n_ai_b_r_a_v_ai_c_a_p_et_t_i_
+## texts [string]
+LA GROTTE
+"Rusons, Rody! Offre-lui tes provisions. Pendant qu'il les mangera, nous partirons à la recherche de l'étoile. J'ai repéré l'entrée d'un tunnel au fond de la grotte."
+Où se trouve l'entrée du tunnel?
+Où Rody va-t-il poser ses provisions?
+Que regarde le roi des ténèbres avec appétit ?
+## musics [i1..i3 | l1..l15]
+l10,l12
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+0,1,0,0
+## obj position
+(44.5, 10.5);
+## obj size
+(15.5, 70.8);
+## objNear position
+(106.5, 1.4);
+## objNear size
+(105.5, 110.8);
+## NGP position
+(6.1, -13.5);
+## NGP size
+(63.0, 12.8);
+## NgpNear position
+(-23.1, -39.1);
+## NgpNear size
+(130.8, 47.3);
+## FSW position
+(9.8, -1.4);
+## FSW size
+(17.3, 4.5);
+## fswNear position
+(-64.1, -11.1);
+## fswNear size
+(65.8, 64.3);
+~
+#######################
+###### scene 10 ########
+#######################
+## phonems
+u_m_m___s_et_f_r_u_i_d_e_t_ou_t_l_et_c_ou_l_eu_r_._a__a__a__a_._j_e_v_ai_t_ou_t_a_v_a_l_et_
+b_i_un_j_ou_et___r_o_d_i___v_i_t___v_ou_a_y_on_ou_m_ai_n_s_e_t_u_n_ai_l
+
+c_ai_l_f_r_u_i_l_e_r_oi_d_et_t_et_n_ai_b_r_v_a_t_i_l_m_an_j_et_an_p_r_e_m_i_et_
+in_d_i_c__an_l_et_m_on_t_r_an_l_un_a_p_r_ai_l_oh_t_r__l_oh_r_d_r_d_an_l_e_c_ai_l_l_e_m_on_s_t_r_v_a_m_an_j_et_l_et_f_r_u_i_
+c_ai_l_f_r_u_i_l_a_b_o_m_i_n_a_s_i_on_v_a_t_ai_l_m_an_j_et_an_d_ai_r_n_i_et_
+## texts [string]
+LA GROTTE
+"Hum! Ces fruits de toutes les couleurs! Ah! Ah! Ah! Ah! Je vais tout avaler!"  "Bien joué, Rody! Vite! Voyons où mène ce tunnel..."
+Quel fruit le roi des ténèbres va-t-il manger en premier?
+Indique, en les montrant l'un après l'autre, l'ordre dans lequel le monstre va manger les fruits.
+Quel fruit l'abomination va-t-elle manger en dernier?
+## musics [i1..i3 | l1..l15]
+l8,l4
+## pitch [float]
+0.8,1,1
+## is mastico speaking [booleans] ?
+0,1,0,0
+## obj position
+(1.8, -3.1);
+## obj size
+(10.5, 6.8);
+## objNear position
+(-38.0, -46.5);
+## objNear size
+(64.5, 32.0);
+## NGP position
+(0.4, -4.9);(-0.8, -6.5);(-1.3, -2.6);(-2.4, 0.3);(-3.5, -12.4);(-4.0, -3.0);
+## NGP size
+(12.5, 5.8);(26.5, 8.0);(9.8, 7.8);(8.5, 14.3);(8.3, 7.3);(12.0, 15.5);
+## NgpNear position
+(-36.6, -45.0);(-19.8, -52.5);(-15.9, -45.3);(-1.6, -45.6);(7.6, -47.0);(16.8, -44.5);
+## NgpNear size
+(56.3, 35.0);(60.0, 23.5);(54.8, 34.0);(46.8, 35.8);(62.8, 33.5);(47.0, 35.5);
+## FSW position
+(11.9, 4.4);
+## FSW size
+(31.0, 53.5);
+## fswNear position
+(42.1, -24.6);
+## fswNear size
+(84.8, 75.8);
+~
+#######################
+###### scene 11 ########
+#######################
+## phonems
+r_o_d_i_._ou_et_t_u_p_a_s_et_._m_ai____s_et_r_ai_i_y_on_l_u_m_i_n_eu___f_oh_r_m_i_d_a_b_l_e_r_o_d_i___n_ou_z_a_v_on_r_e_t_r_ou_v_et_l_et_t_oi_l_
+
+
+r_o_d_i_a_m_i_l_a_m_in_s_u_r_l_e_b_ou_t_on_c_i_d_et_c_l_an_ch_l_ou_v_ai_r_t_u_r_d_e_l_a_t_r_a_p_._ch_ai_r_ch_s_e_b_ou_t_on_
+a_p_ai_r_s_oi_t_u_l_a_m_in_d_e_r_o_d_i_
+f_r_an_ch_e_m_an___i_l_n_i_a_r_i_in_d_o_t_r_s_u_r_l_i_m_a_j___on_t_ou_ch_l_e_f_on
+## texts [string]
+DANS LE TUNNEL 
+"Rody? Où es-tu passé? Mais... Ces rayons lumineux? Formidable Rody! Nous avons retrouvé l'étoile!"
+Rody a mis la main sur le bouton qui déclenche l'ouverture de la trappe. Cherche ce bouton.
+Aperçois-tu la main de Rody?
+Franchement, il n'y a rien d'autre sur l'image. On touche le fond.
+## musics [i1..i3 | l1..l15]
+l9,l13
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,1,0,0
+## obj position
+(0.1, 4.8);
+## obj size
+(9.0, 7.5);
+## objNear position
+(-37.6, 10.8);
+## objNear size
+(102.3, 57.0);
+## NGP position
+(-10.5, -0.4);
+## NGP size
+(44.0, 11.8);
+## NgpNear position
+(13.5, -5.0);
+## NgpNear size
+(84.5, 54.0);
+## FSW position
+(-6.8, 11.5);
+## FSW size
+(19.8, 33.0);
+## fswNear position
+(-8.9, 21.3);
+## fswNear size
+(123.3, 86.0);
+~
+#######################
+###### scene 12 ########
+#######################
+## phonems
+d_et_l_i_v_r_et_m_oi_._l_e_r_oi_d_et_t_et_n_ai_b_r_v_e_s_e_s_ai_r_v_i_r_d_e_m_oi_p_ou_r_an_t_r_et_o_p_ai_i_d_et_m_i_l_c_ou_l_eu_r_._l_e_t_an_p_r_ai_s_._d_e_oh_r__i_l_p_l_eu___b_i_in_t_o_l_e_s_o_l_ai_y_v_a_f_ai_r_a_p_a_r_ai_t_r_l_a_r_c_an_s_i_ai_l
+
+
+t_ou_t_e_l_et_f_e_n_ai_t_r_d_e_s_ai_t_s_a_l_s_on_f_o_s_s_o_f_u_n___l_a_c_ai_l
+p_a_r_c_ai_l_m_ou_a_y_in_s_oh_r_t_on_n_ou_d_e_l_a_p_i_ai_s_._o_b_s_ai_r_v_b_i_in_l_i_m_a_j_et_in_d_i_c_l_e_p_e_t_i_d_et_t_a_y_c_i_v_a_n_ou_z_ai_d_et
+a_t_u_r_e_m_a_r_c_et_l_a_f_e_n_ai_t_r_s_m_a_r_a_g_d_i_n_
+## texts [string]
+LA GRANDE SALLE RONDE
+"Délivrez-moi! Le roi des ténèbres veut se servir de moi pour entrer au pays des mille couleurs! Le temps presse. Dehors, il pleut. Bientôt le soleil va faire apparaitre l'arc-en-ciel!"
+Toutes les fenêtres de cette salle sont fausses sauf une: laquelle?
+Par quel moyen sortons-nous de la pièce? Observe bien l'image et indique le petit détail qui va nous aider.
+As-tu remarqué la fenêtre smaragdine?
+## musics [i1..i3 | l1..l15]
+l7,l5
+## pitch [float]
+1.3,1.3,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(25.4, 21.6);
+## obj size
+(28.0, 59.8);
+## objNear position
+(117.6, 9.0);
+## objNear size
+(82.3, 111.0);
+## NGP position
+(2.5, 5.8);
+## NGP size
+(23.0, 73.8);
+## NgpNear position
+(-68.5, 21.1);
+## NgpNear size
+(66.0, 86.3);
+## FSW position
+(-0.1, 15.6);
+## FSW size
+(47.3, 33.5);
+## fswNear position
+(0.0, 27.4);
+## fswNear size
+(168.0, 72.8);
+~
+#######################
+###### scene 13 ########
+#######################
+## phonems
+l_e_s_o_l_ai_y_s_e_m_on_t_r_l_a_b_a_._v_i_t_c_ou_r_on___l_e_r_oi_d_et_t_et_n_ai_b_r_n_ou_p_ou_r_s_u_i_
+
+
+ou_et_l_e_s_o_l_ai_y____t_r_ou_v_l_e_p_a_r_m_i_l_et_n_u_a_j_
+ou_et_l_e_r_oi_d_et_t_et_n_ai_b_r_
+in_r_a_r_l_et_o_p_a_r_b_r_s_o_v_a_j_s_e_c_a_ch_._a_t_r_a_p_l_e_
+## texts [string]
+DEHORS, IL PLEUT
+"Le soleil se montre là-bas! Vite courons! Le roi des ténèbres nous poursuit."
+Où est le soleil? Trouve-le parmi les nuages!
+Où est le roi des ténèbres?
+Un rare léoparbre sauvage se cache. Attrape-le!
+## musics [i1..i3 | l1..l15]
+l11,l13
+## pitch [float]
+1,1.5,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(18.0, 14.3);
+## obj size
+(24.5, 12.3);
+## objNear position
+(120.8, 38.6);
+## objNear size
+(77.5, 52.8);
+## NGP position
+(-13.8, 6.9);
+## NGP size
+(19.0, 15.3);
+## NgpNear position
+(-135.5, -19.3);
+## NgpNear size
+(47.5, 76.0);
+## FSW position
+(-5.5, 3.6);
+## FSW size
+(19.3, 83.8);
+## fswNear position
+(-93.4, 18.8);
+## fswNear size
+(115.8, 91.5);
+~
+#######################
+###### scene 14 ########
+#######################
+## phonems
+l_a_r_c_an_s_i_ai_l_a_p_a_r_ai_._m_on_t_on_l_et_s_c_a_l_i_et_s_e_c_r_ai___i_l_m_ai_n_o_p_ai_y_d_et_m_i_l_c_ou_l_eu_r____l_a_o__n_ou_s_e_r_on_s_o_v_et_
+
+
+l_a_p_oh_r_t_d_u_p_ai_y_d_et_m_i_l_c_ou_l_eu_r_et_f_ai_r_m_et_._m_on_t_r_e_l_a_
+l_et_m_a_r_ch_d_e_l_et_s_c_a_l_i_et_s_on_d_an_j_e_r_e_z_._in_d_i_c_a_r_o_d_i_l_et_z_an_d_r_oi_ou_i_l_d_oi_p_o_z_et_s_et_p_i_et_
+ouu_et_l_e_t_r_ai_z_oh_r_._j_an_n_ai_b_e_z_ou_in
+## texts [string]
+AU PIED DE L'ARC-EN-CIEL
+"L'arc-en-ciel apparait! Montons l'escalier secret. Il mène au pays des mille couleurs. Là-haut nous serons sauvés."
+La porte du pays des mille couleurs est fermée. Montre la.
+Les marches de l'escalier sont dangereuses. Indique à Rody les endroits où il doit poser ses pieds.
+Où est le trésor? J'en ai besoin.
+## musics [i1..i3 | l1..l15]
+i1,l4
+## pitch [float]
+1.3,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(4.6, 14.5);
+## obj size
+(21.0, 30.5);
+## objNear position
+(130.9, 34.8);
+## objNear size
+(53.3, 60.0);
+## NGP position
+(1.0, -0.6);(0.0, 0.1);(0.1, -1.4);(2.0, -0.5);(6.9, -2.8);(7.0, -2.8);
+## NGP size
+(36.8, 8.5);(38.5, 9.0);(40.3, 6.8);(38.5, 7.0);(40.8, 6.8);(44.3, 6.3);
+## NgpNear position
+(44.4, -51.6);(47.0, -41.6);(49.5, -30.3);(54.5, -18.5);(56.5, -7.4);(70.4, 8.9);
+## NgpNear size
+(63.8, 20.8);(55.0, 17.8);(64.0, 16.5);(62.5, 19.0);(75.0, 14.8);(80.8, 24.8);
+## FSW position
+(1.1, -13.8);
+## FSW size
+(40.8, 22.0);
+## fswNear position
+(44.8, -35.5);
+## fswNear size
+(106.5, 57.5);
+~
+#######################
+###### scene 15 ########
+#######################
+## phonems
+a__a__a__a_a____l_et_f_r_u_i_c_e_j_ai_m_an_j_et_t_ou_t_a_l_eu_r_a_v_ai_l_et_c_ou_l_eu_r_d_e_l_a_r_c_an_s_i_ai_l_._m_on_n_et_s_p_r_i_d_i_a_b_o_l_i_c_v_a_l_et_t_r_an_s_f_oh_r_m_et_an_m_an_j_eu_r_d_e_c_ou_l_eu_r___a_a_a__a__a_a_a
+
+
+v_oi_t_u_l_e_f_r_u_i_c_e_l_e_m_on_s_t_r_t_i_in_d_an_s_a_m_in
+d_e_c_ai_l_an_d_r_oi_d_e_s_on_c_oh_r__l_e_r_oi_d_et_t_et_n_ai_b_r_f_ai_t_i_l_s_oh_r_t_i_r_l_et_f_r_u_i_c_i_l_a_m_an_j_et_
+l_et_t_oi_l_et_t_r_ai_p_a_l__c_a_r_t_u_l_a_s_f_i_c_s_i__r_o_d_i___l_a_t_u_r_e_m_a_r_c_et_
+## texts [string]
+AU MILIEU DE L'ARC-EN-CIEL
+"Ah! Ah! Ah! Ah! Les fruits que j'ai mangés tout à l'heure avaient les couleurs de l'arc-en-ciel! Mon esprit diabolique va les transformer en mangeurs de couleurs. Ah! Ah! Ah! Ah!"
+Vois-tu le fruit que le monstre tient dans sa main?
+De quel endroit de son corps, le roi des ténèbres fait-il sortir les fruits qu'il a mangés?
+L'étoile est très pâle car tu l'asphyxies, Rody. L'as-tu remarqué?
+## musics [i1..i3 | l1..l15]
+l8,l6
+## pitch [float]
+0.8,1.2,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-4.1, 4.9);
+## obj size
+(19.3, 14.8);
+## objNear position
+(-103.3, 25.3);
+## objNear size
+(72.0, 46.0);
+## NGP position
+(4.0, -14.4);
+## NGP size
+(6.3, 33.8);
+## NgpNear position
+(-133.6, -21.8);
+## NgpNear size
+(51.3, 84.5);
+## FSW position
+(4.3, -0.4);
+## FSW size
+(14.5, 16.0);
+## fswNear position
+(11.0, -11.9);
+## fswNear size
+(82.0, 53.3);
+~
+#######################
+###### scene 16 ########
+#######################
+## phonems
+M_a_l_eu_r_._l_a_r_c_an_s_i_ai_l_d_i_s_p_a_r_ai_._t_r_ou_v_on_v_i_t_l_a_c_l_et_c_i_ou_v_r_l_a_p_oh_r_t___r_o_d_i
+
+
+ai_d_r_o_d_i__a_t_r_ou_v_et_l_a_c_l_et_
+in_m_an_j_eu_r_v_a_d_et_v_o_r_et_l_a_c_ou_l_eu_r_in_d_i_g_o_d_e_l_a_r_c_an_s_i_ai_l_._m_on_t_r_e_l_e_
+l_a_t_ai_t__d_e_r_o_d_i_an_t_r_an_f_u_s_i_on_a_v_ai_c_l_a_p_oh_r_t_._p_ai_r_ch_m_oi_d_e_s_u_
+## texts [string]
+EN HAUT DE L'ARC-EN-CIEL
+"Malheur! L'arc-en-ciel disparait. Trouvons vite la clé qui ouvre la porte, Rody!"
+Aide Rody à trouver la clé!
+Un 'mangeur' va dévorer la couleur indigo de l'arc-en-ciel. Montre-le.
+La tête de Rodi entre en fusion avec la porte. pêrche-moi dessus.
+## musics [i1..i3 | l1..l15]
+l11,l9
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(1.4, 0.6);
+## obj size
+(9.3, 12.5);
+## objNear position
+(116.3, 43.4);
+## objNear size
+(27.0, 31.8);
+## NGP position
+(-7.4, -6.0);
+## NGP size
+(25.8, 22.5);
+## NgpNear position
+(7.5, -46.3);
+## NgpNear size
+(78.5, 35.5);
+## FSW position
+(-1.0, 6.0);
+## FSW size
+(7.0, 7.3);
+## fswNear position
+(134.5, 42.9);
+## fswNear size
+(43.5, 35.8);
+~
+#######################
+###### scene 17 ########
+#######################
+## phonems
+l_e_r_oi_d_et_t_et_n_ai_b_r__n_e_p_e_p_a_m_on_t_et___i_l_l_u_i_m_an_c_in_m_an_j_eu_r_d_e_c_ou_l_eu_r_._ouu_f___l_a_p_oh_r_t_et_ou_v_ai_r_t___et_t_oi_l_m_u_l_t_i_c_o_l_oh_r___m_in_t_e_n_an_t_u_et_p_l_u_f_oh_r_t_c_e_l_u_i
+
+
+l_et_b_r_an_ch__d_e_l_et_t_oi_l_on_g_r_an_d_i_._c_ai_l_et_l_a_p_l_u_l_on_g_
+l_et_t_oi_l_m_u_l_t_i_c_o_l_oh_r__a_r_e_t_r_ou_v_et_s_on_p_ou_v_oi_r_d_an_l_e_p_ai_i_d_et_m_i_l_c_ou_l_eu_r_._u_n_et_t_oi_l_d_e_s_e_p_ai_i__l_i_a_ai_d_et_._l_a_c_ai_l_
+u_n_oh_t_r_et_t_oi_l_n_e_l_a_p_a_r_c_on_t_r__p_a_ai_d_et_._r_e_t_r_ou_v_l_a
+## texts [string]
+LA PORTE DU PAYS DES MILLE COULEURS
+"Le roi des ténèbres ne peut pas monter, il lui manque un 'mangeur de couleur'. Ouf! La porte est ouverte. Etoile multicolore, maintenant tu es plus forte que lui!"
+Les branches de l'étoile ont grandi. Quelle est la plus longue?
+L'étoile multicolore a retrouvé son pouvoir dans le pays des mille couleurs. Une étoile de ce pays l'y a aidée. Laquelle?
+Une autre étoile ne l'a par contre pas aidé. Retrouve-la.
+## musics [i1..i3 | l1..l15]
+l14,l14
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(6.2, -0.1);
+## obj size
+(37.6, 20.8);
+## objNear position
+(-86.4, 33.7);
+## objNear size
+(71.2, 52.6);
+## NGP position
+(-1.8, -12.3);
+## NGP size
+(26.8, 27.5);
+## NgpNear position
+(-33.9, 34.0);
+## NgpNear size
+(120.8, 56.5);
+## FSW position
+(33.4, 11.3);
+## FSW size
+(19.0, 16.3);
+## fswNear position
+(-20.1, 27.9);
+## fswNear size
+(133.8, 72.3);
+~
+#######################
+###### scene 18 ########
+#######################
+## phonems
+f_oh_r_m_i_d_a_b_l_._l_et_z_et_c_l_ai_r_d_e_l_et_t_oi_l_d_et_t_r_u_i_z_l_e_m_on_s_t_r_._n_ou_z_a_v_on_g_a_gn_et___r_o_d_i_
+
+
+a_v_ai_c__c_ai_l_r_ai_y_on__l_et_t_oi_l_v_a_t_ai_l_t_ou_ch_et_l_e_m_on_s_t_r_
+a_c_ai_l_an_d_r_oi_l_et_t_oi_l_d_oi_t_ai_l_a_t_in_d_r__l_e_m_on_s_t_r_p_ou_r_l_e_d_et_t_r_u_i_r_
+a_c_ai_l_an_d_r_oi_l_e_m_on_s_t_r_v_a_t_i_l_d_et_s_et_d_et_
+## texts [string]
+L'ETOILE MULTICOLORE DETRUIT LE MONSTRE
+"Formidable! Les éclairs de l'étoile détruisent le monstre. Nous avons gagné, Rody!"
+Avec quel rayon, l'étoile va-t-elle toucher le monstre?
+A quel endroit l'étoile doit-elle atteindre le monstre pour le détruire?
+A quel endroit le monstre va t'il décéder?
+## musics [i1..i3 | l1..l15]
+i2,l1
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(0.6, 5.4);
+## obj size
+(23.8, 19.8);
+## objNear position
+(25.0, 22.0);
+## objNear size
+(71.5, 56.0);
+## NGP position
+(-1.5, 3.0);
+## NGP size
+(7.0, 7.8);
+## NgpNear position
+(-6.8, -4.4);
+## NgpNear size
+(64.5, 51.3);
+## FSW position
+(3.6, -12.4);
+## FSW size
+(57.0, 14.5);
+## fswNear position
+(-63.9, -43.9);
+## fswNear size
+(115.3, 40.8);
+~
+#######################
+###### scene 19 ########
+#######################
+## phonems
+m_ai_____l_et_t_oi_l_a_d_i_s_p_a_r_u_._d_et_s_an_d_on_v_i_t_l_et_s_c_a_l_i_et___ai_l_d_oi_t_ai_t_r_e_t_on_b_et_
+
+
+l_e_m_on_s_t_r_et_t_i_l_b_i_in_d_et_t_r_u_i____p_o_z_e_m_oi_s_u_r_s_on_d_o
+c_ai_l_et_l_e_f_r_u_i_c_i_v_ou_l_ai_m_an_j_et_l_a_c_ou_l_eu_r_j_o_n__d_e_l_a_r_c_an_s_i_ai_l_
+r_o_d_i__a_l_ai_r_in_c_i_et_c_e_l_e_m_on_s_t_r_s_oi_t_an_c_o_r_an_v_i_._i_l_s_ai_r_l_e_p_ou_in_p_r_ai_t_a_an_d_et_c_ou_d_r___m_on_t_r_e_l_e
+## texts [string]
+RODY DESCEND L'ESCALIER DE L'ARC-EN-CIEL
+"Mais... l'étoile a disparu! Descendons vite l'escalier. Elle doit être tombée!"
+Le monstre est-il bien détruit? Pose-moi sur son dos.
+Quel est le fruit qui voulait manger la couleur jaune de l'arc-en-ciel?
+Rody a l'air inquiet que le monstre soit encore en vie. Il sert le poing prêt à en découdre, montre le.
+## musics [i1..i3 | l1..l15]
+l8,l13
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(-37.0, 9.5);
+## obj size
+(29.8, 19.3);
+## objNear position
+(-107.6, -34.1);
+## objNear size
+(104.3, 59.3);
+## NGP position
+(3.6, 0.8);
+## NGP size
+(24.3, 9.3);
+## NgpNear position
+(-76.5, -34.6);
+## NgpNear size
+(84.5, 50.3);
+## FSW position
+(-8.1, 5.4);
+## FSW size
+(11.0, 10.0);
+## fswNear position
+(1.6, -6.1);
+## fswNear size
+(59.8, 50.8);
+~
+#######################
+###### scene 20 ########
+#######################
+## phonems
+c_i_et_s_ai_t_e_d_a_m____ai_l_t_i_in_l_et_t_oi_l_m_u_l_t_i_c_o_l_oh_r_d_an_s_a_m_in_
+
+
+j_e_v_ou_d_r_ai_t_ou_ch_et_l_et_t_oi_l_
+s_ai_t_e_d_a_m__m_in_c_i_ai_t____j_ai_m_e_r_ai_l_an_p_ai_ch_et_d_e_v_oi_r_r_o_d_i____ai_d_e_m_oi_
+s_ai_d_u_c_a_r_an_t_s_in_c_a_p_r_e_m_i_ai_r_v_u_._l_a_t_u_r_e_m_a_r_c_et_
+## texts [string]
+LA DAME MYSTERIEUSE
+"Qui est cette dame? Elle tient l'étoile multicolore dans sa main!"
+Je voudrais toucher l'étoile.
+Cette belle dame m'inquiète. J'aimerais l'empêcher de voir Rody. Aide-moi.
+C'est du quarante cinq à première vue. l'as-tu remarqué?
+## musics [i1..i3 | l1..l15]
+l1,i3
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(4.1, -3.1);
+## obj size
+(28.3, 27.0);
+## objNear position
+(-49.5, -4.1);
+## objNear size
+(81.5, 60.8);
+## NGP position
+(5.6, -6.0);
+## NGP size
+(54.0, 23.5);
+## NgpNear position
+(-5.6, 24.3);
+## NgpNear size
+(120.8, 60.5);
+## FSW position
+(-12.9, -2.1);
+## FSW size
+(10.8, 14.0);
+## fswNear position
+(-79.8, -41.9);
+## fswNear size
+(95.0, 41.3);
+~
+#######################
+###### scene 21 ########
+#######################
+## phonems
+n_e_v_ou_z_in_c_i_et_t_et_p_a___j_et_t_ai_an_f_ai_r_m_et_d_an_l_et_t_oi_l_m_u_l_t_i_c_o_l_oh_r_d_e_p_u_i_t_r_ai_l_on_t_an_____j_e_d_e_v_ai_d_et_t_r_u_i_r_l_e_r_oi_d_et_t_et_n_ai_b_r__p_ou_r_ai_t_r_l_i_b_et_r_et______a_l_on_r_e_m_ai_t_r_m_a_j_o_l_i_p_r_i_z_on_a_s_a_p_l_a_s_d_an_l_a_m_a_ch_i_n_a_ch_e_ou_i_n_g_oh_m
+
+
+ou_s_ai_t_b_ai_l_d_a_m__et_t_et_t_ai_l_an_f_ai_r_m_et_
+t_e_s_ou_v_i_in_t_u_d_u_r_ai_y_on_d_e_s_o_l_ai_y_c_i_a_v_ai__ai_d_et_r_o_d_i_a_t_r_ou_v_et_l_a_r_i_v_i_ai_r_an_ch_an_t_et____l_e_r_e_c_o_n_ai_t_u_
+l_e_c_oh_r_ai_d_et_j_a_d_i_s_ou____ou_et_s_e_c_e_r_o_d_i_c_a_ch_l_a_s_i_d_
+## texts [string]
+LA DAME RACONTE
+"Ne vous inquiétez pas. J'étais enfermée dans l'étoile multicolore depuis très longtemps. Je devais détruire le roi des ténèbres pour être libérée. Allons remettre ma jolie prison à sa place dans la machine à chewing-gums"
+Où cette belle dame était-elle enfermée?
+te souviens-tu du rayon de soleil qui avait aidé Rody à trouver la rivière enchantée? Le reconnais-tu?
+Le corps est déjà dissous! Où est-ce que Rody cache l'acide? 
+## musics [i1..i3 | l1..l15]
+l14,l2
+## pitch [float]
+1.2,1.2,1
+## is mastico speaking [booleans] ?
+0,0,1,0
+## obj position
+(6.4, 0.9);
+## obj size
+(28.0, 22.8);
+## objNear position
+(-52.4, -7.5);
+## objNear size
+(103.3, 97.5);
+## NGP position
+(9.0, 1.1);
+## NGP size
+(115.3, 12.3);
+## NgpNear position
+(-54.9, 33.3);
+## NgpNear size
+(164.3, 62.5);
+## FSW position
+(-0.5, -1.6);
+## FSW size
+(14.8, 21.3);
+## fswNear position
+(63.9, -41.0);
+## fswNear size
+(31.8, 38.5);
+~
+#######################
+###### scene 22 ########
+#######################
+## phonems
+et_v_ou_a_l_a___r_o_d_i____g_r_a_s_a_t_oi___l_e_p_r_o_f_ai_s_eu_r_g_o_b_i_n_o__a_r_e_t_r_ou_v_et_s_on_n_et_p_ou_z__et_s_a_m_a_ch_i_n_f_on_c_s_i_oh_n_a_n_ou_v_o
+
+
+ouu_et_l_et_p_ou_z_d_u_p_r_o_f_et_s_eu_r_g_o_b_i_n_o_
+a_c_ai_l_an_d_r_oi_d_e_l_a_m_a_ch_i_n_l_ai_ch_e_ou_i_n_g_oh_m_p_r_ai_n_t_i_l_l_eu_r_c_ou_l_eu_r_
+l_et_t_oi_l_n_e_s_et_ch_a_p_e_r_a_p_l_u__m_in_t_e_n_an_c_ai_l_et_b_i_in_n_a_t_a_ch_et_a_l_a_m_a_ch_i_n_._l_a_v_oi_t_u_
+## texts [string]
+CHEZ LE PROFESSEUR GOBINO
+"Et voilà, Rody! Grâce à toi, le professeur Gobino a retrouvé son épouse et sa machine fonctionne à nouveau."
+Où est l'épouse du professeur Gobino?
+A quel endroit de la machine les chewing-gums prennent-ils leur couleur?
+L'étoile ne s'échappera plus maintenant qu'elle est bien attachée à la machine. La vois-tu?
+## musics [i1..i3 | l1..l15]
+l9,i1
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(9.0, 6.0);
+## obj size
+(36.3, 60.3);
+## objNear position
+(77.4, 8.6);
+## objNear size
+(122.3, 101.3);
+## NGP position
+(1.6, 1.0);
+## NGP size
+(14.0, 13.5);
+## NgpNear position
+(-12.1, 7.3);
+## NgpNear size
+(83.8, 45.5);
+## FSW position
+(-3.0, -1.8);
+## FSW size
+(26.5, 25.5);
+## fswNear position
+(-81.8, -18.8);
+## fswNear size
+(78.0, 71.5);
+~
+#######################
+###### scene 23 ########
+#######################
+## phonems
+r_o_d_i___t_a_m_a_m_an_s_ai_f_ai_t_e_d_u_s_ou_s_i__m_ai_j_e_v_oi_c_ai_l_n_e_t_an_v_e_p_a_c_a_r_t_u_a_r_an_d_u_l_e_b_o_n_eu_r_a_b_i_in_d_et_j_an_
+
+
+j_e_v_ou_d_r_ai_an_b_r_a_s_et_r_o_d_i____ai_d_e_m_oi_a_l_u_i_d_o_n_et_in_b_ai_z_et_s_u_r_l_a_j_ou_
+t_e_r_a_p_ai_l_t_u__ou_et_t_ai_r_an_j_et_l_et_ch_o_s_u_r_d_e_r_o_d_i____ou_i_i____m_ai_z_ou_s_on_t_ai_l_m_in_t_e_n_an_
+j_ai_m_e_r_ai_t_ou_ch_et_l_e_c_o_ch_on____i_l_et_r_ai_s_t_et_s_eu_l_p_an_d_an_t_ou_s_e_t_an_
+## texts [string]
+DANS LA CHAMBRE DE RODY
+"Rody, ta maman s'est fait du souci mais je vois qu'elle ne t'en veut pas car tu as rendu le bonheur à bien des gens!"
+Je voudrais embrasser Rody: aide-moi à lui donner un baiser sur la joue.
+Te rapelles-tu où étaient rangées les chaussures de Rody? Oui? Mais où sont-elles maintenant?
+J'aimerais toucher le cochon: il est resté seul pendant tout ce temps. 
+## musics [i1..i3 | l1..l15]
+l15,l14
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(-3.6, 0.6);
+## obj size
+(12.0, 13.3);
+## objNear position
+(-88.9, 19.8);
+## objNear size
+(80.8, 78.0);
+## NGP position
+(2.0, -5.9);
+## NGP size
+(21.0, 13.8);
+## NgpNear position
+(-32.8, -6.8);
+## NgpNear size
+(75.5, 63.5);
+## FSW position
+(-1.6, -11.5);
+## FSW size
+(21.8, 25.3);
+## fswNear position
+(106.3, -37.4);
+## fswNear size
+(58.5, 53.8);
+~
+#######################
+###### scene 24 ########
+#######################
+## phonems
+et_m_oi__j_e_s_u_i_z_e_r_e__c_a_r_j_a_d_oh_r_l_et_ch_e_ou_i_n_g_oh_m_
+
+
+_
+
+
+## texts [string]
+AU MILIEU DES CHEWING-GUMS
+"Et moi, je suis heureux car j'adore les chewing-gums!"
+-
+
+
+## musics [i1..i3 | l1..l15]
+i2,l3
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,1,0
+## obj position
+(6.2, -0.1);
+## obj size
+(37.6, 20.8);
+## objNear position
+(-86.4, 33.7);
+## objNear size
+(71.2, 52.6);
+## NGP position
+(0.0, 0.0);
+## NGP size
+(0.0, 0.0);
+## NgpNear position
+(0.0, 0.0);
+## NgpNear size
+(0.0, 0.0);
+## FSW position
+(0.0, 0.0);
+## FSW size
+(0.0, 0.0);
+## fswNear position
+(0.0, 0.0);
+## fswNear size
+(0.0, 0.0);
+~

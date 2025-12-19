@@ -57,7 +57,7 @@
         </footer>
     </div>
 
-    <script src="Build/RodyCollection/Build/RodyCollection.loader.js"></script>
+    <script src="Build/RodyCollection.loader.js"></script>
     <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -79,7 +79,7 @@
             }, 5000);
         }
 
-        var buildUrl = "Build/RodyCollection/Build";
+        var buildUrl = "Build";
         var loaderUrl = buildUrl + "/RodyCollection.loader.js";
 
         // Detect if using compressed (.gz) or uncompressed files
@@ -90,7 +90,7 @@
             dataUrl: buildUrl + "/RodyCollection.data" + (useGzip ? ".gz" : ""),
             frameworkUrl: buildUrl + "/RodyCollection.framework.js" + (useGzip ? ".gz" : ""),
             codeUrl: buildUrl + "/RodyCollection.wasm" + (useGzip ? ".gz" : ""),
-            streamingAssetsUrl: "Build/RodyCollection/StreamingAssets",
+            streamingAssetsUrl: "StreamingAssets",
             companyName: "Bretzel Studio",
             productName: "Rody Collection",
             productVersion: "1.0",
