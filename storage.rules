@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Permissive rules for development - allows all read/write
+      // TODO: Tighten these before production
+      allow read, write: if request.time < timestamp.date(2026, 1, 18);
+    }
+  }
+}
