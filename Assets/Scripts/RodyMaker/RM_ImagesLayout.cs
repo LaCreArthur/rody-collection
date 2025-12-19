@@ -34,6 +34,10 @@ public class RM_ImagesLayout : RM_Layout {
 	}
     public void ImportClick()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Debug.Log("[RM_ImagesLayout] File browser not available on WebGL");
+        return;
+#else
         Debug.Log("Import button clicked");
         var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
         string path = null;
@@ -44,11 +48,12 @@ public class RM_ImagesLayout : RM_Layout {
             return;
 
 		gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0,-35,0);
-        if (gm.currentScene == 0) 
+        if (gm.currentScene == 0)
 			gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadSprite(path,0,640,400); // the title is a bigger img
-		else 
+		else
 			gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadSprite(path,0,320,130);
         // update the miniature
         gm.mainLayout.GetComponent<RM_MainLayout>().miniScenes[gm.currentScene].GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(path,0,36,21);
+#endif
     }
 }

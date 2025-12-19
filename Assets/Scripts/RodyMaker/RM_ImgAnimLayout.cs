@@ -24,6 +24,10 @@ public class RM_ImgAnimLayout : RM_Layout {
 
 	public void ImportClick(int i)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Debug.Log("[RM_ImgAnimLayout] File browser not available on WebGL");
+        return;
+#else
         Debug.Log("Import button clicked");
         var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
         string path = null;
@@ -34,10 +38,11 @@ public class RM_ImgAnimLayout : RM_Layout {
             return;
 
         // i + offset <= frames.Count because it should not be possible to add the i+1 frame if the i doesn't exist
-        if ((i + offset) >= frames.Count) 
+        if ((i + offset) >= frames.Count)
             frames.Add(RM_SaveLoad.LoadSprite(path,0,320,130));
 		else frames[i + offset] = RM_SaveLoad.LoadSprite(path,0,320,130);
 
         SetActiveBtn();
+#endif
     }
 }

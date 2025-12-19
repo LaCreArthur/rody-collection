@@ -33,7 +33,13 @@ public class RA_NewGame : MonoBehaviour {
 	}
 
 	public void NG_OnAcceptClick() {
-
+#if UNITY_WEBGL && !UNITY_EDITOR
+		// File system operations not available on WebGL
+		feedbackTxt.text = "Cette fonctionnalité n'est pas disponible dans la version web, Rody!";
+		buttonNop.SetActive(true);
+		newGamePanel.SetActive(false);
+		feedbackPanel.SetActive(true);
+#else
 		// check if the name is OK (characteres)
 		string path = Path.Combine(Application.streamingAssetsPath, titleInput.text);
 		Debug.Log("[RA] Path of the new game : " + path);
@@ -48,13 +54,13 @@ public class RA_NewGame : MonoBehaviour {
 				feedbackPanel.SetActive(true);
 				return;
 			}
-			
+
 			// create folder with this name
 			Directory.CreateDirectory(path);
 			CopyRodyBaseFolder(path);
 			Debug.Log("[RA] New game folder created");
 			// if there is a custom cover image specified
-			if (imgInput.text.Length > 0) { 
+			if (imgInput.text.Length > 0) {
 				CopyCoverImage(path);
 			}
 		}
@@ -77,6 +83,7 @@ public class RA_NewGame : MonoBehaviour {
 		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {UnsetfeedbackPanel(2);});
 		newGamePanel.SetActive(false);
 		feedbackPanel.SetActive(true);
+#endif
 	}
 
 	public void NG_OnCancelClick() {
@@ -85,6 +92,10 @@ public class RA_NewGame : MonoBehaviour {
 
 	public void NG_ImgClick()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Debug.Log("[RA_NewGame] File browser not available on WebGL");
+        return;
+#else
         Debug.Log("Import Img clicked");
         var extensions = new[] {new ExtensionFilter("Images", "png", "jpg", "jpeg" ),};
         string imgPath = null;
@@ -95,9 +106,10 @@ public class RA_NewGame : MonoBehaviour {
             return;
 
 		imgInput.text = imgPath;
-        
+
 		// load the sprite
 		coverImgSprite = RM_SaveLoad.LoadSprite(imgPath,0,340,480);
+#endif
     }
 
 	// copy a game folder
@@ -145,11 +157,17 @@ public class RA_NewGame : MonoBehaviour {
 	}
 
 	public void IG_OnUploadClick(){
+#if UNITY_WEBGL && !UNITY_EDITOR
+		// File system operations not available on WebGL
+		feedbackTxt.text = "L'import de dossiers n'est pas disponible dans la version web, Rody!";
+		buttonNop.SetActive(true);
+		feedbackPanel.SetActive(true);
+#else
 		// choix du dossier
 		string[] folderPath = StandaloneFileBrowser.OpenFolderPanel("Dossier de jeu a importer", Application.dataPath, false);
 
 		feedbackTxt.text = "";
-	
+
 		if (folderPath.Length == 0){
 			buttonNop.SetActive(true);
             feedbackTxt.text += "Aucun dossier n'a été sélectionné!";
@@ -157,7 +175,7 @@ public class RA_NewGame : MonoBehaviour {
 		else {
 			int errorCount = 0;
 			string[] errorsTxt = new string[3];
-			
+
 			if(!File.Exists(folderPath[0] + "/credits.txt")){
 				errorsTxt[errorCount] = "le fichier 'credits.txt'";
 				errorCount++;
@@ -190,16 +208,17 @@ public class RA_NewGame : MonoBehaviour {
 				buttonNop.SetActive(true);
 				feedbackTxt.text += "Le dossier ne peut pas être importé !\n";
 				if (errorCount == 1)
-					feedbackTxt.text += errorsTxt[0] + " est introuvable !"; 
+					feedbackTxt.text += errorsTxt[0] + " est introuvable !";
 				else {
 					for (int i = 0; i < (errorCount-2); i++) {
-						feedbackTxt.text += errorsTxt[i] + ", "; 
+						feedbackTxt.text += errorsTxt[i] + ", ";
 					}
-					feedbackTxt.text += errorsTxt[errorCount-2] + " et " +  errorsTxt[errorCount-1] + " sont introuvables !"; 
+					feedbackTxt.text += errorsTxt[errorCount-2] + " et " +  errorsTxt[errorCount-1] + " sont introuvables !";
 				}
 			}
 		}
         feedbackPanel.SetActive(true);
+#endif
 	}
 
 	public void SG_onDelete(bool isDeletable) {
