@@ -82,14 +82,12 @@
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/RodyCollection.loader.js";
 
-        // Using uncompressed files for GitHub Pages compatibility
-        // (GitHub Pages doesn't set Content-Encoding: gzip header)
-        var useGzip = false;
-
+        // Using Brotli compression with decompression fallback for GitHub Pages
+        // Unity outputs .unityweb files which include JS decompression
         var config = {
-            dataUrl: buildUrl + "/RodyCollection.data" + (useGzip ? ".gz" : ""),
-            frameworkUrl: buildUrl + "/RodyCollection.framework.js" + (useGzip ? ".gz" : ""),
-            codeUrl: buildUrl + "/RodyCollection.wasm" + (useGzip ? ".gz" : ""),
+            dataUrl: buildUrl + "/RodyCollection.data.unityweb",
+            frameworkUrl: buildUrl + "/RodyCollection.framework.js.unityweb",
+            codeUrl: buildUrl + "/RodyCollection.wasm.unityweb",
             streamingAssetsUrl: "StreamingAssets",
             companyName: "Bretzel Studio",
             productName: "Rody Collection",

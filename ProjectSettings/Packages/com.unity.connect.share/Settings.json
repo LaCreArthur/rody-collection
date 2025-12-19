@@ -4,7 +4,7 @@
             {
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "buildOutputDirList",
-                "value": "{\"m_Value\":\"/Users/bretzelstudio/Unity Projects/RodyMaker/docs/Build/RodyCollection;/Users/bretzelstudio/Unity Projects/RodyMaker/build/webgl/rody-maker;;;;;;;;\"}"
+                "value": "{\"m_Value\":\"/Users/bretzelstudio/Unity Projects/RodyMaker/docs/RodyCollection;/Users/bretzelstudio/Unity Projects/RodyMaker/docs/Build/RodyCollection;/Users/bretzelstudio/Unity Projects/RodyMaker/build/webgl/rody-maker;;;;;;;\"}"
             }
         ]
     }
