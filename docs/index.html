@@ -82,9 +82,9 @@
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/RodyCollection.loader.js";
 
-        // Detect if using compressed (.gz) or uncompressed files
-        // Unity can output either depending on build settings
-        var useGzip = true; // Set to false if your build doesn't use compression
+        // Using uncompressed files for GitHub Pages compatibility
+        // (GitHub Pages doesn't set Content-Encoding: gzip header)
+        var useGzip = false;
 
         var config = {
             dataUrl: buildUrl + "/RodyCollection.data" + (useGzip ? ".gz" : ""),
