@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Firebase story provider using REST API.
@@ -171,38 +172,122 @@ public class FirebaseStoryProvider : IStoryProvider
     private IEnumerator LoadStoriesCoroutine(Action<List<StoryMetadata>> onComplete, Action<string> onError)
     {
         string url = FirebaseConfig.GetCollectionUrl("stories");
+        Debug.Log($"[FirebaseStoryProvider] Loading stories from: {url}");
+        Debug.Log($"[FirebaseStoryProvider] Full URL length: {url.Length} chars");
 
         using (var request = UnityWebRequest.Get(url))
         {
+            // Log request details before sending
+            Debug.Log($"[FirebaseStoryProvider] Sending request...");
+
             yield return request.SendWebRequest();
+
+            // Log detailed response info
+            Debug.Log($"[FirebaseStoryProvider] Request completed!");
+            Debug.Log($"[FirebaseStoryProvider] Result: {request.result}");
+            Debug.Log($"[FirebaseStoryProvider] Response code: {request.responseCode}");
+            Debug.Log($"[FirebaseStoryProvider] Error (if any): {request.error ?? "none"}");
+            Debug.Log($"[FirebaseStoryProvider] Downloaded bytes: {request.downloadedBytes}");
+
+            // Check for CORS or network issues
+            if (request.result == UnityWebRequest.Result.ConnectionError)
+            {
+                Debug.LogError($"[FirebaseStoryProvider] CONNECTION ERROR - possibly CORS issue in WebGL: {request.error}");
+                onError?.Invoke($"Connection error (CORS?): {request.error}");
+                yield break;
+            }
 
             if (request.result != UnityWebRequest.Result.Success)
             {
+                Debug.LogError($"[FirebaseStoryProvider] HTTP Error: {request.error}");
+                Debug.LogError($"[FirebaseStoryProvider] Response headers: {request.GetResponseHeaders()?.Count ?? 0} headers");
                 onError?.Invoke($"Failed to load stories: {request.error}");
                 yield break;
             }
 
+            string responseText = request.downloadHandler.text;
+            Debug.Log($"[FirebaseStoryProvider] Response length: {responseText.Length} chars");
+            if (responseText.Length < 500)
+            {
+                Debug.Log($"[FirebaseStoryProvider] Response: {responseText}");
+            }
+            else
+            {
+                Debug.Log($"[FirebaseStoryProvider] Response preview: {responseText.Substring(0, 500)}...");
+            }
+
             try
             {
-                var response = JsonUtility.FromJson<FirestoreCollectionResponse>(request.downloadHandler.text);
-                _storiesCache.Clear();
+                Debug.Log("[FirebaseStoryProvider] Starting JSON parse...");
 
-                if (response.documents != null)
+                // Log first 200 chars of response for debugging
+                string preview = responseText.Length > 200 ? responseText.Substring(0, 200) : responseText;
+                Debug.Log($"[FirebaseStoryProvider] JSON preview: {preview}");
+
+                // Sanity check: verify JSON contains expected structure
+                bool hasDocuments = responseText.Contains("\"documents\"");
+                bool hasName = responseText.Contains("\"name\"");
+                bool hasFields = responseText.Contains("\"fields\"");
+                Debug.Log($"[FirebaseStoryProvider] JSON structure check: hasDocuments={hasDocuments}, hasName={hasName}, hasFields={hasFields}");
+
+                // Check for common error responses
+                if (responseText.Contains("\"error\""))
                 {
-                    foreach (var doc in response.documents)
+                    Debug.LogError($"[FirebaseStoryProvider] Response contains error: {responseText}");
+                    onError?.Invoke($"Firebase error: {responseText}");
+                    yield break;
+                }
+
+                // Check if response is empty object
+                string trimmed = responseText.Trim();
+                if (trimmed == "{}" || trimmed == "{ }")
+                {
+                    Debug.LogWarning("[FirebaseStoryProvider] Response is empty object {} - no stories in Firestore");
+                    _storiesCache.Clear();
+                    onComplete?.Invoke(new List<StoryMetadata>());
+                    yield break;
+                }
+
+                // Parse using Newtonsoft.Json (JsonUtility fails with arrays in WebGL)
+                Debug.Log("[FirebaseStoryProvider] Parsing with Newtonsoft.Json...");
+
+                _storiesCache.Clear();
+                var response = JsonConvert.DeserializeObject<FirestoreCollectionResponse>(responseText);
+
+                if (response == null)
+                {
+                    Debug.LogError("[FirebaseStoryProvider] Newtonsoft returned null");
+                    onError?.Invoke("Failed to parse response");
+                    yield break;
+                }
+
+                Debug.Log($"[FirebaseStoryProvider] response.documents: {(response.documents != null ? $"{response.documents.Length} items" : "NULL")}");
+
+                if (response.documents == null || response.documents.Length == 0)
+                {
+                    Debug.LogWarning("[FirebaseStoryProvider] No documents found");
+                    onComplete?.Invoke(new List<StoryMetadata>());
+                    yield break;
+                }
+
+                foreach (var doc in response.documents)
+                {
+                    var metadata = ParseStoryMetadata(doc);
+                    if (metadata != null)
                     {
-                        var metadata = ParseStoryMetadata(doc);
-                        if (metadata != null)
-                        {
-                            _storiesCache[metadata.id] = metadata;
-                        }
+                        Debug.Log($"[FirebaseStoryProvider] Parsed: {metadata.id} - {metadata.title}");
+                        _storiesCache[metadata.id] = metadata;
                     }
                 }
 
+                Debug.Log($"[FirebaseStoryProvider] Successfully loaded {_storiesCache.Count} stories");
                 onComplete?.Invoke(new List<StoryMetadata>(_storiesCache.Values));
             }
             catch (Exception e)
             {
+                Debug.LogError($"[FirebaseStoryProvider] EXCEPTION during parsing: {e.GetType().Name}: {e.Message}");
+                Debug.LogError($"[FirebaseStoryProvider] Stack trace: {e.StackTrace}");
+                Debug.LogError($"[FirebaseStoryProvider] Raw response was: {responseText}");
                 onError?.Invoke($"Failed to parse stories: {e.Message}");
             }
         }
@@ -224,7 +309,7 @@ public class FirebaseStoryProvider : IStoryProvider
 
             try
             {
-                var doc = JsonUtility.FromJson<FirestoreDocument>(request.downloadHandler.text);
+                var doc = JsonConvert.DeserializeObject<FirestoreDocument>(request.downloadHandler.text);
                 var scene = ParseSceneData(doc);
 
                 // Cache it
@@ -238,6 +323,7 @@ public class FirebaseStoryProvider : IStoryProvider
             }
             catch (Exception e)
             {
+                Debug.LogError($"[FirebaseStoryProvider] Failed to parse scene {storyId}/{sceneIndex}: {e.Message}");
                 onError?.Invoke($"Failed to parse scene: {e.Message}");
             }
         }
@@ -593,21 +679,21 @@ public class FirebaseStoryProvider : IStoryProvider
     #endregion
 
     #region Firestore JSON Models
+    // NOTE: These classes intentionally do NOT have [Serializable] attribute
+    // to avoid Unity's serialization depth limit with circular references.
+    // JsonUtility.FromJson works fine without the attribute.
 
-    [Serializable]
     private class FirestoreCollectionResponse
     {
         public FirestoreDocument[] documents;
     }
 
-    [Serializable]
     private class FirestoreDocument
     {
         public string name;
         public FirestoreFields fields;
     }
 
-    [Serializable]
     private class FirestoreFields
     {
         // Story metadata fields
@@ -649,7 +735,6 @@ public class FirebaseStoryProvider : IStoryProvider
         public FirestoreValue sceneMusic;
     }
 
-    [Serializable]
     private class FirestoreValue
     {
         public string stringValue;
@@ -659,13 +744,11 @@ public class FirebaseStoryProvider : IStoryProvider
         public FirestoreMap mapValue;  // For nested map values
     }
 
-    [Serializable]
     private class FirestoreMapValue
     {
         public FirestoreMap mapValue;
     }
 
-    [Serializable]
     private class FirestoreMap
     {
         public FirestoreFields fields;

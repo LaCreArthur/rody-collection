@@ -13,12 +13,282 @@ public static class RM_SaveLoad {
     #region WebGL Async Methods
 
     /// <summary>
+    /// Saves the game asynchronously to Firebase (for WebGL).
+    /// </summary>
+    public static void SaveGameAsync(RM_GameManager gm, Action onComplete, Action<string> onError = null)
+    {
+        int scene = gm.currentScene;
+        var provider = StoryProviderManager.FirebaseProvider;
+
+        if (provider == null)
+        {
+            onError?.Invoke("Firebase provider not available");
+            return;
+        }
+
+        string storyId = PathManager.GamePath;
+        Debug.Log($"[RM_SaveLoad] SaveGameAsync: Saving scene {scene} to Firebase story '{storyId}'");
+
+        // Update scene count if this is a new scene
+        bool isNewScene = PlayerPrefs.GetInt("scenesCount") + 1 == scene;
+        if (isNewScene)
+        {
+            Debug.Log("[RM_SaveLoad] Adding a new scene to the counter...");
+            PlayerPrefs.SetInt("scenesCount", scene);
+        }
+
+        // Special case: scene 0 is just a cover image
+        if (scene == 0)
+        {
+            SaveCoverSpriteAsync(gm, storyId, provider, onComplete, onError);
+            return;
+        }
+
+        // Convert RM_GameManager state to SceneData
+        SceneData sceneData = GameManagerToSceneData(gm);
+
+        // Save scene data to Firebase, then save sprites
+        provider.SaveSceneAsync(storyId, scene, sceneData,
+            () => {
+                Debug.Log($"[RM_SaveLoad] Scene {scene} data saved successfully");
+
+                // Update scene count in story metadata
+                UpdateSceneCountAsync(storyId, provider,
+                    () => {
+                        // Now save the sprites
+                        SaveSpritesAsync(gm, storyId, scene, provider, onComplete, onError);
+                    },
+                    onError
+                );
+            },
+            error => {
+                Debug.LogError($"[RM_SaveLoad] Failed to save scene data: {error}");
+                onError?.Invoke(error);
+            }
+        );
+    }
+
+    /// <summary>
+    /// Saves the cover sprite (scene 0) asynchronously.
+    /// </summary>
+    private static void SaveCoverSpriteAsync(RM_GameManager gm, string storyId, FirebaseStoryProvider provider, Action onComplete, Action<string> onError)
+    {
+        Texture2D tex = gm.scenePanel.GetComponent<SpriteRenderer>().sprite.texture;
+
+        // Create a readable copy and resize
+        Texture2D readableTex = MakeTextureReadable(tex);
+        RM_TextureScale.Point(readableTex, 320, 240);
+        byte[] pngData = readableTex.EncodeToPNG();
+        UnityEngine.Object.Destroy(readableTex);
+
+        string spriteName = "0.png";
+        provider.UploadSpriteAsync(storyId, spriteName, pngData,
+            url => {
+                Debug.Log($"[RM_SaveLoad] Cover sprite uploaded: {url}");
+                onComplete?.Invoke();
+            },
+            error => {
+                Debug.LogError($"[RM_SaveLoad] Failed to upload cover: {error}");
+                onError?.Invoke(error);
+            }
+        );
+    }
+
+    /// <summary>
+    /// Saves all sprites for a scene asynchronously.
+    /// </summary>
+    private static void SaveSpritesAsync(RM_GameManager gm, string storyId, int scene, FirebaseStoryProvider provider, Action onComplete, Action<string> onError)
+    {
+        Texture2D tex = gm.scenePanel.GetComponent<SpriteRenderer>().sprite.texture;
+
+        // Create a readable copy and resize
+        Texture2D readableTex = MakeTextureReadable(tex);
+        RM_TextureScale.Point(readableTex, 320, 130);
+        byte[] basePngData = readableTex.EncodeToPNG();
+        UnityEngine.Object.Destroy(readableTex);
+
+        // Count total sprites to upload (base frames 1-4 + animation frames)
+        int animFrameCount = RM_ImgAnimLayout.frames.Count;
+        int totalSprites = 4 + animFrameCount; // 4 base frames + animation frames
+        int uploadedCount = 0;
+        bool hasError = false;
+
+        Action checkComplete = () => {
+            uploadedCount++;
+            if (uploadedCount >= totalSprites && !hasError)
+            {
+                Debug.Log($"[RM_SaveLoad] All {totalSprites} sprites uploaded successfully");
+                onComplete?.Invoke();
+            }
+        };
+
+        Action<string> handleError = (error) => {
+            if (!hasError)
+            {
+                hasError = true;
+                onError?.Invoke(error);
+            }
+        };
+
+        // Upload base frames 1-4 (all use the same base image initially)
+        for (int i = 1; i <= 4; i++)
+        {
+            string spriteName = $"{scene}.{i}.png";
+            provider.UploadSpriteAsync(storyId, spriteName, basePngData,
+                url => checkComplete(),
+                error => handleError(error)
+            );
+        }
+
+        // Upload animation frames if any
+        for (int j = 0; j < animFrameCount; j++)
+        {
+            Sprite frame = RM_ImgAnimLayout.frames[j];
+            if (frame != null)
+            {
+                Texture2D frameTex = MakeTextureReadable(frame.texture);
+                RM_TextureScale.Point(frameTex, 320, 130);
+                byte[] framePngData = frameTex.EncodeToPNG();
+                UnityEngine.Object.Destroy(frameTex);
+
+                string spriteName = $"{scene}.{j + 2}.png";
+                provider.UploadSpriteAsync(storyId, spriteName, framePngData,
+                    url => checkComplete(),
+                    error => handleError(error)
+                );
+            }
+            else
+            {
+                checkComplete(); // Count null frames as complete
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates the scene count in the story metadata.
+    /// </summary>
+    private static void UpdateSceneCountAsync(string storyId, FirebaseStoryProvider provider, Action onComplete, Action<string> onError)
+    {
+        int sceneCount = PlayerPrefs.GetInt("scenesCount");
+
+        // Create minimal story data to update scene count
+        var storyData = new StoryData(storyId);
+        storyData.metadata.sceneCount = sceneCount;
+
+        provider.SaveStoryAsync(storyId, storyData,
+            () => {
+                Debug.Log($"[RM_SaveLoad] Scene count updated to {sceneCount}");
+                onComplete?.Invoke();
+            },
+            onError
+        );
+    }
+
+    /// <summary>
+    /// Converts RM_GameManager state to SceneData for Firebase saving.
+    /// </summary>
+    private static SceneData GameManagerToSceneData(RM_GameManager gm)
+    {
+        return new SceneData
+        {
+            dialogues = new PhonemeDialogues
+            {
+                intro1 = gm.introDial1 ?? ".",
+                intro2 = gm.introDial2 ?? ".",
+                intro3 = gm.introDial3 ?? ".",
+                obj = gm.objDial ?? ".",
+                ngp = gm.ngpDial ?? ".",
+                fsw = gm.fswDial ?? "."
+            },
+            texts = new DisplayTexts
+            {
+                title = gm.titleText ?? "glitch title",
+                intro = gm.introText ?? "glitch intro",
+                obj = gm.objText ?? ".",
+                ngp = gm.ngpText ?? ".",
+                fsw = gm.fswText ?? "."
+            },
+            music = new MusicSettings
+            {
+                introMusic = gm.musicIntro ?? "i1",
+                sceneMusic = gm.musicLoop ?? "l1"
+            },
+            voice = new VoiceSettings
+            {
+                pitch1 = gm.pitch1,
+                pitch2 = gm.pitch2,
+                pitch3 = gm.pitch3,
+                isMastico1 = gm.isMastico1,
+                isMastico2 = gm.isMastico2,
+                isMastico3 = gm.isMastico3,
+                isZambla = gm.isZambla
+            },
+            objects = new ObjectZones
+            {
+                obj = new ObjectZone
+                {
+                    positionRaw = objListToString(gm.obj),
+                    sizeRaw = objListToString(gm.obj, true),
+                    nearPositionRaw = objListToString(gm.objNear),
+                    nearSizeRaw = objListToString(gm.objNear, true)
+                },
+                ngp = new ObjectZone
+                {
+                    positionRaw = objListToString(gm.ngp),
+                    sizeRaw = objListToString(gm.ngp, true),
+                    nearPositionRaw = objListToString(gm.ngpNear),
+                    nearSizeRaw = objListToString(gm.ngpNear, true)
+                },
+                fsw = new ObjectZone
+                {
+                    positionRaw = objListToString(gm.fsw),
+                    sizeRaw = objListToString(gm.fsw, true),
+                    nearPositionRaw = objListToString(gm.fswNear),
+                    nearSizeRaw = objListToString(gm.fswNear, true)
+                }
+            }
+        };
+    }
+
+    /// <summary>
+    /// Creates a readable copy of a texture (required for EncodeToPNG on WebGL).
+    /// </summary>
+    private static Texture2D MakeTextureReadable(Texture2D source)
+    {
+        RenderTexture tmp = RenderTexture.GetTemporary(
+            source.width,
+            source.height,
+            0,
+            RenderTextureFormat.Default,
+            RenderTextureReadWrite.Linear);
+
+        Graphics.Blit(source, tmp);
+        RenderTexture previous = RenderTexture.active;
+        RenderTexture.active = tmp;
+
+        Texture2D readableTexture = new Texture2D(source.width, source.height);
+        readableTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
+        readableTexture.Apply();
+
+        RenderTexture.active = previous;
+        RenderTexture.ReleaseTemporary(tmp);
+
+        return readableTexture;
+    }
+
+    /// <summary>
     /// Loads scene text data asynchronously from StoryProvider (for WebGL).
     /// </summary>
     public static void LoadSceneTxtAsync(int scene, Action<string[]> onSuccess, Action<string> onError = null)
     {
         string storyId = PathManager.GamePath; // On WebGL, this is the story ID
-        var provider = StoryProviderManager.Provider;
+        var provider = StoryProviderManager.FirebaseProvider;
+
+        if (provider == null)
+        {
+            onError?.Invoke("Firebase provider not available");
+            return;
+        }
 
         provider.LoadSceneAsync(storyId, scene,
             sceneData => {
@@ -57,7 +327,8 @@ public static class RM_SaveLoad {
         for (int i = 1; i <= 4; i++)
         {
             int frameIndex = i;
-            string spritePath = $"Sprites/{scene}.{frameIndex}.png";
+            // Don't add Sprites/ prefix - FirebaseStoryProvider already adds /sprites/
+            string spritePath = $"{scene}.{frameIndex}.png";
 
             provider.LoadSpriteAsync(storyId, spritePath,
                 sprite => {
@@ -111,8 +382,8 @@ public static class RM_SaveLoad {
             return;
         }
 
-        string spritePath = $"Sprites/{spriteName}";
-        provider.LoadSpriteAsync(storyId, spritePath, onSuccess, onError);
+        // Don't add Sprites/ prefix - FirebaseStoryProvider already adds /sprites/ to path
+        provider.LoadSpriteAsync(storyId, spriteName, onSuccess, onError);
     }
 
     /// <summary>
@@ -145,32 +416,41 @@ public static class RM_SaveLoad {
     {
         string[] arr = new string[26];
 
-        arr[0] = data.introDial1 ?? "";
-        arr[1] = data.introDial2 ?? "";
-        arr[2] = data.introDial3 ?? "";
-        arr[3] = data.objDial ?? "";
-        arr[4] = data.ngpDial ?? "";
-        arr[5] = data.fswDial ?? "";
-        arr[6] = data.titleText ?? "";
-        arr[7] = data.introText ?? "";
-        arr[8] = data.objText ?? "";
-        arr[9] = data.ngpText ?? "";
-        arr[10] = data.fswText ?? "";
-        arr[11] = $"{data.musicIntro},{data.musicLoop}";
-        arr[12] = $"{data.pitch1},{data.pitch2},{data.pitch3}";
-        arr[13] = $"{(data.isMastico1 ? "1" : "0")},{(data.isMastico2 ? "1" : "0")},{(data.isMastico3 ? "1" : "0")},{(data.isZambla ? "1" : "0")}";
-        arr[14] = data.objPosition ?? "";
-        arr[15] = data.objSize ?? "";
-        arr[16] = data.objNearPosition ?? "";
-        arr[17] = data.objNearSize ?? "";
-        arr[18] = data.ngpPosition ?? "";
-        arr[19] = data.ngpSize ?? "";
-        arr[20] = data.ngpNearPosition ?? "";
-        arr[21] = data.ngpNearSize ?? "";
-        arr[22] = data.fswPosition ?? "";
-        arr[23] = data.fswSize ?? "";
-        arr[24] = data.fswNearPosition ?? "";
-        arr[25] = data.fswNearSize ?? "";
+        // Dialogues (phonemes)
+        arr[0] = data.dialogues?.intro1 ?? "";
+        arr[1] = data.dialogues?.intro2 ?? "";
+        arr[2] = data.dialogues?.intro3 ?? "";
+        arr[3] = data.dialogues?.obj ?? "";
+        arr[4] = data.dialogues?.ngp ?? "";
+        arr[5] = data.dialogues?.fsw ?? "";
+
+        // Display texts
+        arr[6] = data.texts?.title ?? "";
+        arr[7] = data.texts?.intro ?? "";
+        arr[8] = data.texts?.obj ?? "";
+        arr[9] = data.texts?.ngp ?? "";
+        arr[10] = data.texts?.fsw ?? "";
+
+        // Music
+        arr[11] = $"{data.music?.introMusic ?? "i1"},{data.music?.sceneMusic ?? "l1"}";
+
+        // Voice settings
+        arr[12] = $"{data.voice?.pitch1 ?? 1f},{data.voice?.pitch2 ?? 1f},{data.voice?.pitch3 ?? 1f}";
+        arr[13] = $"{(data.voice?.isMastico1 == true ? "1" : "0")},{(data.voice?.isMastico2 == true ? "1" : "0")},{(data.voice?.isMastico3 == true ? "1" : "0")},{(data.voice?.isZambla == true ? "1" : "0")}";
+
+        // Object zones
+        arr[14] = data.objects?.obj?.positionRaw ?? "";
+        arr[15] = data.objects?.obj?.sizeRaw ?? "";
+        arr[16] = data.objects?.obj?.nearPositionRaw ?? "";
+        arr[17] = data.objects?.obj?.nearSizeRaw ?? "";
+        arr[18] = data.objects?.ngp?.positionRaw ?? "";
+        arr[19] = data.objects?.ngp?.sizeRaw ?? "";
+        arr[20] = data.objects?.ngp?.nearPositionRaw ?? "";
+        arr[21] = data.objects?.ngp?.nearSizeRaw ?? "";
+        arr[22] = data.objects?.fsw?.positionRaw ?? "";
+        arr[23] = data.objects?.fsw?.sizeRaw ?? "";
+        arr[24] = data.objects?.fsw?.nearPositionRaw ?? "";
+        arr[25] = data.objects?.fsw?.nearSizeRaw ?? "";
 
         return arr;
     }

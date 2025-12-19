@@ -20,6 +20,7 @@ public class FirebaseMigrationTool : EditorWindow
     private float _progress = 0f;
     private int _currentStoryIndex = 0;
     private int _currentSceneIndex = 0;
+    private bool _cleanBeforeUpload = true;
 
     [MenuItem("Tools/Firebase/Migration Tool")]
     public static void ShowWindow()
@@ -76,12 +77,33 @@ public class FirebaseMigrationTool : EditorWindow
 
         EditorGUILayout.Space();
 
+        // Clean before upload option
+        _cleanBeforeUpload = EditorGUILayout.ToggleLeft("Clean Storage before upload (recommended)", _cleanBeforeUpload);
+
+        EditorGUILayout.Space();
+
         // Upload button
         EditorGUI.BeginDisabledGroup(_isUploading);
         if (GUILayout.Button("Upload Selected to Firebase", GUILayout.Height(40)))
         {
             StartUpload();
         }
+        EditorGUI.EndDisabledGroup();
+
+        EditorGUILayout.Space();
+
+        // Clean all storage button
+        EditorGUI.BeginDisabledGroup(_isUploading);
+        GUI.backgroundColor = new Color(1f, 0.5f, 0.5f);
+        if (GUILayout.Button("Clean ALL Storage (Delete all files)"))
+        {
+            if (EditorUtility.DisplayDialog("Clean All Storage",
+                "This will DELETE ALL files in Firebase Storage.\n\nAre you sure?", "Yes, Delete All", "Cancel"))
+            {
+                StartCleanAllStorage();
+            }
+        }
+        GUI.backgroundColor = Color.white;
         EditorGUI.EndDisabledGroup();
 
         // Progress bar
@@ -179,6 +201,14 @@ public class FirebaseMigrationTool : EditorWindow
         string creditsFile = Path.Combine(storyPath, "credits.txt");
         string spritesPath = Path.Combine(storyPath, "Sprites");
 
+        // Clean old files first if option is enabled
+        if (_cleanBeforeUpload)
+        {
+            _statusMessage = $"Cleaning old files for {storyId}...";
+            Repaint();
+            yield return CleanStoryStorageCoroutine(storyId);
+        }
+
         // Count scenes
         int sceneCount = CountScenes(levelsFile);
         Debug.Log($"[Migration] {storyId}: {sceneCount} scenes");
@@ -217,6 +247,15 @@ public class FirebaseMigrationTool : EditorWindow
         if (File.Exists(titleSprite))
         {
             yield return UploadSprite(storyId, "0.png", titleSprite);
+        }
+
+        // Upload cover.png from Sprites folder
+        string coverPath = Path.Combine(spritesPath, "cover.png");
+        if (File.Exists(coverPath))
+        {
+            _statusMessage = $"Uploading {storyId} cover...";
+            Repaint();
+            yield return UploadSprite(storyId, "cover.png", coverPath);
         }
 
         Debug.Log($"[Migration] {storyId} complete!");
@@ -311,6 +350,139 @@ public class FirebaseMigrationTool : EditorWindow
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError($"[Migration] Failed to upload sprite {spriteName}: {request.error}");
+            }
+        }
+    }
+
+    private void StartCleanAllStorage()
+    {
+        _isUploading = true;
+        _progress = 0f;
+        _statusMessage = "Cleaning storage...";
+        EditorCoroutineRunner.StartCoroutine(CleanAllStorageCoroutine());
+    }
+
+    private IEnumerator CleanAllStorageCoroutine()
+    {
+        _statusMessage = "Listing files in storage...";
+        Repaint();
+
+        // List all files in storage
+        string listUrl = $"{FirebaseConfig.StorageBaseUrl}?prefix=stories/";
+
+        using (var request = UnityWebRequest.Get(listUrl))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"[Migration] Failed to list storage files: {request.error}");
+                _statusMessage = $"Failed to list files: {request.error}";
+                _isUploading = false;
+                Repaint();
+                yield break;
+            }
+
+            var json = request.downloadHandler.text;
+            var files = ParseStorageFileList(json);
+
+            if (files.Count == 0)
+            {
+                _statusMessage = "Storage is already empty!";
+                _isUploading = false;
+                Repaint();
+                yield break;
+            }
+
+            Debug.Log($"[Migration] Found {files.Count} files to delete");
+
+            // Delete each file
+            for (int i = 0; i < files.Count; i++)
+            {
+                string fileName = files[i];
+                _statusMessage = $"Deleting {i + 1}/{files.Count}: {fileName}";
+                _progress = (float)i / files.Count;
+                Repaint();
+
+                yield return DeleteStorageFile(fileName);
+            }
+
+            _statusMessage = $"Deleted {files.Count} files from storage!";
+            _isUploading = false;
+            _progress = 1f;
+            Repaint();
+        }
+    }
+
+    private IEnumerator CleanStoryStorageCoroutine(string storyId)
+    {
+        // List files for this story
+        string prefix = $"stories/{storyId}/";
+        string listUrl = $"{FirebaseConfig.StorageBaseUrl}?prefix={UnityWebRequest.EscapeURL(prefix)}";
+
+        using (var request = UnityWebRequest.Get(listUrl))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning($"[Migration] Could not list files for {storyId}: {request.error}");
+                yield break;
+            }
+
+            var json = request.downloadHandler.text;
+            var files = ParseStorageFileList(json);
+
+            Debug.Log($"[Migration] Deleting {files.Count} old files for {storyId}");
+
+            foreach (var fileName in files)
+            {
+                yield return DeleteStorageFile(fileName);
+            }
+        }
+    }
+
+    private List<string> ParseStorageFileList(string json)
+    {
+        var files = new List<string>();
+
+        // Simple JSON parsing for {"items": [{"name": "..."}, ...]}
+        int itemsStart = json.IndexOf("\"items\"");
+        if (itemsStart < 0) return files;
+
+        int pos = itemsStart;
+        while (true)
+        {
+            int nameStart = json.IndexOf("\"name\"", pos);
+            if (nameStart < 0) break;
+
+            int valueStart = json.IndexOf("\"", nameStart + 7);
+            if (valueStart < 0) break;
+
+            int valueEnd = json.IndexOf("\"", valueStart + 1);
+            if (valueEnd < 0) break;
+
+            string fileName = json.Substring(valueStart + 1, valueEnd - valueStart - 1);
+            files.Add(fileName);
+
+            pos = valueEnd + 1;
+        }
+
+        return files;
+    }
+
+    private IEnumerator DeleteStorageFile(string filePath)
+    {
+        string encodedPath = UnityWebRequest.EscapeURL(filePath);
+        string url = $"{FirebaseConfig.StorageBaseUrl}/{encodedPath}";
+
+        using (var request = UnityWebRequest.Delete(url))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning($"[Migration] Failed to delete {filePath}: {request.error}");
             }
         }
     }

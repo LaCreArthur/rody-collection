@@ -129,10 +129,14 @@ public class StoryProviderManager : MonoBehaviour
 
     private void InitializeFirebase(Action onReady, Action<string> onError)
     {
-        Debug.Log("StoryProviderManager: Initializing Firebase provider...");
+        Debug.Log("[StoryProviderManager] InitializeFirebase() called");
+        Debug.Log($"[StoryProviderManager] Instance is: {(_instance != null ? "valid" : "NULL")}");
+        Debug.Log($"[StoryProviderManager] Coroutine runner (this): {(this != null ? this.name : "NULL")}");
 
         _firebaseProvider = new FirebaseStoryProvider(this);
         _provider = _firebaseProvider;
+
+        Debug.Log("[StoryProviderManager] FirebaseStoryProvider created, calling LoadStoriesAsync...");
 
         // Load stories list to verify connection works
         _firebaseProvider.LoadStoriesAsync(
@@ -140,14 +144,18 @@ public class StoryProviderManager : MonoBehaviour
             {
                 _initialized = true;
                 _isInitializing = false;
-                Debug.Log($"StoryProviderManager: Firebase initialized, found {stories.Count} stories");
+                Debug.Log($"[StoryProviderManager] SUCCESS - Firebase initialized, found {stories.Count} stories");
+                foreach (var story in stories)
+                {
+                    Debug.Log($"[StoryProviderManager]   - Story: {story.id} = {story.title} ({story.sceneCount} scenes)");
+                }
                 onReady?.Invoke();
                 OnProviderReady?.Invoke();
             },
             error =>
             {
                 _isInitializing = false;
-                Debug.LogError($"StoryProviderManager: Firebase initialization failed: {error}");
+                Debug.LogError($"[StoryProviderManager] FAILED - Firebase initialization error: {error}");
                 onError?.Invoke(error);
             }
         );

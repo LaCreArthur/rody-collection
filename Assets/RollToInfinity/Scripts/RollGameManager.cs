@@ -92,7 +92,7 @@ public class RollGameManager : MonoBehaviour {
 	void Update () {
 		
 		// Print currentSpeed
-		float currentSpeed = Mathf.Round(player.GetComponent<Rigidbody>().velocity.magnitude);
+		float currentSpeed = Mathf.Round(player.GetComponent<Rigidbody>().linearVelocity.magnitude);
 		speedText.text = currentSpeed.ToString() + " KMH";
 
 		// update scrollbars

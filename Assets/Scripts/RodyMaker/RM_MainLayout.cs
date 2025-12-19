@@ -100,9 +100,32 @@ public class RM_MainLayout : RM_Layout
     public void SaveClick()
     {
         Debug.Log("Save button clicked");
+#if UNITY_WEBGL && !UNITY_EDITOR
+        SaveClickAsync();
+#else
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
+#endif
     }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    private void SaveClickAsync()
+    {
+        // Disable save button while saving
+        Debug.Log("[RM_MainLayout] Starting async save to Firebase...");
+
+        RM_SaveLoad.SaveGameAsync(gm,
+            () => {
+                Debug.Log("[RM_MainLayout] Save completed successfully!");
+                gm.Reset();
+            },
+            error => {
+                Debug.LogError($"[RM_MainLayout] Save failed: {error}");
+                // TODO: Show error UI to user
+            }
+        );
+    }
+#endif
 
     public void RM_ResetClick()
     {

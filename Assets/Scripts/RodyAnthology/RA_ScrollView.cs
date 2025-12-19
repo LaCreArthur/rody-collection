@@ -51,20 +51,36 @@ public class RA_ScrollView : MonoBehaviour {
 	/// </summary>
 	IEnumerator InitWebGL()
 	{
+		Debug.Log("[RA_ScrollView] InitWebGL() started");
 		if (loadingUI != null) loadingUI.SetActive(true);
 
 		// Wait for provider to be ready
 		if (!StoryProviderManager.IsReady)
 		{
+			Debug.Log("[RA_ScrollView] StoryProviderManager not ready, calling Initialize()...");
 			StoryProviderManager.Initialize();
+
+			int waitFrames = 0;
 			while (!StoryProviderManager.IsReady)
 			{
+				waitFrames++;
+				if (waitFrames % 60 == 0) // Log every 60 frames (~1 second)
+				{
+					Debug.Log($"[RA_ScrollView] Still waiting for provider... (frame {waitFrames})");
+				}
 				yield return null;
 			}
+			Debug.Log($"[RA_ScrollView] Provider ready after {waitFrames} frames");
+		}
+		else
+		{
+			Debug.Log("[RA_ScrollView] StoryProviderManager already ready");
 		}
 
 		if (loadingUI != null) loadingUI.SetActive(false);
+		Debug.Log("[RA_ScrollView] Calling InitFromProvider()...");
 		InitFromProvider();
+		Debug.Log("[RA_ScrollView] InitWebGL() complete");
 	}
 
 	/// <summary>
@@ -167,6 +183,17 @@ public class RA_ScrollView : MonoBehaviour {
 			slotCount += 2;
 		}
 
+		// Handle empty slot list
+		if (slots.Count == 0)
+		{
+			Debug.LogWarning("[RA_ScrollView] No slots to display!");
+			content.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+			slotImages = new List<Image>();
+			slotButtons = new List<Button>();
+			scrollRect = GetComponent<ScrollRect>();
+			return;
+		}
+
 		content.GetComponent<RectTransform>().sizeDelta = new Vector2(slotCount * 100, 100);
 
 		slotImages = new List<Image>();
@@ -181,7 +208,7 @@ public class RA_ScrollView : MonoBehaviour {
 			title.SetActive(false);
 		}
 
-		step = 1.0f / (slots.Count - 1);
+		step = 1.0f / Mathf.Max(1, slots.Count - 1);
 		Debug.Log("slots count : " + slots.Count);
 		scrollRect = GetComponent<ScrollRect>();
 		scrollRect.onValueChanged.AddListener(OnValueChanged);
@@ -213,10 +240,10 @@ public class RA_ScrollView : MonoBehaviour {
 
 				//Debug.Log("\"" + lastFolderName + "\" est un dossier de jeu valide");
 
-				// instantiate a slot 
+				// instantiate a slot
 				GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
-				// load the cover
-				slot.transform.GetChild(0).GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(folder + "/cover.png", 0, 100, 137);
+				// load the cover from Sprites folder
+				slot.transform.GetChild(0).GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(folder + "/Sprites/cover.png", 0, 100, 137);
 				slot.name = lastFolderName;
 				// game's title
 				slot.GetComponentInChildren<Text>().text = lastFolderName;
@@ -479,7 +506,7 @@ public class RA_ScrollView : MonoBehaviour {
 	}
 
 	bool isGameFolder(string folderPath) {
-		return (File.Exists(folderPath + "/cover.png")
+		return (File.Exists(folderPath + "/Sprites/cover.png")
 			&& File.Exists(folderPath + "/credits.txt")
 			&& File.Exists(folderPath + "/levels.rody")
 			&& Directory.Exists(folderPath + "/Sprites"));

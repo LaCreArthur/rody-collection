@@ -125,14 +125,14 @@ public class RA_NewGame : MonoBehaviour {
 			File.Copy(sprite, sprite.Replace(oldGamePath+"\\Sprites\\", spritesPath), true);
 
 		try {
-			File.Copy(oldGamePath + "/cover.png", newGamePath + "/cover.png");
+			File.Copy(oldGamePath + "/Sprites/cover.png", newGamePath + "/Sprites/cover.png");
 		}
 		catch (System.Exception e)
-		{ 
+		{
 			Debug.Log(e);
 			// copy cover from base path
-			Debug.Log("load cover : " + basePath + "/cover.png");
-			File.Copy(basePath + "/cover.png", newGamePath + "/cover.png");
+			Debug.Log("load cover : " + basePath + "/Sprites/cover.png");
+			File.Copy(basePath + "/Sprites/cover.png", newGamePath + "/Sprites/cover.png");
 		}
 
 		File.Copy(oldGamePath + "/credits.txt", newGamePath + "/credits.txt");
@@ -149,8 +149,8 @@ public class RA_NewGame : MonoBehaviour {
 		RM_TextureScale.Point(tex, 340, 480);
 		// encode the sprite into a new png (in case img was in another format)
 		var bytes = tex.EncodeToPNG();
-		// create the file
-		FileStream png = new FileStream(newGamePath + "/cover.png", FileMode.Create);
+		// create the file in Sprites folder
+		FileStream png = new FileStream(newGamePath + "/Sprites/cover.png", FileMode.Create);
 		var binary = new BinaryWriter(png);
 		binary.Write(bytes);
 		png.Close();
@@ -199,8 +199,8 @@ public class RA_NewGame : MonoBehaviour {
 				yeapTxt.text = "ok";
 				buttonYeap.SetActive(true);
 				feedbackTxt.text += "Le dossier "+gameName+" a bien été importé !\n";
-				if(!File.Exists(folderPath[0] + "/cover.png")){
-					feedbackTxt.text += "l'image de jacquette (cover.png) est manquante !";
+				if(!File.Exists(folderPath[0] + "/Sprites/cover.png")){
+					feedbackTxt.text += "l'image de jacquette (Sprites/cover.png) est manquante !";
 
 				}
 			}
