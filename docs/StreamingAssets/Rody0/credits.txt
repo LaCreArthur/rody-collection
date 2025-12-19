@@ -1,7 +1,0 @@
-﻿TITRE DU JEU
-SECTION 1
-blablabla
-
-on peut ecrire ici ce qu'on veut, la premiere ligne est le titre, le reste le contenu des crédits
-
-Si tu veux soutenir le projet et nous remercier, tu peux faire une donation ici : https://www.paypal.me/LaCreArthur
