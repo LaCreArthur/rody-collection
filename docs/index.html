@@ -17,7 +17,7 @@
         <main>
             <div class="game-wrapper">
                 <div id="unity-container" class="unity-desktop">
-                    <canvas id="unity-canvas" width="1280" height="800" tabindex="-1"></canvas>
+                    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
                     <div id="unity-loading-bar">
                         <div id="unity-logo"></div>
                         <div id="unity-progress-bar-empty">
@@ -117,12 +117,46 @@
             alert("Erreur de chargement: " + message);
         });
 
-        // Fullscreen button
+        // Custom fullscreen with aspect ratio preservation
+        var isFullscreen = false;
+
         fullscreenButton.onclick = () => {
-            if (myGameInstance) {
-                myGameInstance.SetFullscreen(1);
+            isFullscreen = !isFullscreen;
+
+            if (isFullscreen) {
+                // Request browser fullscreen on container
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+                container.classList.add('unity-fullscreen');
+                fullscreenButton.querySelector('.icon').textContent = '⛶';
+                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Quitter';
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                container.classList.remove('unity-fullscreen');
+                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Plein écran';
             }
         };
+
+        // Handle ESC key or browser fullscreen exit
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                isFullscreen = false;
+                container.classList.remove('unity-fullscreen');
+                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Plein écran';
+            }
+        });
 
         // Mute button
         var isMuted = false;

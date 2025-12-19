@@ -103,11 +103,53 @@ main {
     aspect-ratio: 16/10;
 }
 
+/* Fullscreen mode - center with black bars, maintain aspect ratio */
+#unity-container.unity-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#unity-container.unity-fullscreen #unity-canvas {
+    width: auto;
+    height: auto;
+    max-width: 100vw;
+    max-height: 100vh;
+    aspect-ratio: 16/10;
+}
+
+/* Scale to fit while maintaining aspect ratio */
+@media (min-aspect-ratio: 16/10) {
+    /* Screen is wider than game - height constrained */
+    #unity-container.unity-fullscreen #unity-canvas {
+        height: 100vh;
+        width: calc(100vh * 16 / 10);
+    }
+}
+
+@media (max-aspect-ratio: 16/10) {
+    /* Screen is taller than game - width constrained */
+    #unity-container.unity-fullscreen #unity-canvas {
+        width: 100vw;
+        height: calc(100vw * 10 / 16);
+    }
+}
+
 #unity-canvas {
     width: 100%;
     height: 100%;
     background: #231f20;
     display: block;
+    /* Pixel-perfect rendering for retro look */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 /* Loading bar */
