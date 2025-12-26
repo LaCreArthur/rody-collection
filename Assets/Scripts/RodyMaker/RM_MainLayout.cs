@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class RM_MainLayout : RM_Layout
     public Sprite miniAddSceneSprite;
 
     public Button objBtn, IntroBtn;
+    public Text saveStatusText;  // Optional: assign in Inspector for save feedback
 
     void Start() {
         SetActiveBtn();
@@ -148,8 +150,10 @@ public class RM_MainLayout : RM_Layout
     public void TestClick()
     {
         Debug.Log("Test button clicked");
-        gm.warningLayout.GetComponent<RM_WarningLayout>().test = true;
-        gm.warningLayout.GetComponent<RM_WarningLayout>().newScene = gm.currentScene;
+        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
+        warningLayout.test = true;
+        warningLayout.newScene = gm.currentScene;
+        warningLayout.warningText.text = "TU TESTES LA SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
     }
@@ -161,7 +165,38 @@ public class RM_MainLayout : RM_Layout
 #else
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
+        StartCoroutine(ShowSaveFeedback());
 #endif
+    }
+
+    private IEnumerator ShowSaveFeedback()
+    {
+        // Flash the current miniscene to indicate save
+        if (gm.currentScene < miniScenes.Length)
+        {
+            var miniImage = miniScenes[gm.currentScene].GetComponent<Image>();
+            Color originalColor = miniImage.color;
+
+            // Flash white briefly
+            miniImage.color = Color.white;
+            yield return new WaitForSeconds(0.15f);
+            miniImage.color = originalColor;
+            yield return new WaitForSeconds(0.1f);
+            miniImage.color = Color.white;
+            yield return new WaitForSeconds(0.15f);
+            miniImage.color = originalColor;
+        }
+
+        // Also show text feedback if available
+        if (saveStatusText != null)
+        {
+            saveStatusText.text = "Sauvegardé !";
+            saveStatusText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            saveStatusText.gameObject.SetActive(false);
+        }
+
+        Debug.Log("[RM_MainLayout] Save feedback shown");
     }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -183,10 +218,26 @@ public class RM_MainLayout : RM_Layout
     }
 #endif
 
-    public void RM_ResetClick()
+    public void RM_DeleteClick()
     {
-        Debug.Log("Reset button clicked");
-        gm.warningLayout.GetComponent<RM_WarningLayout>().newScene = gm.currentScene;
+        Debug.Log("Delete button clicked");
+
+        // Only allow deletion of scenes >= 18 (or new unsaved scenes)
+        if (gm.currentScene < 18 && gm.currentScene <= PlayerPrefs.GetInt("scenesCount"))
+        {
+            Debug.Log("Cannot delete scenes 1-17");
+            return;
+        }
+
+        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
+        warningLayout.newScene = gm.currentScene;
+        warningLayout.isDeleteMode = true;
+
+        if (gm.currentScene > PlayerPrefs.GetInt("scenesCount"))
+            warningLayout.warningText.text = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
+        else
+            warningLayout.warningText.text = "TU SUPPRIMES LA SCENE " + gm.currentScene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
+
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
     }
@@ -196,32 +247,37 @@ public class RM_MainLayout : RM_Layout
     {
         Debug.Log("Scene " + scene + " button clicked");
         RM_WarningLayout warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-        
-        string strChangeScene = "TU CHANGES DE SCENE \nAttention Rody, cela va effacer les modification non sauvegardées ! Es-tu sûr de vouloir continuer ?";
-	    string strRemoveScene = "TU SUPPRIMES LA SCENE \nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
-        string strCancelScene = "TU ANNULES CETTE NOUVELLE SCENE \nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
-        string strNewScene    = "TU AJOUTE UNE NOUVELLE SCENE \nAttention Rody, cela va effacer les modification non sauvegardées ! Es-tu sûr de vouloir continuer ?";
-        
+
+        string strChangeScene = "TU CHANGES DE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
+        string strRemoveScene = "TU SUPPRIMES LA SCENE " + scene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
+        string strCancelScene = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
+        string strNewScene    = "TU AJOUTES UNE NOUVELLE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
+
         if (scene == gm.currentScene) {
-            // >= 18 : remove or cancel
+            // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
             if (scene >= 18) {
+                warningLayout.isDeleteMode = true;  // Use delete mode
                 if (scene > PlayerPrefs.GetInt("scenesCount")) {
-                    Debug.Log("cancel?");
+                    Debug.Log("cancel new scene?");
                     warningLayout.warningText.text = strCancelScene;
                 }
                 else {
-                    Debug.Log("delete?");
+                    Debug.Log("delete scene?");
                     warningLayout.warningText.text = strRemoveScene;
                 }
             }
-            // < 18 : nothing
-            else return;
+            else {
+                // Scenes 1-17 cannot be deleted by clicking
+                return;
+            }
         }
-            
-        else if (scene > PlayerPrefs.GetInt("scenesCount"))
-                warningLayout.warningText.text = strNewScene;
+        else if (scene > PlayerPrefs.GetInt("scenesCount")) {
+            // Adding a new scene
+            warningLayout.warningText.text = strNewScene;
+        }
         else {
-            Debug.Log("change?");
+            // Changing to a different existing scene
+            Debug.Log("change scene?");
             warningLayout.warningText.text = strChangeScene;
         }
         
