@@ -9,8 +9,169 @@ public static class PathManager
 {
     /// <summary>
     /// Root path of the currently loaded story (set via PlayerPrefs "gamePath").
+    /// For JSON stories, this is the path to the .rody.json file.
+    /// For folder stories, this is the path to the story folder.
     /// </summary>
     public static string GamePath => PlayerPrefs.GetString("gamePath");
+
+    /// <summary>
+    /// Returns true if the current GamePath points to a .rody.json file.
+    /// </summary>
+    public static bool IsJsonStory => GamePath.EndsWith(".rody.json") || GamePath.EndsWith(".json");
+
+    /// <summary>
+    /// Root path for user-created stories (in persistent data).
+    /// </summary>
+    public static string UserStoriesPath =>
+        Path.Combine(Application.persistentDataPath, "UserStories");
+
+    /// <summary>
+    /// Returns true if the current GamePath is a user story (in UserStoriesPath).
+    /// Works for both folder and JSON stories.
+    /// </summary>
+    public static bool IsUserStory
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(GamePath)) return false;
+            return GamePath.StartsWith(UserStoriesPath);
+        }
+    }
+
+    /// <summary>
+    /// Returns true if the current GamePath is an official story (in StreamingAssets).
+    /// Official stories require forking before editing.
+    /// </summary>
+    public static bool IsOfficialStory
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(GamePath)) return false;
+            return GamePath.StartsWith(Application.streamingAssetsPath);
+        }
+    }
+
+    /// <summary>
+    /// Forks a JSON story by copying it to UserStories with a unique name.
+    /// Returns the path to the forked copy, or null on failure.
+    /// </summary>
+    public static string ForkJsonStory(string sourcePath)
+    {
+        if (!File.Exists(sourcePath))
+        {
+            Debug.LogError($"[PathManager] Cannot fork - source not found: {sourcePath}");
+            return null;
+        }
+
+        // Read the JSON to get the title for naming
+        try
+        {
+            string json = File.ReadAllText(sourcePath);
+            var story = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+            string title = story?.story?.title ?? Path.GetFileNameWithoutExtension(sourcePath);
+
+            // Get unique path with _edit suffix
+            string destPath = GetUniqueJsonForkPath(title);
+
+            // Copy the file
+            File.Copy(sourcePath, destPath);
+            Debug.Log($"[PathManager] Forked JSON story to: {destPath}");
+
+            return destPath;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[PathManager] Failed to fork JSON story: {e.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets a unique path for a forked JSON story (adds _edit suffix).
+    /// </summary>
+    public static string GetUniqueJsonForkPath(string storyTitle)
+    {
+        EnsureUserStoriesDirectory();
+
+        string baseName = storyTitle + "_edit.rody.json";
+        string targetPath = Path.Combine(UserStoriesPath, baseName);
+
+        if (!File.Exists(targetPath))
+            return targetPath;
+
+        // Find a unique number suffix
+        int counter = 2;
+        while (File.Exists(Path.Combine(UserStoriesPath, $"{storyTitle}_edit{counter}.rody.json")))
+        {
+            counter++;
+        }
+
+        return Path.Combine(UserStoriesPath, $"{storyTitle}_edit{counter}.rody.json");
+    }
+
+    /// <summary>
+    /// Gets the path to a specific user story.
+    /// </summary>
+    public static string GetUserStoryPath(string storyId)
+    {
+        return Path.Combine(UserStoriesPath, storyId);
+    }
+
+    /// <summary>
+    /// Ensures the UserStories directory exists.
+    /// </summary>
+    public static void EnsureUserStoriesDirectory()
+    {
+        if (!Directory.Exists(UserStoriesPath))
+        {
+            Directory.CreateDirectory(UserStoriesPath);
+        }
+    }
+
+    /// <summary>
+    /// Generates a unique fork name for a story by appending _edit suffix.
+    /// If _edit exists, tries _edit2, _edit3, etc.
+    /// </summary>
+    public static string GetUniqueForkName(string originalName)
+    {
+        string baseName = originalName + "_edit";
+        string targetPath = GetUserStoryPath(baseName);
+
+        if (!Directory.Exists(targetPath))
+            return baseName;
+
+        // Find a unique number suffix
+        int counter = 2;
+        while (Directory.Exists(GetUserStoryPath(baseName + counter)))
+        {
+            counter++;
+        }
+
+        return baseName + counter;
+    }
+
+    /// <summary>
+    /// Gets a unique path for a JSON story file in the UserStories directory.
+    /// </summary>
+    public static string GetUniqueJsonStoryPath(string storyTitle)
+    {
+        EnsureUserStoriesDirectory();
+
+        string baseName = storyTitle + ".rody.json";
+        string targetPath = Path.Combine(UserStoriesPath, baseName);
+
+        if (!File.Exists(targetPath))
+            return targetPath;
+
+        // Find a unique number suffix
+        int counter = 2;
+        while (File.Exists(Path.Combine(UserStoriesPath, $"{storyTitle}_{counter}.rody.json")))
+        {
+            counter++;
+        }
+
+        return Path.Combine(UserStoriesPath, $"{storyTitle}_{counter}.rody.json");
+    }
     
     /// <summary>
     /// Path to the Sprites folder within the current story.

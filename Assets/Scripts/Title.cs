@@ -38,7 +38,9 @@ public class Title : MonoBehaviour {
 			string gamePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Rody7");
 			if (customGame == 1) {
 				string customGamePath = PlayerPrefs.GetString("gamePath");
-				if (customGamePath != "" || Directory.Exists(customGamePath)){
+				// For JSON stories, check if file exists. For folders, check if directory exists.
+				if (!string.IsNullOrEmpty(customGamePath) &&
+				    (File.Exists(customGamePath) || Directory.Exists(customGamePath))){
 					gamePath = customGamePath;
 					Debug.Log("Launching Custom Game");
 				}
@@ -51,7 +53,15 @@ public class Title : MonoBehaviour {
 			PlayerPrefs.SetInt("scenesCount", RM_SaveLoad.CountScenesTxt());
 			Debug.Log("scenes in this game folder : " + PlayerPrefs.GetInt("scenesCount"));
 
-			titleImage.sprite = RM_SaveLoad.LoadSprite(PathManager.GetSpritePath("0.png"),0,320,200);
+			// Load title sprite - use JSON provider for JSON stories
+			if (PathManager.IsJsonStory)
+			{
+				titleImage.sprite = RM_SaveLoad.LoadTitleSprite();
+			}
+			else
+			{
+				titleImage.sprite = RM_SaveLoad.LoadSprite(PathManager.GetSpritePath("0.png"),0,320,200);
+			}
 			Cursor.visible = false;
 		}
 		else {

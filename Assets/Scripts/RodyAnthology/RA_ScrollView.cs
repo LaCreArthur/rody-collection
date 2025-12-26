@@ -17,10 +17,13 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject content;
 	public Transform slotPrefab;
 	public Transform slotNewGamePrefab;
-	public Transform slotLoadGamePrefab;
+	public Transform slotLoadGamePrefab; // Now used for importing .rody.json files
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
+
+	// Tracks which slots are user stories (for deletion/export)
+	private HashSet<int> userStorySlotIndices = new HashSet<int>();
 
 	static ScrollRect scrollRect;
 	static float t = 0.0f;
@@ -172,15 +175,11 @@ public class RA_ScrollView : MonoBehaviour {
 	{
 		if (includeFileSystemSlots)
 		{
-			// SLOT LOAD GAME
-			GameObject loadGameSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
-			loadGameSlot.name = "loadGame";
-			slots.Add(loadGameSlot);
 			// SLOT NEW GAME
 			GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
 			newGameSlot.name = "newGame";
 			slots.Add(newGameSlot);
-			slotCount += 2;
+			slotCount += 1;
 		}
 
 		// Handle empty slot list
@@ -223,11 +222,12 @@ public class RA_ScrollView : MonoBehaviour {
 		PlayerPrefs.SetInt("rodyMakerFirstTime", 1);
 		slots  = new List<GameObject>();
 		slotTitles  = new List<GameObject>();
+		userStorySlotIndices.Clear();
 		int slotIndex = 0;
 		string[] gameFolders = Directory.GetDirectories(Application.streamingAssetsPath);
 		string[] orderedGameFolders = OrderGameFolder(gameFolders);
 
-		// SLOT OF THE GAMES IN streamingAssetsPath
+		// OFFICIAL STORIES (from StreamingAssets)
 		foreach (string folder in orderedGameFolders) {
 
 			//Debug.Log(Path.GetDirectoryName(folder));
@@ -247,25 +247,30 @@ public class RA_ScrollView : MonoBehaviour {
 				slot.name = lastFolderName;
 				// game's title
 				slot.GetComponentInChildren<Text>().text = lastFolderName;
-				
+
 				// add the slot to slots
 				slots.Add(slot);
-				
+
 				slotIndex++;
 			}
 		}
 
-		// SLOT LOAD GAME
-		GameObject loadGameSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
-		loadGameSlot.name = "loadGame"; // simplify the access;
-		slots.Add(loadGameSlot);
+		// USER STORIES (from Application.persistentDataPath/UserStories)
+		LoadUserStories(ref slotIndex);
+
+		// SLOT IMPORT (import .rody.json) - reuses the old "Load Game" prefab
+		GameObject importSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
+		importSlot.name = "importStory";
+		slots.Add(importSlot);
+		slotIndex++;
+
 		// SLOT NEW GAME
 		GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
 		newGameSlot.name = "newGame"; // simplify the access;
 		slots.Add(newGameSlot);
-		
+
 		// set the size of the content relative to the slot count to have a fluid scroll
-		content.GetComponent<RectTransform>().sizeDelta = new Vector2((slotIndex+2) * 100, 100);
+		content.GetComponent<RectTransform>().sizeDelta = new Vector2((slotIndex+1) * 100, 100);
 		// populate the lists
 		slotImages  = new List<Image>();
 		slotButtons = new List<Button>();
@@ -273,11 +278,12 @@ public class RA_ScrollView : MonoBehaviour {
 			slotImages.Add(slots[i].GetComponent<Image>());
 			slots[i].GetComponent<Button>().onClick.AddListener(OnClick);
 			slotButtons.Add(slots[i].GetComponent<Button>());
-			GameObject title = slots[i].transform.Find("Title").gameObject;
+
+			GameObject title = slots[i].transform.Find("Title")?.gameObject;
 			slotTitles.Add(title);
-			title.SetActive(false);
+			if (title != null) title.SetActive(false);
 		}
-		
+
 		// compute the step required to switch the selected slot
 		step = 1.0f / (slots.Count-1);
 		Debug.Log("slots count : " + slots.Count);
@@ -287,7 +293,130 @@ public class RA_ScrollView : MonoBehaviour {
 		selectedButton = middleSlot = slots.Count / 2;
 		scrollRect.horizontalNormalizedPosition = (selectedButton) * step;
 		slotImages[selectedButton].GetComponent<Image>().sprite = selected;
-		slotTitles[selectedButton].SetActive(true);
+		if (slotTitles[selectedButton] != null) slotTitles[selectedButton].SetActive(true);
+	}
+
+	/// <summary>
+	/// Loads user stories from UserStoriesPath and adds them as slots.
+	/// Supports both folder-based stories and .rody.json files.
+	/// </summary>
+	void LoadUserStories(ref int slotIndex)
+	{
+		PathManager.EnsureUserStoriesDirectory();
+		string userStoriesPath = PathManager.UserStoriesPath;
+
+		if (!Directory.Exists(userStoriesPath))
+		{
+			Debug.Log("[RA_ScrollView] No user stories directory");
+			return;
+		}
+
+		// Load folder-based user stories
+		string[] userFolders = Directory.GetDirectories(userStoriesPath);
+		Debug.Log($"[RA_ScrollView] Found {userFolders.Length} user story folders");
+
+		foreach (string folder in userFolders)
+		{
+			if (isGameFolder(folder))
+			{
+				string folderName = new DirectoryInfo(folder).Name;
+
+				// Instantiate a slot
+				GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
+
+				// Load the cover from Sprites folder
+				string coverPath = Path.Combine(folder, "Sprites", "cover.png");
+				if (File.Exists(coverPath))
+				{
+					slot.transform.GetChild(0).GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(coverPath, 0, 100, 137);
+				}
+
+				slot.name = "user:" + folderName; // Prefix to identify as user story
+				slot.GetComponentInChildren<Text>().text = folderName;
+
+				slots.Add(slot);
+				userStorySlotIndices.Add(slots.Count - 1);
+
+				slotIndex++;
+				Debug.Log($"[RA_ScrollView] Added user story folder: {folderName}");
+			}
+		}
+
+		// Load .rody.json files
+		string[] jsonFiles = Directory.GetFiles(userStoriesPath, "*.rody.json");
+		Debug.Log($"[RA_ScrollView] Found {jsonFiles.Length} .rody.json files");
+
+		foreach (string jsonPath in jsonFiles)
+		{
+			try
+			{
+				// Create a temporary provider to read metadata
+				var tempProvider = new JsonStoryProvider(jsonPath);
+				var stories = tempProvider.GetStories();
+
+				if (stories.Count > 0)
+				{
+					var storyMeta = stories[0];
+
+					// Instantiate a slot
+					GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
+
+					// Try to load cover from the JSON
+					var coverSprite = tempProvider.LoadSprite(null, "cover.png", 100, 137);
+					if (coverSprite != null)
+					{
+						slot.transform.GetChild(0).GetComponent<Image>().sprite = coverSprite;
+					}
+
+					string fileName = Path.GetFileName(jsonPath);
+					slot.name = "json:" + jsonPath; // Full path for JSON files
+					slot.GetComponentInChildren<Text>().text = storyMeta.title;
+
+					slots.Add(slot);
+					userStorySlotIndices.Add(slots.Count - 1);
+
+					slotIndex++;
+					Debug.Log($"[RA_ScrollView] Added JSON story: {storyMeta.title}");
+				}
+			}
+			catch (System.Exception e)
+			{
+				Debug.LogWarning($"[RA_ScrollView] Failed to load JSON story {jsonPath}: {e.Message}");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Checks if a slot index is a user story.
+	/// </summary>
+	public bool IsUserStorySlot(int index)
+	{
+		return userStorySlotIndices.Contains(index);
+	}
+
+	/// <summary>
+	/// Gets the path for a slot, handling official stories, user folder stories, and JSON stories.
+	/// </summary>
+	string GetSlotPath(int index)
+	{
+		string slotName = content.transform.GetChild(index).name;
+
+		if (slotName.StartsWith("json:"))
+		{
+			// JSON story - the full path is stored after the prefix
+			return slotName.Substring(5); // Remove "json:" prefix
+		}
+		else if (slotName.StartsWith("user:"))
+		{
+			// User story folder - get from UserStoriesPath
+			string folderName = slotName.Substring(5); // Remove "user:" prefix
+			return Path.Combine(PathManager.UserStoriesPath, folderName);
+		}
+		else
+		{
+			// Official story - get from StreamingAssets
+			return Path.Combine(Application.streamingAssetsPath, slotName);
+		}
 	}
 
 	public void Reset() {
@@ -298,6 +427,7 @@ public class RA_ScrollView : MonoBehaviour {
 		slotTitles.Clear();
 		slotImages.Clear();
 		slotButtons.Clear();
+		userStorySlotIndices.Clear();
 #if UNITY_WEBGL && !UNITY_EDITOR
 		InitFromProvider();
 #else
@@ -459,8 +589,10 @@ public class RA_ScrollView : MonoBehaviour {
 	IEnumerator LoadFolder(int index) {
 		PlayerPrefs.SetInt("customGame",1);
 
+		string slotName = content.transform.GetChild(index).name;
+
 #if UNITY_WEBGL && !UNITY_EDITOR
-		// On WebGL, no loadGame/newGame slots - all slots are stories
+		// On WebGL, no newGame/import slots - all slots are stories
 		while(menu.pix.BlockCount > 32) {
 			menu.pix.enabled = true;
 			menu.pix.BlockCount -= (menu.pixAcceleration * menu.pix.BlockCount / 100);
@@ -472,14 +604,14 @@ public class RA_ScrollView : MonoBehaviour {
 		SceneManager.LoadScene(1); // load the intro scene
 #else
 		// new empty game
-		if (index == content.transform.childCount - 1) {
+		if (slotName == "newGame") {
 			newGamePanel.SetActive(true);
 		}
-		// load a game folder
-		else if (index == content.transform.childCount - 2) {
-			ngScript.IG_OnUploadClick();
+		// import a .rody.json file
+		else if (slotName == "importStory") {
+			ngScript.OnImportClick();
 		}
-		// Load the selected game
+		// Load the selected game (official or user)
 		else {
 			while(menu.pix.BlockCount > 32) {
 				menu.pix.enabled = true;
@@ -487,8 +619,9 @@ public class RA_ScrollView : MonoBehaviour {
 				Debug.Log(menu.pix.BlockCount);
 				yield return new WaitForEndOfFrame();
 			}
-			Debug.Log("[RA] Set game path : " + getGamePath(index));
-			PlayerPrefs.SetString("gamePath", getGamePath(index));
+			string gamePath = GetSlotPath(index);
+			Debug.Log("[RA] Set game path : " + gamePath);
+			PlayerPrefs.SetString("gamePath", gamePath);
 			SceneManager.LoadScene(1); // load the intro scene
 		}
 #endif
@@ -515,25 +648,80 @@ public class RA_ScrollView : MonoBehaviour {
 	public void OnSuppr(int index) {
 		string gameName = content.transform.GetChild(index).name;
 		bool isDeletable = false;
-		switch (gameName)
+
+		// JSON stories are deletable (delete the file)
+		if (gameName.StartsWith("json:"))
 		{
-			case "Rody Et Mastico" :
-			case "Rody Et Mastico II" :
-			case "Rody Et Mastico III" :
-			case "Rody Noël" :
-			case "Rody Et Mastico V" :
-			case "Rody Et Mastico VI" :
-			case "Rody Et Mastico A Ibiza" :
-			case "loadGame" :
-			case "newGame" :
-				isDeletable = false;
-				break;
-			default:
-				PlayerPrefs.SetString("gameToDelete", gameName);
-				isDeletable = true;
-				break;
+			string jsonPath = gameName.Substring(5); // Remove "json:" prefix
+			PlayerPrefs.SetString("gameToDelete", jsonPath);
+			PlayerPrefs.SetString("gameToDeleteType", "json");
+			isDeletable = true;
+		}
+		// User folder stories are deletable
+		else if (gameName.StartsWith("user:"))
+		{
+			string folderName = gameName.Substring(5); // Remove "user:" prefix
+			string fullPath = Path.Combine(PathManager.UserStoriesPath, folderName);
+			PlayerPrefs.SetString("gameToDelete", fullPath);
+			PlayerPrefs.SetString("gameToDeleteType", "folder");
+			isDeletable = true;
+		}
+		// Official stories and special slots are not deletable
+		else
+		{
+			switch (gameName)
+			{
+				case "Rody Et Mastico" :
+				case "Rody Et Mastico II" :
+				case "Rody Et Mastico III" :
+				case "Rody Noël" :
+				case "Rody Et Mastico V" :
+				case "Rody Et Mastico VI" :
+				case "Rody Et Mastico A Ibiza" :
+				case "newGame" :
+				case "importStory" :
+					isDeletable = false;
+					break;
+				default:
+					// Other non-user stories (if any)
+					PlayerPrefs.SetString("gameToDelete", gameName);
+					PlayerPrefs.SetString("gameToDeleteType", "folder");
+					isDeletable = true;
+					break;
+			}
 		}
 		ngScript.SG_onDelete(isDeletable);
+	}
+
+	/// <summary>
+	/// Gets the currently selected slot's path for export.
+	/// Returns null if not a user story (folder-based only, not JSON).
+	/// JSON stories don't need re-export - they're already in the right format.
+	/// </summary>
+	public string GetSelectedUserStoryPath()
+	{
+		if (selectedButton < 0 || selectedButton >= slots.Count)
+			return null;
+
+		string slotName = content.transform.GetChild(selectedButton).name;
+
+		// JSON stories can't be re-exported (they're already JSON)
+		if (slotName.StartsWith("json:"))
+			return null;
+
+		if (!slotName.StartsWith("user:"))
+			return null;
+
+		string folderName = slotName.Substring(5);
+		return Path.Combine(PathManager.UserStoriesPath, folderName);
+	}
+
+	/// <summary>
+	/// Gets the currently selected slot index.
+	/// </summary>
+	public int GetSelectedIndex()
+	{
+		return selectedButton;
 	}
 	
 }

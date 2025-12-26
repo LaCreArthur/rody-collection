@@ -35,15 +35,23 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	IEnumerator init() {
-		string spritePath = PathManager.SpritesPath + System.IO.Path.DirectorySeparatorChar;
-
-		for (int i = 0; i<16; i++) { //TODO if scrollable menu : change 16 to dynamic number
+		// Load scene thumbnails
+		for (int i = 0; i < 16; i++) {
 			GameObject image = scenes[i].transform.GetChild(0).gameObject;
-			//Debug.Log("load miniature : " + spritePath + (i+1) + ".1.png");
-			image.GetComponent<Image>().sprite =
-			RM_SaveLoad.LoadSprite(spritePath + (i+1) , 1, 61, 25);
-            //Debug.Log(spritePath+i+".1.png");
-        }
+			int sceneIndex = i + 1;
+
+			// Use JSON provider for JSON stories, folder-based for others
+			if (PathManager.IsJsonStory)
+			{
+				string spriteName = $"{sceneIndex}.1.png";
+				image.GetComponent<Image>().sprite = RM_SaveLoad.LoadSceneThumbnail(sceneIndex);
+			}
+			else
+			{
+				string spritePath = PathManager.SpritesPath + System.IO.Path.DirectorySeparatorChar;
+				image.GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(spritePath + sceneIndex, 1, 61, 25);
+			}
+		}
 
 		foreach (GameObject button in buttons) {
 			yield return new WaitForSeconds(0.2f);
@@ -133,9 +141,9 @@ public class MenuManager : MonoBehaviour {
 				PlayerPrefs.SetInt("currentScene", sceneToLoad);
 				SceneManager.LoadScene(3);
 				break;
-			case 1: // Bouton Draw
+			case 1: // Bouton Draw (Edit)
 				PlayerPrefs.SetInt("currentScene",0);
-				SceneManager.LoadScene(6);
+				ForkAndEdit();
 				break;
 			case 2: // Bouton intro
 				//LoadGame();
@@ -146,6 +154,56 @@ public class MenuManager : MonoBehaviour {
 				break;
 			default: break;
 		}
+	}
+
+	/// <summary>
+	/// Forks official stories to user space before editing.
+	/// User stories (JSON or folder) are edited in place.
+	/// </summary>
+	private void ForkAndEdit() {
+#if UNITY_WEBGL && !UNITY_EDITOR
+		// WebGL: Edit not supported for now (needs IndexedDB implementation)
+		Debug.LogWarning("[MenuManager] Edit not yet supported on WebGL");
+		return;
+#else
+		string currentPath = PlayerPrefs.GetString("gamePath");
+
+		// User stories can be edited directly (both JSON and folder)
+		if (PathManager.IsUserStory)
+		{
+			Debug.Log("[MenuManager] Editing user story in place: " + currentPath);
+			SceneManager.LoadScene(6);
+			return;
+		}
+
+		// Official stories need to be forked first
+		Debug.Log("[MenuManager] Forking official story to user space...");
+
+		string forkedPath;
+		if (PathManager.IsJsonStory)
+		{
+			// Fork JSON story
+			forkedPath = PathManager.ForkJsonStory(currentPath);
+		}
+		else
+		{
+			// Fork folder-based story
+			forkedPath = UserStoryProvider.ForkStory(currentPath);
+		}
+
+		if (string.IsNullOrEmpty(forkedPath))
+		{
+			Debug.LogError("[MenuManager] Fork failed, cannot edit");
+			return;
+		}
+
+		// Update gamePath to the forked copy
+		PlayerPrefs.SetString("gamePath", forkedPath);
+		PlayerPrefs.SetInt("scenesCount", RM_SaveLoad.CountScenesTxt());
+		Debug.Log("[MenuManager] Now editing forked story: " + forkedPath);
+
+		SceneManager.LoadScene(6);
+#endif
 	}
 
 	private void LoadGame(){

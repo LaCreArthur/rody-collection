@@ -90,6 +90,142 @@
 
 ---
 
+## 2025-12-26: JSON-Only Story Loading
+
+### Goal
+Load stories directly from `.rody.json` files without intermediate folder conversion. Eliminates the export→import→folder dance.
+
+### How It Works
+1. **Import**: Copies `.rody.json` file directly to `UserStories/`
+2. **Detection**: `PathManager.IsJsonStory` checks if path ends with `.json`
+3. **Loading**: `RM_SaveLoad` methods detect JSON and use `JsonStoryProvider`
+4. **Sprites**: Decoded from base64 on-demand, cached in memory
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `JsonStoryProvider.cs` | IStoryProvider that loads directly from JSON, decodes base64 sprites |
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `PathManager.cs` | `IsJsonStory`, `GetUniqueJsonStoryPath()` |
+| `RM_SaveLoad.cs` | JSON provider for `LoadSceneTxt()`, `LoadSceneSprites()`, `CountScenesTxt()`, `LoadCredits()` |
+| `RA_ScrollView.cs` | Lists `.rody.json` files, `json:` prefix for slots |
+| `RA_NewGame.cs` | Import copies JSON directly (no conversion) |
+| `MenuManager.cs` | `LoadSceneThumbnail()` for JSON stories |
+| `Title.cs` | `LoadTitleSprite()` for JSON stories |
+
+### Key Implementation Details
+- **Sprite.Create pixelsPerUnit**: Must be `1f` for pixel art (default is 100)
+- **Slot naming**: `json:/full/path.rody.json` vs `user:foldername`
+- **Static provider**: Cached in `RM_SaveLoad`, invalidated when path changes
+
+---
+
+## 2025-12-26: JSON Story Editing Support
+
+### Goal
+Enable full editing of JSON stories without converting to folder structure. Fork official stories before editing, edit user stories directly.
+
+### Architecture
+- **Official stories** (in StreamingAssets): Fork to UserStories before editing
+- **User stories** (in UserStories): Edit directly in place
+- **Location-based distinction**: `PathManager.IsOfficialStory` / `PathManager.IsUserStory`
+
+### How It Works
+1. **Fork**: `PathManager.ForkJsonStory()` copies JSON to UserStories with `_edit` suffix
+2. **Edit**: Click edit button on story
+   - If official → Fork first, then load editor
+   - If user → Load editor directly
+3. **Save**: `RM_SaveLoad.SaveGame()` → `SaveGameToJson()` → updates JSON in place
+4. **Delete Scene**: `DeleteSceneFromJson()` removes scene + sprites, reindexes remaining
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `PathManager.cs` | `IsOfficialStory`, `ForkJsonStory()`, `GetUniqueJsonForkPath()` |
+| `MenuManager.cs` | `ForkAndEdit()` updated for JSON forking |
+| `JsonStoryProvider.cs` | Added save region: `SaveScene()`, `SaveSprite()`, `UpdateSceneCount()`, `WriteToFile()`, `MakeTextureReadable()` |
+| `RM_SaveLoad.cs` | `SaveGameToJson()`, `DeleteSceneFromJson()`, updated `SaveGame()` and `DeleteScene()` routing |
+| `RM_MainLayout.cs` | `LoadSpritesFromJson()` for editor sprite loading |
+
+### Key Code Patterns
+
+**JSON Save Flow**:
+```
+SaveGame(gm) → PathManager.IsJsonStory? → SaveGameToJson()
+  ↓
+JsonStoryProvider.SaveScene(sceneIndex, SceneData)
+JsonStoryProvider.SaveSprite(name, Texture2D)
+JsonStoryProvider.WriteToFile() → JSON serialized to disk
+```
+
+**JSON Delete Flow**:
+```
+DeleteScene(scene) → PathManager.IsJsonStory? → DeleteSceneFromJson()
+  ↓
+Remove scene from cachedStory.scenes
+Remove sprites matching "scene.*.png"
+Reindex subsequent scenes (scene 5 becomes 4, etc.)
+WriteToFile()
+```
+
+### Hindsight
+- `MakeTextureReadable()` is required before `EncodeToPNG()` on non-readable textures
+- Scene deletion requires sprite reindexing to maintain consecutive indices
+- `RM_MainLayout.LoadSprites()` had direct folder path usage - needed separate JSON path
+
+---
+
+## 2024-12-26: User Stories Feature
+
+### Goal
+Enable players to create, edit, and share personalized stories without modifying official content.
+
+### Key Features Implemented
+1. **User Stories Storage** - `Application.persistentDataPath/UserStories/`
+2. **Fork-on-Edit** - Editing official stories creates a copy in user space
+3. **Export/Import** - Portable `.rody.json` format with base64 sprites
+
+### Architecture Decisions
+- **Local-first approach** - No cloud storage costs, no moderation needed
+- **Same file format** - User stories use levels.rody, Sprites/, credits.txt
+- **Desktop-first** - WebGL (IndexedDB) planned for future iteration
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `UserStoryProvider.cs` | IStoryProvider for user stories + ForkStory() |
+| `StoryExporter.cs` | Export to .rody.json with base64 sprites |
+| `StoryImporter.cs` | Import from .rody.json files |
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `PathManager.cs` | UserStoriesPath, IsUserStory, GetUniqueForkName() |
+| `MenuManager.cs` | ForkAndEdit() for fork-on-edit protection |
+| `RA_ScrollView.cs` | Separator, user stories section, import slot |
+| `RA_NewGame.cs` | OnImportClick(), OnExportClick(), user story deletion |
+
+### Export Format (.rody.json)
+```json
+{
+  "formatVersion": 1,
+  "story": { "id": "...", "title": "...", "sceneCount": 5 },
+  "scenes": [...],
+  "sprites": { "cover.png": "base64...", "1.1.png": "base64..." }
+}
+```
+
+### Inspector Wiring Required
+On `RA_ScrollView`: assign `slotSeparatorPrefab` and `slotImportPrefab`
+
+### See Also
+- [USER_STORIES_FEATURE.md](USER_STORIES_FEATURE.md) - Full documentation
+
+---
+
 ## Key Discoveries
 
 **Architecture:**

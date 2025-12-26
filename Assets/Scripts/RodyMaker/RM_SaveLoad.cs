@@ -10,6 +10,66 @@ public static class RM_SaveLoad {
 
     public static bool CustomFolder = false;
 
+    // Static provider for JSON story loading
+    private static JsonStoryProvider jsonProvider;
+    private static string jsonProviderPath;
+
+    /// <summary>
+    /// Gets or creates a JsonStoryProvider for the current JSON story.
+    /// Returns null if the current story is not a JSON file.
+    /// </summary>
+    private static JsonStoryProvider GetJsonProvider()
+    {
+        if (!PathManager.IsJsonStory)
+            return null;
+
+        // Create new provider if path changed or not initialized
+        if (jsonProvider == null || jsonProviderPath != PathManager.GamePath)
+        {
+            jsonProvider?.ClearSpriteCache();
+            jsonProvider = new JsonStoryProvider(PathManager.GamePath);
+            jsonProviderPath = PathManager.GamePath;
+        }
+
+        return jsonProvider;
+    }
+
+    /// <summary>
+    /// Clears the cached JSON provider (call when switching stories).
+    /// </summary>
+    public static void ClearJsonProvider()
+    {
+        jsonProvider?.ClearSpriteCache();
+        jsonProvider = null;
+        jsonProviderPath = null;
+    }
+
+    /// <summary>
+    /// Loads the title sprite (0.png) for JSON stories.
+    /// </summary>
+    public static Sprite LoadTitleSprite()
+    {
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            return provider.LoadSprite(null, "0.png", 320, 200);
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Loads a scene thumbnail (first frame) for JSON stories.
+    /// </summary>
+    public static Sprite LoadSceneThumbnail(int sceneIndex)
+    {
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            return provider.LoadSprite(null, $"{sceneIndex}.1.png", 61, 25);
+        }
+        return null;
+    }
+
     #region WebGL Async Methods
 
     /// <summary>
@@ -457,16 +517,168 @@ public static class RM_SaveLoad {
 
     #endregion
 
+    #region JSON Save
+
+    /// <summary>
+    /// Saves the current scene to a JSON story file.
+    /// </summary>
+    private static void SaveGameToJson(RM_GameManager gm, int scene)
+    {
+        var provider = GetJsonProvider();
+        if (provider == null)
+        {
+            Debug.LogError("[RM_SaveLoad] Cannot save - no JSON provider available");
+            return;
+        }
+
+        // Scene 0 is just the cover image
+        if (scene == 0)
+        {
+            Texture2D tex = gm.scenePanel.GetComponent<SpriteRenderer>().sprite.texture;
+            Texture2D resized = MakeTextureReadable(tex);
+            RM_TextureScale.Point(resized, 320, 240);
+            provider.SaveSprite("0.png", resized);
+            if (resized != tex) UnityEngine.Object.Destroy(resized);
+            provider.WriteToFile();
+            Debug.Log("[RM_SaveLoad] JSON: Cover saved");
+            return;
+        }
+
+        // Convert game state to SceneData
+        SceneData sceneData = GameManagerToSceneData(gm);
+        provider.SaveScene(scene, sceneData);
+
+        // Save the main scene sprite (frames 1-4, same image)
+        Texture2D sceneTex = gm.scenePanel.GetComponent<SpriteRenderer>().sprite.texture;
+        Texture2D resizedScene = MakeTextureReadable(sceneTex);
+        RM_TextureScale.Point(resizedScene, 320, 130);
+
+        for (int i = 1; i <= 4; i++)
+        {
+            provider.SaveSprite($"{scene}.{i}.png", resizedScene);
+        }
+        if (resizedScene != sceneTex) UnityEngine.Object.Destroy(resizedScene);
+
+        // Save animation frames if any
+        int framesCount = RM_ImgAnimLayout.frames.Count;
+        for (int j = 0; j < framesCount; j++)
+        {
+            Sprite frame = RM_ImgAnimLayout.frames[j];
+            if (frame != null)
+            {
+                Texture2D frameTex = MakeTextureReadable(frame.texture);
+                RM_TextureScale.Point(frameTex, 320, 130);
+                provider.SaveSprite($"{scene}.{j + 2}.png", frameTex);
+                if (frameTex != frame.texture) UnityEngine.Object.Destroy(frameTex);
+            }
+        }
+
+        // Update scene count and write to file
+        provider.UpdateSceneCount(PlayerPrefs.GetInt("scenesCount"));
+        provider.WriteToFile();
+
+        Debug.Log($"[RM_SaveLoad] JSON: Scene {scene} saved");
+    }
+
+    /// <summary>
+    /// Deletes a scene from a JSON story file.
+    /// </summary>
+    private static void DeleteSceneFromJson(int scene)
+    {
+        var provider = GetJsonProvider();
+        if (provider == null)
+        {
+            Debug.LogError("[RM_SaveLoad] Cannot delete - no JSON provider available");
+            return;
+        }
+
+        var cachedStory = provider.GetCachedStory();
+        if (cachedStory?.scenes == null)
+        {
+            Debug.LogError("[RM_SaveLoad] Cannot delete - no scenes in story");
+            return;
+        }
+
+        // Remove the scene data
+        cachedStory.scenes.RemoveAll(s => s.index == scene);
+
+        // Remove associated sprites (scene.1.png, scene.2.png, etc.)
+        if (cachedStory.sprites != null)
+        {
+            var spritesToRemove = new List<string>();
+            foreach (var key in cachedStory.sprites.Keys)
+            {
+                if (key.StartsWith($"{scene}.") && key.EndsWith(".png"))
+                {
+                    spritesToRemove.Add(key);
+                }
+            }
+            foreach (var key in spritesToRemove)
+            {
+                cachedStory.sprites.Remove(key);
+            }
+            Debug.Log($"[RM_SaveLoad] JSON: Removed {spritesToRemove.Count} sprites for scene {scene}");
+        }
+
+        // Reindex subsequent scenes
+        foreach (var s in cachedStory.scenes)
+        {
+            if (s.index > scene)
+            {
+                // Also rename sprites for this scene
+                if (cachedStory.sprites != null)
+                {
+                    int oldIndex = s.index;
+                    int newIndex = oldIndex - 1;
+                    var spritesToRename = new List<string>();
+                    foreach (var key in cachedStory.sprites.Keys)
+                    {
+                        if (key.StartsWith($"{oldIndex}.") && key.EndsWith(".png"))
+                        {
+                            spritesToRename.Add(key);
+                        }
+                    }
+                    foreach (var oldKey in spritesToRename)
+                    {
+                        string newKey = oldKey.Replace($"{oldIndex}.", $"{newIndex}.");
+                        cachedStory.sprites[newKey] = cachedStory.sprites[oldKey];
+                        cachedStory.sprites.Remove(oldKey);
+                    }
+                }
+                s.index--;
+            }
+        }
+
+        // Update scene count
+        int newCount = PlayerPrefs.GetInt("scenesCount") - 1;
+        PlayerPrefs.SetInt("scenesCount", newCount);
+        provider.UpdateSceneCount(newCount);
+
+        // Write to file
+        provider.WriteToFile();
+        Debug.Log($"[RM_SaveLoad] JSON: Scene {scene} deleted, scenes count now: {newCount}");
+    }
+
+    #endregion
+
 	public static void SaveGame (RM_GameManager gm)
     {
         int scene = gm.currentScene;
-        
+
         // increment the counter only if scene is saved, avoid create a second new scene without saving the first one
         if (PlayerPrefs.GetInt("scenesCount") + 1 == scene) {
 			Debug.Log("Adding a new scene to the counter...");
-			PlayerPrefs.SetInt("scenesCount", scene); 
+			PlayerPrefs.SetInt("scenesCount", scene);
         }
 
+        // JSON story save path
+        if (PathManager.IsJsonStory)
+        {
+            SaveGameToJson(gm, scene);
+            return;
+        }
+
+        // Legacy folder-based save
         string path = PathManager.GamePath + Path.DirectorySeparatorChar;
         string newPath = path;
         
@@ -637,6 +849,14 @@ public static class RM_SaveLoad {
 
     public static string[] LoadSceneTxt(int scene)
     {
+        // Check if this is a JSON story
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            return LoadSceneTxtFromJson(provider, scene);
+        }
+
+        // Legacy folder-based loading
         // Debug.Log("LoadSceneTxt gamePath : "+PathManager.GamePath);
         string[] sceneStr = new string[26];
         try
@@ -658,7 +878,7 @@ public static class RM_SaveLoad {
                     else
                         if (line[0] == '#') // does not count as a line
                             continue;
-                        else 
+                        else
                         {
                             if (line[0] == '.') // empty but count as a line
                                 sceneStr[i] = "";
@@ -670,7 +890,7 @@ public static class RM_SaveLoad {
                 }
                 sr.Close();
             }
-            
+
 			return sceneStr;
         }
         catch (Exception e)
@@ -681,18 +901,35 @@ public static class RM_SaveLoad {
 		return null;
     }
 
+    /// <summary>
+    /// Loads scene text data from a JSON story provider.
+    /// </summary>
+    private static string[] LoadSceneTxtFromJson(JsonStoryProvider provider, int scene)
+    {
+        SceneData sceneData = provider.LoadScene(null, scene);
+        return SceneDataToStringArray(sceneData);
+    }
+
     public static int CountScenesTxt() {
+        // Check if this is a JSON story
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            return provider.GetSceneCount(null);
+        }
+
+        // Legacy folder-based counting
         int count = 0;
         try
-        {   
+        {
             using (StreamReader sr = new StreamReader(PathManager.LevelsFile))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
-                    if (line == "~") 
+                    if (line == "~")
                         count++;
                 sr.Close();
-            }    
+            }
         }
         catch (Exception e)
         {
@@ -715,8 +952,16 @@ public static class RM_SaveLoad {
         return newLine;
     }
 
-    public static List<Sprite> LoadSceneSprites(int scene) 
+    public static List<Sprite> LoadSceneSprites(int scene)
     {
+        // Check if this is a JSON story
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            return provider.LoadSceneSprites(null, scene);
+        }
+
+        // Legacy folder-based loading
         List<Sprite> sceneSprites = new List<Sprite>();
 
         string spritesPath = PathManager.GetSceneSpritesBasePath(scene);
@@ -845,6 +1090,15 @@ public static class RM_SaveLoad {
 
     public static void DeleteScene(int scene) {
         Debug.Log("(DeleteScene) Erase level " + scene + ", scenes count : " + PlayerPrefs.GetInt("scenesCount"));
+
+        // JSON story delete
+        if (PathManager.IsJsonStory)
+        {
+            DeleteSceneFromJson(scene);
+            return;
+        }
+
+        // Legacy folder-based delete
         // Debug.Log("(DeleteScene) Deleting scene " + scene + " sprites ...");
         // for (int i=0; i < 5; ++i){
         //     File.Delete(path + "Sprites\\" + scene + "." + i + ".png" );
@@ -904,8 +1158,21 @@ public static class RM_SaveLoad {
 		}
 	}
 
-        public static void LoadCredits(Text title, Text credits)
+    public static void LoadCredits(Text title, Text credits)
     {
+        // Check if this is a JSON story
+        var provider = GetJsonProvider();
+        if (provider != null)
+        {
+            string creditsText = provider.LoadCredits(null);
+            string[] lines = creditsText.Split('\n');
+            title.text = lines.Length > 0 ? lines[0] : "";
+            credits.text = lines.Length > 1 ? string.Join("\n", lines, 1, lines.Length - 1) : "";
+            Debug.Log("Read Credits from JSON: Done!");
+            return;
+        }
+
+        // Legacy folder-based loading
         string path = PathManager.CreditsFile;
         Debug.Log("Read Credits at " + path);
         // Debug.Log("LoadSceneTxt gamePath : "+path);

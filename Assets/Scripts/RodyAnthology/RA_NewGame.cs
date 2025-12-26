@@ -156,68 +156,121 @@ public class RA_NewGame : MonoBehaviour {
 		png.Close();
 	}
 
-	public void IG_OnUploadClick(){
+	/// <summary>
+	/// Imports a .rody.json story file by copying it directly to UserStories.
+	/// </summary>
+	public void OnImportClick()
+	{
 #if UNITY_WEBGL && !UNITY_EDITOR
-		// File system operations not available on WebGL
-		feedbackTxt.text = "L'import de dossiers n'est pas disponible dans la version web, Rody!";
+		feedbackTxt.text = "L'import de fichiers n'est pas disponible dans la version web, Rody!";
 		buttonNop.SetActive(true);
 		feedbackPanel.SetActive(true);
 #else
-		// choix du dossier
-		string[] folderPath = StandaloneFileBrowser.OpenFolderPanel("Dossier de jeu a importer", Application.dataPath, false);
+		var extensions = new[] { new ExtensionFilter("Rody Story", "rody.json", "json") };
+		string[] files = StandaloneFileBrowser.OpenFilePanel("Importer une histoire", "", extensions, false);
 
-		feedbackTxt.text = "";
-
-		if (folderPath.Length == 0){
+		if (files.Length == 0)
+		{
+			feedbackTxt.text = "Aucun fichier n'a été sélectionné!";
 			buttonNop.SetActive(true);
-            feedbackTxt.text += "Aucun dossier n'a été sélectionné!";
-        }
-		else {
-			int errorCount = 0;
-			string[] errorsTxt = new string[3];
-
-			if(!File.Exists(folderPath[0] + "/credits.txt")){
-				errorsTxt[errorCount] = "le fichier 'credits.txt'";
-				errorCount++;
-			}
-			if(!File.Exists(folderPath[0] + "/levels.rody")){
-				errorsTxt[errorCount] = "le fichier 'levels.rody'";
-				errorCount++;
-			}
-			if(!Directory.Exists(folderPath[0] + "/Sprites")){
-				errorsTxt[errorCount] = "le sous-dossier 'Sprites'";
-				errorCount++;
-			}
-
-			// if the folder is valid
-			if(errorCount == 0) {
-				// get the name of the game
-				string gameName = Path.GetFileName(folderPath[0]);
-				// copy the folder
-				CopyGameFolder(folderPath[0], Path.Combine(Application.streamingAssetsPath, gameName));
-				// set the Ok button
-				yeapTxt.text = "ok";
-				buttonYeap.SetActive(true);
-				feedbackTxt.text += "Le dossier "+gameName+" a bien été importé !\n";
-				if(!File.Exists(folderPath[0] + "/Sprites/cover.png")){
-					feedbackTxt.text += "l'image de jacquette (Sprites/cover.png) est manquante !";
-
-				}
-			}
-			else {
-				buttonNop.SetActive(true);
-				feedbackTxt.text += "Le dossier ne peut pas être importé !\n";
-				if (errorCount == 1)
-					feedbackTxt.text += errorsTxt[0] + " est introuvable !";
-				else {
-					for (int i = 0; i < (errorCount-2); i++) {
-						feedbackTxt.text += errorsTxt[i] + ", ";
-					}
-					feedbackTxt.text += errorsTxt[errorCount-2] + " et " +  errorsTxt[errorCount-1] + " sont introuvables !";
-				}
-			}
+			feedbackPanel.SetActive(true);
+			return;
 		}
-        feedbackPanel.SetActive(true);
+
+		string filePath = files[0];
+		Debug.Log($"[RA_NewGame] Importing story from: {filePath}");
+
+		// Validate before importing
+		string json = File.ReadAllText(filePath);
+		var (isValid, title, sceneCount, error) = StoryImporter.ValidateJson(json);
+
+		if (!isValid)
+		{
+			feedbackTxt.text = $"Le fichier n'est pas valide!\n{error}";
+			buttonNop.SetActive(true);
+			feedbackPanel.SetActive(true);
+			return;
+		}
+
+		// Simply copy the JSON file to UserStories directory
+		string destPath = PathManager.GetUniqueJsonStoryPath(title);
+
+		try
+		{
+			File.Copy(filePath, destPath, overwrite: false);
+			Debug.Log($"[RA_NewGame] Copied JSON to: {destPath}");
+		}
+		catch (System.Exception e)
+		{
+			Debug.LogError($"[RA_NewGame] Failed to copy JSON: {e.Message}");
+			feedbackTxt.text = $"L'import a échoué!\n{e.Message}";
+			buttonNop.SetActive(true);
+			feedbackPanel.SetActive(true);
+			return;
+		}
+
+		// Success
+		feedbackTxt.text = $"L'histoire \"{title}\" a été importée!\n({sceneCount} scènes)";
+		yeapTxt.text = "ok";
+		buttonYeap.SetActive(true);
+		buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
+		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate { UnsetfeedbackPanel(1); }); // Reload menu
+		feedbackPanel.SetActive(true);
+
+		Debug.Log($"[RA_NewGame] Story imported to: {destPath}");
+#endif
+	}
+
+	/// <summary>
+	/// Exports the currently selected user story to a .rody.json file.
+	/// </summary>
+	public void OnExportClick()
+	{
+#if UNITY_WEBGL && !UNITY_EDITOR
+		feedbackTxt.text = "L'export n'est pas disponible dans la version web, Rody!";
+		buttonNop.SetActive(true);
+		feedbackPanel.SetActive(true);
+#else
+		// Get the selected user story path
+		string storyPath = sv.GetSelectedUserStoryPath();
+
+		if (string.IsNullOrEmpty(storyPath))
+		{
+			feedbackTxt.text = "Sélectionne une de tes histoires pour l'exporter!";
+			buttonNop.SetActive(true);
+			feedbackPanel.SetActive(true);
+			return;
+		}
+
+		// Get suggested filename
+		string suggestedName = StoryExporter.GetExportFileName(storyPath);
+
+		// Open save dialog
+		string savePath = StandaloneFileBrowser.SaveFilePanel("Exporter l'histoire", "", suggestedName, "rody.json");
+
+		if (string.IsNullOrEmpty(savePath))
+		{
+			// User cancelled
+			return;
+		}
+
+		// Export the story
+		bool success = StoryExporter.ExportToFile(storyPath, savePath);
+
+		if (success)
+		{
+			feedbackTxt.text = $"L'histoire a été exportée!\n{Path.GetFileName(savePath)}";
+			yeapTxt.text = "ok";
+			buttonYeap.SetActive(true);
+			buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
+			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate { UnsetfeedbackPanel(0); });
+		}
+		else
+		{
+			feedbackTxt.text = "L'export a échoué!";
+			buttonNop.SetActive(true);
+		}
+		feedbackPanel.SetActive(true);
 #endif
 	}
 
@@ -269,16 +322,39 @@ public class RA_NewGame : MonoBehaviour {
 				try
 				{
 					string gamePath = PlayerPrefs.GetString("gameToDelete");
-					Debug.Log(gamePath);
-					if (gamePath.Length > 0)
-						Directory.Delete(System.IO.Path.Combine(Application.streamingAssetsPath,PlayerPrefs.GetString("gameToDelete")), true);	
+					string deleteType = PlayerPrefs.GetString("gameToDeleteType", "folder");
+					Debug.Log($"[RA_NewGame] Deleting ({deleteType}): {gamePath}");
+
+					if (!string.IsNullOrEmpty(gamePath))
+					{
+						if (deleteType == "json")
+						{
+							// JSON file deletion
+							if (File.Exists(gamePath))
+							{
+								File.Delete(gamePath);
+								Debug.Log($"[RA_NewGame] Deleted JSON file: {gamePath}");
+							}
+						}
+						else if (Path.IsPathRooted(gamePath) && Directory.Exists(gamePath))
+						{
+							// User story folder - gamePath is already the full path
+							Directory.Delete(gamePath, true);
+						}
+						else
+						{
+							// Legacy - relative path in StreamingAssets
+							Directory.Delete(Path.Combine(Application.streamingAssetsPath, gamePath), true);
+						}
+					}
 					PlayerPrefs.SetString("gameToDelete", "");
+					PlayerPrefs.SetString("gameToDeleteType", "");
 					sv.Reset(); // reload the menu
 				}
 				catch (System.Exception e)
 				{
 					Debug.Log(e);
-					feedbackTxt.text = "Impossible de supprimer le dossier ! \n" + e.ToString() ;
+					feedbackTxt.text = "Impossible de supprimer ! \n" + e.ToString() ;
 					buttonNop.SetActive(true);
 					feedbackPanel.SetActive(true);
 				}

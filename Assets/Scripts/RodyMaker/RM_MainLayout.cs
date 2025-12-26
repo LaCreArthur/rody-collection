@@ -23,15 +23,23 @@ public class RM_MainLayout : RM_Layout
 
     public void LoadSprites()
     {
+        // JSON story loading
+        if (PathManager.IsJsonStory)
+        {
+            LoadSpritesFromJson();
+            return;
+        }
+
+        // Legacy folder-based loading
         string spritePath = PathManager.SpritesPath + Path.DirectorySeparatorChar;
         int i;
         // Debug.Log("LoadSprites spritePath : " + spritePath);
-           
+
         // Load miniscenes
-        miniScenes[0].GetComponent<Image>().sprite = 
+        miniScenes[0].GetComponent<Image>().sprite =
             RM_SaveLoad.LoadSprite(spritePath+0+".png",0,36,21);
 
-        for (i = 1; i < PlayerPrefs.GetInt("scenesCount") + 1; i++) { 
+        for (i = 1; i < PlayerPrefs.GetInt("scenesCount") + 1; i++) {
             Sprite miniSprite = RM_SaveLoad.LoadSprite(spritePath + (i), 1, 36, 21);
             miniScenes[i].GetComponent<Image>().sprite = miniSprite;
             //miniScene.GetComponent<Image>().color = notActiveColor;
@@ -45,24 +53,72 @@ public class RM_MainLayout : RM_Layout
         }
         // Load Scene sprite
         if (gm.currentScene == 0)
-            gm.scenePanel.GetComponent<SpriteRenderer>().sprite = 
+            gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
                 RM_SaveLoad.LoadSprite(spritePath+0+".png",0,320,240);
         else {
-            gm.scenePanel.GetComponent<SpriteRenderer>().sprite = 
+            gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
                 RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene),1,320,130);
-            
+
             // Load animations frames
             DirectoryInfo dir = new DirectoryInfo(spritePath);
             var files = dir.GetFiles(gm.currentScene + ".*.png");
             gm.framesCount = files.Length - 1; // - 1 because the x.1.png is not part of the animation
             //Debug.Log("there are " + files.Length + " sprites for the scene " + gm.currentScene);
-            
+
             // reset frame List
 		    RM_ImgAnimLayout.frames.Clear();
-            
+
             // add the scene frames
             for (i = 0; i < gm.framesCount; ++i) {
 			    RM_ImgAnimLayout.frames.Add(RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene), i+2, 320, 130));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Loads sprites from JSON story using RM_SaveLoad helper methods.
+    /// </summary>
+    private void LoadSpritesFromJson()
+    {
+        int sceneCount = PlayerPrefs.GetInt("scenesCount");
+        int i;
+
+        // Load miniscene thumbnails
+        miniScenes[0].GetComponent<Image>().sprite = RM_SaveLoad.LoadTitleSprite();
+
+        for (i = 1; i <= sceneCount; i++)
+        {
+            miniScenes[i].GetComponent<Image>().sprite = RM_SaveLoad.LoadSceneThumbnail(i);
+        }
+
+        // Activate new scene button
+        if (i < 29)
+        {
+            miniScenes[i].GetComponent<Button>().interactable = true;
+            miniScenes[i].GetComponent<Image>().sprite = miniAddSceneSprite;
+        }
+
+        // Load current scene sprite
+        if (gm.currentScene == 0)
+        {
+            gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadTitleSprite();
+        }
+        else
+        {
+            // Load scene sprites from JSON
+            var sceneSprites = RM_SaveLoad.LoadSceneSprites(gm.currentScene);
+            if (sceneSprites.Count > 0)
+            {
+                gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sceneSprites[0];
+            }
+
+            gm.framesCount = sceneSprites.Count - 1;
+
+            // Reset and populate frame list
+            RM_ImgAnimLayout.frames.Clear();
+            for (i = 1; i < sceneSprites.Count; i++)
+            {
+                RM_ImgAnimLayout.frames.Add(sceneSprites[i]);
             }
         }
     }
