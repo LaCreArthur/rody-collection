@@ -96,10 +96,10 @@ public class RM_GameManager : MonoBehaviour {
 		introLayout.GetComponent<RM_IntroLayout>().titleInputField.text = null;
 		objLayout.GetComponent<RM_ObjLayout>().objInputField.text = null;
 
-		// Reset miniatures
+		// Reset thumbnails
 		mainLayout.GetComponent<RM_MainLayout>().LoadSprites();
-		mainLayout.GetComponent<RM_MainLayout>().MiniSceneUpdate();
-		mainLayout.GetComponent<RM_MainLayout>().SetActiveBtn();
+		mainLayout.GetComponent<RM_MainLayout>().UpdateActiveThumbnail();
+		mainLayout.GetComponent<RM_MainLayout>().UpdateButtonStates();
 		// objLayout.GetComponent<RM_ObjLayout>().zoneNear.SetActive(false);
 
 

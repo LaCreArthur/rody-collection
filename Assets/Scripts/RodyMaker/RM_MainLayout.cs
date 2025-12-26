@@ -1,26 +1,47 @@
 ﻿using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+/// <summary>
+/// Main editor layout controller. Handles scene thumbnails, button clicks,
+/// and navigation between editor panels.
+/// </summary>
 public class RM_MainLayout : RM_Layout
 {
+    [Header("Scene Thumbnails")]
+    [FormerlySerializedAs("notActiveColor")]
+    public Color inactiveSceneColor;
 
-    public Color notActiveColor ;
-    public Color activeColor;
-    public GameObject[] miniScenes;
-    public Slider sliderScenes;
-    public Sprite miniAddSceneSprite;
+    [FormerlySerializedAs("activeColor")]
+    public Color activeSceneColor;
 
-    public Button objBtn, IntroBtn;
-    public Text saveStatusText;  // Optional: assign in Inspector for save feedback
+    [FormerlySerializedAs("miniScenes")]
+    public GameObject[] sceneThumbnails;
+
+    [FormerlySerializedAs("sliderScenes")]
+    public Slider thumbnailSlider;
+
+    [FormerlySerializedAs("miniAddSceneSprite")]
+    public Sprite addSceneSprite;
+
+    [Header("Buttons")]
+    [FormerlySerializedAs("objBtn")]
+    public Button objectsButton;
+
+    [FormerlySerializedAs("IntroBtn")]
+    public Button introButton;
+
+    [Header("Feedback")]
+    public Text saveStatusText;
 
     void Start() {
-        SetActiveBtn();
+        UpdateButtonStates();
     }
 
-    public void SetActiveBtn(){
-        objBtn.interactable = IntroBtn.interactable = (gm.currentScene == 0)?false:true;
+    public void UpdateButtonStates(){
+        objectsButton.interactable = introButton.interactable = (gm.currentScene != 0);
     }
 
     public void LoadSprites()
@@ -35,25 +56,23 @@ public class RM_MainLayout : RM_Layout
         // Legacy folder-based loading
         string spritePath = PathManager.SpritesPath + Path.DirectorySeparatorChar;
         int i;
-        // Debug.Log("LoadSprites spritePath : " + spritePath);
 
-        // Load miniscenes
-        miniScenes[0].GetComponent<Image>().sprite =
+        // Load scene thumbnails
+        sceneThumbnails[0].GetComponent<Image>().sprite =
             RM_SaveLoad.LoadSprite(spritePath+0+".png",0,36,21);
 
         for (i = 1; i < PlayerPrefs.GetInt("scenesCount") + 1; i++) {
-            Sprite miniSprite = RM_SaveLoad.LoadSprite(spritePath + (i), 1, 36, 21);
-            miniScenes[i].GetComponent<Image>().sprite = miniSprite;
-            //miniScene.GetComponent<Image>().color = notActiveColor;
-            //Debug.Log(spritePath+i+".1.png");
+            Sprite thumbnail = RM_SaveLoad.LoadSprite(spritePath + (i), 1, 36, 21);
+            sceneThumbnails[i].GetComponent<Image>().sprite = thumbnail;
         }
 
-        // activate new scene button
-        if (i < 29) {// 29 is the last scene
-            miniScenes[i].GetComponent<Button>().interactable = true;
-            miniScenes[i].GetComponent<Image>().sprite = miniAddSceneSprite;
+        // Activate new scene button
+        if (i < 29) {
+            sceneThumbnails[i].GetComponent<Button>().interactable = true;
+            sceneThumbnails[i].GetComponent<Image>().sprite = addSceneSprite;
         }
-        // Load Scene sprite
+
+        // Load main scene sprite
         if (gm.currentScene == 0)
             gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
                 RM_SaveLoad.LoadSprite(spritePath+0+".png",0,320,240);
@@ -61,16 +80,12 @@ public class RM_MainLayout : RM_Layout
             gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
                 RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene),1,320,130);
 
-            // Load animations frames
+            // Load animation frames
             DirectoryInfo dir = new DirectoryInfo(spritePath);
             var files = dir.GetFiles(gm.currentScene + ".*.png");
-            gm.framesCount = files.Length - 1; // - 1 because the x.1.png is not part of the animation
-            //Debug.Log("there are " + files.Length + " sprites for the scene " + gm.currentScene);
+            gm.framesCount = files.Length - 1;
 
-            // reset frame List
-		    RM_ImgAnimLayout.frames.Clear();
-
-            // add the scene frames
+            RM_ImgAnimLayout.frames.Clear();
             for (i = 0; i < gm.framesCount; ++i) {
 			    RM_ImgAnimLayout.frames.Add(RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene), i+2, 320, 130));
             }
@@ -85,19 +100,19 @@ public class RM_MainLayout : RM_Layout
         int sceneCount = PlayerPrefs.GetInt("scenesCount");
         int i;
 
-        // Load miniscene thumbnails
-        miniScenes[0].GetComponent<Image>().sprite = RM_SaveLoad.LoadTitleSprite();
+        // Load scene thumbnails
+        sceneThumbnails[0].GetComponent<Image>().sprite = RM_SaveLoad.LoadTitleSprite();
 
         for (i = 1; i <= sceneCount; i++)
         {
-            miniScenes[i].GetComponent<Image>().sprite = RM_SaveLoad.LoadSceneThumbnail(i);
+            sceneThumbnails[i].GetComponent<Image>().sprite = RM_SaveLoad.LoadSceneThumbnail(i);
         }
 
         // Activate new scene button
         if (i < 29)
         {
-            miniScenes[i].GetComponent<Button>().interactable = true;
-            miniScenes[i].GetComponent<Image>().sprite = miniAddSceneSprite;
+            sceneThumbnails[i].GetComponent<Button>().interactable = true;
+            sceneThumbnails[i].GetComponent<Image>().sprite = addSceneSprite;
         }
 
         // Load current scene sprite
@@ -125,7 +140,7 @@ public class RM_MainLayout : RM_Layout
         }
     }
 
-    public void IntroClick()
+    public void OnIntroClick()
     {
         Debug.Log("Intro button clicked");
         SetLayouts(gm.introLayout,gm.introTextObj);
@@ -133,35 +148,37 @@ public class RM_MainLayout : RM_Layout
         gm.introLayout.GetComponent<RM_IntroLayout>().titleInputField.text = gm.titleText;
     }
 
-    public void ImagesClick()
+    public void OnImagesClick()
     {
         Debug.Log("Images button clicked");
         SetLayouts(gm.imagesLayout);
         UnsetLayouts(gm.mainLayout);
         gm.imagesLayout.GetComponent<RM_ImagesLayout>().SetActiveBtn();
     }
-    public void RM_ObjectsClick()
+
+    public void OnObjectsClick()
     {
         Debug.Log("Objects button clicked");
         SetLayouts(gm.introTextObj, gm.title, gm.objectsLayout);
         UnsetLayouts(gm.mainLayout);
     }
 
-    public void TestClick()
+    public void OnTestClick()
     {
         Debug.Log("Test button clicked");
         var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-        warningLayout.test = true;
-        warningLayout.newScene = gm.currentScene;
-        warningLayout.warningText.text = "TU TESTES LA SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
+        warningLayout.isTestMode = true;
+        warningLayout.targetScene = gm.currentScene;
+        warningLayout.messageText.text = "TU TESTES LA SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
     }
-    public void SaveClick()
+
+    public void OnSaveClick()
     {
         Debug.Log("Save button clicked");
 #if UNITY_WEBGL && !UNITY_EDITOR
-        SaveClickAsync();
+        OnSaveClickAsync();
 #else
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
@@ -171,20 +188,20 @@ public class RM_MainLayout : RM_Layout
 
     private IEnumerator ShowSaveFeedback()
     {
-        // Flash the current miniscene to indicate save
-        if (gm.currentScene < miniScenes.Length)
+        // Flash the current scene thumbnail to indicate save
+        if (gm.currentScene < sceneThumbnails.Length)
         {
-            var miniImage = miniScenes[gm.currentScene].GetComponent<Image>();
-            Color originalColor = miniImage.color;
+            var thumbnailImage = sceneThumbnails[gm.currentScene].GetComponent<Image>();
+            Color originalColor = thumbnailImage.color;
 
             // Flash white briefly
-            miniImage.color = Color.white;
+            thumbnailImage.color = Color.white;
             yield return new WaitForSeconds(0.15f);
-            miniImage.color = originalColor;
+            thumbnailImage.color = originalColor;
             yield return new WaitForSeconds(0.1f);
-            miniImage.color = Color.white;
+            thumbnailImage.color = Color.white;
             yield return new WaitForSeconds(0.15f);
-            miniImage.color = originalColor;
+            thumbnailImage.color = originalColor;
         }
 
         // Also show text feedback if available
@@ -200,9 +217,8 @@ public class RM_MainLayout : RM_Layout
     }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    private void SaveClickAsync()
+    private void OnSaveClickAsync()
     {
-        // Disable save button while saving
         Debug.Log("[RM_MainLayout] Starting async save to Firebase...");
 
         RM_SaveLoad.SaveGameAsync(gm,
@@ -212,13 +228,12 @@ public class RM_MainLayout : RM_Layout
             },
             error => {
                 Debug.LogError($"[RM_MainLayout] Save failed: {error}");
-                // TODO: Show error UI to user
             }
         );
     }
 #endif
 
-    public void RM_DeleteClick()
+    public void OnDeleteClick()
     {
         Debug.Log("Delete button clicked");
 
@@ -230,22 +245,21 @@ public class RM_MainLayout : RM_Layout
         }
 
         var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-        warningLayout.newScene = gm.currentScene;
+        warningLayout.targetScene = gm.currentScene;
         warningLayout.isDeleteMode = true;
 
         if (gm.currentScene > PlayerPrefs.GetInt("scenesCount"))
-            warningLayout.warningText.text = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
+            warningLayout.messageText.text = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
         else
-            warningLayout.warningText.text = "TU SUPPRIMES LA SCENE " + gm.currentScene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
+            warningLayout.messageText.text = "TU SUPPRIMES LA SCENE " + gm.currentScene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
 
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
     }
 
-
-    public void RM_SceneClick(int scene)
+    public void OnSceneThumbnailClick(int scene)
     {
-        Debug.Log("Scene " + scene + " button clicked");
+        Debug.Log("Scene thumbnail " + scene + " clicked");
         RM_WarningLayout warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
 
         string strChangeScene = "TU CHANGES DE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
@@ -256,14 +270,14 @@ public class RM_MainLayout : RM_Layout
         if (scene == gm.currentScene) {
             // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
             if (scene >= 18) {
-                warningLayout.isDeleteMode = true;  // Use delete mode
+                warningLayout.isDeleteMode = true;
                 if (scene > PlayerPrefs.GetInt("scenesCount")) {
-                    Debug.Log("cancel new scene?");
-                    warningLayout.warningText.text = strCancelScene;
+                    Debug.Log("Cancel new scene?");
+                    warningLayout.messageText.text = strCancelScene;
                 }
                 else {
-                    Debug.Log("delete scene?");
-                    warningLayout.warningText.text = strRemoveScene;
+                    Debug.Log("Delete scene?");
+                    warningLayout.messageText.text = strRemoveScene;
                 }
             }
             else {
@@ -273,48 +287,46 @@ public class RM_MainLayout : RM_Layout
         }
         else if (scene > PlayerPrefs.GetInt("scenesCount")) {
             // Adding a new scene
-            warningLayout.warningText.text = strNewScene;
+            warningLayout.messageText.text = strNewScene;
         }
         else {
             // Changing to a different existing scene
-            Debug.Log("change scene?");
-            warningLayout.warningText.text = strChangeScene;
+            Debug.Log("Change scene?");
+            warningLayout.messageText.text = strChangeScene;
         }
-        
-        warningLayout.newScene = scene;
+
+        warningLayout.targetScene = scene;
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
-        
     }
 
-    public void MiniSceneUpdate() {
-        for (int i = 0; i<30; i++) {
-            miniScenes[i].GetComponent<Image>().color = notActiveColor;
-            //Debug.Log(spritePath+i+".1.png");
+    public void UpdateActiveThumbnail() {
+        for (int i = 0; i < 30; i++) {
+            sceneThumbnails[i].GetComponent<Image>().color = inactiveSceneColor;
         }
-        miniScenes[gm.currentScene].GetComponent<Image>().color = activeColor;
-        MoveMini((int)sliderScenes.value); // reset new scene button if a scene was deleted
+        sceneThumbnails[gm.currentScene].GetComponent<Image>().color = activeSceneColor;
+        UpdateThumbnailPositions((int)thumbnailSlider.value);
     }
 
-    public void SliderHandler ()
+    public void OnThumbnailSliderChanged()
     {
-        MoveMini((int)sliderScenes.value);
+        UpdateThumbnailPositions((int)thumbnailSlider.value);
     }
 
-    public void MoveMini(int sliderValue)
+    public void UpdateThumbnailPositions(int sliderValue)
     {
-        for (int i=0; i<5; ++i) // for each rows
+        for (int i = 0; i < 5; ++i) // for each row
         {
-            for (int j = 6*i; j < 6*i+6; ++j) // 6 miniatures per row
+            for (int j = 6*i; j < 6*i+6; ++j) // 6 thumbnails per row
             {
-                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > PlayerPrefs.GetInt("scenesCount") + 1) // mini over the top or under the bottom of layout
-                    miniScenes[j].SetActive(false);
+                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > PlayerPrefs.GetInt("scenesCount") + 1)
+                    sceneThumbnails[j].SetActive(false);
                 else
                 {
                     if (j <= PlayerPrefs.GetInt("scenesCount") + 1)
-                            miniScenes[j].SetActive(true);
-                    Vector3 minipos = miniScenes[j].GetComponent<Transform>().localPosition;
-                    miniScenes[j].GetComponent<Transform>().localPosition = new Vector3(minipos.x, 22.5f - ((i-sliderValue) * 22.0f), minipos.z);
+                        sceneThumbnails[j].SetActive(true);
+                    Vector3 pos = sceneThumbnails[j].GetComponent<Transform>().localPosition;
+                    sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - ((i-sliderValue) * 22.0f), pos.z);
                 }
             }
         }

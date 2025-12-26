@@ -1,57 +1,70 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles the warning/confirmation dialog in the editor.
+/// Shows warnings before scene changes, deletions, or entering test mode.
+/// </summary>
 public class RM_WarningLayout : RM_Layout {
 
-	public int newScene;
-	public bool test = false;
-	public bool isDeleteMode = false;  // True when deleting a scene
-	public Text warningText;
+	[FormerlySerializedAs("newScene")]
+	public int targetScene;
 
-	public void CancelClick(){
-		Debug.Log("Cancel button clicked");
-		test = false;
+	[FormerlySerializedAs("test")]
+	public bool isTestMode = false;
+
+	public bool isDeleteMode = false;
+
+	[FormerlySerializedAs("warningText")]
+	public Text messageText;
+
+	public void OnCancelClick(){
+		Debug.Log("Warning dialog cancelled");
+		isTestMode = false;
 		isDeleteMode = false;
-		ResetLayout();
+		CloseDialog();
 	}
-	public void AcceptClick(){
 
-		Debug.Log("Accept button clicked, load scene : " + newScene);
-		if (test){
+	public void OnConfirmClick(){
+		Debug.Log("Warning dialog confirmed, target scene: " + targetScene);
+
+		if (isTestMode){
 			// Test mode - load play scene
-			test = false;  // Reset flag
-			if (newScene == 0) // test of the title screen
-            	SceneManager.LoadScene(1);
-        	else
-            	SceneManager.LoadScene(3);
+			isTestMode = false;
+			if (targetScene == 0)
+				SceneManager.LoadScene(1);  // Title screen test
+			else
+				SceneManager.LoadScene(3);  // Game scene test
 			return;
 		}
 		else if (isDeleteMode) {
 			// Delete current scene
 			Debug.Log("Deleting scene " + gm.currentScene);
-			isDeleteMode = false;  // Reset flag
+			isDeleteMode = false;
 			if (gm.currentScene <= PlayerPrefs.GetInt("scenesCount"))
 				RM_SaveLoad.DeleteScene(gm.currentScene);
 			else
-				Debug.Log("cancel new scene creation");
-			// Load the preceding scene
-			newScene = gm.currentScene - 1;
-			if (newScene < 1) newScene = 1;
+				Debug.Log("Cancelled new scene creation");
+			// Navigate to the preceding scene
+			targetScene = gm.currentScene - 1;
+			if (targetScene < 1) targetScene = 1;
 		}
-		else if (gm.currentScene == newScene) {
-			// Clicking on current scene (shouldn't happen normally, but handle it)
-			ResetLayout();
+		else if (gm.currentScene == targetScene) {
+			// Clicking on current scene (shouldn't happen normally)
+			CloseDialog();
 			return;
 		}
-		// Change to the new scene
-		PlayerPrefs.SetInt("currentScene", newScene);
-		gm.currentScene = newScene;
+
+		// Navigate to the target scene
+		PlayerPrefs.SetInt("currentScene", targetScene);
+		gm.currentScene = targetScene;
 		gm.Reset();
-		ResetLayout();
+		CloseDialog();
 	}
 
-	public void ResetLayout(){
+	private void CloseDialog(){
 		SetLayouts(gm.mainLayout);
 		UnsetLayouts(gm.warningLayout);
 	}
