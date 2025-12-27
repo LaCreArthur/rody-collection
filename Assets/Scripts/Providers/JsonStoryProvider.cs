@@ -292,49 +292,57 @@ public class JsonStoryProvider : IStoryProvider
         SceneData newSceneData;
         if (templateScene?.data != null)
         {
-            // Copy from template (deep copy by creating new instance)
-            newSceneData = new SceneData
-            {
-                titleText = "Nouveau titre",
-                introText = "Nouveau texte d'introduction",
-                introDial1 = templateScene.data.introDial1 ?? ".",
-                introDial2 = templateScene.data.introDial2 ?? ".",
-                introDial3 = templateScene.data.introDial3 ?? ".",
-                objDial = ".",
-                ngpDial = ".",
-                fswDial = ".",
-                objText = ".",
-                ngpText = ".",
-                fswText = ".",
-                musicIntro = templateScene.data.musicIntro ?? "",
-                musicLoop = templateScene.data.musicLoop ?? "",
-                pitch1 = 1f,
-                pitch2 = 1f,
-                pitch3 = 1f,
-                isMastico1 = false,
-                isMastico2 = false,
-                isMastico3 = false,
-                isZambla = false,
-                objPos = "0",
-                objSize = "0,0",
-                objNearPos = "0",
-                objNearSize = "0,0",
-                ngpPos = "0",
-                ngpSize = "0,0",
-                ngpNearPos = "0",
-                ngpNearSize = "0,0",
-                fswPos = "0",
-                fswSize = "0,0",
-                fswNearPos = "0",
-                fswNearSize = "0,0"
-            };
+            // Copy from template - use nested structure
+            newSceneData = new SceneData();
+
+            // Display texts
+            newSceneData.texts.title = "Nouveau titre";
+            newSceneData.texts.intro = "Nouveau texte d'introduction";
+            newSceneData.texts.obj = ".";
+            newSceneData.texts.ngp = ".";
+            newSceneData.texts.fsw = ".";
+
+            // Phoneme dialogues (copy intro patterns from template)
+            newSceneData.dialogues.intro1 = templateScene.data.dialogues?.intro1 ?? ".";
+            newSceneData.dialogues.intro2 = templateScene.data.dialogues?.intro2 ?? ".";
+            newSceneData.dialogues.intro3 = templateScene.data.dialogues?.intro3 ?? ".";
+            newSceneData.dialogues.obj = ".";
+            newSceneData.dialogues.ngp = ".";
+            newSceneData.dialogues.fsw = ".";
+
+            // Music (copy from template)
+            newSceneData.music.introMusic = templateScene.data.music?.introMusic ?? "";
+            newSceneData.music.sceneMusic = templateScene.data.music?.sceneMusic ?? "";
+
+            // Voice settings (defaults)
+            newSceneData.voice.pitch1 = 1f;
+            newSceneData.voice.pitch2 = 1f;
+            newSceneData.voice.pitch3 = 1f;
+            newSceneData.voice.isMastico1 = false;
+            newSceneData.voice.isMastico2 = false;
+            newSceneData.voice.isMastico3 = false;
+            newSceneData.voice.isZambla = false;
+
+            // Object zones (empty defaults - format is "(x,y);" for position, "(w,h);" for size)
+            newSceneData.objects.obj.positionRaw = "(0,0);";
+            newSceneData.objects.obj.sizeRaw = "(10,10);";
+            newSceneData.objects.obj.nearPositionRaw = "(0,0);";
+            newSceneData.objects.obj.nearSizeRaw = "(20,20);";
+            newSceneData.objects.ngp.positionRaw = "(50,0);";
+            newSceneData.objects.ngp.sizeRaw = "(10,10);";
+            newSceneData.objects.ngp.nearPositionRaw = "(50,0);";
+            newSceneData.objects.ngp.nearSizeRaw = "(20,20);";
+            newSceneData.objects.fsw.positionRaw = "(100,0);";
+            newSceneData.objects.fsw.sizeRaw = "(10,10);";
+            newSceneData.objects.fsw.nearPositionRaw = "(100,0);";
+            newSceneData.objects.fsw.nearSizeRaw = "(20,20);";
         }
         else
         {
             // Create default scene data
             newSceneData = SceneDataParser.CreateGlitchScene();
-            newSceneData.titleText = "Nouveau titre";
-            newSceneData.introText = "Nouveau texte d'introduction";
+            newSceneData.texts.title = "Nouveau titre";
+            newSceneData.texts.intro = "Nouveau texte d'introduction";
         }
 
         // Add to scenes list

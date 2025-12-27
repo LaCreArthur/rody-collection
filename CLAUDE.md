@@ -13,10 +13,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 # Build WebGL from Unity Editor
 # File > Build Settings > WebGL > Build
-# Output: build/webgl/
+# Output: build/WebGL/
 # Resolution: 960x600 (3x Atari ST 320x200)
 
-# Deploy to GitHub Pages (WebGL build in build/webgl/)
+# Build WebGL from CLI (used by CI)
+# Unity -batchmode -quit -projectPath . -buildTarget WebGL -executeMethod BuildScript.Build
+
+# Deploy to GitHub Pages (CI builds on push to master)
 git push origin master  # Triggers .github/workflows/deploy-pages.yml
 
 # Deploy Firebase rules

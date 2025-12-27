@@ -126,6 +126,21 @@ public static class SceneDataParser
         var data = new SceneData();
         data.dialogues = PhonemeDialogues.Glitch;
         data.texts = DisplayTexts.Glitch;
+
+        // Set valid object zone data (format: "(x,y);" for position, "(w,h);" for size)
+        data.objects.obj.positionRaw = "(0,0);";
+        data.objects.obj.sizeRaw = "(10,10);";
+        data.objects.obj.nearPositionRaw = "(0,0);";
+        data.objects.obj.nearSizeRaw = "(20,20);";
+        data.objects.ngp.positionRaw = "(50,0);";
+        data.objects.ngp.sizeRaw = "(10,10);";
+        data.objects.ngp.nearPositionRaw = "(50,0);";
+        data.objects.ngp.nearSizeRaw = "(20,20);";
+        data.objects.fsw.positionRaw = "(100,0);";
+        data.objects.fsw.sizeRaw = "(10,10);";
+        data.objects.fsw.nearPositionRaw = "(100,0);";
+        data.objects.fsw.nearSizeRaw = "(20,20);";
+
         return data;
     }
 }

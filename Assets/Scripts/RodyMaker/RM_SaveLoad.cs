@@ -599,6 +599,9 @@ public static class RM_SaveLoad {
         }
 
         provider.CreateNewScene(sceneIndex);
+
+        // Write to disk immediately so the scene persists
+        provider.WriteToFile();
     }
 
     /// <summary>
