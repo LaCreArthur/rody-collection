@@ -53,7 +53,7 @@ public class RM_ImagesLayout : RM_Layout {
 		else
 			gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadSprite(path,0,320,130);
         // update the miniature
-        gm.mainLayout.GetComponent<RM_MainLayout>().miniScenes[gm.currentScene].GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(path,0,36,21);
+        gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(path,0,36,21);
 #endif
     }
 }

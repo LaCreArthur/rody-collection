@@ -233,25 +233,14 @@ public class RM_MainLayout : RM_Layout
     }
 #endif
 
-    public void OnDeleteClick()
+    public void OnRevertClick()
     {
-        Debug.Log("Delete button clicked");
-
-        // Only allow deletion of scenes >= 18 (or new unsaved scenes)
-        if (gm.currentScene < 18 && gm.currentScene <= PlayerPrefs.GetInt("scenesCount"))
-        {
-            Debug.Log("Cannot delete scenes 1-17");
-            return;
-        }
+        Debug.Log("Revert button clicked");
 
         var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
         warningLayout.targetScene = gm.currentScene;
-        warningLayout.isDeleteMode = true;
-
-        if (gm.currentScene > PlayerPrefs.GetInt("scenesCount"))
-            warningLayout.messageText.text = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
-        else
-            warningLayout.messageText.text = "TU SUPPRIMES LA SCENE " + gm.currentScene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
+        warningLayout.isRevertMode = true;
+        warningLayout.messageText.text = "TU ANNULES LES MODIFICATIONS\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
 
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
@@ -259,7 +248,8 @@ public class RM_MainLayout : RM_Layout
 
     public void OnSceneThumbnailClick(int scene)
     {
-        Debug.Log("Scene thumbnail " + scene + " clicked");
+        int scenesCount = PlayerPrefs.GetInt("scenesCount");
+        Debug.Log($"[RM_MainLayout] OnSceneThumbnailClick({scene}) - currentScene: {gm.currentScene}, scenesCount: {scenesCount}");
         RM_WarningLayout warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
 
         string strChangeScene = "TU CHANGES DE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
@@ -271,31 +261,34 @@ public class RM_MainLayout : RM_Layout
             // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
             if (scene >= 18) {
                 warningLayout.isDeleteMode = true;
-                if (scene > PlayerPrefs.GetInt("scenesCount")) {
-                    Debug.Log("Cancel new scene?");
+                if (scene > scenesCount) {
+                    Debug.Log($"[RM_MainLayout] Action: CANCEL new scene (scene {scene} > scenesCount {scenesCount})");
                     warningLayout.messageText.text = strCancelScene;
                 }
                 else {
-                    Debug.Log("Delete scene?");
+                    Debug.Log($"[RM_MainLayout] Action: DELETE scene {scene} (scene <= scenesCount {scenesCount})");
                     warningLayout.messageText.text = strRemoveScene;
                 }
             }
             else {
                 // Scenes 1-17 cannot be deleted by clicking
+                Debug.Log($"[RM_MainLayout] Action: NONE (clicking current scene {scene} < 18, returning)");
                 return;
             }
         }
-        else if (scene > PlayerPrefs.GetInt("scenesCount")) {
+        else if (scene > scenesCount) {
             // Adding a new scene
+            Debug.Log($"[RM_MainLayout] Action: ADD new scene (scene {scene} > scenesCount {scenesCount})");
             warningLayout.messageText.text = strNewScene;
         }
         else {
             // Changing to a different existing scene
-            Debug.Log("Change scene?");
+            Debug.Log($"[RM_MainLayout] Action: CHANGE to scene {scene}");
             warningLayout.messageText.text = strChangeScene;
         }
 
         warningLayout.targetScene = scene;
+        Debug.Log($"[RM_MainLayout] Showing warning dialog, targetScene set to {scene}");
         UnsetLayouts(gm.mainLayout);
         SetLayouts(gm.warningLayout);
     }
