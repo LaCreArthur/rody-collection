@@ -51,6 +51,10 @@ private static string BlankSpriteBase64 {
 | `RM_MainLayout.cs` | Clear panel when no sprites (fallback), empty scene click handling |
 | `RM_SaveLoad.cs` | Added `WriteToFile()` after `CreateNewScene()` |
 
+### Planning
+- Created `docs/JSON_MIGRATION_PLAN.md` - 6-phase roadmap to remove legacy folder structure
+- Added ObjectZone modernization to `docs/REFACTORING_ROADMAP.md` backlog
+
 ---
 
 ## 2025-12-27: Editor UX Fixes & New Scene Creation
