@@ -4,16 +4,14 @@
 
 ---
 
-## 2025-12-27: Editor UX Fixes & CI Setup
+## 2025-12-27: Editor UX Fixes & New Scene Creation
 
 ### Git Workflow Change
 **IMPORTANT**: Do not push to `master` on every commit. CI now builds WebGL on each push to master.
 - Batch commits locally, push when ready for a build
-- Use feature branches for larger changes if needed
+- DOTween now included in repo (needed for CI builds)
 
 ### Editor Button Behavior
-Clarified and fixed the editor button UX:
-
 | Button | Behavior |
 |--------|----------|
 | **Save** | Saves current scene, shows flash feedback on thumbnail |
@@ -21,37 +19,36 @@ Clarified and fixed the editor button UX:
 | **Test** | Warns about unsaved changes, loads game in play mode |
 | **Thumbnail click** | Navigate to scene, OR delete (scenes ≥18 only when clicking current scene) |
 
-### Changes
-- Renamed `OnDeleteClick` → `OnRevertClick` with new `isRevertMode` flag
-- Added save feedback (thumbnail flash + optional text)
+### Bugs Fixed
+
+**1. New Scene Not Appearing in Thumbnails**
+- Root cause: `scenesCount` wasn't updated until save, so thumbnails didn't show new scene
+- Fix: Update `scenesCount` immediately when navigating to new scene
+- For JSON stories: `CreateNewScene()` creates scene entry with placeholder data before navigation
+
+**2. JSON Story New Scene Creation**
+- Added `JsonStoryProvider.CreateNewScene(sceneIndex)` - creates scene with template data
+- New scenes get: "Nouveau titre", "Nouveau texte d'introduction", music from previous scene
+- No sprites (expected warning until user imports image)
+
+**3. Delete Scene** - Working correctly (was not actually broken, logs confirmed)
+
+### Code Changes
 - Renamed fields with `FormerlySerializedAs` for Inspector compatibility:
-  - `miniScenes` → `sceneThumbnails`
-  - `newScene` → `targetScene`
-  - `test` → `isTestMode`
-  - `warningText` → `messageText`
-
-### Debug Logging Added
-Investigating two bugs:
-1. New scene button not adding new scene
-2. Delete (via thumbnail) deleting wrong scene (n+1)
-
-Logs now show:
-```
-[RM_MainLayout] OnSceneThumbnailClick(N) - currentScene: X, scenesCount: Y
-[RM_MainLayout] Action: ADD/DELETE/CANCEL/CHANGE
-[RM_WarningLayout] Modes - Test: false, Delete: true, Revert: false
-```
+  - `miniScenes` → `sceneThumbnails`, `newScene` → `targetScene`
+  - `test` → `isTestMode`, `warningText` → `messageText`
+- Added `isRevertMode` flag for Revert button behavior
+- Added detailed debug logging for scene operations
 
 ### Files Modified
 | File | Changes |
 |------|---------|
-| `RM_MainLayout.cs` | Revert button, save feedback, detailed logging |
-| `RM_WarningLayout.cs` | isRevertMode, bug detection logging |
+| `RM_MainLayout.cs` | Revert button, save feedback, logging |
+| `RM_WarningLayout.cs` | isRevertMode, CreateNewScene call before navigation |
+| `RM_SaveLoad.cs` | `CreateNewScene()` helper method |
+| `JsonStoryProvider.cs` | `CreateNewScene()` with placeholder data |
 | `RM_ImagesLayout.cs` | Fixed stale `miniScenes` reference |
-
-### Pending Investigation
-- Check console logs when testing new scene / delete to identify root cause
-- May be Inspector wiring issue (button passing wrong index)
+| `CLAUDE.md` | CI note, DOTween now in repo |
 
 ---
 
