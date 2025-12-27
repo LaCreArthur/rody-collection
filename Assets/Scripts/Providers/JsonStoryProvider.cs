@@ -14,6 +14,27 @@ public class JsonStoryProvider : IStoryProvider
     private StoryExporter.ExportedStory cachedStory;
     private Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
+    // Pre-computed base64 of a 320x130 white PNG (computed once, used forever)
+    private static string _blankSpriteBase64;
+    private static string BlankSpriteBase64
+    {
+        get
+        {
+            if (_blankSpriteBase64 == null)
+            {
+                // Generate once on first access, then cached for app lifetime
+                var tex = new Texture2D(320, 130, TextureFormat.RGBA32, false);
+                var pixels = new Color[320 * 130];
+                for (int i = 0; i < pixels.Length; i++) pixels[i] = Color.white;
+                tex.SetPixels(pixels);
+                tex.Apply();
+                _blankSpriteBase64 = Convert.ToBase64String(tex.EncodeToPNG());
+                UnityEngine.Object.Destroy(tex);
+            }
+            return _blankSpriteBase64;
+        }
+    }
+
     public JsonStoryProvider(string jsonPath)
     {
         jsonFilePath = jsonPath;
@@ -355,10 +376,26 @@ public class JsonStoryProvider : IStoryProvider
             data = newSceneData
         });
 
+        // Create a blank white placeholder sprite for the new scene
+        CreateBlankSprite(sceneIndex);
+
         // Update scene count
         UpdateSceneCount(sceneIndex);
 
-        Debug.Log($"JsonStoryProvider: Created new scene {sceneIndex} from template");
+        Debug.Log($"JsonStoryProvider: Created new scene {sceneIndex} with blank sprite");
+    }
+
+    /// <summary>
+    /// Adds a blank white placeholder sprite for a new scene.
+    /// Uses cached base64 - no texture creation after first use.
+    /// </summary>
+    private void CreateBlankSprite(int sceneIndex)
+    {
+        if (cachedStory.sprites == null)
+            cachedStory.sprites = new Dictionary<string, string>();
+
+        string spriteName = $"{sceneIndex}.1.png";
+        cachedStory.sprites[spriteName] = BlankSpriteBase64;
     }
 
     /// <summary>

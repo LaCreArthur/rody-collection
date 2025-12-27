@@ -138,3 +138,4 @@ UnityReusables.*       - Shared utilities
 - Prefer explicit code over Inspector wiring for new features
 - Use conventional commits: `fix:`, `feat:`, `docs:`
 - **Never null-check serialized fields** - If a prefab/reference isn't assigned in the Inspector, let it fail loudly with NullReferenceException rather than silently skipping
+- **Cache static/constant data** - If generating the same data every time (e.g., blank textures, default configs), compute once and cache as static field or constant. Don't recreate identical data repeatedly.

@@ -4,6 +4,55 @@
 
 ---
 
+## 2025-12-27: New Scene Creation Fixes
+
+### Bugs Fixed
+
+**1. IndexOutOfRangeException on new scene**
+- Root cause: Object zone format was `"0"` instead of `"(x,y);"`
+- Fix: `JsonStoryProvider.CreateNewScene()` and `SceneDataParser.CreateGlitchScene()` now use correct format `"(0,0);"`
+
+**2. New scene not displaying after creation**
+- Root cause: Main panel kept previous scene's sprite when new scene had no sprites
+- Fix: Added blank white placeholder sprite (320x130) when creating new scenes
+
+**3. Clicking new scene triggered delete**
+- Root cause: Empty scenes (no sprites) triggered delete mode on thumbnail click
+- Fix: Now moot - scenes always have sprites. Added fallback check for safety.
+
+### Key Implementation: Blank Sprite Caching
+
+```csharp
+// WRONG: Creating texture every time
+private void CreateBlankSprite(int sceneIndex) {
+    Texture2D tex = new Texture2D(320, 130);  // Wasteful!
+    // ... fill, encode, convert every call
+}
+
+// RIGHT: Cache static data
+private static string _blankSpriteBase64;
+private static string BlankSpriteBase64 {
+    get {
+        if (_blankSpriteBase64 == null) {
+            // Generate once, cache forever
+        }
+        return _blankSpriteBase64;
+    }
+}
+```
+
+**Lesson**: When generating identical data repeatedly (blank textures, default configs), compute once and cache as static field.
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `JsonStoryProvider.cs` | Fixed object zone format, added `CreateBlankSprite()` with cached base64 |
+| `SceneDataParser.cs` | Fixed `CreateGlitchScene()` object zone format |
+| `RM_MainLayout.cs` | Clear panel when no sprites (fallback), empty scene click handling |
+| `RM_SaveLoad.cs` | Added `WriteToFile()` after `CreateNewScene()` |
+
+---
+
 ## 2025-12-27: Editor UX Fixes & New Scene Creation
 
 ### Git Workflow Change

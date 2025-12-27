@@ -128,8 +128,13 @@ public class RM_MainLayout : RM_Layout
             {
                 gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sceneSprites[0];
             }
+            else
+            {
+                // New scene with no sprites - clear the panel
+                gm.scenePanel.GetComponent<SpriteRenderer>().sprite = null;
+            }
 
-            gm.framesCount = sceneSprites.Count - 1;
+            gm.framesCount = Mathf.Max(0, sceneSprites.Count - 1);
 
             // Reset and populate frame list
             RM_ImgAnimLayout.frames.Clear();
@@ -260,14 +265,26 @@ public class RM_MainLayout : RM_Layout
         if (scene == gm.currentScene) {
             // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
             if (scene >= 18) {
-                warningLayout.isDeleteMode = true;
+                // Check if scene has sprites - empty scenes shouldn't trigger delete on click
+                var sceneSprites = RM_SaveLoad.LoadSceneSprites(scene);
+                bool hasContent = sceneSprites != null && sceneSprites.Count > 0;
+
                 if (scene > scenesCount) {
+                    // Scene beyond scenesCount - cancel new scene creation
+                    warningLayout.isDeleteMode = true;
                     Debug.Log($"[RM_MainLayout] Action: CANCEL new scene (scene {scene} > scenesCount {scenesCount})");
                     warningLayout.messageText.text = strCancelScene;
                 }
-                else {
+                else if (hasContent) {
+                    // Scene with content - offer to delete
+                    warningLayout.isDeleteMode = true;
                     Debug.Log($"[RM_MainLayout] Action: DELETE scene {scene} (scene <= scenesCount {scenesCount})");
                     warningLayout.messageText.text = strRemoveScene;
+                }
+                else {
+                    // Empty scene (no sprites) - just ignore the click
+                    Debug.Log($"[RM_MainLayout] Action: NONE (scene {scene} is empty, ignoring click)");
+                    return;
                 }
             }
             else {

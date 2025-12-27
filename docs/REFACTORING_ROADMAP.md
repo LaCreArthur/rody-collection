@@ -47,6 +47,35 @@ var scene = StoryProviderManager.Provider.LoadScene("Rody Et Mastico", 1);
 - **Observable Pattern** - Replace PlayerPrefs state
 - **SoundManager Refactor** - Break up 360-line monolith
 
+### ObjectZone Format Modernization
+
+**Current state:** Object zones use legacy string format from `levels.rody`:
+```csharp
+// Position: "(x,y);(x2,y2);" - semicolon-separated, parentheses for grouping
+positionRaw = "(0,0);(50,20);"
+sizeRaw = "(10,10);(15,15);"
+```
+
+**Problem:** Requires string parsing in `ReadObjects()` / `LoadObject()` with fragile split logic.
+
+**Goal:** Use proper typed JSON structure:
+```csharp
+public class ObjectZone
+{
+    public List<Vector2Int> positions;  // [(0,0), (50,20)]
+    public List<Vector2Int> sizes;      // [(10,10), (15,15)]
+    public List<Vector2Int> nearPositions;
+    public List<Vector2Int> nearSizes;
+}
+```
+
+**Tasks:**
+- [ ] Update `ObjectZone` class with typed fields
+- [ ] Add JSON serialization attributes for Vector2Int
+- [ ] Migrate `ReadObjects()` / `LoadObject()` to use typed data
+- [ ] Write migration for existing `.rody.json` files
+- [ ] Keep `levels.rody` parser backward-compatible
+
 ---
 
 ## Code Preferences
