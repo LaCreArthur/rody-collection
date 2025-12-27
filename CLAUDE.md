@@ -33,7 +33,8 @@ gsutil cors set cors.json gs://rody-maker.firebasestorage.app
 
 These plugins are installed locally but excluded from git (add them manually):
 - **Odin Inspector** - Enhanced Unity inspector
-- **DOTween** - Animation tweening
+
+Note: DOTween is now included in the repo for CI builds.
 
 ## Architecture
 
