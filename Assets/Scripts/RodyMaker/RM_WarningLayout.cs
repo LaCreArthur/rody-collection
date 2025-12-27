@@ -75,6 +75,14 @@ public class RM_WarningLayout : RM_Layout {
 
 		// Navigate to the target scene
 		Debug.Log($"[RM_WarningLayout] Navigating from scene {gm.currentScene} to scene {targetScene}");
+
+		// If navigating to a new scene, update scenesCount immediately
+		int currentScenesCount = PlayerPrefs.GetInt("scenesCount");
+		if (targetScene > currentScenesCount) {
+			PlayerPrefs.SetInt("scenesCount", targetScene);
+			Debug.Log($"[RM_WarningLayout] New scene created, scenesCount updated to {targetScene}");
+		}
+
 		PlayerPrefs.SetInt("currentScene", targetScene);
 		gm.currentScene = targetScene;
 		gm.Reset();
