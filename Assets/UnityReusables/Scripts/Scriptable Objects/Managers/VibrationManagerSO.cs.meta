@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: f85ec20dde3e4ac6ad7cae384c324518
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - isHaptic: {fileID: 11400000, guid: 2930ac1b2a0752247aebcd7d173fbd0c, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

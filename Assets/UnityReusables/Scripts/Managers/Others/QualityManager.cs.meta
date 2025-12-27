@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 245971c95cc56e140bcb9b20240b9c2c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mainCam: {instanceID: 0}
+  - averageFPS: {fileID: 11400000, guid: 173eb42072ac1f640840c0bd366eb6d3, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
