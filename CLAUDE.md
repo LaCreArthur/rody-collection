@@ -27,6 +27,8 @@ firebase deploy --only storage:rules
 gsutil cors set cors.json gs://rody-maker.firebasestorage.app
 ```
 
+**⚠️ CI Note**: Do NOT push to `master` on every commit. CI builds WebGL on each push to master. Batch commits locally and push when ready for a build.
+
 ## Local-Only Plugins
 
 These plugins are installed locally but excluded from git (add them manually):
