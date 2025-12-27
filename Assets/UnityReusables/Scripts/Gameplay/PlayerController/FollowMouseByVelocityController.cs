@@ -57,9 +57,9 @@ namespace UnityReusables.PlayerController
             if (!_isTouching) return;
             var position = transform.position;
             var diff = _destPos - position; // gives the direction the player needs to go
-            diff.y = _rb.velocity.y / velocityFactor;
+            diff.y = _rb.linearVelocity.y / velocityFactor;
             //rb.velocity = velocityFactor * diff; // clamp the speed
-            _rb.velocity = velocityFactor * diff;
+            _rb.linearVelocity = velocityFactor * diff;
             //m_destPos.y = position.y;
 
             transform.LookAt(_destPos);

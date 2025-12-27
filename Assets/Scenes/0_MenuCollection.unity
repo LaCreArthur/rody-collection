@@ -616,7 +616,7 @@ MonoBehaviour:
     type: 3}
   slotNewGamePrefab: {fileID: 224635054786522992, guid: 2e5d0d24cb35df140b5b64ef60b590bc,
     type: 3}
-  slotLoadGamePrefab: {fileID: 224481212350372128, guid: c41366fd93acf254794d75e6612c0d03,
+  slotLoadGamePrefab: {fileID: 224481212350372128, guid: fab2594f69aea4b709321ef63a84e038,
     type: 3}
   loadingUI: {fileID: 0}
   ngScript: {fileID: 1314820487}
@@ -2965,10 +2965,10 @@ RectTransform:
   - {fileID: 1788847244}
   m_Father: {fileID: 1367348201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 320, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1314820485
 MonoBehaviour:

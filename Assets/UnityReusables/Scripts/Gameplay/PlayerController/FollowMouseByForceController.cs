@@ -60,9 +60,9 @@ namespace UnityReusables.PlayerController
             rb.AddForce(forceFactor * Time.fixedDeltaTime * diff, ForceMode.Force);
 
             var dist = Vector3.Distance(_destPos, position);
-            rb.drag = dragFactor / dist; // increase drag when distance diminish for a slow-down effect
+            rb.linearDamping = dragFactor / dist; // increase drag when distance diminish for a slow-down effect
 
-            rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity); // clamp the speed
+            rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, maxVelocity); // clamp the speed
 
             transform.LookAt(_destPos, Vector3.up);
 

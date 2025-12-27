@@ -29,7 +29,7 @@ namespace UnityReusables.CharacterControllers
         {
             // Move the character by finding the target velocity
             float newVel = move * runSpeed * 10f * Time.fixedDeltaTime;
-            var rbV = _rb.velocity;
+            var rbV = _rb.linearVelocity;
             Vector3 targetVelocity = new Vector3(moveOnX ? newVel : 0, rbV.y, moveOnX ? 0 : newVel);
             if (targetVelocity.y < 0)
             {
@@ -37,7 +37,7 @@ namespace UnityReusables.CharacterControllers
             }
 
             // And then smoothing it out and applying it to the character
-            _rb.velocity = Vector3.SmoothDamp(rbV, targetVelocity, ref velocity, movementSmoothing);
+            _rb.linearVelocity = Vector3.SmoothDamp(rbV, targetVelocity, ref velocity, movementSmoothing);
         }
 
         protected override void SetJumpVelocity()
@@ -73,7 +73,7 @@ namespace UnityReusables.CharacterControllers
         public void SetFreeze(bool isFrozen)
         {
             if (!isFrozen) arrowAnim.DORestart();
-            _rb.velocity = Vector3.zero;
+            _rb.linearVelocity = Vector3.zero;
             this.isFrozen = isFrozen;
         }
     }

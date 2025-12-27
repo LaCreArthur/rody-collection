@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114927884658957062}
   - component: {fileID: 114020446987828994}
   m_Layer: 5
-  m_Name: miniScene
+  m_Name: sceneThumbnail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

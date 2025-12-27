@@ -14,6 +14,6 @@ public class ResetPooledRBComponent : MonoBehaviour, IPoolableComponent
             _rb = GetComponent<Rigidbody>(); // lazy init
         if (_rb == null) 
             return; // no rb
-        _rb.velocity = _rb.angularVelocity = Vector3.zero;
+        _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
     }
 }

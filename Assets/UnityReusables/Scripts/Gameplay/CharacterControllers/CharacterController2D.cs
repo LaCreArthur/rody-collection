@@ -36,7 +36,7 @@ namespace UnityReusables.CharacterControllers
         {
             float newVel = move * runSpeed * 10f * Time.fixedDeltaTime;
             // Move the character by finding the target velocity
-            var rbV = _rb2D.velocity;
+            var rbV = _rb2D.linearVelocity;
             Vector3 targetVelocity = new Vector2(newVel, rbV.y);
             if (targetVelocity.y < 0)
             {
@@ -44,7 +44,7 @@ namespace UnityReusables.CharacterControllers
             }
 
             // And then smoothing it out and applying it to the character
-            _rb2D.velocity = Vector3.SmoothDamp(rbV, targetVelocity, ref velocity, movementSmoothing);
+            _rb2D.linearVelocity = Vector3.SmoothDamp(rbV, targetVelocity, ref velocity, movementSmoothing);
         }
 
         protected override void SetJumpVelocity()

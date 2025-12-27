@@ -31,7 +31,7 @@ namespace UnityReusables.PlayerController
 
         private void FixedUpdate()
         {
-            _rb.velocity = Vector3.ClampMagnitude(_moveDirection, 1f) * moveSpeed;
+            _rb.linearVelocity = Vector3.ClampMagnitude(_moveDirection, 1f) * moveSpeed;
         }
 
         // public void OnMove(InputValue value)
