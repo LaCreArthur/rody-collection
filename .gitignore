@@ -7,11 +7,6 @@
 # Builds
 [Bb]uild/
 [Bb]uilds/
-
-# GitHub Pages - WebGL Build Exception
-!build/
-build/*
-!build/webgl/
 [Ss]creenshot/
 [Ss]creenshots/
 [Ll]ogs/
@@ -123,8 +118,3 @@ UserSettings/
 # Firebase logs
 firebase-debug.log
 
-# Paid plugins (do not commit to public repo)
-Assets/Plugins/Sirenix/
-Assets/Plugins/Sirenix.meta
-Assets/Plugins/Demigiant/
-Assets/Plugins/Demigiant.meta
