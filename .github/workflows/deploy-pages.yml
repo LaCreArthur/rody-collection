@@ -18,11 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: true
 
       - name: Cache Library
         uses: actions/cache@v3
