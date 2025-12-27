@@ -581,6 +581,27 @@ public static class RM_SaveLoad {
     }
 
     /// <summary>
+    /// Creates a new scene in the JSON story, using the previous scene as a template.
+    /// </summary>
+    public static void CreateNewScene(int sceneIndex)
+    {
+        if (!PathManager.IsJsonStory)
+        {
+            Debug.Log("[RM_SaveLoad] CreateNewScene: Not a JSON story, skipping");
+            return;
+        }
+
+        var provider = GetJsonProvider();
+        if (provider == null)
+        {
+            Debug.LogError("[RM_SaveLoad] Cannot create scene - no JSON provider available");
+            return;
+        }
+
+        provider.CreateNewScene(sceneIndex);
+    }
+
+    /// <summary>
     /// Deletes a scene from a JSON story file.
     /// </summary>
     private static void DeleteSceneFromJson(int scene)

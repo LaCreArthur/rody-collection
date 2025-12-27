@@ -266,6 +266,94 @@ public class JsonStoryProvider : IStoryProvider
     }
 
     /// <summary>
+    /// Creates a new scene by copying data from the previous scene.
+    /// Used when adding a new scene in the editor.
+    /// </summary>
+    public void CreateNewScene(int sceneIndex)
+    {
+        if (cachedStory == null)
+        {
+            Debug.LogError("JsonStoryProvider: No story loaded");
+            return;
+        }
+
+        // Check if scene already exists
+        var existingScene = cachedStory.scenes?.Find(s => s.index == sceneIndex);
+        if (existingScene != null)
+        {
+            Debug.Log($"JsonStoryProvider: Scene {sceneIndex} already exists");
+            return;
+        }
+
+        // Get the previous scene as template
+        int templateIndex = sceneIndex - 1;
+        var templateScene = cachedStory.scenes?.Find(s => s.index == templateIndex);
+
+        SceneData newSceneData;
+        if (templateScene?.data != null)
+        {
+            // Copy from template (deep copy by creating new instance)
+            newSceneData = new SceneData
+            {
+                titleText = "Nouveau titre",
+                introText = "Nouveau texte d'introduction",
+                introDial1 = templateScene.data.introDial1 ?? ".",
+                introDial2 = templateScene.data.introDial2 ?? ".",
+                introDial3 = templateScene.data.introDial3 ?? ".",
+                objDial = ".",
+                ngpDial = ".",
+                fswDial = ".",
+                objText = ".",
+                ngpText = ".",
+                fswText = ".",
+                musicIntro = templateScene.data.musicIntro ?? "",
+                musicLoop = templateScene.data.musicLoop ?? "",
+                pitch1 = 1f,
+                pitch2 = 1f,
+                pitch3 = 1f,
+                isMastico1 = false,
+                isMastico2 = false,
+                isMastico3 = false,
+                isZambla = false,
+                objPos = "0",
+                objSize = "0,0",
+                objNearPos = "0",
+                objNearSize = "0,0",
+                ngpPos = "0",
+                ngpSize = "0,0",
+                ngpNearPos = "0",
+                ngpNearSize = "0,0",
+                fswPos = "0",
+                fswSize = "0,0",
+                fswNearPos = "0",
+                fswNearSize = "0,0"
+            };
+        }
+        else
+        {
+            // Create default scene data
+            newSceneData = SceneDataParser.CreateGlitchScene();
+            newSceneData.titleText = "Nouveau titre";
+            newSceneData.introText = "Nouveau texte d'introduction";
+        }
+
+        // Add to scenes list
+        if (cachedStory.scenes == null)
+            cachedStory.scenes = new List<StoryExporter.ExportedScene>();
+
+        cachedStory.scenes.Add(new StoryExporter.ExportedScene
+        {
+            index = sceneIndex,
+            data = newSceneData
+        });
+
+        // Update scene count
+        UpdateSceneCount(sceneIndex);
+
+        Debug.Log($"JsonStoryProvider: Created new scene {sceneIndex} from template");
+    }
+
+    /// <summary>
     /// Writes the cached story back to the JSON file.
     /// </summary>
     public bool WriteToFile()
