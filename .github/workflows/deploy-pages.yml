@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: WebGL-Build
-          path: build/WebGL
+          path: build/WebGL/WebGL  # game-ci nested output
 
   deploy:
     needs: build
@@ -67,7 +67,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: WebGL-Build
-          path: build/webgl
+          path: build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -75,7 +75,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/webgl'
+          path: build
 
       - name: Deploy to GitHub Pages
         id: deployment
