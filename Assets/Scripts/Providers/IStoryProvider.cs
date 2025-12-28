@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Abstraction layer for story data access.
-/// Enables switching between local (StreamingAssets) and remote (Firebase) storage.
+/// Enables switching between local (StreamingAssets) and embedded (Resources) storage.
 /// </summary>
 public interface IStoryProvider
 {

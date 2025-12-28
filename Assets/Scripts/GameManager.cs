@@ -61,50 +61,26 @@ public class GameManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// WebGL async initialization - loads scene data from Firebase.
+	/// WebGL initialization - loads scene data from Resources (synchronous).
 	/// </summary>
 	IEnumerator InitSceneWebGL(int scene)
 	{
-		bool dataLoaded = false;
-		bool spritesLoaded = false;
-		string[] sceneStr = null;
-		List<Sprite> loadedSprites = null;
+		yield return null; // Yield once to let UI update
 
-		// Load scene text data
-		RM_SaveLoad.LoadSceneTxtAsync(scene,
-			data => {
-				sceneStr = data;
-				dataLoaded = true;
-			},
-			error => {
-				Debug.LogError($"[GameManager] Failed to load scene data: {error}");
-				dataLoaded = true; // Continue anyway to avoid infinite loop
-			}
-		);
+		string storyId = PlayerPrefs.GetString("gamePath");
+		var provider = StoryProviderManager.Provider;
 
-		// Load scene sprites
-		RM_SaveLoad.LoadSceneSpritesAsync(scene,
-			sprites => {
-				loadedSprites = sprites;
-				spritesLoaded = true;
-			},
-			error => {
-				Debug.LogError($"[GameManager] Failed to load sprites: {error}");
-				spritesLoaded = true; // Continue anyway
-			}
-		);
+		// Load scene data from provider
+		SceneData sceneData = provider.LoadScene(storyId, scene);
+		List<Sprite> loadedSprites = provider.LoadSceneSprites(storyId, scene);
 
-		// Wait for both to complete
-		while (!dataLoaded || !spritesLoaded)
-			yield return null;
-
-		if (sceneStr != null && loadedSprites != null)
+		if (sceneData != null && loadedSprites != null && loadedSprites.Count > 0)
 		{
-			// Apply loaded data
-			ApplySceneData(sceneStr);
+			// Apply loaded data using SceneData directly
+			ApplySceneDataFromModel(sceneData);
 			sceneSprites = loadedSprites;
 
-			Debug.Log($"[GameManager] WebGL: Loaded {sceneSprites.Count} sprites");
+			Debug.Log($"[GameManager] WebGL: Loaded {sceneSprites.Count} sprites for '{storyId}'");
 			sceneAnimator.baseFrame = sceneSprites[0];
 			sceneAnimator.frames = new List<Sprite>(sceneSprites);
 			sceneAnimator.frames.RemoveAt(0);
@@ -124,9 +100,46 @@ public class GameManager : MonoBehaviour {
 		}
 		else
 		{
-			Debug.LogError("[GameManager] Failed to load scene - returning to menu");
+			Debug.LogError($"[GameManager] Failed to load scene {scene} from '{storyId}' - returning to menu");
 			SceneManager.LoadScene(2);
 		}
+	}
+
+	/// <summary>
+	/// Applies scene data from SceneData model (used by WebGL path).
+	/// </summary>
+	void ApplySceneDataFromModel(SceneData data)
+	{
+		// Dialogues
+		introDial1 = data.dialogues?.intro1 ?? ".";
+		introDial2 = data.dialogues?.intro2 ?? ".";
+		introDial3 = data.dialogues?.intro3 ?? ".";
+		objDial = data.dialogues?.obj ?? ".";
+		ngpDial = data.dialogues?.ngp ?? ".";
+		fswDial = data.dialogues?.fsw ?? ".";
+
+		// Texts
+		titleText = data.texts?.title ?? "";
+		introText = data.texts?.intro ?? "";
+		objText = data.texts?.obj ?? "";
+		ngpText = data.texts?.ngp ?? "";
+		fswText = data.texts?.fsw ?? "";
+
+		// Music - set audio clips directly
+		source.clip = sm.getMusic(data.music?.introMusic ?? "i1");
+		intro.sceneMusic.clip = sm.getMusic(data.music?.sceneMusic ?? "l1");
+
+		// Voice
+		sm.pitch1 = data.voice?.pitch1 ?? 1f;
+		sm.pitch2 = data.voice?.pitch2 ?? 1f;
+		sm.pitch3 = data.voice?.pitch3 ?? 1f;
+		sm.isMastico1 = data.voice?.isMastico1 ?? false;
+		sm.isMastico2 = data.voice?.isMastico2 ?? false;
+		sm.isMastico3 = data.voice?.isMastico3 ?? false;
+		sm.isZambla = data.voice?.isZambla ?? false;
+
+		// Objects (simplified - WebGL doesn't need interactive zones for now)
+		// Full object zone loading would require parsing the raw position/size strings
 	}
 
 	/// <summary>

@@ -1,19 +1,17 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// Singleton manager for accessing the current story provider.
-/// Allows easy switching between local and remote providers.
-/// Handles platform-specific initialization (WebGL uses Firebase).
+/// Handles platform-specific initialization:
+/// - WebGL: Uses ResourcesStoryProvider (embedded JSON in build)
+/// - Desktop: Uses LocalStoryProvider (StreamingAssets folder)
 /// </summary>
 public class StoryProviderManager : MonoBehaviour
 {
     private static StoryProviderManager _instance;
     private static IStoryProvider _provider;
-    private static FirebaseStoryProvider _firebaseProvider;
     private static bool _initialized = false;
-    private static bool _isInitializing = false;
 
     public static StoryProviderManager Instance => _instance;
 
@@ -28,16 +26,16 @@ public class StoryProviderManager : MonoBehaviour
     public static bool IsReady => _initialized;
 
     /// <summary>
-    /// Whether we're using Firebase (WebGL) or local storage.
+    /// Whether we're using WebGL (Resources) or local storage (StreamingAssets).
     /// </summary>
-    public static bool IsUsingFirebase
+    public static bool IsUsingWebGL
     {
         get
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             return true;
 #else
-            return _firebaseProvider != null && _provider == _firebaseProvider;
+            return _provider is ResourcesStoryProvider;
 #endif
         }
     }
@@ -53,8 +51,10 @@ public class StoryProviderManager : MonoBehaviour
             if (_provider == null)
             {
 #if UNITY_WEBGL && !UNITY_EDITOR
-                Debug.LogWarning("StoryProviderManager: Provider accessed before initialization on WebGL. Call Initialize() first.");
-                return null;
+                // Auto-initialize with ResourcesStoryProvider for WebGL
+                _provider = new ResourcesStoryProvider("Stories");
+                _initialized = true;
+                Debug.Log("StoryProviderManager: Auto-initialized with ResourcesStoryProvider");
 #else
                 _provider = new LocalStoryProvider();
                 _initialized = true;
@@ -65,14 +65,7 @@ public class StoryProviderManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the Firebase provider for async operations.
-    /// Returns null if not using Firebase.
-    /// </summary>
-    public static FirebaseStoryProvider FirebaseProvider => _firebaseProvider;
-
-    /// <summary>
     /// Initializes the provider based on platform.
-    /// Must be called on WebGL before using the provider.
     /// </summary>
     public static void Initialize(Action onReady = null, Action<string> onError = null)
     {
@@ -82,29 +75,25 @@ public class StoryProviderManager : MonoBehaviour
             return;
         }
 
-        if (_isInitializing)
-        {
-            Debug.LogWarning("StoryProviderManager: Already initializing");
-            return;
-        }
-
-        if (_instance == null)
-        {
-            Debug.LogError("StoryProviderManager: No instance found. Add StoryProviderManager to a GameObject in your scene.");
-            onError?.Invoke("StoryProviderManager instance not found");
-            return;
-        }
-
-        _isInitializing = true;
-
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // WebGL: Use Firebase
-        _instance.InitializeFirebase(onReady, onError);
+        // WebGL: Use Resources (embedded JSON)
+        try
+        {
+            _provider = new ResourcesStoryProvider("Stories");
+            _initialized = true;
+            Debug.Log("StoryProviderManager: Initialized with ResourcesStoryProvider");
+            onReady?.Invoke();
+            OnProviderReady?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"StoryProviderManager: Failed to initialize: {e.Message}");
+            onError?.Invoke(e.Message);
+        }
 #else
         // Desktop/Editor: Use local storage
         _provider = new LocalStoryProvider();
         _initialized = true;
-        _isInitializing = false;
         Debug.Log("StoryProviderManager: Initialized with LocalStoryProvider");
         onReady?.Invoke();
         OnProviderReady?.Invoke();
@@ -112,53 +101,23 @@ public class StoryProviderManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Forces Firebase provider even on desktop (for testing).
+    /// Forces Resources provider even on desktop (for testing).
     /// </summary>
-    public static void InitializeWithFirebase(Action onReady = null, Action<string> onError = null)
+    public static void InitializeWithResources(Action onReady = null, Action<string> onError = null)
     {
-        if (_instance == null)
+        try
         {
-            Debug.LogError("StoryProviderManager: No instance found");
-            onError?.Invoke("StoryProviderManager instance not found");
-            return;
+            _provider = new ResourcesStoryProvider("Stories");
+            _initialized = true;
+            Debug.Log("StoryProviderManager: Initialized with ResourcesStoryProvider (forced)");
+            onReady?.Invoke();
+            OnProviderReady?.Invoke();
         }
-
-        _isInitializing = true;
-        _instance.InitializeFirebase(onReady, onError);
-    }
-
-    private void InitializeFirebase(Action onReady, Action<string> onError)
-    {
-        Debug.Log("[StoryProviderManager] InitializeFirebase() called");
-        Debug.Log($"[StoryProviderManager] Instance is: {(_instance != null ? "valid" : "NULL")}");
-        Debug.Log($"[StoryProviderManager] Coroutine runner (this): {(this != null ? this.name : "NULL")}");
-
-        _firebaseProvider = new FirebaseStoryProvider(this);
-        _provider = _firebaseProvider;
-
-        Debug.Log("[StoryProviderManager] FirebaseStoryProvider created, calling LoadStoriesAsync...");
-
-        // Load stories list to verify connection works
-        _firebaseProvider.LoadStoriesAsync(
-            stories =>
-            {
-                _initialized = true;
-                _isInitializing = false;
-                Debug.Log($"[StoryProviderManager] SUCCESS - Firebase initialized, found {stories.Count} stories");
-                foreach (var story in stories)
-                {
-                    Debug.Log($"[StoryProviderManager]   - Story: {story.id} = {story.title} ({story.sceneCount} scenes)");
-                }
-                onReady?.Invoke();
-                OnProviderReady?.Invoke();
-            },
-            error =>
-            {
-                _isInitializing = false;
-                Debug.LogError($"[StoryProviderManager] FAILED - Firebase initialization error: {error}");
-                onError?.Invoke(error);
-            }
-        );
+        catch (Exception e)
+        {
+            Debug.LogError($"StoryProviderManager: Failed to initialize: {e.Message}");
+            onError?.Invoke(e.Message);
+        }
     }
 
     /// <summary>
@@ -177,7 +136,6 @@ public class StoryProviderManager : MonoBehaviour
     public static void ResetToLocal()
     {
         _provider = new LocalStoryProvider();
-        _firebaseProvider = null;
         _initialized = true;
         Debug.Log("StoryProviderManager: Reset to LocalStoryProvider");
     }
@@ -192,8 +150,5 @@ public class StoryProviderManager : MonoBehaviour
 
         _instance = this;
         DontDestroyOnLoad(gameObject);
-
-        // Auto-initialize on Awake (can be disabled if you want manual control)
-        // Initialize();
     }
 }

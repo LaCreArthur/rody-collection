@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Rody Collection** is a Unity 6 (6000.3.2f1) recreation of classic Atari ST point-and-click adventure games with a built-in story editor. The game supports dual platforms: desktop (local storage) and WebGL (Firebase backend).
+**Rody Collection** is a Unity 6 (6000.3.2f1) recreation of classic Atari ST point-and-click adventure games with a built-in story editor. The game supports dual platforms: desktop (local storage) and WebGL (embedded Resources).
 
 **Live URL**: https://lacrearthur.github.io/rody-collection/
 
@@ -21,13 +21,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Deploy to GitHub Pages (CI builds on push to master)
 git push origin master  # Triggers .github/workflows/deploy-pages.yml
-
-# Deploy Firebase rules
-firebase deploy --only firestore:rules
-firebase deploy --only storage:rules
-
-# Update Firebase Storage CORS (requires gcloud CLI)
-gsutil cors set cors.json gs://rody-maker.firebasestorage.app
 ```
 
 **⚠️ CI Note**: Do NOT push to `master` on every commit. CI builds WebGL on each push to master. Batch commits locally and push when ready for a build.
@@ -45,7 +38,7 @@ Note: DOTween is now included in the repo for CI builds.
 | Type | Location | Provider |
 |------|----------|----------|
 | Official Stories (Desktop) | `StreamingAssets/` | `LocalStoryProvider` |
-| Official Stories (WebGL) | Firebase | `FirebaseStoryProvider` |
+| Official Stories (WebGL) | `Resources/Stories/` | `ResourcesStoryProvider` |
 | User Stories (Desktop) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
 | JSON Stories (`.rody.json`) | Any location | `JsonStoryProvider` |
 
@@ -80,7 +73,6 @@ Scene 6: RM_Main (Level Editor)
 | `Assets/Scripts/Models/SceneData.cs` | Typed scene data model |
 | `Assets/Scripts/Utils/PathManager.cs` | Cross-platform path handling |
 | `Assets/Scripts/SoundManager.cs` | Phoneme TTS and audio |
-| `Assets/Editor/FirebaseMigrationTool.cs` | Upload stories to Firebase Storage |
 | `Assets/Editor/StoryExportTool.cs` | Batch export stories to JSON |
 
 ### Phoneme Text-to-Speech

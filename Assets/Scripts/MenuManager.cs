@@ -82,31 +82,21 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	IEnumerator InitWebGL() {
-		// Load scene thumbnails asynchronously from Firebase
-		int loadedCount = 0;
-		int totalToLoad = 16;
+		// Load scene thumbnails from Resources (synchronous)
+		string storyId = PathManager.GamePath;
+		var provider = StoryProviderManager.Provider;
 
 		for (int i = 0; i < 16; i++) {
 			int sceneIndex = i + 1;
 			GameObject image = scenes[i].transform.GetChild(0).gameObject;
 			string spriteName = $"{sceneIndex}.1.png";
 
-			RM_SaveLoad.LoadSpriteAsync(spriteName,
-				sprite => {
-					if (sprite != null && image != null)
-						image.GetComponent<Image>().sprite = sprite;
-					loadedCount++;
-				},
-				error => {
-					Debug.LogWarning($"[MenuManager] Failed to load thumbnail {spriteName}: {error}");
-					loadedCount++;
-				}
-			);
+			var sprite = provider.LoadSprite(storyId, spriteName, 320, 130);
+			if (sprite != null && image != null)
+				image.GetComponent<Image>().sprite = sprite;
 		}
 
-		// Wait for all thumbnails to load (or fail)
-		while (loadedCount < totalToLoad)
-			yield return null;
+		yield return null; // Allow frame to render
 
 		// Animate buttons appearing
 		foreach (GameObject button in buttons) {

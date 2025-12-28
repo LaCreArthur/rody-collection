@@ -73,6 +73,8 @@ public class Title : MonoBehaviour {
 
 	IEnumerator InitWebGL()
 	{
+		yield return null; // Yield once to let UI update
+
 		if (isTitle) {
 			// gamePath is already set by RA_ScrollView (it's the story ID)
 			string storyId = PlayerPrefs.GetString("gamePath");
@@ -94,38 +96,39 @@ public class Title : MonoBehaviour {
 				PlayerPrefs.SetInt("scenesCount", 10);
 			}
 
-			// Load title image asynchronously
-			bool spriteLoaded = false;
-			RM_SaveLoad.LoadSpriteAsync("0.png",
-				sprite => {
-					if (sprite != null && titleImage != null)
-						titleImage.sprite = sprite;
-					spriteLoaded = true;
-				},
-				error => {
-					Debug.LogWarning($"[Title] WebGL: Failed to load title sprite: {error}");
-					spriteLoaded = true;
-				}
-			);
-
-			while (!spriteLoaded)
-				yield return null;
+			// Load title image synchronously from provider
+			var titleSprite = provider.LoadSprite(storyId, "0.png", 320, 200);
+			if (titleSprite != null && titleImage != null)
+			{
+				titleImage.sprite = titleSprite;
+			}
+			else
+			{
+				Debug.LogWarning($"[Title] WebGL: Failed to load title sprite for '{storyId}'");
+			}
 
 			Cursor.visible = false;
 		}
 		else {
 			Cursor.visible = true;
 			Debug.Log("CREDITS ROLL (WebGL)");
-			// Load credits asynchronously
-			RM_SaveLoad.LoadCreditsAsync(
-				(title, credits) => {
-					var titleText = GameObject.Find("Title")?.GetComponent<Text>();
-					var creditsText = GameObject.Find("Credits")?.GetComponent<Text>();
-					if (titleText != null) titleText.text = title;
-					if (creditsText != null) creditsText.text = credits;
-				},
-				error => Debug.LogWarning($"[Title] WebGL: Failed to load credits: {error}")
-			);
+
+			// Load credits synchronously from provider
+			string storyId = PlayerPrefs.GetString("gamePath");
+			var provider = StoryProviderManager.Provider;
+			string creditsText = provider.LoadCredits(storyId);
+
+			var titleTextComponent = GameObject.Find("Title")?.GetComponent<UnityEngine.UI.Text>();
+			var creditsTextComponent = GameObject.Find("Credits")?.GetComponent<UnityEngine.UI.Text>();
+
+			if (!string.IsNullOrEmpty(creditsText))
+			{
+				string[] lines = creditsText.Split('\n');
+				if (titleTextComponent != null && lines.Length > 0)
+					titleTextComponent.text = lines[0];
+				if (creditsTextComponent != null && lines.Length > 1)
+					creditsTextComponent.text = string.Join("\n", lines, 1, lines.Length - 1);
+			}
 		}
 	}
 

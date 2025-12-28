@@ -17,6 +17,43 @@ public class StoryExportTool : EditorWindow
         GetWindow<StoryExportTool>("Story Export Tool");
     }
 
+    [MenuItem("Tools/Rody/Export All Stories Now")]
+    public static void ExportAllStoriesNow()
+    {
+        string outputPath = Path.Combine(Application.dataPath, "..", "static", "Stories");
+
+        if (!Directory.Exists(outputPath))
+        {
+            Directory.CreateDirectory(outputPath);
+        }
+
+        string[] storyFolders = Directory.GetDirectories(Application.streamingAssetsPath);
+        int successCount = 0;
+
+        foreach (var folder in storyFolders)
+        {
+            string folderName = Path.GetFileName(folder);
+
+            // Skip invalid or template folders
+            if (folderName == "Rody0") continue;
+            if (!File.Exists(Path.Combine(folder, "levels.rody"))) continue;
+
+            string outputFile = Path.Combine(outputPath, StoryExporter.GetExportFileName(folder));
+
+            if (StoryExporter.ExportToFile(folder, outputFile))
+            {
+                Debug.Log($"[StoryExportTool] Exported: {folderName} -> {outputFile}");
+                successCount++;
+            }
+            else
+            {
+                Debug.LogError($"[StoryExportTool] Failed: {folderName}");
+            }
+        }
+
+        Debug.Log($"[StoryExportTool] Export complete! {successCount} stories exported to {outputPath}");
+    }
+
     void OnEnable()
     {
         outputPath = Path.Combine(Application.dataPath, "ExportedStories");

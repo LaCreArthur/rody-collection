@@ -224,17 +224,9 @@ public class RM_MainLayout : RM_Layout
 #if UNITY_WEBGL && !UNITY_EDITOR
     private void OnSaveClickAsync()
     {
-        Debug.Log("[RM_MainLayout] Starting async save to Firebase...");
-
-        RM_SaveLoad.SaveGameAsync(gm,
-            () => {
-                Debug.Log("[RM_MainLayout] Save completed successfully!");
-                gm.Reset();
-            },
-            error => {
-                Debug.LogError($"[RM_MainLayout] Save failed: {error}");
-            }
-        );
+        // WebGL with embedded Resources is read-only for official stories
+        // This shouldn't be reached as the editor is desktop-only
+        Debug.LogWarning("[RM_MainLayout] Save not supported on WebGL - stories are read-only");
     }
 #endif
 

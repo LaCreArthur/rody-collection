@@ -16,9 +16,9 @@ This feature enables players to create, edit, save, and share their own stories 
 
 | Type | Location | Provider |
 |------|----------|----------|
-| Official Stories | `StreamingAssets/` | `LocalStoryProvider` |
-| User Stories | `persistentDataPath/UserStories/` | `UserStoryProvider` |
-| WebGL Official | Firebase | `FirebaseStoryProvider` |
+| Official Stories (Desktop) | `StreamingAssets/` | `LocalStoryProvider` |
+| Official Stories (WebGL) | `Resources/Stories/` | `ResourcesStoryProvider` |
+| User Stories (Desktop) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
 
 ### Key Design Decisions
 

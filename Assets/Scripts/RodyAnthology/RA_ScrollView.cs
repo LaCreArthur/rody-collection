@@ -50,7 +50,7 @@ public class RA_ScrollView : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// WebGL initialization - waits for Firebase, then loads from provider.
+	/// WebGL initialization - waits for provider, then loads from static JSON.
 	/// </summary>
 	IEnumerator InitWebGL()
 	{
@@ -88,7 +88,7 @@ public class RA_ScrollView : MonoBehaviour {
 
 	/// <summary>
 	/// Initialize from StoryProvider (used on WebGL).
-	/// No file system access - gets stories from Firebase.
+	/// No file system access - gets stories from static JSON files.
 	/// </summary>
 	void InitFromProvider()
 	{
@@ -112,8 +112,8 @@ public class RA_ScrollView : MonoBehaviour {
 			slot.name = story.id;
 			slot.GetComponentInChildren<Text>().text = story.title;
 
-			// Load cover async on WebGL
-			LoadCoverAsync(slot, story.id);
+			// Load cover from Resources on WebGL
+			LoadCover(slot, story.id);
 
 			slots.Add(slot);
 			slotIndex++;
@@ -153,21 +153,17 @@ public class RA_ScrollView : MonoBehaviour {
 		return ordered;
 	}
 
-	void LoadCoverAsync(GameObject slot, string storyId)
+	void LoadCover(GameObject slot, string storyId)
 	{
-		var provider = StoryProviderManager.FirebaseProvider;
+		var provider = StoryProviderManager.Provider;
 		if (provider != null)
 		{
-			provider.LoadSpriteAsync(storyId, "cover.png",
-				sprite => {
-					if (slot != null && sprite != null)
-					{
-						var img = slot.transform.GetChild(0).GetComponent<Image>();
-						if (img != null) img.sprite = sprite;
-					}
-				},
-				error => Debug.LogWarning($"[RA_ScrollView] Failed to load cover for {storyId}: {error}")
-			);
+			var sprite = provider.LoadSprite(storyId, "cover.png", 320, 240);
+			if (slot != null && sprite != null)
+			{
+				var img = slot.transform.GetChild(0).GetComponent<Image>();
+				if (img != null) img.sprite = sprite;
+			}
 		}
 	}
 
@@ -631,7 +627,7 @@ public class RA_ScrollView : MonoBehaviour {
 
 	string getGamePath(int index) {
 #if UNITY_WEBGL && !UNITY_EDITOR
-		// On WebGL, just return the story ID (slot name) - Firebase provider uses IDs
+		// On WebGL, just return the story ID (slot name) - WebGL provider uses IDs
 		return content.transform.GetChild(index).name;
 #else
 		return System.IO.Path.Combine(Application.streamingAssetsPath, content.transform.GetChild(index).name);

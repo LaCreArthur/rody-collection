@@ -4,6 +4,70 @@
 
 ---
 
+## 2025-12-28: Firebase Removal & Static JSON Migration
+
+### Goal
+Remove Firebase dependency entirely. WebGL builds now use embedded JSON in Resources folder instead of HTTP requests.
+
+### Why?
+- Firebase billing account closed (412 Precondition Failed errors)
+- Static JSON is simpler - no CORS, no HTTP, no async complexity
+- Official stories are read-only anyway - no need for cloud storage
+
+### Architecture Change
+
+| Before | After |
+|--------|-------|
+| WebGL: Firebase Storage + Firestore | WebGL: Resources folder (embedded in build) |
+| HTTP requests for each story/sprite | Synchronous Resources.Load |
+| CORS configuration required | No CORS needed |
+| ~14MB downloaded at runtime | ~14MB added to build size |
+
+### New Provider: ResourcesStoryProvider
+
+```csharp
+// Stories in Assets/Resources/Stories/*.rody.json
+var provider = new ResourcesStoryProvider("Stories");
+var stories = provider.GetStories();  // Synchronous!
+var sprite = provider.LoadSprite(storyId, "cover.png", 320, 240);
+```
+
+- Loads `index.json` listing all stories
+- Parses each `.rody.json` on init
+- Sprites decoded from base64 on demand
+- No async callbacks needed
+
+### Files Deleted
+| File | Reason |
+|------|--------|
+| `FirebaseStoryProvider.cs` | No longer needed |
+| `FirebaseConfig.cs` | No longer needed |
+| `FirebaseMigrationTool.cs` | No longer needed |
+| `WebJsonStoryProvider.cs` | Replaced by ResourcesStoryProvider |
+| `firebase.json` | No Firebase |
+| `.firebaserc` | No Firebase |
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `ResourcesStoryProvider.cs` | IStoryProvider loading from Resources folder |
+| `Assets/Resources/Stories/*.rody.json` | 7 official stories + index.json |
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `StoryProviderManager.cs` | Uses ResourcesStoryProvider for WebGL, removed async init |
+| `RA_ScrollView.cs` | `LoadCover()` now synchronous |
+| `RM_SaveLoad.cs` | Removed dead Firebase async methods |
+| `deploy-pages.yml` | Removed "Copy Stories" step (embedded in build) |
+
+### Remaining Work
+- [x] Update any callers of `LoadCoverAsync` to use `LoadCover` (done - `LoadCover` is synchronous)
+- [ ] Test WebGL build with embedded stories
+- [x] Update CLAUDE.md Firebase references (done - table shows ResourcesStoryProvider)
+
+---
+
 ## 2025-12-27: New Scene Creation Fixes
 
 ### Bugs Fixed

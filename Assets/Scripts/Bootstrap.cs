@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Bootstraps the game by initializing the story provider.
-/// On WebGL, waits for Firebase to be ready before proceeding.
+/// On WebGL, loads stories from Resources folder.
 /// Attach this to a GameObject in the first scene (Scene 0).
 /// </summary>
 public class Bootstrap : MonoBehaviour
