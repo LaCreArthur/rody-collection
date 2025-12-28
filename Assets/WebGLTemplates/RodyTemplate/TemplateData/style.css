@@ -10,7 +10,7 @@
 }
 
 :root {
-    /* Atari ST color palette - Blue & Orange */
+    /* Rody Collection color palette - matching WebGL build */
     --bg-dark: #1a1a1e;
     --monitor-bezel: #8a8a8e;
     --monitor-bezel-light: #a8a8ac;
@@ -21,6 +21,12 @@
     --accent-pink: #ff6b9d;
     --text: #f0e8e0;
     --text-muted: #9a9a9a;
+    /* New colors matching WebGL build */
+    --beige: #e8dcc8;
+    --beige-light: #f5efe5;
+    --salmon: #e8a090;
+    --salmon-dark: #d08878;
+    --title-blue: #5088c8;
 }
 
 body {
@@ -50,19 +56,39 @@ header h1 {
     font-family: 'Press Start 2P', cursive;
     font-size: 1.4rem;
     font-weight: 400;
-    color: var(--accent-pink);
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     letter-spacing: 2px;
     margin-bottom: 6px;
     display: inline-block;
     padding: 8px 25px;
-    border: 2px solid var(--accent-pink);
-    background: linear-gradient(180deg, rgba(255,107,157,0.1) 0%, transparent 100%);
+    background: #1a1a2e;
+    /* Beveled 3D border: blue on left/top, salmon on right/bottom */
+    border-style: solid;
+    border-width: 3px;
+    border-left-color: #4080c0;
+    border-top-color: #4080c0;
+    border-right-color: #d08070;
+    border-bottom-color: #d08070;
+}
+
+header h1 span {
+    /* Gradient: blue→white, sharp brown, salmon→light */
+    background: linear-gradient(180deg, 
+        #4080c0 0%, 
+        #4080c0 25%, 
+        #c8d8e8 55%, 
+        #805040 56%, 
+        #e8a090 80%, 
+        #f0d0c0 90%,
+        #f0d0c0 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 header .subtitle {
     font-size: 1.3rem;
-    color: var(--text-muted);
+    color: var(--beige);
     margin-top: 10px;
     letter-spacing: 1px;
 }
@@ -265,39 +291,36 @@ main {
     padding: 10px 18px;
     font-family: 'Press Start 2P', cursive;
     font-size: 0.55rem;
-    color: var(--text);
-    background: linear-gradient(180deg, 
-        var(--monitor-bezel-light) 0%, 
-        var(--monitor-bezel) 50%, 
-        var(--monitor-bezel-dark) 100%
-    );
-    border: 2px solid var(--monitor-bezel-dark);
-    border-top-color: var(--monitor-bezel-light);
-    border-left-color: var(--monitor-bezel-light);
+    color: #2a2a2e;
+    background: #a0a0a0;
+    /* 3D bevel: light top/left, dark bottom/right - thicker bottom for keyboard look */
+    border-style: solid;
+    border-top-width: 2px;
+    border-left-width: 2px;
+    border-right-width: 3px;
+    border-bottom-width: 6px;
+    border-top-color: #c8c8c8;
+    border-left-color: #c8c8c8;
+    border-bottom-color: #505050;
+    border-right-color: #505050;
     cursor: pointer;
     transition: all 0.1s;
     text-transform: uppercase;
     letter-spacing: 1px;
     border-radius: 4px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
 }
 
 .btn:hover {
-    background: linear-gradient(180deg, 
-        #b8b8bc 0%, 
-        var(--monitor-bezel-light) 50%, 
-        var(--monitor-bezel) 100%
-    );
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
+    background: #b8b8b8;
 }
 
 .btn:active {
+    /* Invert bevel when pressed */
+    border-top-color: #505050;
+    border-left-color: #505050;
+    border-bottom-color: #c8c8c8;
+    border-right-color: #c8c8c8;
     transform: translateY(1px);
-    border-top-color: var(--monitor-bezel-dark);
-    border-left-color: var(--monitor-bezel-dark);
-    border-bottom-color: var(--monitor-bezel-light);
-    border-right-color: var(--monitor-bezel-light);
 }
 
 .btn .icon {
@@ -311,7 +334,13 @@ main {
 /* Info box */
 .info-box {
     background: var(--monitor-inner);
-    border: 2px solid var(--monitor-bezel-dark);
+    /* Beveled 3D border: blue on left/top, salmon on right/bottom */
+    border-style: solid;
+    border-width: 3px;
+    border-left-color: #4080c0;
+    border-top-color: #4080c0;
+    border-right-color: #d08070;
+    border-bottom-color: #d08070;
     border-radius: 6px;
     padding: 15px 25px;
     max-width: 600px;
@@ -319,16 +348,7 @@ main {
     position: relative;
 }
 
-/* Orange accent bar at top */
-.info-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 20px;
-    right: 20px;
-    height: 2px;
-    background: var(--accent-orange);
-}
+
 
 .info-box h2 {
     font-family: 'Press Start 2P', cursive;
