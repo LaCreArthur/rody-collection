@@ -23,6 +23,7 @@ public class RM_DialLayout : RM_Layout {
 		SetLayouts(gm.dialoguesLayout, gm.introTextObj);
 		UnsetLayouts(gm.dialLayout);
 
+		// Write back pitch and phonems
 		switch (activeDial)
         {
             case 1:
@@ -39,6 +40,9 @@ public class RM_DialLayout : RM_Layout {
                 break;
             default: break;
         }
+
+		// Write back dialog display text to introText
+		SetDialText();
 
 		Debug.Log("new pitch is : " + pitch);
 		Debug.Log("new introDial is : " + phonems);
@@ -102,7 +106,7 @@ public class RM_DialLayout : RM_Layout {
             case 1:
                 if (dials.Length > 2) textInputField.text = dials[1];
                 break;
-            case 2: 
+            case 2:
                 if (dials.Length > 4) textInputField.text = dials[3];
                 break;
             case 3:
@@ -110,5 +114,21 @@ public class RM_DialLayout : RM_Layout {
                 break;
             default: break;
         }
+	}
+
+	/// <summary>
+	/// Writes back the dialog display text from textInputField to gm.introText.
+	/// Format: text"dialog1"text"dialog2"text"dialog3"text
+	/// </summary>
+	private void SetDialText() {
+		string[] dials = gm.introText.Split('"');
+		if (dials.Length < 2) return; // No dialogs to update
+
+		int dialIndex = (activeDial * 2) - 1; // 1->1, 2->3, 3->5
+		if (dialIndex < dials.Length) {
+			dials[dialIndex] = textInputField.text;
+			gm.introText = string.Join("\"", dials);
+			Debug.Log("Saved introText dialog " + activeDial + ": " + textInputField.text);
+		}
 	}
 }

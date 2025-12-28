@@ -26,20 +26,27 @@ public class RM_ObjLayout : RM_Layout {
 	public void RM_ReturnClick(){
 		Debug.Log("ObjReturn button clicked");
 		SetLayouts(gm.objectsLayout,gm.objTextObj, gm.introTextObj);
-		// TODO: unset near zones 
+		// TODO: unset near zones
 		UnsetLayouts(gm.objLayout, gm.objTextObj);
 		RM_SaveLoad.SetActiveZones(zonesNear, zones, false);
 
+		// Write back phonems and text to GameManager
 		switch (activeObj)
         {
             case 1:
                 gm.objDial = phonems;
+                gm.objText = objInputField.text;
+                Debug.Log("Saved objText: " + gm.objText);
                 break;
             case 2:
                 gm.ngpDial = phonems;
+                gm.ngpText = objInputField.text;
+                Debug.Log("Saved ngpText: " + gm.ngpText);
                 break;
             case 3:
                 gm.fswDial = phonems;
+                gm.fswText = objInputField.text;
+                Debug.Log("Saved fswText: " + gm.fswText);
                 break;
             default: break;
         }

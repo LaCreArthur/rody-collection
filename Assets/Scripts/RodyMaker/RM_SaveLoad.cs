@@ -1054,10 +1054,10 @@ public static class RM_SaveLoad {
         string[] sizeList = sizeStr.Split(';');
 
         int zonesCount = posList.Length;
-        Debug.Log("(readObjects) posList length is : " + zonesCount);
+        // Debug.Log("(readObjects) posList length is : " + zonesCount);
         
         if (posList.Length != sizeList.Length) {
-            Debug.Log("(readObjects) posList not same length as sizeList !");
+            // Debug.Log("(readObjects) posList not same length as sizeList !");
             return null;
         }
 
@@ -1079,8 +1079,8 @@ public static class RM_SaveLoad {
             
             obj.name = name+i;
              
-            Debug.Log("(readObjects) obj name : " + obj.name);
-            Debug.Log("(readObjects) parent name : " + parent.name);
+            // Debug.Log("(readObjects) obj name : " + obj.name);
+            // Debug.Log("(readObjects) parent name : " + parent.name);
 
             objects.Add(LoadObject(obj, posList[i], sizeList[i]));
         }

@@ -27,6 +27,11 @@ public class RM_IntroLayout : RM_Layout {
 
 	public void RM_ReturnClick(){
 		Debug.Log("IntroReturn button clicked");
+
+		// Write back title to GameManager
+		gm.titleText = titleInputField.text;
+		Debug.Log("Saved titleText: " + gm.titleText);
+
 		SetLayouts(gm.mainLayout);
 		UnsetLayouts(gm.introTextObj, gm.title, gm.introLayout);
 	}
