@@ -81,18 +81,22 @@ public class PhonemeDialogues
 public class DisplayTexts
 {
     public string title = "";       // Scene title
-    public string intro = "";       // Introductory text
+    public string intro1 = "";      // First intro dialog text
+    public string intro2 = "";      // Second intro dialog text (optional)
+    public string intro3 = "";      // Third intro dialog text (optional)
     public string obj = "";         // Object to find description
     public string ngp = "";         // NGP object description
     public string fsw = "";         // FSW object description
-    
+
     /// <summary>
     /// Default glitch texts used when loading fails.
     /// </summary>
     public static DisplayTexts Glitch => new DisplayTexts
     {
         title = "Glitch",
-        intro = "intro glitch",
+        intro1 = "intro glitch",
+        intro2 = "",
+        intro3 = "",
         obj = "object glitch",
         ngp = "ngp object glitch",
         fsw = "fsw object glitch"

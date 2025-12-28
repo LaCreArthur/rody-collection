@@ -163,7 +163,9 @@ public static class WorkingStory
         // Add default first scene
         var defaultScene = SceneDataParser.CreateGlitchScene();
         defaultScene.texts.title = "Premier tableau";
-        defaultScene.texts.intro = "Texte d'introduction";
+        defaultScene.texts.intro1 = "Texte d'introduction";
+        defaultScene.texts.intro2 = "";
+        defaultScene.texts.intro3 = "";
 
         Current.scenes.Add(new StoryExporter.ExportedScene
         {
@@ -323,7 +325,9 @@ public static class WorkingStory
         // Create new scene data
         var newScene = new SceneData();
         newScene.texts.title = "Nouveau titre";
-        newScene.texts.intro = "Nouveau texte d'introduction";
+        newScene.texts.intro1 = "Nouveau texte d'introduction";
+        newScene.texts.intro2 = "";
+        newScene.texts.intro3 = "";
         newScene.texts.obj = ".";
         newScene.texts.ngp = ".";
         newScene.texts.fsw = ".";

@@ -29,7 +29,7 @@ public class RM_WarningLayout : RM_Layout {
 	}
 
 	public void OnConfirmClick(){
-		Debug.Log($"[RM_WarningLayout] OnConfirmClick - targetScene: {targetScene}, currentScene: {gm.currentScene}, scenesCount: {PlayerPrefs.GetInt("scenesCount")}");
+		Debug.Log($"[RM_WarningLayout] OnConfirmClick - targetScene: {targetScene}, currentScene: {gm.currentScene}, scenesCount: {WorkingStory.SceneCount}");
 		Debug.Log($"[RM_WarningLayout] Modes - Test: {isTestMode}, Delete: {isDeleteMode}, Revert: {isRevertMode}");
 
 		if (isTestMode){
@@ -57,7 +57,7 @@ public class RM_WarningLayout : RM_Layout {
 			}
 			Debug.Log($"[RM_WarningLayout] Deleting scene {gm.currentScene}");
 			ResetFlags();
-			if (gm.currentScene <= PlayerPrefs.GetInt("scenesCount"))
+			if (gm.currentScene <= WorkingStory.SceneCount)
 				RM_SaveLoad.DeleteScene(gm.currentScene);
 			else
 				Debug.Log("[RM_WarningLayout] Cancelled new scene creation (scene > scenesCount)");
@@ -76,16 +76,14 @@ public class RM_WarningLayout : RM_Layout {
 		// Navigate to the target scene
 		Debug.Log($"[RM_WarningLayout] Navigating from scene {gm.currentScene} to scene {targetScene}");
 
-		// If navigating to a new scene, create it first then update scenesCount
-		int currentScenesCount = PlayerPrefs.GetInt("scenesCount");
-		if (targetScene > currentScenesCount) {
+		// If navigating to a new scene, create it first (SceneCount updates automatically)
+		if (targetScene > WorkingStory.SceneCount) {
 			// For JSON stories, create the scene entry with template data
 			RM_SaveLoad.CreateNewScene(targetScene);
-			PlayerPrefs.SetInt("scenesCount", targetScene);
-			Debug.Log($"[RM_WarningLayout] New scene created, scenesCount updated to {targetScene}");
+			Debug.Log($"[RM_WarningLayout] New scene created, SceneCount is now {WorkingStory.SceneCount}");
 		}
 
-		PlayerPrefs.SetInt("currentScene", targetScene);
+		WorkingStory.CurrentSceneIndex = targetScene;
 		gm.currentScene = targetScene;
 		gm.Reset();
 		CloseDialog();

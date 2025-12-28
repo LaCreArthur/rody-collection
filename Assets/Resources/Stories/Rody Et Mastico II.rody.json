@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.4813560Z",
+  "exportedAt": "2025-12-28T19:15:59.2395430Z",
   "story": {
     "id": "Rody Et Mastico II",
     "title": "RODY ET MASTICO 2",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "DANS LA MAISON DE RODY",
-          "intro": "\"Noël approche. Pas un seul sapin dans les magasins! Quel arbre allons-nous décorer?\" \"Prends ta bicyclette, Rody, et partons vers la forêt, pour voir ce qui se passe.\"",
+          "intro1": "Noël approche. Pas un seul sapin dans les magasins! Quel arbre allons-nous décorer?",
+          "intro2": "Prends ta bicyclette, Rody, et partons vers la forêt, pour voir ce qui se passe.",
+          "intro3": "",
           "obj": "Où est la bicyclette de Rody?",
           "ngp": "Une étoile est posée sur la table. La vois-tu?",
           "fsw": "Perche-moi sur le canna, plus vite que ça!"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "LE SAPIN FACE A RODY",
-          "intro": "\"Regarde devant toi, Rody. Attention, le sapin!\" ",
+          "intro1": "Regarde devant toi, Rody. Attention, le sapin!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Que regarde Rody?",
           "ngp": "Sais-tu ce qu'on appelle le dérailleur, sur la bicyclette?",
           "fsw": "Quelle partie du corps de Rody va percuter le sapin violemment ?"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "RODY ABASOURDI ET LE SAPIN PARLANT",
-          "intro": "\"Pas trop de mal? Ecoute, ce sapin parle:\" \"Trouver Gaëtan et ses amis les bûcherons. Ils doivent venir comme chaque année, choisir parmi nous les arbres pour Noël; mais ils ont disparu...\"",
+          "intro1": "Pas trop de mal? Ecoute, ce sapin parle:",
+          "intro2": "Trouver Gaëtan et ses amis les bûcherons. Ils doivent venir comme chaque année, choisir parmi nous les arbres pour Noël; mais ils ont disparu...",
+          "intro3": "",
           "obj": "Quel chemin Rody va-t-il prendre?",
           "ngp": "Quel est le plus petit des sapins?",
           "fsw": "Le sapin qui parle en désigne un autre pour les bûcherons, car il ne veut pas mourir. Trouve le condamné !"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "RODY SE DIRIGE VERS LE CAIRN",
-          "intro": "\"Allons, Rody, le temps presse. Noël approche. Le mystère doit être éclairci très vite. Suivons le chemin indiqué par ces cairns\"",
+          "intro1": "Allons, Rody, le temps presse. Noël approche. Le mystère doit être éclairci très vite. Suivons le chemin indiqué par ces cairns",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre le premier cairn que va rencontrer Rody.",
           "ngp": "Où est l'avertisseur sonor de la bicyclette de Rody?",
           "fsw": "Cet hiver est bien étrange, il y a même des Papes de Louisiane. Les vois-tu ?"
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "LE CAIRN PARLE",
-          "intro": "\"Vous êtes dans la bonne direction. Courage! Mais soyez prudents! La sorcière est redoutable! As-tu entendu, Rody? N'oublie pas que ton vélo a un bouton magique! Il te servira peut-être.\"",
+          "intro1": "Vous êtes dans la bonne direction. Courage! Mais soyez prudents! La sorcière est redoutable! As-tu entendu, Rody? N'oublie pas que ton vélo a un bouton magique! Il te servira peut-être.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est le bouton magique?",
           "ngp": "Un lapin observe Rody. Où est-il?",
           "fsw": "Le démon guête, l'as-tu remarqué ?"
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LA TRUITE SUR LE PONT",
-          "intro": "\"Remet vite cette truite dans l'eau. Elle va mourir.\"",
+          "intro1": "Remet vite cette truite dans l'eau. Elle va mourir.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre la truite à Rody.",
           "ngp": "L'une des planches du pont est prête à casser. Laquelle?",
           "fsw": "Je vois une belle pile-culée, trouve-la!"
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "RODY REMET LA TRUITE DANS LA RIVIERE",
-          "intro": "\"Merci, Rody! Tu m'as rendu un grand service. Aussi, je vais t'aider: appelle Gaëlle, la grenouille, si tu est en difficulté.\" \"Ces rencontres sont étranges... Nous devons être sur la bonne route!\"",
+          "intro1": "Merci, Rody! Tu m'as rendu un grand service. Aussi, je vais t'aider: appelle Gaëlle, la grenouille, si tu est en difficulté.",
+          "intro2": "Ces rencontres sont étranges... Nous devons être sur la bonne route!",
+          "intro3": "",
           "obj": "Gaëlle la grenouille est au bord de la rivière. La vois-tu?",
           "ngp": "Montre le catadiopre de la bicyclette?",
           "fsw": "Où penses-tu que se cache l'écureuil qui a fait chuter Rody?"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "LA STATION EN FORME D'ESCARGOT",
-          "intro": "\"Quel drôle d'escargot géant! Il ressemble à une station spatiale... Regarde, Rody. Un hélicoptère se pose sur la plate-forme. Cache-toi!\"",
+          "intro1": "Quel drôle d'escargot géant! Il ressemble à une station spatiale... Regarde, Rody. Un hélicoptère se pose sur la plate-forme. Cache-toi!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où Rody peut-il se cacher?",
           "ngp": "Aperçois-tu le cockpit de l'hélicoptère?",
           "fsw": "A quel endroit les fumées d'uranium peuvent t'elle sortir de la station?"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "L'HELICOPTERE DU PERE-NOEL",
-          "intro": "\"Serait-ce la maison du père-noël? C'est anormal. Le père-noël n'habite pas dans ce genre d'engin. Approchons...\"",
+          "intro1": "Serait-ce la maison du père-noël? C'est anormal. Le père-noël n'habite pas dans ce genre d'engin. Approchons...",
+          "intro2": "",
+          "intro3": "",
           "obj": "As-tu remarqué la barbe du père-noël?",
           "ngp": "Vois-tu le moteur qui fait tourner l'hélicoptère?",
           "fsw": "Mon dos me gratte, perche-moi sur le rotor anticouple!"
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LA PORTE OUVERTE",
-          "intro": "\"Cette porte n'est pas fermée. Entrons!\"",
+          "intro1": "Cette porte n'est pas fermée. Entrons!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est la porte par laquelle Rody peut entrer?",
           "ngp": "Vois-tu l'hélice arrière de l'hélicoptère?",
           "fsw": "As-tu remarqué le lecteur de floppy disc ?"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LA SORCIERE ET L'INTERIEUR DE LA STATION ",
-          "intro": "\"Eh! Eh! Père-noël, tu es malheureux! Moi, je m'amuse beaucoup. Regarde bien tous tes jouets. Bientôt, ils vont s'envoler dans l'espace, pour toujours. Eh! Eh! Eh! Eh!\"",
+          "intro1": "Eh! Eh! Père-noël, tu es malheureux! Moi, je m'amuse beaucoup. Regarde bien tous tes jouets. Bientôt, ils vont s'envoler dans l'espace, pour toujours. Eh! Eh! Eh! Eh!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Par quelle issue, les jouets vont-ils s'envoler dans l'espace?",
           "ngp": "La hotte du père-noël est abandonnée dans un coin. Montre-la.",
           "fsw": "Où sont les instructions du programme de la station?"
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LES JOUETS S'ENVOLENT",
-          "intro": "\"Rody, c'est le moment d'agir. Récupérons vite les jouets. Appuie sur le bouton magique de ta bicyclette.\"",
+          "intro1": "Rody, c'est le moment d'agir. Récupérons vite les jouets. Appuie sur le bouton magique de ta bicyclette.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quel est l'objet qui va permettre  à Rody de récupérer les jouets?",
           "ngp": "L'un des jouets est un camion-grue. Lequel?",
           "fsw": "Vois-tu la coupole d'observation panoramique de la station?"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "RODY RECUPERE LES JOUETS",
-          "intro": "\"Bravo, Rody, tu as réussi. Tous les jouets sont dans le sac. Maintenant, nous devons affronter la sorcière.\"",
+          "intro1": "Bravo, Rody, tu as réussi. Tous les jouets sont dans le sac. Maintenant, nous devons affronter la sorcière.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Qu'est-ce qui permet à Rody de tenir le sac?",
           "ngp": "Un jouet a été abimé. Le reconnais-tu?",
           "fsw": "J'aimerais renifler un peu de zyklon B, en vois-tu?"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "L'ESCARGOT GEANT AVANCE",
-          "intro": "\"Tu as eu les jouets mais les bûcherons et le père-noël sont en mon pouvoir. Fuyons à présent! En avant, Gaëtan!\" \"Gaëtan? Mais cet escargot est le bûcheron! Rody, souviens-toi les paroles de la truite! Appelons la grenouille Gaëlle!\"",
+          "intro1": "Tu as eu les jouets mais les bûcherons et le père-noël sont en mon pouvoir. Fuyons à présent! En avant, Gaëtan!",
+          "intro2": "Gaëtan? Mais cet escargot est le bûcheron! Rody, souviens-toi les paroles de la truite! Appelons la grenouille Gaëlle!",
+          "intro3": "",
           "obj": "Grâce à quoi, la sorcière fait-elle avancer l'escargot?",
           "ngp": "Où est Rody?",
           "fsw": "Où était posé l'hélicoptère quand l'escargot était une station?"
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "LA GRENOUILLE",
-          "intro": "\"Coa, coa, coa. Gaëtan!\"",
+          "intro1": "Coa, coa, coa. Gaëtan!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu la main droite de Gaëtan?",
           "ngp": "Gaëlle tient une baguette magique. Où est-elle?",
           "fsw": "As-tu remarqué le ciel bleu?"
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "LE PERE-NOEL EST LIBRE",
-          "intro": "\"Malheur à moi. Gaëlle, la fée! Gaëtan l'aime depuis toujours. Il fond devant elle, cet idiot! Ils n'auraient jamais dû se rencontrer. Je suis perdue. Mon plan a échoué. Ah a a ah!... Je te rends ta liberté, père-noël! Tu as gagné.\"",
+          "intro1": "Malheur à moi. Gaëlle, la fée! Gaëtan l'aime depuis toujours. Il fond devant elle, cet idiot! Ils n'auraient jamais dû se rencontrer. Je suis perdue. Mon plan a échoué. Ah a a ah!... Je te rends ta liberté, père-noël! Tu as gagné.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Avec quoi la sorcière coupe-t'elle les liens qui retiennet prisonnier le père-noël?",
           "ngp": "Où est la hache de Gaëtan?",
           "fsw": "Du sang coule des yeux de Gaëlle, montre-le."
@@ -1061,7 +1093,9 @@
         },
         "texts": {
           "title": "RODY ET LE PERE-NOEL",
-          "intro": "\"Merci, Rody! Tu as été très courageux. Je pense que les bûcherons de la forêt ont retrouvé leur forme humaine maintenant. Les arbes de Noël seront à temps dans les maisons. Au revoir. Je pars faire ma distribution de jouets!\"",
+          "intro1": "Merci, Rody! Tu as été très courageux. Je pense que les bûcherons de la forêt ont retrouvé leur forme humaine maintenant. Les arbes de Noël seront à temps dans les maisons. Au revoir. Je pars faire ma distribution de jouets!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre un des bûcherons de la forêt.",
           "ngp": "Quel est le bûcheron qu'on apercevait dans le cairn? Et celui qui était transformé en truite?",
           "fsw": "aperçois-tu la poupée de la cousine de Rody?"
@@ -1126,7 +1160,9 @@
         },
         "texts": {
           "title": "LE SAPIN DE NOEL",
-          "intro": "\"Tout est bien qui finit bien. Nous voici rentrés à la maison. Noël arrive. Et moi, je suis le plus beau des astres de Noël.\"",
+          "intro1": "Tout est bien qui finit bien. Nous voici rentrés à la maison. Noël arrive. Et moi, je suis le plus beau des astres de Noël.",
+          "intro2": "",
+          "intro3": "",
           "obj": "-",
           "ngp": "",
           "fsw": ""

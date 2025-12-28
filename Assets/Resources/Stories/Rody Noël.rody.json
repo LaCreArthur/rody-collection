@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.5535330Z",
+  "exportedAt": "2025-12-28T19:15:59.7225870Z",
   "story": {
     "id": "Rody Noël",
     "title": "RODY NOEL",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "LA LETTRE DU PERE-NOEL",
-          "intro": "\"C'est une invitation du père-noël. Prépare tes valises, Rody. Nous allons lui rendre visite\"",
+          "intro1": "C'est une invitation du père-noël. Prépare tes valises, Rody. Nous allons lui rendre visite",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre la signature du père-noël!",
           "ngp": "Où est la voiture facteur?",
           "fsw": "Vois-tu le man-spreading de l'ourson?"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "LE SAPIN DE NOEL",
-          "intro": "\"Bon voyage, Rody. Je te confie mes décorations: les boules, les guirlandes, les bougies. Elles ont un pouvoir magique.\" ",
+          "intro1": "Bon voyage, Rody. Je te confie mes décorations: les boules, les guirlandes, les bougies. Elles ont un pouvoir magique.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quelle est la plus grosse boule?",
           "ngp": "Le calendrier est à la date du 22 décembre. L'as-tu remarqué?",
           "fsw": "Aide l'ourson a tenir la queue du chat qui essaie de s'enfuire pour sa vie"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "LE CHEVAL TRANSFORMABLE",
-          "intro": "\"Ce cheval transformable est la nouvelle invention du professeur Gobino. Il va te permettre de te rendre très rapidement au pays du père-noël.\"",
+          "intro1": "Ce cheval transformable est la nouvelle invention du professeur Gobino. Il va te permettre de te rendre très rapidement au pays du père-noël.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où Rody va-t-il s'asseoir?",
           "ngp": "Montre l'écran de contrôle.",
           "fsw": "Grâce à toi, l'ourson à réussi son affaire. Vois-tu comme il est heureux?"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "LA VOIE LACTEE",
-          "intro": "\"Traversons la voie lactée. C'est un vrai labyrinthe! Nous devons trouver la porte magique... Mais attention aux éclairs. Cet orage de grêle est surprenant à cette époque de l'année!\"",
+          "intro1": "Traversons la voie lactée. C'est un vrai labyrinthe! Nous devons trouver la porte magique... Mais attention aux éclairs. Cet orage de grêle est surprenant à cette époque de l'année!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est la porte magique?",
           "ngp": "Quel chemin Rody va-t-il prendre? Montre les différentes étapes.",
           "fsw": "Trouve Rody avant qu'il ne meurt, sans scaphandre dans l'espace."
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "LA PORTE MAGIQUE",
-          "intro": "\"Nous y voilà. Les bougies du sapin vont nous servir. Elles brûlerons les liens qui tiennent cette porte fermée.\"",
+          "intro1": "Nous y voilà. Les bougies du sapin vont nous servir. Elles brûlerons les liens qui tiennent cette porte fermée.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Trouve la boite aux lettres du père-noël.",
           "ngp": "Où doit-on placer l'une des bougies?",
           "fsw": "J'ai perdu la boule, ramasse-la pour moi Rody."
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LE GENIE DES NUAGES",
-          "intro": "\"Depuis plusieurs nuits, des éclairs sillonnent le ciel et empêchent les étoiles de dormir. Mes nuages sont pleins de grêle. Le prince des orages est en colère. Qui aura le courage de l'affronter?\"",
+          "intro1": "Depuis plusieurs nuits, des éclairs sillonnent le ciel et empêchent les étoiles de dormir. Mes nuages sont pleins de grêle. Le prince des orages est en colère. Qui aura le courage de l'affronter?",
+          "intro2": "",
+          "intro3": "",
           "obj": "Grâce à quel objet, le génie fabrique-t-il ses nuages?",
           "ngp": "Un lutin est perché sur un nuage? le vois-tu?",
           "fsw": "Où est la Gaule sur cette image?"
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "L'ENTREPOT DE JOUETS",
-          "intro": "\"Nous voilà dans l'entrepôt de jouets du père-noël. Ne vois-tu rien de surprenant, Rody? Ces jouets sont difformes! Trouvons vite le père-noël. Il est sûrement à l'usine.\"",
+          "intro1": "Nous voilà dans l'entrepôt de jouets du père-noël. Ne vois-tu rien de surprenant, Rody? Ces jouets sont difformes! Trouvons vite le père-noël. Il est sûrement à l'usine.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est l'entrée de l'usine?",
           "ngp": "L'un des jouets est épargné par le malheur. Lequel?",
           "fsw": "On ne fait pas ça en public, touche le!"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "L'USINE",
-          "intro": "\"Vous voulez savoir ce qui arrive: la nuit sur les nuages, les rêves des étoiles se transforment en jouets. Mais ces orages de grêle les dérangent: voilà ce que nous trouvons dans les nuages...\"",
+          "intro1": "Vous voulez savoir ce qui arrive: la nuit sur les nuages, les rêves des étoiles se transforment en jouets. Mais ces orages de grêle les dérangent: voilà ce que nous trouvons dans les nuages...",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre le tapis roulant.",
           "ngp": "Vois-tu la chauve-souris?",
           "fsw": "Distingues-tu le nuage languissant? "
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "LE PERE-NOEL",
-          "intro": "\"Je suis malheureux. Ma distribution de jouets a lieu demain soir. J'aurai honte de les offrir dans cet état. Oh! la! la! Que faire? Seule, la princesse des neiges peut peut-être tout arranger.\"",
+          "intro1": "Je suis malheureux. Ma distribution de jouets a lieu demain soir. J'aurai honte de les offrir dans cet état. Oh! la! la! Que faire? Seule, la princesse des neiges peut peut-être tout arranger.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Que prend le père-noël pour sécher ses larmes?",
           "ngp": "As-tu remarqué la souris?",
           "fsw": "Montre-moi l'ourson dans ses joyeux ébats."
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LE CHEVAL-FUSEE",
-          "intro": "\"Sur l'écran de contrôle, je vois le trône de la princesse des neiges. Il est vide. Elle semble partie très loin dans l'univers. Ton cheval transformé en fusée t'emmènera vite jusqu'à elle.\"\t",
+          "intro1": "Sur l'écran de contrôle, je vois le trône de la princesse des neiges. Il est vide. Elle semble partie très loin dans l'univers. Ton cheval transformé en fusée t'emmènera vite jusqu'à elle.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est l'entrée de la fusée?",
           "ngp": "Montre l'une des parties du cheval qui n'est pas encore transformée.",
           "fsw": "As-tu remarqué que le prochain a se transformer n'est pas rassuré!"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LA PRINCESSE DES NEIGES ",
-          "intro": "\"Au secours! J'entends la musique du monstre de l'hiver. Je dois donc rentrer très vite. Mais mon cygne est blessé. Il a heurté une étoile filante. Aidez-moi!\"",
+          "intro1": "Au secours! J'entends la musique du monstre de l'hiver. Je dois donc rentrer très vite. Mais mon cygne est blessé. Il a heurté une étoile filante. Aidez-moi!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où le cygne est-il blessé?",
           "ngp": "Pour fabriquer la neige, la princesse doit jouer de la flûte. Vois-tu cet instrument?",
           "fsw": "Profite du chahut pour subtiliser le sac à main Rody!"
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LE SAUVETAGE DE LA PRINCESSE",
-          "intro": "\"Ces guirlandes sont magiques. Elles vont nous permettre de tirer le cygne\" \"Vous dites que le prince des orages emplit les nuages de grêle. Passons par son domaine. L'entrée est derrière l'étoile polaire\"",
+          "intro1": "Ces guirlandes sont magiques. Elles vont nous permettre de tirer le cygne",
+          "intro2": "Vous dites que le prince des orages emplit les nuages de grêle. Passons par son domaine. L'entrée est derrière l'étoile polaire",
+          "intro3": "",
           "obj": "Où étaient rangées les guirlandes?",
           "ngp": "Où est l'étoile polaire?",
           "fsw": "Attrape un peu de sang de l'étoile filante, Rody. Ca vaut un bon prix!"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "LE PRINCE DES ORAGES",
-          "intro": "\"Le monstre de l'hiver a joué si fort qu'il m'a réveillé. Maintenant, je suis en colère. Je n'arrive plus à me rendormir.\" \"C'était pour m'appeler. J'étais retenue quelquepart dans l'univers laissez-moi former ma neige maintenant.\"",
+          "intro1": "Le monstre de l'hiver a joué si fort qu'il m'a réveillé. Maintenant, je suis en colère. Je n'arrive plus à me rendormir.",
+          "intro2": "C'était pour m'appeler. J'étais retenue quelquepart dans l'univers laissez-moi former ma neige maintenant.",
+          "intro3": "",
           "obj": "D'où sortent les grêlons?",
           "ngp": "Vois-tu l'épée du prince?",
           "fsw": "La princesse a de larges épaules. As-tu vu sa bourse?"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "LA POURDRE DE SOMMEIL",
-          "intro": "\"Nous devons calmer le prince. Cache les boules magiques du sapin dans ce nuage, Rody. Elles vont y répandre de la pourdre de sommeil. Vite, le prince va bientôt l'attraper...\"",
+          "intro1": "Nous devons calmer le prince. Cache les boules magiques du sapin dans ce nuage, Rody. Elles vont y répandre de la pourdre de sommeil. Vite, le prince va bientôt l'attraper...",
+          "intro2": "",
+          "intro3": "",
           "obj": "Dans quel nuage, Rody va-t-il mettre les boules magiques?",
           "ngp": "Montre le doigt du prince qui s'appelle l'auriculaire?",
           "fsw": "Vois-tu le rond? Oui? Tu as perdu!"
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "LE PRINCE ENDORMI",
-          "intro": "\"Bravo Rody. Le prince est endormi. Maintenant, la princesse peut emplir les nuages de neige, tranquillement.\"",
+          "intro1": "Bravo Rody. Le prince est endormi. Maintenant, la princesse peut emplir les nuages de neige, tranquillement.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu la poudre de sommeil?",
           "ngp": "On apercoit le monstre de l'hiver. Montre-le?",
           "fsw": "As-tu remarqué que le prince à de la compagnie? Quel coquin!"
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "LE PERE-NOEL ET SES RENNES",
-          "intro": "\"Les étoiles dorment paisiblement. Les nuages se garnissent de beaux jouets. Rody, Je te remercie pour la seconde fois. Veux-tu faire un tour de traîneau? Je t'emmène avec moi distribuer les jouets de Noël.\"",
+          "intro1": "Les étoiles dorment paisiblement. Les nuages se garnissent de beaux jouets. Rody, Je te remercie pour la seconde fois. Veux-tu faire un tour de traîneau? Je t'emmène avec moi distribuer les jouets de Noël.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre les rênes que tient le père-noël.",
           "ngp": "Quel est le plus petit renne?",
           "fsw": "Qu'est ce que je fais sur l'image en même temps que Rody? Je suis dans sa tête normalement. Où suis-je?"
@@ -1061,7 +1093,9 @@
         },
         "texts": {
           "title": "MASTICO, LE CADEAU!",
-          "intro": "\"Et moi, je serai le cadeau de Noël de tous les petits Rody de la terre.\"",
+          "intro1": "Et moi, je serai le cadeau de Noël de tous les petits Rody de la terre.",
+          "intro2": "",
+          "intro3": "",
           "obj": "",
           "ngp": "",
           "fsw": ""

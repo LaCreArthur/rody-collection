@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.4659480Z",
+  "exportedAt": "2025-12-28T19:15:59.2220270Z",
   "story": {
     "id": "Rody Et Mastico A Ibiza",
     "title": "RODY A IBIZA",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "LA MARMELADE DE GRAND MERE",
-          "intro": "\"Quelle après-midi agitée, prenez un bon goûter ta cousine et toi Rody, vous l'avez bien mérité !\" \"C'est dommage, il n'y a plus de marmelade, je l'ai mangée. Prenez vite vos vélos et allez voir si mamie en a encore !\"",
+          "intro1": "Quelle après-midi agitée, prenez un bon goûter ta cousine et toi Rody, vous l'avez bien mérité !",
+          "intro2": "C'est dommage, il n'y a plus de marmelade, je l'ai mangée. Prenez vite vos vélos et allez voir si mamie en a encore !",
+          "intro3": "",
           "obj": "Le pot de marmelade de ta maman est vide Rody, l'as-tu remarqué ?",
           "ngp": "Un avion va atterrir sur la piste derrière la maison, le vois-tu ?",
           "fsw": "Ta maman possède une feuille de boucher, trouve-la !"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "QUEL DROLE DE COUCOU ...",
-          "intro": "\"La pilote est d'accord pour nous transporter rapidement chez mamie.\"  \"... ... ... ...\"  \"Génial allons voir ce qu'il se passe, Rody !\"",
+          "intro1": "La pilote est d'accord pour nous transporter rapidement chez mamie.",
+          "intro2": "... ... ... ...",
+          "intro3": "Génial allons voir ce qu'il se passe, Rody !",
           "obj": "As-tu remarqué le drôle de coucou ?",
           "ngp": "Où Rody a-t-il stationné son vélo ?",
           "fsw": "On aperçoit un saumon, perche-moi dessus !"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "CA TREMBLE DE PARTOUT !",
-          "intro": "\"C'est super, on voit déja la maison de mamie, nous y serons très vite Rody !\"  \"Quel drôle de tableau de bord, c'est quoi ce bouton ?\"  \"... ...\"",
+          "intro1": "C'est super, on voit déja la maison de mamie, nous y serons très vite Rody !",
+          "intro2": "Quel drôle de tableau de bord, c'est quoi ce bouton ?",
+          "intro3": "... ...",
           "obj": "La pilote nous a dit qu'il faut toucher un bouton, lequel ?",
           "ngp": "Ah ah ah, un parachute se cache dans l'avion, le vois-tu ?",
           "fsw": "Quelle chance Rody, un castellanus. Touche-le !"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "LE PLAGE D'IBIZA",
-          "intro": "\"L'avion allait trop vite Rody, nous avons raté la maison de mamie.\"  \"Chouette, nous allons atterrir sur une jolie plage !\"",
+          "intro1": "L'avion allait trop vite Rody, nous avons raté la maison de mamie.",
+          "intro2": "Chouette, nous allons atterrir sur une jolie plage !",
+          "intro3": "",
           "obj": "Vois-tu le ponton où Rody va se poser ?",
           "ngp": "Mais dis-moi Rody, sais-tu où est l'appendice caudal de la baleine ?",
           "fsw": "Meuh. Meuh. Trouve la \"vache\"."
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "DERRIERE LES ROCHERS",
-          "intro": "\"Salut les copains, je n'ai pas assez d'essence pour aller chez mamie. Heureusement l'Archimage aura une solution !\"\"Remercions Le Prince de la plage de nous aider Rody.\"",
+          "intro1": "Salut les copains, je n'ai pas assez d'essence pour aller chez mamie. Heureusement l'Archimage aura une solution !",
+          "intro2": "Remercions Le Prince de la plage de nous aider Rody.",
+          "intro3": "",
           "obj": "Allons chez la Reine des animaux Rody, Vois-tu la jeep du Prince de la plage ?",
           "ngp": "Attention, il y a un bol de soupe encore chaude. Touche-la !",
           "fsw": "As-tu remarqué l'estran ? Pose-moi dessus !"
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "PANNE D'ESSENCE",
-          "intro": "\"J'ai tambouriné à la porte, personne ne répond ! Que faire ?\"  \"J'entends du bruit qui vient de derrière la maison, il y a sûrement un autre chemin vers le jardin, Rody.\"",
+          "intro1": "J'ai tambouriné à la porte, personne ne répond ! Que faire ?",
+          "intro2": "J'entends du bruit qui vient de derrière la maison, il y a sûrement un autre chemin vers le jardin, Rody.",
+          "intro3": "",
           "obj": "Les rochers contre le muret seraient un moyen de l'escalader, les vois-tu ? ",
           "ngp": "Regarde la belle fontaine Rody, perche-moi sur son bec.",
           "fsw": "Un pangolin s'est caché, trouve-le vite."
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "LA PISCINE DES ANIMAUX",
-          "intro": "\"Nous sommes presque sauvés ! L'Archimage ne doit pas être loin.\"\"Joignons-nous vite à la fête, nous sommes déjà en retard ...\"",
+          "intro1": "Nous sommes presque sauvés ! L'Archimage ne doit pas être loin.",
+          "intro2": "Joignons-nous vite à la fête, nous sommes déjà en retard ...",
+          "intro3": "",
           "obj": "La Reine des animaux est là, Rody. Où est-elle ?",
           "ngp": "Il y a une très belle marquise, montre-la moi.",
           "fsw": "L'ange des rêves humides a tiré sa flèche magique. Trouve-la !"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "L'ARCHIMAGE ENDORMI",
-          "intro": "\"Rody et sa cousine ont un service à te demander cher ami, ils doivent se rendre chez mamie car ils n'ont plus de marmelade !\" \"Comment êtes-vous entrés ? Allons au temple, l'Archimage pourra utiliser sa magie.\"",
+          "intro1": "Rody et sa cousine ont un service à te demander cher ami, ils doivent se rendre chez mamie car ils n'ont plus de marmelade !",
+          "intro2": "Comment êtes-vous entrés ? Allons au temple, l'Archimage pourra utiliser sa magie.",
+          "intro3": "",
           "obj": "Vois-tu le temple ancestral ?",
           "ngp": "Notre vieil ami caméraman est venu voir ce qu'il se passe, te rappelles-tu de lui ?",
           "fsw": "Montre-moi l'ornithorynque !"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "UN SACRE RITUEL",
-          "intro": "\"Pifendo Pifendo ! Dépêchez-vous, le portail ne restera ouvert que quelques instants.\"  \"Rody, fais quelque chose vite, la marmelade, pense à ta mère.\"",
+          "intro1": "Pifendo Pifendo ! Dépêchez-vous, le portail ne restera ouvert que quelques instants.",
+          "intro2": "Rody, fais quelque chose vite, la marmelade, pense à ta mère.",
+          "intro3": "",
           "obj": "Le vent violent nous vient en aide, il va te propulser dans le portail. L'as-tu remarqué ?",
           "ngp": "On voit la villa de la Reine en contrebas, trouve-la !",
           "fsw": "Trouve le \"ba\" de pierre."
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LE TEMPLE MIS A SAC",
-          "intro": "\"Oups. Mon ami Boby tombe dans le portail à ta place Rody. J'ai une autre idée !\"  \"Tu devais te dépêcher, il faut que tu sois plus attentif la prochaine fois.\"",
+          "intro1": "Oups. Mon ami Boby tombe dans le portail à ta place Rody. J'ai une autre idée !",
+          "intro2": "Tu devais te dépêcher, il faut que tu sois plus attentif la prochaine fois.",
+          "intro3": "",
           "obj": "Le vent a été trop violent, le temple s'écroule, l'as-tu remarqué ?",
           "ngp": "Où est passée la Reine des animaux ? Je ne la vois plus.",
           "fsw": "Et l'asticot Rody, l'as-tu vu ?"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LE CASSE DU SIECLE ",
-          "intro": "\"Le temple est en ruine. Comment l'Archimage va-t-il nous aider maintenant ? Je commence à avoir très faim.\"\"La Reine des animaux est magique Rody, vous irez plus vite que tous les vents sur son dos.\"",
+          "intro1": "Le temple est en ruine. Comment l'Archimage va-t-il nous aider maintenant ? Je commence à avoir très faim.",
+          "intro2": "La Reine des animaux est magique Rody, vous irez plus vite que tous les vents sur son dos.",
+          "intro3": "",
           "obj": "Hé l'ami, vois-tu le robot que j'ai trouvé ? Tu lui touches le pied ou pas ?",
           "ngp": "Il y a un mécanisme ancien qui sert sûrement à actionner un piège, tu le vois ou pas ?",
           "fsw": "Y a le glyphe qui est tombé dans l'éboulement, faudrait voir à le retrouver quand même !"
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LE VOLCAN PAS CONTENT",
-          "intro": "\"Oh je suis rassuré, nous sommes partis à temps ! Elle en a dans le capot la Reine des animaux !\"  \"Mon ventre gronde. Rody, j'ai hâte de manger de la marmelade, celle de mamie est si bonne.\"",
+          "intro1": "Oh je suis rassuré, nous sommes partis à temps ! Elle en a dans le capot la Reine des animaux !",
+          "intro2": "Mon ventre gronde. Rody, j'ai hâte de manger de la marmelade, celle de mamie est si bonne.",
+          "intro3": "",
           "obj": "Reconnais-tu la tête du robot sur le guépard supersonic ?",
           "ngp": "On aperçoit la maison de mamie en bas, vous y êtes presque. Cherche-la.",
           "fsw": "Tu vois le tyrolien comme il s'amuse, ou pas ?"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "ENFIN CHEZ MAMIE",
-          "intro": "\"Ca y est Rody, on est devant la porte de mamie, dépêchez-vous d'entrer, la nuit commence à tomber.\" \"Attention à l'atterrissage les enfants !\"",
+          "intro1": "Ca y est Rody, on est devant la porte de mamie, dépêchez-vous d'entrer, la nuit commence à tomber.",
+          "intro2": "Attention à l'atterrissage les enfants !",
+          "intro3": "",
           "obj": "Vois-tu le vitrail de la porte de ta grand-mère, Rody ?",
           "ngp": "Super, Les amanites phalloides sont de promenade ce soir, mange-les !",
           "fsw": "Vite, attrape le petit bijou de mamie avant qu'il ne s'enfuit !"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "CE SOIR C'EST MARMELADE TOUT LE MONDE",
-          "intro": "\"Oh oh oh mon petit Billy et sa cousine sont là ! Venez, venez, j'ai de la marmelade encore chaude, ne vous brûlez pas les doigts !\"  \"Sacrée mamie, Rody ! Dommage que nous ne restions pas plus longtemps.\"",
+          "intro1": "Oh oh oh mon petit Billy et sa cousine sont là ! Venez, venez, j'ai de la marmelade encore chaude, ne vous brûlez pas les doigts !",
+          "intro2": "Sacrée mamie, Rody ! Dommage que nous ne restions pas plus longtemps.",
+          "intro3": "",
           "obj": "Il faut se dépêcher de rentrer, prends le pot de marmelade !",
           "ngp": "Mets ton doigt dans le Cephalotus follicularis.",
           "fsw": "Où est-ce que mamie a rangé sa théière ?"
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "EN BAS DES BLOCS",
-          "intro": "\"Alors que vous pouvez enfin goûter, ce n'est plus l'heure, c'est dommage ! Tiens tiens, cet endroit me rapelle quelque chose, qu'est-ce donc ?\"  \"Ce trajet m'a ouvert l'appétit, je meurs de faim !\"",
+          "intro1": "Alors que vous pouvez enfin goûter, ce n'est plus l'heure, c'est dommage ! Tiens tiens, cet endroit me rapelle quelque chose, qu'est-ce donc ?",
+          "intro2": "Ce trajet m'a ouvert l'appétit, je meurs de faim !",
+          "intro3": "",
           "obj": "Ah ah ah la maison de mamie n'était pas si loin, tu l'as remarquée ?",
           "ngp": "L'immeuble de Rody est juste là, appuis sur sa sonette !",
           "fsw": "Un \"lapin\" se cache dans le quartier, tu le vois ou pas ?"
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "PLACE AU GOUTER",
-          "intro": "\"J'ai fais un drôle de rêve Rody ... Ca alors ! Vous avez retrouvé le mari de ta maman !\"\"Je suis folle de joie, reste-t-il du pain ? Goûtons tant que c'est chaud !\"",
+          "intro1": "J'ai fais un drôle de rêve Rody ... Ca alors ! Vous avez retrouvé le mari de ta maman !",
+          "intro2": "Je suis folle de joie, reste-t-il du pain ? Goûtons tant que c'est chaud !",
+          "intro3": "",
           "obj": "Vois-tu la marmelade de ta grand-mère, Rody ?",
           "ngp": "Sers-t'en Rody ! Mais où est rangée la cuillère ?",
           "fsw": "As-tu remarqué quelque chose de bizarre ? On dirait que l'on t'observe ... Sais-tu d'où ça vient ?"
@@ -1061,7 +1093,9 @@
         },
         "texts": {
           "title": "MARMELASTICO",
-          "intro": "\"A moi les goûters toute la journée, maintenant que je connais l'ile enchantée ! Hé hé hé hé.\"",
+          "intro1": "A moi les goûters toute la journée, maintenant que je connais l'ile enchantée ! Hé hé hé hé.",
+          "intro2": "",
+          "intro3": "",
           "obj": "",
           "ngp": "",
           "fsw": ""

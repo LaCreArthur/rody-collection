@@ -99,36 +99,39 @@ public class RM_DialLayout : RM_Layout {
 	}
 	
 	public void GetDialText() {
-		string[] dials = gm.introText.Split('"');
-		textInputField.text = "";
 		switch (activeDial)
-        {
-            case 1:
-                if (dials.Length > 2) textInputField.text = dials[1];
-                break;
-            case 2:
-                if (dials.Length > 4) textInputField.text = dials[3];
-                break;
-            case 3:
-                if (dials.Length > 6) textInputField.text = dials[5];
-                break;
-            default: break;
-        }
+		{
+			case 1:
+				textInputField.text = gm.introText1 ?? "";
+				break;
+			case 2:
+				textInputField.text = gm.introText2 ?? "";
+				break;
+			case 3:
+				textInputField.text = gm.introText3 ?? "";
+				break;
+			default:
+				textInputField.text = "";
+				break;
+		}
 	}
 
 	/// <summary>
-	/// Writes back the dialog display text from textInputField to gm.introText.
-	/// Format: text"dialog1"text"dialog2"text"dialog3"text
+	/// Writes back the dialog display text from textInputField to gm.introText1/2/3.
 	/// </summary>
 	private void SetDialText() {
-		string[] dials = gm.introText.Split('"');
-		if (dials.Length < 2) return; // No dialogs to update
-
-		int dialIndex = (activeDial * 2) - 1; // 1->1, 2->3, 3->5
-		if (dialIndex < dials.Length) {
-			dials[dialIndex] = textInputField.text;
-			gm.introText = string.Join("\"", dials);
-			Debug.Log("Saved introText dialog " + activeDial + ": " + textInputField.text);
+		switch (activeDial)
+		{
+			case 1:
+				gm.introText1 = textInputField.text;
+				break;
+			case 2:
+				gm.introText2 = textInputField.text;
+				break;
+			case 3:
+				gm.introText3 = textInputField.text;
+				break;
 		}
+		Debug.Log($"Saved introText{activeDial}: {textInputField.text}");
 	}
 }

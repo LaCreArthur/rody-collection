@@ -47,10 +47,8 @@ public class RM_DialoguesLayout : RM_Layout {
 	}
 
     public void SetDialButtons(){
-        string[] dials = gm.introText.Split('"');
-        if (dials.Length > 2) dial2Btn.interactable = true;
-        else dial2Btn.interactable = false;
-        if (dials.Length > 4) dial3Btn.interactable = true;
-        else dial3Btn.interactable = false;
+        // Enable dial buttons based on whether intro texts are set
+        dial2Btn.interactable = !string.IsNullOrEmpty(gm.introText1);
+        dial3Btn.interactable = !string.IsNullOrEmpty(gm.introText2);
     }
 }

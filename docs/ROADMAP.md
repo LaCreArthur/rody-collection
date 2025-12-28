@@ -192,7 +192,8 @@ Natural French text → phoneme conversion for easier dialogue editing.
 
 ### Other
 
-- **Observable pattern** - Replace PlayerPrefs state management
+- **Export UI integration** - `OnExportClick()` in `RA_NewGame.cs` exists but no button is wired. Need to decide location: Scene 0 (alongside Import) or Scene 6 (Rody Maker save menu)
+- **PlayerPrefs cleanup** - ✅ DONE: `currentScene`/`scenesCount` replaced with `WorkingStory` properties. Remaining: `gamePath`, `gameToDelete`, other legacy keys
 - **SoundManager refactor** - Break up 360-line monolith
 
 ---

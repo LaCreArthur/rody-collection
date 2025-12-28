@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.5180830Z",
+  "exportedAt": "2025-12-28T19:15:59.2790790Z",
   "story": {
     "id": "Rody Et Mastico V",
     "title": "RODY ET MASTICO 5",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "LE TAPIS VOLANT",
-          "intro": "\"Doux, doux... Je suis le vent galant qui dépose les oeufs dans les jardins. Je t'emmène, Rody. Installe-toi sur le tapis.\" \"Ecoutons. La réponse est peut-être dans le vent.\"",
+          "intro1": "Doux, doux... Je suis le vent galant qui dépose les oeufs dans les jardins. Je t'emmène, Rody. Installe-toi sur le tapis.",
+          "intro2": "Ecoutons. La réponse est peut-être dans le vent.",
+          "intro3": "",
           "obj": "D'où sort le tapis?",
           "ngp": "Un oiseau est perché dans l'arbre. Le vois-tu?.",
           "fsw": "Par quel touche de style s'exprime la galanterie du vent galant?"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "LE VENT MECHANT",
-          "intro": "\"Je suis plus rapide que vous! Ah! Ah! Ah!\" \"Je suis trop lent. Seul le vent violent peut le poursuivre. Chez la rose  des vents, tu le rencontreras.\"",
+          "intro1": "Je suis plus rapide que vous! Ah! Ah! Ah!",
+          "intro2": "Je suis trop lent. Seul le vent violent peut le poursuivre. Chez la rose  des vents, tu le rencontreras.",
+          "intro3": "",
           "obj": "L'une des cloches a les yeux bleus. Laquelle?",
           "ngp": "Le vent méchant transporte une feuille d'érable. Laquelle est-ce?",
           "fsw": "Rody semble désemparé, que peut bien en être la cause?"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "LES MOULINS",
-          "intro": "\"Comme je suis étourdi. J'ai oublié dans quel moulin se trouve la rose des vents.\" \"Nous devons faire vite, Rody. L'un de tes oeufs est un émetteur. Utilise-le. Le moulin qui abrite la rose des vents te répondra.\"",
+          "intro1": "Comme je suis étourdi. J'ai oublié dans quel moulin se trouve la rose des vents.",
+          "intro2": "Nous devons faire vite, Rody. L'un de tes oeufs est un émetteur. Utilise-le. Le moulin qui abrite la rose des vents te répondra.",
+          "intro3": "",
           "obj": "Dans quel moulin est la rose des vents?",
           "ngp": "As-tu remarqué le 'mouton'...?",
           "fsw": "Vois-tu le bel étalon qui négocie un prix de groupe?"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "LA ROSE DES VENTS",
-          "intro": "\"J'ignore où le vent méchant transporte les cloches. J'appelle tout de suite le vent violent. N'ayez crainte: il est violent mais pas méchant.\"",
+          "intro1": "J'ignore où le vent méchant transporte les cloches. J'appelle tout de suite le vent violent. N'ayez crainte: il est violent mais pas méchant.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est indiqué le nord?",
           "ngp": "Une souris se cache quelque part. Cherche-la?",
           "fsw": "As-tu vu cette femme cul-de-jatte?! Il faudrait l'aider..."
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "LE VENT VIOLENT",
-          "intro": "\"Accroche-toi, garçon! Ca va filer!\" \"L'un des oeufs est gonflable. C'est le moment de t'en servir, Rody. Installe-toi.\"",
+          "intro1": "Accroche-toi, garçon! Ca va filer!",
+          "intro2": "L'un des oeufs est gonflable. C'est le moment de t'en servir, Rody. Installe-toi.",
+          "intro3": "",
           "obj": "Où Rody va-t-il s'asseoir pour voyager avec le vent violent?",
           "ngp": "Un chat est sorti du moulin. L'as tu remarqué?",
           "fsw": "Distingues-tu la prétendante du chat? "
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LE LAC",
-          "intro": "\"Te voilà au pôle nord, Rody. Regarde les icebergs dans le lac. Mais, que se passe-t-il? Le vent s'arrête! Attention, tu vas tomber dans le lac!\"",
+          "intro1": "Te voilà au pôle nord, Rody. Regarde les icebergs dans le lac. Mais, que se passe-t-il? Le vent s'arrête! Attention, tu vas tomber dans le lac!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre le plus gros des icebergs.",
           "ngp": "Aperçois-tu le phoque?",
           "fsw": "Alors que tous le monde s'amuse, le phoque est triste. Rend lui son sourire. "
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "LE LAPIN",
-          "intro": "\"Qui vient me déranger? Un oeuf en chocolat! C'est un bon repas! Je vais le dévorer.\" \"Non! Arrêtez! Majesté! C'est le petit Rody. Il cherche des cloches qui ont disparu.\"\t",
+          "intro1": "Qui vient me déranger? Un oeuf en chocolat! C'est un bon repas! Je vais le dévorer.",
+          "intro2": "Non! Arrêtez! Majesté! C'est le petit Rody. Il cherche des cloches qui ont disparu.",
+          "intro3": "",
           "obj": "Montre la main du géant?",
           "ngp": "Montre le pingouin.",
           "fsw": "As-tu remarqué le doigt de Rody?"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "LE ROI DU SILENCE",
-          "intro": "\"Bon! tu mérites que je te vienne en aide. Tu es courageux. Je vais interroger mon ordinateur. Mes quatres fils habitent aux quatres coins de la terre. Ils savent sûrement ce qui se passe!\"",
+          "intro1": "Bon! tu mérites que je te vienne en aide. Tu es courageux. Je vais interroger mon ordinateur. Mes quatres fils habitent aux quatres coins de la terre. Ils savent sûrement ce qui se passe!",
+          "intro2": "",
+          "intro3": "",
           "obj": "En appuyant sur quoi, le roi fait-il sortir l'ordinateur de l'eau?",
           "ngp": "As-tu remarqué l'éléphant de mer?",
           "fsw": "Le phoque est revigoré, c'est l'heure du tournage avec ces dames! Où est la caméra?"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "L'ORDINATEUR",
-          "intro": "\"L'un de mes fils vit dans un cyclone, l'autre dans la mer, le troisième sous une montagne et le quatrième sur un volcan. Ils surveillent les quatres éléments: la terre, le feu, l'air et l'eau. Un jour l'un d'entre eux me remplacera.\"",
+          "intro1": "L'un de mes fils vit dans un cyclone, l'autre dans la mer, le troisième sous une montagne et le quatrième sur un volcan. Ils surveillent les quatres éléments: la terre, le feu, l'air et l'eau. Un jour l'un d'entre eux me remplacera.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où voit-on un volcan?",
           "ngp": "Une araignée s'est glisée sur l'ordinateur. Où est-elle?",
           "fsw": "Le roi a dégainé son pisto-doigt. Trouve la victime."
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LE VOLCAN",
-          "intro": "\"Regarde, père. Le volcan menaçait d'éclater. Je l'ai calmé avec toutes ces cloches et j'ai évité un vacarme assourdissant. On n'entendra plus jamais le bruit des cloches. Tu es fier de moi, n'est-ce pas?\"",
+          "intro1": "Regarde, père. Le volcan menaçait d'éclater. Je l'ai calmé avec toutes ces cloches et j'ai évité un vacarme assourdissant. On n'entendra plus jamais le bruit des cloches. Tu es fier de moi, n'est-ce pas?",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est la bouche du volcan?",
           "ngp": "Cherche un corbeau parmi les oiseaux?",
           "fsw": "Il est violent mais aussi content. Qui est-ce?"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LA COLOMBE",
-          "intro": "\"Monte dans la colombe supersonique du roi, Rody. Porte vite un message à la rose des vents: qu'elle envoie tous ses vents réunis vers le volcan pour qu'ils emportent les cloches... avant qu'il ne soit trop tard...\"",
+          "intro1": "Monte dans la colombe supersonique du roi, Rody. Porte vite un message à la rose des vents: qu'elle envoie tous ses vents réunis vers le volcan pour qu'ils emportent les cloches... avant qu'il ne soit trop tard...",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre les yeux de la colombe.",
           "ngp": "Où sont les réacteurs de l'avion-colombe?",
           "fsw": "On voit un baleinier au loin. Touche la baleine avant qu'elle s'en aille."
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LE SAUVETAGE DES CLOCHES",
-          "intro": "\"Pauvre de moi! Je croyais bien faire. Mon père doit être furieux. Jamais il ne me laissera sa place sur le trône! Calme-toi mon cher volcan. Nous devons nous faire oublier.\"",
+          "intro1": "Pauvre de moi! Je croyais bien faire. Mon père doit être furieux. Jamais il ne me laissera sa place sur le trône! Calme-toi mon cher volcan. Nous devons nous faire oublier.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quelle est la plus petite des cloches?",
           "ngp": "Il y a une biche près du volcan. La vois-tu?",
           "fsw": "As-tu remarqué que le vent violent chevauche le vent galant?"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "LE RETOUR",
-          "intro": "\"Bravo, Rody. Les cloches sont revenues. Les oeufs de la poule-magicienne t'ont rendu un grand service. Remercions la.\"",
+          "intro1": "Bravo, Rody. Les cloches sont revenues. Les oeufs de la poule-magicienne t'ont rendu un grand service. Remercions la.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre la cloche du milieu dans le clocher.",
           "ngp": "Vois-tu le poussin qui sort d'un oeuf?",
           "fsw": "Mange vite ton oeuf, Rody, avant qu'il n'éclose!"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "MASTICO SE DEGUISE",
-          "intro": "\"Ne trouvez-vous pas que j'ai l'air d'une cloche ?\"",
+          "intro1": "Ne trouvez-vous pas que j'ai l'air d'une cloche ?",
+          "intro2": "",
+          "intro3": "",
           "obj": "",
           "ngp": "",
           "fsw": ""

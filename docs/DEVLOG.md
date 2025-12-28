@@ -4,47 +4,53 @@
 
 ---
 
-## 2025-12-28: PlayerPrefs Cleanup (IN PROGRESS)
+## 2025-12-28: Intro Text Format Refactor ✅
+
+**Problem:** Intro text wasn't being saved in Rody Maker. The old format stored intro dialogs as a single string with embedded quotes (`"Dialog1" "Dialog2" "Dialog3"`), which broke when parsed on new scenes.
+
+**Solution:** Changed to separate `intro1`, `intro2`, `intro3` fields in DisplayTexts, matching the existing pattern in PhonemeDialogues.
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `SceneData.cs` | Changed `DisplayTexts.intro` → `intro1`, `intro2`, `intro3` |
+| `SceneDataParser.cs` | Added `ParseIntroTexts()` to parse old format into separate fields |
+| `RM_GameManager.cs` | Uses separate `introText1/2/3` fields |
+| `RM_DialLayout.cs` | Simplified `GetDialText()`/`SetDialText()` to use separate fields directly |
+| `RM_SaveLoad.cs` | Updated `GameManagerToSceneData()` to save intro1/2/3 |
+| `RM_DialoguesLayout.cs` | `SetDialButtons()` checks if intro texts are non-empty |
+| `RM_TextInput.cs` | Directly writes to `introText1/2/3` instead of parsing quotes |
+| `GameManager.cs` | Added `CombineIntroTexts()` helper for gameplay display |
+| `WorkingStory.cs` | Updated default scene creation to use intro1/2/3 |
+
+**Action Required:** Run `Tools > Rody > Export All Stories Now` to regenerate JSON files.
+
+---
+
+## 2025-12-28: PlayerPrefs Cleanup ✅
 
 **Goal:** Replace PlayerPrefs state passing with WorkingStory properties.
 
-### Completed
+### Changes Made
 
-| Task | Status |
-|------|--------|
-| Added `WorkingStory.CurrentSceneIndex` property | ✅ |
-| Reset `CurrentSceneIndex` in `WorkingStory.Clear()` | ✅ |
-| Replace in `RM_GameManager.cs` | ✅ |
-| Replace in `GameManager.cs` | ✅ |
+| File | Changes |
+|------|---------|
+| `WorkingStory.cs` | Added `CurrentSceneIndex` property, reset in `Clear()` |
+| `RM_GameManager.cs` | Replaced `PlayerPrefs currentScene/scenesCount` → `WorkingStory` |
+| `GameManager.cs` | Replaced `PlayerPrefs.GetInt("currentScene")` → `WorkingStory.CurrentSceneIndex` |
+| `MenuManager.cs` | Replaced 4x `PlayerPrefs.SetInt("currentScene")` |
+| `ClickHandler.cs` | Replaced all `PlayerPrefs currentScene/scenesCount` |
+| `RM_WarningLayout.cs` | Replaced all `PlayerPrefs currentScene/scenesCount` |
+| `Intro.cs` | Replaced `PlayerPrefs.GetInt("scenesCount")` |
+| `RM_SaveLoad.cs` | Removed redundant `SetSceneCount` and scenesCount PlayerPrefs |
+| `RM_MainLayout.cs` | Replaced 3x `PlayerPrefs.GetInt("scenesCount")` |
 
-### Remaining
+### Result
 
-| File | Changes Needed |
-|------|----------------|
-| `MenuManager.cs` | Replace `PlayerPrefs.SetInt("currentScene", x)` → `WorkingStory.CurrentSceneIndex = x` |
-| `ClickHandler.cs` | Replace Get/Set currentScene |
-| `RM_WarningLayout.cs` | Replace Get/Set currentScene |
-| `Intro.cs` | Replace `PlayerPrefs.GetInt("scenesCount")` → `WorkingStory.SceneCount` |
-| Multiple files | Remove redundant `PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount)` |
-
-### Pattern to Apply
-
-```csharp
-// BEFORE
-currentScene = PlayerPrefs.GetInt("currentScene");
-PlayerPrefs.SetInt("currentScene", x);
-
-// AFTER
-currentScene = WorkingStory.CurrentSceneIndex;
-WorkingStory.CurrentSceneIndex = x;
-```
-
-### Files to Grep
-
-```bash
-grep -rn 'PlayerPrefs.*"currentScene"' Assets/Scripts/
-grep -rn 'PlayerPrefs.*"scenesCount"' Assets/Scripts/
-```
+- `grep -rn 'PlayerPrefs.*"currentScene"' Assets/Scripts/` → **No matches**
+- `grep -rn 'PlayerPrefs.*"scenesCount"' Assets/Scripts/` → **No matches**
+- Unity compiles without errors ✅
 
 ---
 

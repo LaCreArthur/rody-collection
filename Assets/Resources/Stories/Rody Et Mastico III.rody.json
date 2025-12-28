@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.4981630Z",
+  "exportedAt": "2025-12-28T19:15:59.2595820Z",
   "story": {
     "id": "Rody Et Mastico III",
     "title": "RODY ET MASTICO 3",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "VILLAGE DE MONTAGNE",
-          "intro": "\"Regarde là-bas, Rody, vers le chalet. Ta maman te fait signe de rentrer. La tempête de neige approche\"",
+          "intro1": "Regarde là-bas, Rody, vers le chalet. Ta maman te fait signe de rentrer. La tempête de neige approche",
+          "intro2": "",
+          "intro3": "",
           "obj": "Je suis Mastico, le robot, le meilleur ami de Rody. Aide-moi à lui montrer sa maman.",
           "ngp": "Sais-tu d'où arrive la tempête?",
           "fsw": "Remarques-tu Gérard, le collègue de ta maman, Rody?"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "PAYSAGE DE MONTAGNE",
-          "intro": "\"Attends, Rody. Entends ces hurlements dans la montagne! Il se passe quelque chose. Allons voir.\" ",
+          "intro1": "Attends, Rody. Entends ces hurlements dans la montagne! Il se passe quelque chose. Allons voir.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Un aigle vole dans le ciel. Le vois-tu?",
           "ngp": "On aperçoit un chamois dans la montagne. Trouve-le.",
           "fsw": "Où se cache Robert, l'ancien collègue de ta mère, Rody?"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "LES FLEURS",
-          "intro": "\"C'est étrange, ces fleurs semblent tristes. Ecoute, l'une d'elle murmure quelque chose\" \"Aidez-nous! Le monstre de l'hiver est en colère. Nous allons mourir de froid. Et pourtant le printemps arrive..!\"",
+          "intro1": "C'est étrange, ces fleurs semblent tristes. Ecoute, l'une d'elle murmure quelque chose",
+          "intro2": "Aidez-nous! Le monstre de l'hiver est en colère. Nous allons mourir de froid. Et pourtant le printemps arrive..!",
+          "intro3": "",
           "obj": "L'une des fleurs a des clochettes. Laquelle?",
           "ngp": "Quelle fleur s'appelle 'un crocus'?",
           "fsw": "D'où est-ce que Rody entend les fleurs parler?"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "LE DANGER",
-          "intro": "\"Mais... Que se passe-t-il? Attention, Rody!\"",
+          "intro1": "Mais... Que se passe-t-il? Attention, Rody!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Rody a perdu ses bâtons. Où sont-il?.",
           "ngp": "Les serres de l'aigle vont saisir Rody. Montre-les.",
           "fsw": "Où a été vu pour la dernière fois Hayabusa, l'ami ninja de ta mère, Rody?"
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "L'AIGLE",
-          "intro": "\"Ne vous inquiétez pas. Je suis un ami. Je vous emmène au monstre de l'hiver: le 'Badedon'... qui joue du violon, du bandonéon, du clairon, du barython et aussi de l'helic...oh, oh, oh! Au secours...\"",
+          "intro1": "Ne vous inquiétez pas. Je suis un ami. Je vous emmène au monstre de l'hiver: le 'Badedon'... qui joue du violon, du bandonéon, du clairon, du barython et aussi de l'helic...oh, oh, oh! Au secours...",
+          "intro2": "",
+          "intro3": "",
           "obj": "Rody a perdu ses lunettes. Retrouve-les.",
           "ngp": "Un bouquetin observe la scène. Le distingues-tu?",
           "fsw": "Si je craque, Rody meurt. Que suis-je ?"
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LES NUAGES",
-          "intro": "\"Nous sommes les cumulus, les 'enfants du Badedon'. Nous avons caché ses instruments de musique. Voilà pourquoi il est fâché. Ah! Ah! Ah! Il ne peut pas s'en aller.\"",
+          "intro1": "Nous sommes les cumulus, les 'enfants du Badedon'. Nous avons caché ses instruments de musique. Voilà pourquoi il est fâché. Ah! Ah! Ah! Il ne peut pas s'en aller.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quel est le nuage qui parle?",
           "ngp": "Aperçois-tu l'écharpe de Rody?",
           "fsw": "L'aigle s'est pris une bonne bastos! Pèrche-moi sur l'impact."
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "LA TEMPETE",
-          "intro": "\"Rody, où es-tu? Nous devons retrouver ces instruments et les rendre au 'Badedon'!\"",
+          "intro1": "Rody, où es-tu? Nous devons retrouver ces instruments et les rendre au 'Badedon'!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quel est le plus petit nuage?",
           "ngp": "Où est allé se réfugier l'aigle?",
           "fsw": "Un cumulus m'invite à la fête! Pèrche-moi à sa main."
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "LA CREVASSE",
-          "intro": "\"Tu es tombé dans une crevasse... C'est formidable, tu as découvert le bandonéon. Mets-le vite dans ton sac à dos et continuons notre recherche.\"",
+          "intro1": "Tu es tombé dans une crevasse... C'est formidable, tu as découvert le bandonéon. Mets-le vite dans ton sac à dos et continuons notre recherche.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu le bandonéon?",
           "ngp": "Où est tombé le sac à dos de Rody?",
           "fsw": "Il est la preuve que tu en a trop pris gros. Trouve-le!"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "LES TRACES DANS LA NEIGE",
-          "intro": "\"As-tu remarqué ces traces dans la neige? suivons-les et voyons où elles nous amènent\"",
+          "intro1": "As-tu remarqué ces traces dans la neige? suivons-les et voyons où elles nous amènent",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre à Rody les traces de pas dans la neige.",
           "ngp": "Une marmotte sort de son terrier. L'aperçois-tu?",
           "fsw": "Où est Georges, le troisième collègue de la mère de Rody?"
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LA CABANE",
-          "intro": "\"La cheminée de cette maison fume. Quelqu'un y habite. Approchons... Mais ne serait-ce pas les instruments que nous cherchons, là, par terre?\"\t",
+          "intro1": "La cheminée de cette maison fume. Quelqu'un y habite. Approchons... Mais ne serait-ce pas les instruments que nous cherchons, là, par terre?",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est la cheminée de la maison?",
           "ngp": "As-tu observé les instruments près de la maison? Où est le violoncelle?",
           "fsw": "Je dirais que c'est un bon cinquante-six."
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LE CLOWN ",
-          "intro": "\"J'ai trouvé ces instruments de musique là-bas vers le glacier. Il m'est impossible d'en sortir un seul son. Emportez-les si vous en avez besoin. Prenez aussi mon scooter des neiges: vous arriverez plus vite là-haut!\"",
+          "intro1": "J'ai trouvé ces instruments de musique là-bas vers le glacier. Il m'est impossible d'en sortir un seul son. Emportez-les si vous en avez besoin. Prenez aussi mon scooter des neiges: vous arriverez plus vite là-haut!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est le scooter des neiges?",
           "ngp": "Quel est l'instrument qu'on appelle le saxophone?",
           "fsw": "Serais-ce Serges, l'ami de maman ?"
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LE SCOOTER DES NEIGES",
-          "intro": "\"Aha! Gagagaga! Voilà le badedon. Descends vite Rody. Moi, je m'en vais.\"",
+          "intro1": "Aha! Gagagaga! Voilà le badedon. Descends vite Rody. Moi, je m'en vais.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est le 'badedon'",
           "ngp": "A ton avis, où est le moteur du scooter des neiges",
           "fsw": "Trouve la volute du violoncelle."
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "LE BADEDON",
-          "intro": "\"Attention Rody. Il veut t'attraper. Montre-lui ce que tu lui as apporté!\"",
+          "intro1": "Attention Rody. Il veut t'attraper. Montre-lui ce que tu lui as apporté!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Avec quelle patte, le monstre va-t-il attraper Rody?",
           "ngp": "Reconnais-tu l'instrument qu'on appelle le clairon?",
           "fsw": "As-tu remarqué le badedon sucer un de ses enfants cumulus?"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "LE MONSTRE ORCHESTRE",
-          "intro": "\"Il prend ses instruments... Regarde: les nuages pleurent, la neige fond. nous avons réussi, Rody!\"",
+          "intro1": "Il prend ses instruments... Regarde: les nuages pleurent, la neige fond. nous avons réussi, Rody!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu le mouchoir que tient l'un des nuages?",
           "ngp": "Sais-tu quel est l'instrument qu'on appelle la lyre?",
           "fsw": "Montre-moi la note de musique verte. "
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "LE RETOUR AU CHALET",
-          "intro": "\"Nous voilà rentrés au chalet. Ta maman est rassurée. Les nuages sont partis. La neige a fondu. Les fleurs s'épanouissent. Tout le monde est heureux!\"",
+          "intro1": "Nous voilà rentrés au chalet. Ta maman est rassurée. Les nuages sont partis. La neige a fondu. Les fleurs s'épanouissent. Tout le monde est heureux!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Le soleil apparait. Le distingues-tu?",
           "ngp": "Aperçois-tu le 'Badedon' qui tire les nuages, dans le lointain?",
           "fsw": "Par où vient de sortir Francky, juste avant que Rody n'arrive."
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "LE SKI A ROULETTES",
-          "intro": "\"Et moi, je trouve que le ski à roulettes, c'est bien agréable!\"",
+          "intro1": "Et moi, je trouve que le ski à roulettes, c'est bien agréable!",
+          "intro2": "",
+          "intro3": "",
           "obj": "-",
           "ngp": "",
           "fsw": ""

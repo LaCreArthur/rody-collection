@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.4304800Z",
+  "exportedAt": "2025-12-28T19:15:59.1217100Z",
   "story": {
     "id": "Rody Et Mastico",
     "title": "RODY ET MASTICO",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "DANS LA CHAMBRE DE RODY",
-          "intro": "\"Rody, maman a ouvert doucement la porte de ta chambre et s'apprête à déposer un baiser sur ton front. Mais... elle ne te trouvera pas! Viens vite, le professeur Gobino nous attend.\"",
+          "intro1": "Rody, maman a ouvert doucement la porte de ta chambre et s'apprête à déposer un baiser sur ton front. Mais... elle ne te trouvera pas! Viens vite, le professeur Gobino nous attend.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Je suis Mastico, le robot. Me vois-tu sur l'écran?... Et Rody, le vois-tu?... Trouve-le et déplace-moi jusqu'à sa main!",
           "ngp": "Où Rody a-t-il rangé ses chaussures?",
           "fsw": "Nous sommes allez sur la lune, te rapelles-tu comment?"
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "LE LABORATOIRE PROFESSEUR GOBINO",
-          "intro": "\"Bonjour, professeur Gobino. Vous dites que votre machine à chewing-gum est en panne car l'étoile multicolore qui la faisait fonctionner, a disparu. Rody et moi, Mastico, partons pour le pays des mille couleurs. Nous retrouverons cette étoile.\" ",
+          "intro1": "Bonjour, professeur Gobino. Vous dites que votre machine à chewing-gum est en panne car l'étoile multicolore qui la faisait fonctionner, a disparu. Rody et moi, Mastico, partons pour le pays des mille couleurs. Nous retrouverons cette étoile.",
+          "intro2": "",
+          "intro3": "",
           "obj": "A quel endroit les chewing-gums sortent-ils de la machine?",
           "ngp": "Aide-moi à repérer l'endroit de la machine où était accrochée l'étoile.",
           "fsw": "Rody se demande où le professeur Gobino a-t-il coincé son outil. Aide-le!"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "LE MARCHAND DE FRUITS",
-          "intro": "\"Profitons de notre passage devant ce magasin pour acheter quelques fruits. Nous devons emmener des provisions pour le voyage. Nous en aurons besoin\"",
+          "intro1": "Profitons de notre passage devant ce magasin pour acheter quelques fruits. Nous devons emmener des provisions pour le voyage. Nous en aurons besoin",
+          "intro2": "",
+          "intro3": "",
           "obj": "Dans quoi Rody va-t-il emporter ses provisions?",
           "ngp": "Pose-moi sur chaque fruit que Rody a choisi dans l'ordre que je te donne : Cerise, Orange, Banane, Poires, Prunes, Raisins",
           "fsw": "Je veux la caisse du magasin. Trouve la."
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "A LA SORTIE DE LA VILLE",
-          "intro": "\"Nous sommes sortis de la ville. Le soleil se lève et nous fait un clin d'oeil. Il veut nous parler. Ecoute :\" \"Marchez jusqu'a la rivière enchantée et montez dans le bateau qui a le plus grand nombre de hublots. Bonne chance !\"",
+          "intro1": "Nous sommes sortis de la ville. Le soleil se lève et nous fait un clin d'oeil. Il veut nous parler. Ecoute :",
+          "intro2": "Marchez jusqu'a la rivière enchantée et montez dans le bateau qui a le plus grand nombre de hublots. Bonne chance !",
+          "intro3": "",
           "obj": "Emmène-moi au bout du rayon de soleil qui est le plus long. C'est là que coule la rivière enchantée!",
           "ngp": "Au loin on aperçoit la ville: devine dans quel immeuble habite Rody.",
           "fsw": "Le marchand de fruits nous a suivit. Où se cache t'il ?"
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "AU BORD DE LA RIVIERE",
-          "intro": "\"Nous voilà au bord de la rivière. Que de bateaux! Montons dans celui que le soleil nous a indiqué. Et en avant pour l'aventure...\"",
+          "intro1": "Nous voilà au bord de la rivière. Que de bateaux! Montons dans celui que le soleil nous a indiqué. Et en avant pour l'aventure...",
+          "intro2": "",
+          "intro3": "",
           "obj": "Cherche le bateau qui a le plus de hublots et perche-moi sur son pavillon.",
           "ngp": "A ton avis où se trouve le gouvernail du bateau que Rody va conduire ?",
           "fsw": "Les chewing-gums incolores du professeur ont contaminé l'équipage d'un bateau, il est en quarantaine. Lequel ?"
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LE BATEAU AU BORD DE LA CASCADE",
-          "intro": "\"La rivière devient un torrent. Nous devons quitter le bateau. Tiens-toi bien à la corde, Rody. Je vais l'attacher à un arbre sur la berge\"",
+          "intro1": "La rivière devient un torrent. Nous devons quitter le bateau. Tiens-toi bien à la corde, Rody. Je vais l'attacher à un arbre sur la berge",
+          "intro2": "",
+          "intro3": "",
           "obj": "Je dois trouver une branche bien solide. Laquelle me conseilles-tu?",
           "ngp": "A quel endroit le bateau va-t-il basculer dans la cascade?",
           "fsw": "Vois tu la bitte du bateau ? Touche la."
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "SOUS LA CASCADE",
-          "intro": "\"Bravo, Rody. Nous voilà sous la cascade. Regarde, un escalier est creusé dans la roche. Montons les marches. Qu'allons-nous trouver derrière cette porte?\"",
+          "intro1": "Bravo, Rody. Nous voilà sous la cascade. Regarde, un escalier est creusé dans la roche. Montons les marches. Qu'allons-nous trouver derrière cette porte?",
+          "intro2": "",
+          "intro3": "",
           "obj": "Que de boutons sur cette porte! Mets-moi sur celui qui permet de l'ouvrir.",
           "ngp": "Où est la corde qui a sauvé Rody?",
           "fsw": "Tout le monde n'a pas été sauvé par la corde. Où est le marchant ?"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "LA GROTTE",
-          "intro": "\"Ah! Ah! Ah! Ah! Je suis le roi des ténèbres. Je rêve de détruire les couleurs du monde. L'étoile multicolore est ma prisonnière. Ah! Ah! Ah! Ah! Et quand l'arc-en-ciel apparaitra, elle me conduira au pays des mille couleurs.\"",
+          "intro1": "Ah! Ah! Ah! Ah! Je suis le roi des ténèbres. Je rêve de détruire les couleurs du monde. L'étoile multicolore est ma prisonnière. Ah! Ah! Ah! Ah! Et quand l'arc-en-ciel apparaitra, elle me conduira au pays des mille couleurs.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Perche-moi sur la couronne du roi des ténèbres.",
           "ngp": "Devine de quel endroit sort toute cette fumée qui envahit la grotte.",
           "fsw": "Le roi des ténèbres indique à Rody de se rapprocher. A quel endroit exactement ?"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "LA GROTTE",
-          "intro": "\"Rusons, Rody! Offre-lui tes provisions. Pendant qu'il les mangera, nous partirons à la recherche de l'étoile. J'ai repéré l'entrée d'un tunnel au fond de la grotte.\"",
+          "intro1": "Rusons, Rody! Offre-lui tes provisions. Pendant qu'il les mangera, nous partirons à la recherche de l'étoile. J'ai repéré l'entrée d'un tunnel au fond de la grotte.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où se trouve l'entrée du tunnel?",
           "ngp": "Où Rody va-t-il poser ses provisions?",
           "fsw": "Que regarde le roi des ténèbres avec appétit ?"
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "LA GROTTE",
-          "intro": "\"Hum! Ces fruits de toutes les couleurs! Ah! Ah! Ah! Ah! Je vais tout avaler!\"  \"Bien joué, Rody! Vite! Voyons où mène ce tunnel...\"",
+          "intro1": "Hum! Ces fruits de toutes les couleurs! Ah! Ah! Ah! Ah! Je vais tout avaler!",
+          "intro2": "Bien joué, Rody! Vite! Voyons où mène ce tunnel...",
+          "intro3": "",
           "obj": "Quel fruit le roi des ténèbres va-t-il manger en premier?",
           "ngp": "Indique, en les montrant l'un après l'autre, l'ordre dans lequel le monstre va manger les fruits.",
           "fsw": "Quel fruit l'abomination va-t-elle manger en dernier?"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "DANS LE TUNNEL ",
-          "intro": "\"Rody? Où es-tu passé? Mais... Ces rayons lumineux? Formidable Rody! Nous avons retrouvé l'étoile!\"",
+          "intro1": "Rody? Où es-tu passé? Mais... Ces rayons lumineux? Formidable Rody! Nous avons retrouvé l'étoile!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Rody a mis la main sur le bouton qui déclenche l'ouverture de la trappe. Cherche ce bouton.",
           "ngp": "Aperçois-tu la main de Rody?",
           "fsw": "Franchement, il n'y a rien d'autre sur l'image. On touche le fond."
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LA GRANDE SALLE RONDE",
-          "intro": "\"Délivrez-moi! Le roi des ténèbres veut se servir de moi pour entrer au pays des mille couleurs! Le temps presse. Dehors, il pleut. Bientôt le soleil va faire apparaitre l'arc-en-ciel!\"",
+          "intro1": "Délivrez-moi! Le roi des ténèbres veut se servir de moi pour entrer au pays des mille couleurs! Le temps presse. Dehors, il pleut. Bientôt le soleil va faire apparaitre l'arc-en-ciel!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Toutes les fenêtres de cette salle sont fausses sauf une: laquelle?",
           "ngp": "Par quel moyen sortons-nous de la pièce? Observe bien l'image et indique le petit détail qui va nous aider.",
           "fsw": "As-tu remarqué la fenêtre smaragdine?"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "DEHORS, IL PLEUT",
-          "intro": "\"Le soleil se montre là-bas! Vite courons! Le roi des ténèbres nous poursuit.\"",
+          "intro1": "Le soleil se montre là-bas! Vite courons! Le roi des ténèbres nous poursuit.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est le soleil? Trouve-le parmi les nuages!",
           "ngp": "Où est le roi des ténèbres?",
           "fsw": "Un rare léoparbre sauvage se cache. Attrape-le!"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "AU PIED DE L'ARC-EN-CIEL",
-          "intro": "\"L'arc-en-ciel apparait! Montons l'escalier secret. Il mène au pays des mille couleurs. Là-haut nous serons sauvés.\"",
+          "intro1": "L'arc-en-ciel apparait! Montons l'escalier secret. Il mène au pays des mille couleurs. Là-haut nous serons sauvés.",
+          "intro2": "",
+          "intro3": "",
           "obj": "La porte du pays des mille couleurs est fermée. Montre la.",
           "ngp": "Les marches de l'escalier sont dangereuses. Indique à Rody les endroits où il doit poser ses pieds.",
           "fsw": "Où est le trésor? J'en ai besoin."
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "AU MILIEU DE L'ARC-EN-CIEL",
-          "intro": "\"Ah! Ah! Ah! Ah! Les fruits que j'ai mangés tout à l'heure avaient les couleurs de l'arc-en-ciel! Mon esprit diabolique va les transformer en mangeurs de couleurs. Ah! Ah! Ah! Ah!\"",
+          "intro1": "Ah! Ah! Ah! Ah! Les fruits que j'ai mangés tout à l'heure avaient les couleurs de l'arc-en-ciel! Mon esprit diabolique va les transformer en mangeurs de couleurs. Ah! Ah! Ah! Ah!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu le fruit que le monstre tient dans sa main?",
           "ngp": "De quel endroit de son corps, le roi des ténèbres fait-il sortir les fruits qu'il a mangés?",
           "fsw": "L'étoile est très pâle car tu l'asphyxies, Rody. L'as-tu remarqué?"
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "EN HAUT DE L'ARC-EN-CIEL",
-          "intro": "\"Malheur! L'arc-en-ciel disparait. Trouvons vite la clé qui ouvre la porte, Rody!\"",
+          "intro1": "Malheur! L'arc-en-ciel disparait. Trouvons vite la clé qui ouvre la porte, Rody!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Aide Rody à trouver la clé!",
           "ngp": "Un 'mangeur' va dévorer la couleur indigo de l'arc-en-ciel. Montre-le.",
           "fsw": "La tête de Rodi entre en fusion avec la porte. pêrche-moi dessus."
@@ -1061,7 +1093,9 @@
         },
         "texts": {
           "title": "LA PORTE DU PAYS DES MILLE COULEURS",
-          "intro": "\"Le roi des ténèbres ne peut pas monter, il lui manque un 'mangeur de couleur'. Ouf! La porte est ouverte. Etoile multicolore, maintenant tu es plus forte que lui!\"",
+          "intro1": "Le roi des ténèbres ne peut pas monter, il lui manque un 'mangeur de couleur'. Ouf! La porte est ouverte. Etoile multicolore, maintenant tu es plus forte que lui!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Les branches de l'étoile ont grandi. Quelle est la plus longue?",
           "ngp": "L'étoile multicolore a retrouvé son pouvoir dans le pays des mille couleurs. Une étoile de ce pays l'y a aidée. Laquelle?",
           "fsw": "Une autre étoile ne l'a par contre pas aidé. Retrouve-la."
@@ -1126,7 +1160,9 @@
         },
         "texts": {
           "title": "L'ETOILE MULTICOLORE DETRUIT LE MONSTRE",
-          "intro": "\"Formidable! Les éclairs de l'étoile détruisent le monstre. Nous avons gagné, Rody!\"",
+          "intro1": "Formidable! Les éclairs de l'étoile détruisent le monstre. Nous avons gagné, Rody!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Avec quel rayon, l'étoile va-t-elle toucher le monstre?",
           "ngp": "A quel endroit l'étoile doit-elle atteindre le monstre pour le détruire?",
           "fsw": "A quel endroit le monstre va t'il décéder?"
@@ -1191,7 +1227,9 @@
         },
         "texts": {
           "title": "RODY DESCEND L'ESCALIER DE L'ARC-EN-CIEL",
-          "intro": "\"Mais... l'étoile a disparu! Descendons vite l'escalier. Elle doit être tombée!\"",
+          "intro1": "Mais... l'étoile a disparu! Descendons vite l'escalier. Elle doit être tombée!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Le monstre est-il bien détruit? Pose-moi sur son dos.",
           "ngp": "Quel est le fruit qui voulait manger la couleur jaune de l'arc-en-ciel?",
           "fsw": "Rody a l'air inquiet que le monstre soit encore en vie. Il sert le poing prêt à en découdre, montre le."
@@ -1256,7 +1294,9 @@
         },
         "texts": {
           "title": "LA DAME MYSTERIEUSE",
-          "intro": "\"Qui est cette dame? Elle tient l'étoile multicolore dans sa main!\"",
+          "intro1": "Qui est cette dame? Elle tient l'étoile multicolore dans sa main!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Je voudrais toucher l'étoile.",
           "ngp": "Cette belle dame m'inquiète. J'aimerais l'empêcher de voir Rody. Aide-moi.",
           "fsw": "C'est du quarante cinq à première vue. l'as-tu remarqué?"
@@ -1321,7 +1361,9 @@
         },
         "texts": {
           "title": "LA DAME RACONTE",
-          "intro": "\"Ne vous inquiétez pas. J'étais enfermée dans l'étoile multicolore depuis très longtemps. Je devais détruire le roi des ténèbres pour être libérée. Allons remettre ma jolie prison à sa place dans la machine à chewing-gums\"",
+          "intro1": "Ne vous inquiétez pas. J'étais enfermée dans l'étoile multicolore depuis très longtemps. Je devais détruire le roi des ténèbres pour être libérée. Allons remettre ma jolie prison à sa place dans la machine à chewing-gums",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où cette belle dame était-elle enfermée?",
           "ngp": "te souviens-tu du rayon de soleil qui avait aidé Rody à trouver la rivière enchantée? Le reconnais-tu?",
           "fsw": "Le corps est déjà dissous! Où est-ce que Rody cache l'acide? "
@@ -1386,7 +1428,9 @@
         },
         "texts": {
           "title": "CHEZ LE PROFESSEUR GOBINO",
-          "intro": "\"Et voilà, Rody! Grâce à toi, le professeur Gobino a retrouvé son épouse et sa machine fonctionne à nouveau.\"",
+          "intro1": "Et voilà, Rody! Grâce à toi, le professeur Gobino a retrouvé son épouse et sa machine fonctionne à nouveau.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est l'épouse du professeur Gobino?",
           "ngp": "A quel endroit de la machine les chewing-gums prennent-ils leur couleur?",
           "fsw": "L'étoile ne s'échappera plus maintenant qu'elle est bien attachée à la machine. La vois-tu?"
@@ -1451,7 +1495,9 @@
         },
         "texts": {
           "title": "DANS LA CHAMBRE DE RODY",
-          "intro": "\"Rody, ta maman s'est fait du souci mais je vois qu'elle ne t'en veut pas car tu as rendu le bonheur à bien des gens!\"",
+          "intro1": "Rody, ta maman s'est fait du souci mais je vois qu'elle ne t'en veut pas car tu as rendu le bonheur à bien des gens!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Je voudrais embrasser Rody: aide-moi à lui donner un baiser sur la joue.",
           "ngp": "Te rapelles-tu où étaient rangées les chaussures de Rody? Oui? Mais où sont-elles maintenant?",
           "fsw": "J'aimerais toucher le cochon: il est resté seul pendant tout ce temps. "
@@ -1516,7 +1562,9 @@
         },
         "texts": {
           "title": "AU MILIEU DES CHEWING-GUMS",
-          "intro": "\"Et moi, je suis heureux car j'adore les chewing-gums!\"",
+          "intro1": "Et moi, je suis heureux car j'adore les chewing-gums!",
+          "intro2": "",
+          "intro3": "",
           "obj": "-",
           "ngp": "",
           "fsw": ""

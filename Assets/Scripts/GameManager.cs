@@ -113,7 +113,12 @@ public class GameManager : MonoBehaviour {
 
 		// Texts
 		titleText = data.texts?.title ?? "";
-		introText = data.texts?.intro ?? "";
+		// Combine intro texts for gameplay display
+		introText = CombineIntroTexts(
+			data.texts?.intro1 ?? "",
+			data.texts?.intro2 ?? "",
+			data.texts?.intro3 ?? ""
+		);
 		objText = data.texts?.obj ?? "";
 		ngpText = data.texts?.ngp ?? "";
 		fswText = data.texts?.fsw ?? "";
@@ -235,6 +240,18 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			SceneManager.LoadScene(2);
 		}
+	}
+
+	/// <summary>
+	/// Combines intro texts for gameplay display.
+	/// </summary>
+	string CombineIntroTexts(string intro1, string intro2, string intro3)
+	{
+		var parts = new List<string>();
+		if (!string.IsNullOrEmpty(intro1)) parts.Add(intro1);
+		if (!string.IsNullOrEmpty(intro2)) parts.Add(intro2);
+		if (!string.IsNullOrEmpty(intro3)) parts.Add(intro3);
+		return string.Join("\n", parts);
 	}
 
 	/// <summary>

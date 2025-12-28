@@ -32,8 +32,8 @@ public class RM_GameManager : MonoBehaviour {
 	public float pitch1, pitch2, pitch3;
 	[HideInInspector] 
 	public bool isMastico1, isMastico2, isMastico3, isZambla, modified = false;
-	[HideInInspector] 
-	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText,objText,ngpText,fswText, musicIntro, musicLoop;
+	[HideInInspector]
+	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText1,introText2,introText3,objText,ngpText,fswText, musicIntro, musicLoop;
 
 	void Start() {
 
@@ -73,7 +73,9 @@ public class RM_GameManager : MonoBehaviour {
 		ngpDial    = ".";
 		fswDial    = ".";
 		titleText  = "glitch title";
-		introText  = "glitch intro";
+		introText1 = "";
+		introText2 = "";
+		introText3 = "";
 		objText    = ".";
 		ngpText    = ".";
 		fswText    = ".";
@@ -148,8 +150,11 @@ public class RM_GameManager : MonoBehaviour {
 		// Display texts
 		titleText = data.texts?.title ?? "glitch title";
 		title.GetComponent<Text>().text = titleText;
-		introText = data.texts?.intro ?? "glitch intro";
-		introTextObj.GetComponent<Text>().text = introText;
+		introText1 = data.texts?.intro1 ?? "";
+		introText2 = data.texts?.intro2 ?? "";
+		introText3 = data.texts?.intro3 ?? "";
+		// Update UI to show first intro text (or combined for display)
+		introTextObj.GetComponent<Text>().text = !string.IsNullOrEmpty(introText1) ? introText1 : "Dialogues de la scène";
 		objText = data.texts?.obj ?? ".";
 		ngpText = data.texts?.ngp ?? ".";
 		fswText = data.texts?.fsw ?? ".";

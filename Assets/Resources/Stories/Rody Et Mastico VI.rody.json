@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T09:24:30.5347590Z",
+  "exportedAt": "2025-12-28T19:15:59.7021890Z",
   "story": {
     "id": "Rody Et Mastico VI",
     "title": "RODY ET MASTICO 6",
@@ -21,7 +21,9 @@
         },
         "texts": {
           "title": "VUE SUR LE PORT",
-          "intro": "\"Dors vite! Rody. Tu te lèves tôt demain pour la pêche. Tiens! Que se passe-t-il? La nuit tombe et le phare reste éteint!\"",
+          "intro1": "Dors vite! Rody. Tu te lèves tôt demain pour la pêche. Tiens! Que se passe-t-il? La nuit tombe et le phare reste éteint!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre le phare.",
           "ngp": "As tu vu les goélands?",
           "fsw": "touche la bitte d'amarrage."
@@ -86,7 +88,9 @@
         },
         "texts": {
           "title": "DANS LE PHARE",
-          "intro": "\"J'ai vérifié les circuits électriques. Tout fonctionne, mais... le phare refuse de s'allumer!\" \"C'est ennuyeux. Les bateaux qui rentrent cette nuit risquent de manquer l'entrée du port.\" ",
+          "intro1": "J'ai vérifié les circuits électriques. Tout fonctionne, mais... le phare refuse de s'allumer!",
+          "intro2": "C'est ennuyeux. Les bateaux qui rentrent cette nuit risquent de manquer l'entrée du port.",
+          "intro3": "",
           "obj": "Aperçois-tu Rody, qui est venu voir ce qui se passe?",
           "ngp": "Une sterne vole à ras des eaux. Montre-la.",
           "fsw": "Quelle est la maison de Rody?"
@@ -151,7 +155,9 @@
         },
         "texts": {
           "title": "LE PHARE TRISTE",
-          "intro": "\"Regarde les yeux du phare, Rody. Ils sont pleins de larmes. Il parle. Ecoutons:\" \"Snif! Je suis malheureux! Où est passée mon amie la vague? Elle n'est pas venue me dire bonjour à la dernière marée! Snif!\" ",
+          "intro1": "Regarde les yeux du phare, Rody. Ils sont pleins de larmes. Il parle. Ecoutons:",
+          "intro2": "Snif! Je suis malheureux! Où est passée mon amie la vague? Elle n'est pas venue me dire bonjour à la dernière marée! Snif!",
+          "intro3": "",
           "obj": "Des bouteilles d'air comprimé sont cachée sous le bateau. Les as-tu remarquées?",
           "ngp": "Montre la quille du voilier...",
           "fsw": "Où se cache le corps de Sandrine, l'amie du père de Rody?"
@@ -216,7 +222,9 @@
         },
         "texts": {
           "title": "RODY, HOMME-GRENOUILLE",
-          "intro": "\"Je te confie cet habit d'homme grenouille, Rody. Ses pouvoirs magiques t'aideront. Retrouve vite cette vague.\" \"En avant pour l'aventure au fond des mers!\"",
+          "intro1": "Je te confie cet habit d'homme grenouille, Rody. Ses pouvoirs magiques t'aideront. Retrouve vite cette vague.",
+          "intro2": "En avant pour l'aventure au fond des mers!",
+          "intro3": "",
           "obj": "Montre les palmes.",
           "ngp": "Où est le gouvernail du bateau sur le quai?",
           "fsw": "Sais-tu où rodi s'est changé?"
@@ -281,7 +289,9 @@
         },
         "texts": {
           "title": "DANS LA MER",
-          "intro": "\"Un courant fort dirige toute l'eau dans la même direction. Laisse toi emporter, Rody.\"",
+          "intro1": "Un courant fort dirige toute l'eau dans la même direction. Laisse toi emporter, Rody.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est le tuba de Rody?",
           "ngp": "Montre l'hippocampe.",
           "fsw": "L'autre nuit, nous avions perdu notre butin, retrouve-le!"
@@ -346,7 +356,9 @@
         },
         "texts": {
           "title": "LE GOUFFRE",
-          "intro": "\"Reverrai-je un jour mon ami le phare?\" \"Mais c'est la vague que nous cherchons! Essaie de la suivre, Rody. ...Attention! C'est un gouffre!\"",
+          "intro1": "Reverrai-je un jour mon ami le phare?",
+          "intro2": "Mais c'est la vague que nous cherchons! Essaie de la suivre, Rody. ...Attention! C'est un gouffre!",
+          "intro3": "",
           "obj": "Vois-tu une étoile de mer?",
           "ngp": "Une huitre a perdu sa perle. Aide-la à la retrouver.",
           "fsw": "Distingues-tu le mawashi-geri de Rody?"
@@ -411,7 +423,9 @@
         },
         "texts": {
           "title": "LA TRAPPE",
-          "intro": "\"Aie! Tu vas bien, Rody? Seule l'eau peut traverser cette trappe. La vague a disparu. Que faire?\"",
+          "intro1": "Aie! Tu vas bien, Rody? Seule l'eau peut traverser cette trappe. La vague a disparu. Que faire?",
+          "intro2": "",
+          "intro3": "",
           "obj": "Vois-tu le poisson qui s'appelle un espadon?",
           "ngp": "On aperoit un Bernard l'hermite. Trouve-le.",
           "fsw": "Bob le poisson rouge vient de perdre sa femme. Où est-t-elle?"
@@ -476,7 +490,9 @@
         },
         "texts": {
           "title": "LE POISSON-SCIE",
-          "intro": "\"Je peux vous aider en percant un trou dans ce grillage. Laissez-moi faire.\"",
+          "intro1": "Je peux vous aider en percant un trou dans ce grillage. Laissez-moi faire.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre le rostre de l'espadon.",
           "ngp": "Un homard est effrayée. Le vois-tu?",
           "fsw": "De quoi Bob est très étonné?"
@@ -541,7 +557,9 @@
         },
         "texts": {
           "title": "LA GROTTE",
-          "intro": "\"Miam! Miam! Je suis le monstre de la terre. Bientôt, je sortirai d'ici! Le prince des volcans me l'a promis: quand j'aurai bu toute l'eau de la mer... Quel drôle de poisson!\"",
+          "intro1": "Miam! Miam! Je suis le monstre de la terre. Bientôt, je sortirai d'ici! Le prince des volcans me l'a promis: quand j'aurai bu toute l'eau de la mer... Quel drôle de poisson!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quel est ce drôle de poisson dont parle le monstre?",
           "ngp": "Aperçois-tu le fusil à harpon de Rody?",
           "fsw": "Pèrche moi sur l'antenne érogène du monstre."
@@ -606,7 +624,9 @@
         },
         "texts": {
           "title": "DANS LE VERRE",
-          "intro": "\"Sers-toi de ton fusil à harpon, Rody. Vise l'oeil, c'est l'endroit le plus sensible.\"\t",
+          "intro1": "Sers-toi de ton fusil à harpon, Rody. Vise l'oeil, c'est l'endroit le plus sensible.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Quel oeil rody va-t-il atteindre?",
           "ngp": "Une limande est tombée dans le verre en même temps que Rody. Trouve-la.",
           "fsw": "Les ongles sont caractéristiques des primates dont l'être humain. Vois-tu celui du 'monstre'?"
@@ -671,7 +691,9 @@
         },
         "texts": {
           "title": "LE MONSTRE TOUCHE",
-          "intro": "\"Bravo Rody! Le monstre est touché. Regarde. L'eau se dirige vers une rivière de lave. Méfie-toi! C'est le prince des volcans!\"",
+          "intro1": "Bravo Rody! Le monstre est touché. Regarde. L'eau se dirige vers une rivière de lave. Méfie-toi! C'est le prince des volcans!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où est la rivière de lave?",
           "ngp": "Vois-tu la queue du monstre?",
           "fsw": "As-tu remarqué les marmottons de la grotte, désormais esseulés?"
@@ -736,7 +758,9 @@
         },
         "texts": {
           "title": "LE PRINCE DES VOLCANS",
-          "intro": "\"Arrêtez cette eau! J'ai peur! Je voulais juste calmer le monstre de la terre. Il menaçait de provoquer un tremblement de terre. Au secours! Mon frère ainé, prince des océans, aide-moi!\"",
+          "intro1": "Arrêtez cette eau! J'ai peur! Je voulais juste calmer le monstre de la terre. Il menaçait de provoquer un tremblement de terre. Au secours! Mon frère ainé, prince des océans, aide-moi!",
+          "intro2": "",
+          "intro3": "",
           "obj": "Avec quoi le prince des volcans appelle-t-il son frère?",
           "ngp": "Montre la tête de la pieuvre qui déploie ses tentacules.",
           "fsw": "Lequel des homards sera prêt à être servi en premier?"
@@ -801,7 +825,9 @@
         },
         "texts": {
           "title": "QUELQUE PART AU FOND DE L'OCEAN",
-          "intro": "\"Mon petit frère est incorrigible. J'envoie mon régiment de baleines pour empêcher toute cette eau de couler sur son volcan. Mais il nous faut trouver du sable pour refermer ce gouffre.\"",
+          "intro1": "Mon petit frère est incorrigible. J'envoie mon régiment de baleines pour empêcher toute cette eau de couler sur son volcan. Mais il nous faut trouver du sable pour refermer ce gouffre.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Où sont les baleines?",
           "ngp": "Montre une anémone de mer.",
           "fsw": "As-tu aperçu l'Atari ST sur lequel tourne ce jeu à l'origine?"
@@ -866,7 +892,9 @@
         },
         "texts": {
           "title": "RODY, HOMME-HELICOPTERE",
-          "intro": "\"Transforme tes bouteilles en propulseur et tes palmes en hélice, Rody. Allons demander l'aide du maitre des sables.\" \"Bonne chance et merci, Rody. Je vais raconter mon aventure à mon ami le phare.\"",
+          "intro1": "Transforme tes bouteilles en propulseur et tes palmes en hélice, Rody. Allons demander l'aide du maitre des sables.",
+          "intro2": "Bonne chance et merci, Rody. Je vais raconter mon aventure à mon ami le phare.",
+          "intro3": "",
           "obj": "A quel endroit Rody doit-il appuyer pour transformer son matériel de plongée?",
           "ngp": "Vois-tu la méduse?",
           "fsw": "Distingues-tu le jet d'eau des baleines alors que nous sommes dans l'eau?"
@@ -931,7 +959,9 @@
         },
         "texts": {
           "title": "LE MAITRE DES SABLES",
-          "intro": "\"J'appelle tout de suite le vent violent. Il transportera le sable du désert jusqu'à la mer. Ensuite les sables mouvants boucheront la grotte du monstre et son entrée.\"",
+          "intro1": "J'appelle tout de suite le vent violent. Il transportera le sable du désert jusqu'à la mer. Ensuite les sables mouvants boucheront la grotte du monstre et son entrée.",
+          "intro2": "",
+          "intro3": "",
           "obj": "Montre la rose des vents.",
           "ngp": "Vois-tu l'hélice qui permet à Rody de voler?",
           "fsw": "Discernes-tu Bob qui profite à nouveau de sa liberté grâce à Rody?"
@@ -996,7 +1026,9 @@
         },
         "texts": {
           "title": "LA TEMPETE",
-          "intro": "\"Quelle tempête, ce matin! Tu peux dormir encore un peu Rody. Les pêcheurs n'iront pas en mer aujourd'hui. Le phare fonctionne à nouveau, le sais-tu? Nous ne connaitrons jamais la clé du mystère\"",
+          "intro1": "Quelle tempête, ce matin! Tu peux dormir encore un peu Rody. Les pêcheurs n'iront pas en mer aujourd'hui. Le phare fonctionne à nouveau, le sais-tu? Nous ne connaitrons jamais la clé du mystère",
+          "intro2": "",
+          "intro3": "",
           "obj": "La combinaison de plongée de Rody est quelque part dans la chambre. La vois-tu?",
           "ngp": "On aperçoit un eider dans la tempête, où est-il ?",
           "fsw": "Touche la prise éléctrique, qu'on en finisse!"
@@ -1061,7 +1093,9 @@
         },
         "texts": {
           "title": "MASTICO, ROBOT-GRENOUILLE",
-          "intro": "\"Moi je préfère nager dans une mer de sable, c'est moins dangereux.\"",
+          "intro1": "Moi je préfère nager dans une mer de sable, c'est moins dangereux.",
+          "intro2": "",
+          "intro3": "",
           "obj": "",
           "ngp": "",
           "fsw": ""

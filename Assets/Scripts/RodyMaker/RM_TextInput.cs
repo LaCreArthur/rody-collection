@@ -19,43 +19,26 @@ public class RM_TextInput : MonoBehaviour {
 			gm.title.GetComponent<Text>().text = inputField.text;
 		}
 		if (input == "introText"){
-
-			string[] dials = gm.introText.Split('"');
-			string newDial = "";
-			if (inputField.text.Length > 0)
-				newDial = '"' + inputField.text + '"';
-				
-			switch(gm.dialLayout.GetComponent<RM_DialLayout>().activeDial){
+			// Store directly to the appropriate intro text field
+			int activeDial = gm.dialLayout.GetComponent<RM_DialLayout>().activeDial;
+			switch(activeDial){
 				case 1:
-					if (dials.Length > 6) // 3 dials are set
-						gm.introText = newDial + " " +
-							   "\"" + dials[3] + "\" " + 
-							   "\"" + dials[5] + "\"";
-					else if (dials.Length > 4) // 2 dials
-						gm.introText = newDial + " " +
-							   "\"" + dials[3] + "\"";
-					else 
-						gm.introText = newDial;
+					gm.introText1 = inputField.text;
+					Debug.Log($"introText1 is now: {gm.introText1}");
 					break;
-				case 2: 
-					if (dials.Length > 6) // 3 dials are set
-						gm.introText = "\"" + dials[1] + "\" " + 
-											   newDial + " " + 
-									   "\"" + dials[5] + "\"";
-					else // must be 2 dials 
-						gm.introText = "\"" + dials[1] + "\" " + 
-									  		   newDial;
+				case 2:
+					gm.introText2 = inputField.text;
+					Debug.Log($"introText2 is now: {gm.introText2}");
 					break;
 				case 3:
-					gm.introText = "\"" + dials[1] + "\" \"" + 
-										  dials[3] + "\" " + 
-										   newDial;
+					gm.introText3 = inputField.text;
+					Debug.Log($"introText3 is now: {gm.introText3}");
 					break;
 				default: break;
 			}
 
-			Debug.Log("introText is now : " + gm.introText);
-			gm.introTextObj.GetComponent<Text>().text = gm.introText;
+			// Update display to show first intro text
+			gm.introTextObj.GetComponent<Text>().text = !string.IsNullOrEmpty(gm.introText1) ? gm.introText1 : "Dialogues de la scène";
 		}
 		if (input == "objText"){
 

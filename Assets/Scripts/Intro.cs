@@ -88,7 +88,7 @@ public class Intro : MonoBehaviour
         gm.clickIntro = true;
         isPlaying = false;
 
-        if (gm.currentScene == PlayerPrefs.GetInt("scenesCount")) // last scene animation loop
+        if (gm.currentScene == WorkingStory.SceneCount) // last scene animation loop
         {
             gm.sceneAnimator.isSpeaking = true;
         }

@@ -184,7 +184,7 @@ public class RM_MainLayout : RM_Layout
 
     public void OnSceneThumbnailClick(int scene)
     {
-        int scenesCount = PlayerPrefs.GetInt("scenesCount");
+        int scenesCount = WorkingStory.SceneCount;
         Debug.Log($"[RM_MainLayout] OnSceneThumbnailClick({scene}) - currentScene: {gm.currentScene}, scenesCount: {scenesCount}");
         RM_WarningLayout warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
 
@@ -260,11 +260,11 @@ public class RM_MainLayout : RM_Layout
         {
             for (int j = 6*i; j < 6*i+6; ++j) // 6 thumbnails per row
             {
-                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > PlayerPrefs.GetInt("scenesCount") + 1)
+                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > WorkingStory.SceneCount + 1)
                     sceneThumbnails[j].SetActive(false);
                 else
                 {
-                    if (j <= PlayerPrefs.GetInt("scenesCount") + 1)
+                    if (j <= WorkingStory.SceneCount + 1)
                         sceneThumbnails[j].SetActive(true);
                     Vector3 pos = sceneThumbnails[j].GetComponent<Transform>().localPosition;
                     sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - ((i-sliderValue) * 22.0f), pos.z);

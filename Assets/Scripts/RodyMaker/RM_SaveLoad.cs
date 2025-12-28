@@ -56,7 +56,9 @@ public static class RM_SaveLoad {
             texts = new DisplayTexts
             {
                 title = gm.titleText ?? "glitch title",
-                intro = gm.introText ?? "glitch intro",
+                intro1 = gm.introText1 ?? "",
+                intro2 = gm.introText2 ?? "",
+                intro3 = gm.introText3 ?? "",
                 obj = gm.objText ?? ".",
                 ngp = gm.ngpText ?? ".",
                 fsw = gm.fswText ?? "."
@@ -112,6 +114,18 @@ public static class RM_SaveLoad {
         }
 
         return zone;
+    }
+
+    /// <summary>
+    /// Formats intro texts to legacy format: "Dialog1" "Dialog2" "Dialog3"
+    /// </summary>
+    private static string FormatIntroTexts(string intro1, string intro2, string intro3)
+    {
+        var parts = new System.Collections.Generic.List<string>();
+        if (!string.IsNullOrEmpty(intro1)) parts.Add($"\"{intro1}\"");
+        if (!string.IsNullOrEmpty(intro2)) parts.Add($"\"{intro2}\"");
+        if (!string.IsNullOrEmpty(intro3)) parts.Add($"\"{intro3}\"");
+        return string.Join(" ", parts);
     }
 
     /// <summary>
@@ -193,7 +207,11 @@ public static class RM_SaveLoad {
 
         // Display texts
         arr[6] = data.texts?.title ?? "";
-        arr[7] = data.texts?.intro ?? "";
+        // Combine intro1/2/3 into legacy format: "Dialog1" "Dialog2" "Dialog3"
+        string intro1 = data.texts?.intro1 ?? "";
+        string intro2 = data.texts?.intro2 ?? "";
+        string intro3 = data.texts?.intro3 ?? "";
+        arr[7] = FormatIntroTexts(intro1, intro2, intro3);
         arr[8] = data.texts?.obj ?? "";
         arr[9] = data.texts?.ngp ?? "";
         arr[10] = data.texts?.fsw ?? "";
@@ -272,9 +290,6 @@ public static class RM_SaveLoad {
             }
         }
 
-        // Update scene count
-        WorkingStory.SetSceneCount(PlayerPrefs.GetInt("scenesCount"));
-
         Debug.Log($"[RM_SaveLoad] WorkingStory: Scene {scene} saved (dirty={WorkingStory.IsDirty})");
     }
 
@@ -307,14 +322,6 @@ public static class RM_SaveLoad {
         }
 
         int scene = gm.currentScene;
-
-        // increment the counter only if scene is saved, avoid creating a second new scene without saving the first one
-        if (PlayerPrefs.GetInt("scenesCount") + 1 == scene)
-        {
-            Debug.Log("Adding a new scene to the counter...");
-            PlayerPrefs.SetInt("scenesCount", scene);
-        }
-
         SaveSceneToWorkingStory(gm, scene);
         Debug.Log("Save done!");
     }
@@ -386,10 +393,7 @@ public static class RM_SaveLoad {
 
         Debug.Log($"[RM_SaveLoad] Deleting scene {scene}");
         WorkingStory.DeleteScene(scene);
-
-        int newCount = PlayerPrefs.GetInt("scenesCount") - 1;
-        PlayerPrefs.SetInt("scenesCount", newCount);
-        Debug.Log($"[RM_SaveLoad] Scene deleted, count now: {newCount}");
+        Debug.Log($"[RM_SaveLoad] Scene deleted, count now: {WorkingStory.SceneCount}");
     }
 
     public static void SetActiveZones(List<GameObject> zonesNear, List<GameObject> zones, bool activate = true) {

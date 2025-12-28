@@ -22,7 +22,7 @@ public class MenuManager : MonoBehaviour {
 	void Start()
 	{
 		Cursor.visible = false;
-		PlayerPrefs.SetInt("currentScene", 1);
+		WorkingStory.CurrentSceneIndex = 1;
 
 		if (!WorkingStory.IsLoaded)
 		{
@@ -88,15 +88,15 @@ public class MenuManager : MonoBehaviour {
 	public void OnNext() {
 		switch(actionToLoad) {
 			case 0: // Bouton scene
-				PlayerPrefs.SetInt("currentScene", sceneToLoad);
+				WorkingStory.CurrentSceneIndex = sceneToLoad;
 				SceneManager.LoadScene(3);
 				break;
 			case 1: // Bouton Draw (Edit)
-				PlayerPrefs.SetInt("currentScene",0);
+				WorkingStory.CurrentSceneIndex = 0;
 				ForkAndEdit();
 				break;
 			case 2: // Bouton intro
-				PlayerPrefs.SetInt("currentScene",0);
+				WorkingStory.CurrentSceneIndex = 0;
 				SceneManager.LoadScene(0);
 				break;
 			default: break;
@@ -125,9 +125,6 @@ public class MenuManager : MonoBehaviour {
 		{
 			Debug.Log("[MenuManager] Already a user story, editing in place");
 		}
-
-		// Update scenesCount from WorkingStory
-		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
 		// Go to editor
 		SceneManager.LoadScene(6);

@@ -57,7 +57,7 @@ public static class SceneDataParser
         
         // Parse display texts
         data.texts.title = raw[IDX_TITLE_TEXT] ?? "";
-        data.texts.intro = raw[IDX_INTRO_TEXT] ?? "";
+        ParseIntroTexts(raw[IDX_INTRO_TEXT], data.texts);
         data.texts.obj = raw[IDX_OBJ_TEXT] ?? "";
         data.texts.ngp = raw[IDX_NGP_TEXT] ?? "";
         data.texts.fsw = raw[IDX_FSW_TEXT] ?? "";
@@ -145,7 +145,7 @@ public static class SceneDataParser
             if (pitches.Length >= 2) float.TryParse(pitches[1], out voice.pitch2);
             if (pitches.Length >= 3) float.TryParse(pitches[2], out voice.pitch3);
         }
-        
+
         // Parse speaker flags (1 = Mastico, 0 = other)
         if (!string.IsNullOrEmpty(speakersRaw))
         {
@@ -155,6 +155,29 @@ public static class SceneDataParser
             if (speakers.Length >= 3) voice.isMastico3 = speakers[2] == "1";
             if (speakers.Length >= 4) voice.isZambla = speakers[3] == "1";
         }
+    }
+
+    /// <summary>
+    /// Parses old combined intro text format into separate intro1/2/3 fields.
+    /// Old format: "Dialog 1" "Dialog 2" "Dialog 3" (quotes around each dialog)
+    /// </summary>
+    private static void ParseIntroTexts(string raw, DisplayTexts texts)
+    {
+        if (string.IsNullOrEmpty(raw))
+        {
+            texts.intro1 = "";
+            texts.intro2 = "";
+            texts.intro3 = "";
+            return;
+        }
+
+        // Split by quotes - odd indices contain the dialog text
+        // Example: '"Dialog1" "Dialog2"' splits to ['', 'Dialog1', ' ', 'Dialog2', '']
+        var parts = raw.Split('"');
+
+        texts.intro1 = parts.Length > 1 ? parts[1] : raw; // If no quotes, use whole string
+        texts.intro2 = parts.Length > 3 ? parts[3] : "";
+        texts.intro3 = parts.Length > 5 ? parts[5] : "";
     }
     
     /// <summary>
