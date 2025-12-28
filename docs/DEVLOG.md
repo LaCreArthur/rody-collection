@@ -1,6 +1,101 @@
 # Development Log
 
-> Condensed session log for quick project context. See [REFACTORING_ROADMAP.md](REFACTORING_ROADMAP.md) for ongoing work.
+> Condensed session log for quick project context. See [ROADMAP.md](ROADMAP.md) for ongoing work.
+
+---
+
+## 2025-12-28: Phase 2 - WebGL File Picker
+
+**Goal:** Enable import/export of `.rody.json` stories on WebGL builds.
+
+### Implementation
+
+**Problem:** The existing `UploadFile()` jslib function returns blob URLs via `URL.createObjectURL()`, which Unity WebGL can't read content from.
+
+**Solution:** Added `UploadFileContent()` that uses `FileReader.readAsText()` to return actual file content as a string.
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `Assets/Scripts/WebGL/WebGLFileBrowser.cs` | Singleton helper with DllImport declarations and async callbacks |
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `StandaloneFileBrowser.jslib` | Added `UploadFileContent()` function |
+| `RA_NewGame.cs` | WebGL import uses `WebGLFileBrowser.OpenFileAsText()` → `WorkingStory.LoadFromJson()` |
+| `RA_NewGame.cs` | WebGL export uses `WebGLFileBrowser.DownloadTextFile()` |
+
+### Key Pattern: jslib + SendMessage Callback
+
+```javascript
+// jslib reads file as text and sends to Unity
+UploadFileContent: function(gameObjectName, methodName, filter) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        SendMessage(gameObjectName, methodName, e.target.result);
+    };
+    reader.readAsText(file);
+}
+```
+
+```csharp
+// C# receives callback with file content
+public void OnFileContentLoaded(string content) {
+    WorkingStory.LoadFromJson(content, null);
+}
+```
+
+### Validation Pending
+
+- [ ] WebGL build and test import
+- [ ] WebGL build and test export/download
+
+---
+
+## 2025-12-28: Completed Unify Runtime to WorkingStory
+
+**Goal:** Remove ALL folder-based loading - all runtime story ops go through WorkingStory exclusively.
+
+### Major Refactoring
+
+| File | Before | After | Changes |
+|------|--------|-------|---------|
+| `RM_SaveLoad.cs` | ~1073 lines | ~450 lines | Removed all folder-based fallbacks |
+| `GameManager.cs` | ~451 lines | ~290 lines | Single InitFromWorkingStory() path |
+| `MenuManager.cs` | ~217 lines | ~139 lines | Simplified ForkAndEdit() |
+| `Title.cs` | ~150 lines | ~135 lines | Single InitFromWorkingStory() path |
+| `PathManager.cs` | 228 lines | 29 lines | Keeps only UserStoriesPath |
+| `RA_NewGame.cs` | ~350 lines | ~300 lines | Removed dead folder-copy methods |
+
+### WorkingStory Additions
+
+- Added `DeleteScene()` method for scene deletion support
+
+### Dead Code Removed
+
+- All StreamingAssets paths
+- LocalStoryProvider references
+- Folder-based sprite loading (`LoadSprite(path, scene, w, h)`)
+- Legacy folder deletion in RA_NewGame (CopyGameFolder, CopyRodyBaseFolder, CopyCoverImage)
+- PathManager: GamePath, IsJsonStory, IsOfficialStory, SpritesPath, LevelsFile, CreditsFile, GetSpritePath, etc.
+
+### Hindsight
+
+- **All runtime story data flows through WorkingStory.** No fallbacks, no folder paths.
+- Stories are loaded into WorkingStory in `RA_ScrollView.LoadFolder()` BEFORE scene transitions
+- Every scene now checks `WorkingStory.IsLoaded` first and returns to scene 0 if false
+- The only remaining file system operations are: user story JSON listing (PathManager.UserStoriesPath) and file picker/export
+
+### Verification
+
+```bash
+# These patterns should return no matches in Assets/Scripts/
+grep -r "streamingAssetsPath" Assets/Scripts/  # ✅ None
+grep -r "LocalStoryProvider" Assets/Scripts/   # ✅ None
+```
 
 ---
 
@@ -52,7 +147,7 @@ else
 
 **Key Insight:** Official stories now use just the story ID (e.g., "Rody Et Mastico") as `gamePath`, while user stories use full paths or prefixed paths.
 
-### Phase 2 🔄 IN PROGRESS - WorkingStory Class
+### Phase 2 ✅ COMPLETE - WorkingStory Class
 
 **Created `WorkingStory.cs`** - Static class for in-memory story state:
 
@@ -85,10 +180,34 @@ public static class WorkingStory
 - User stories exist only as `.rody.json` files (no persistent directory)
 - Export = Save (same operation)
 
-**Pending:**
-- Integrate with `MenuManager.cs` (fork flow)
-- Integrate with `RA_NewGame.cs` (import flow)
-- Delete `UserStoryProvider.cs`, `StoryImporter.cs`, `JsonStoryProvider.cs`
+**✅ Integrated:**
+- `MenuManager.cs` - `ForkAndEdit()` uses `WorkingStory.ForkForEditing()` (works on ALL platforms including WebGL)
+- `RA_NewGame.cs`:
+  - `NG_OnAcceptClick()` uses `WorkingStory.CreateNew()` (works on ALL platforms)
+  - `OnImportClick()` uses `WorkingStory.LoadFromJson()` (desktop only, WebGL file picker TODO)
+  - `OnExportClick()` uses `WorkingStory.ExportToJson()` (desktop only, WebGL download TODO)
+- `PathManager.cs` - `IsJsonStory` now checks `WorkingStory.IsLoaded` + `memory:`/`json:` prefixes
+- `RM_SaveLoad.cs` - All load/save methods now delegate to `WorkingStory` when loaded:
+  - `LoadTitleSprite()`, `LoadSceneThumbnail()`, `LoadSceneSprites()` → `WorkingStory.LoadSprite()`
+  - `LoadSceneData()`, `LoadSceneTxt()` → `WorkingStory.LoadScene()`
+  - `SaveGameToJson()` → new `SaveGameToWorkingStory()` method
+  - `CreateNewScene()` → `WorkingStory.CreateNewScene()`
+  - `CountScenesTxt()` → `WorkingStory.SceneCount`
+
+**Deleted:**
+- `UserStoryProvider.cs`, `StoryImporter.cs` - no longer needed
+- `RM_MainLayout.cs` - removed WebGL save check (now works on all platforms via WorkingStory)
+
+**Bug Fixed:** Fork-and-edit for official stories failed because `PathManager.IsJsonStory` only checked `.json` extension, but `gamePath` was `memory:xxx`. Fixed by checking `WorkingStory.IsLoaded` first.
+
+**Remaining WebGL checks (10, all legitimate):**
+- Bootstrap.cs - WebGLResizeHandler + IsWebGL property
+- WebGLResizeHandler.cs - browser integration
+- RM_ImagesLayout, RM_ImgAnimLayout, RA_NewGame - file browser (needs jslib wrapper)
+
+**Next:**
+- Add WebGL file browser support (jslib wrapper for upload/download)
+- Delete `JsonStoryProvider.cs` (still used for listing user stories)
 
 ### ObjectZone Refactoring ✅ COMPLETE
 
@@ -159,14 +278,14 @@ When removing `#if UNITY_WEBGL` checks, we missed `MenuManager.cs` initially bec
 - JSON stories: prefixed (e.g., `json:/path/to/story.rody.json`)
 - Use path separators/prefixes to detect story type at runtime
 
-**Remaining platform checks** (6 files still have `#if UNITY_WEBGL`):
-- `Bootstrap.cs` - WebGLResizeHandler (OK to keep)
-- `MenuManager.cs` - ✅ FIXED
-- `RM_MainLayout.cs` - RodyMaker editor (needs update)
-- `RM_ImagesLayout.cs` - RodyMaker editor (needs update)
-- `RA_NewGame.cs` - needs update
+**Remaining platform checks** (7 files still have `#if UNITY_WEBGL`):
+- `Bootstrap.cs` - WebGLResizeHandler (OK to keep - WebGL-specific feature)
+- `MenuManager.cs` - ✅ FIXED (uses WorkingStory.ForkForEditing)
+- `RM_MainLayout.cs` - RodyMaker editor save button (needs WorkingStory)
+- `RM_ImagesLayout.cs` - RodyMaker editor file import (needs jslib)
+- `RA_NewGame.cs` - 🔄 PARTIAL (new/import use WorkingStory, file picker needs jslib)
 - `WebGLResizeHandler.cs` - OK (WebGL-only component)
-- `RM_ImgAnimLayout.cs` - RodyMaker editor (needs update)
+- `RM_ImgAnimLayout.cs` - RodyMaker editor file import (needs jslib)
 
 ### Files Modified
 | File | Changes |

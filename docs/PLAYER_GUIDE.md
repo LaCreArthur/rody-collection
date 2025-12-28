@@ -131,16 +131,17 @@ Et quand on clique sur enregistrer, ca va directement enregistrer dans le jeu qu
 
 ### Partager vos jeux
 
-Les jeux sont stockes dans le dossier `StreamingAssets/` :
+Vos jeux sont sauvegardes en fichiers `.rody.json` :
 
-1. Allez dans `RodyCollection/StreamingAssets/`
-2. Trouvez votre dossier de jeu (ex: "Ma Nouvelle Histoire")
-3. Partagez le dossier entier avec d'autres personnes
-4. Ils peuvent l'importer avec le bouton Importer
+1. Quand vous sauvegardez, choisissez un emplacement sur votre ordinateur
+2. Le fichier `.rody.json` contient tout (scenes, images, dialogues)
+3. Partagez ce fichier par email, cloud, ou cle USB
+4. Les autres peuvent l'importer avec le bouton Importer
 
-**Ou utilisez le format portable :**
-- Exportez en fichier `.rody.json` (inclut toutes les images en base64)
-- Un seul fichier, facile a partager par email ou cloud
+**Format portable :**
+- Un seul fichier `.rody.json` par histoire
+- Toutes les images sont incluses en base64
+- Fonctionne sur toutes les plateformes
 
 ### Partager vos histoires
 

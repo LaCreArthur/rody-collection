@@ -1,63 +1,47 @@
-# RodyMaker Documentation
+# Rody Collection Documentation
 
-> **Project History**: Originally created in Unity 2019, resurrected and upgraded to Unity 2022.3 LTS in December 2024.
+> A Unity 6 recreation of classic Atari ST adventure games with a built-in level editor.
 
 ## Quick Start
 
-This project contains multiple game prototypes built on a shared utility library called **UnityReusables**.
-
-### Project Structure
-
-```
-Assets/
-├── DOOM/                 # FPS minigame (playable)
-├── RollToInfinity/       # Another game prototype
-├── Pixelation/           # Visual effect module
-├── Feel/NiceVibrations/  # Haptic feedback plugin
-├── UnityReusables/       # Shared utility library
-└── Plugins/Sirenix/      # Odin Inspector
-```
-
-## Documentation Index
-
-### Core Documentation
 | Document | Description |
 |----------|-------------|
-| [Project Overview](PROJECT_OVERVIEW.md) | **Start here!** Game concept, Atari ST heritage, phoneme TTS system |
-| [Architecture](ARCHITECTURE.md) | Patterns, namespaces, and design philosophy |
-| [Inspector Wiring](INSPECTOR_WIRING.md) | **Important!** Understanding serialized logic |
+| [Project Overview](PROJECT_OVERVIEW.md) | Game concept, Atari ST heritage, phoneme TTS |
+| [Player Guide](PLAYER_GUIDE.md) | How to play (French) |
+| [Rody Maker Tutorial](RODY_MAKER_TUTORIAL.md) | Level editor guide (French) |
 
-### Sub-Projects
+## Development
+
 | Document | Description |
 |----------|-------------|
-| [UnityReusables Library](UNITY_REUSABLES.md) | Reusable components and systems |
-| [DOOM FPS Module](DOOM_FPS.md) | FPS minigame documentation |
+| [Roadmap](ROADMAP.md) | Current progress and remaining work |
+| [Development Log](DEVLOG.md) | Session history and implementation details |
+| [Architecture](ARCHITECTURE.md) | Code patterns and namespaces |
+| [Inspector Wiring](INSPECTOR_WIRING.md) | Understanding serialized logic |
 
-### Reference
+## Reference
+
 | Document | Description |
 |----------|-------------|
-| [Refactoring Roadmap](REFACTORING_ROADMAP.md) | Current and planned improvements |
+| [User Stories Feature](USER_STORIES_FEATURE.md) | Import/export system for user content |
 | [Third-Party Plugins](THIRD_PARTY.md) | External dependencies |
-| [Migration Notes](MIGRATION_2022.md) | Unity 2019 → 2022.3 changes |
-| [Development Log](DEVLOG.md) | Session history and progress tracking |
+| [UnityReusables Library](UNITY_REUSABLES.md) | Shared utility components |
+| [Migration Notes](MIGRATION_2022.md) | Unity 2019 to 2022.3 changes |
 
-## Key Concepts
+## Sub-Projects
 
-### ScriptableObject Architecture
-This project uses ScriptableObjects extensively for:
-- **Variables** - Shared state (e.g., `BoolVariable`, `IntVariable`)
-- **Events** - Decoupled communication (e.g., `SimpleEventSO`)
-- **Managers** - Configuration and services
-
-### Inspector-Based Wiring
-**Important**: Much of the game logic is configured in the Unity Inspector, not in code. See [Inspector Wiring](INSPECTOR_WIRING.md) for details.
+| Document | Description |
+|----------|-------------|
+| [DOOM FPS Module](DOOM_FPS.md) | FPS minigame documentation |
 
 ## Unity Version
 
-- **Current**: Unity 2022.3 LTS
+- **Current**: Unity 6 (6000.3.2f1)
 - **Render Pipeline**: Built-in (not URP)
-- **Input System**: Both legacy and new input system
+- **Input System**: Both legacy and new
 
----
+## Links
 
-*Last updated: December 2024*
+- **Play Online**: https://lacrearthur.github.io/rody-collection/
+- **Download**: https://lacrearthur.itch.io/rody-mastico-collection
+- **Source**: https://github.com/LaCreArthur/rody-collection

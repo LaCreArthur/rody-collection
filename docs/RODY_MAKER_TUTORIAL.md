@@ -2,11 +2,6 @@
 
 > Creez vos propres aventures Rody & Mastico avec l'editeur de niveaux integre.
 
-<!-- TODO: Mettre a jour ce tutoriel apres la migration JSON complete.
-     La structure en dossiers (levels.rody, Sprites/, etc.) sera remplacee
-     par le format .rody.json unique pour le chargement et la sauvegarde
-     des histoires personnalisees. -->
-
 ---
 
 ## Table des matieres
@@ -39,14 +34,13 @@ Rody Maker est integre directement dans Rody Collection. Pour y acceder :
 1. Cliquez sur le bouton **"Creer un nouveau"** dans le menu principal
 2. Entrez un titre pour votre jeu (ex: "Le Manoir de Mortevielle" pour la reference a Lankhor !)
 3. Choisissez une image de couverture (celle qui apparaitra dans le menu)
-4. Le jeu cree automatiquement l'arborescence de fichiers necessaire
-5. Vous etes emmene directement dans l'editeur avec une page blanche
+4. Vous etes emmene directement dans l'editeur avec une page blanche
 
 C'est l'ecran titre du jeu et forcement y'a rien, mais du coup on peut directement tout faire !
 
 ### Importer un jeu
 
-Un bouton **"Charger un dossier"** permet d'importer un jeu externe (dossier envoye par un ami) pour qu'il apparaisse dans votre menu.
+Un bouton **"Importer"** permet de charger un fichier `.rody.json` (envoye par un ami) pour l'editer ou y jouer.
 
 ---
 
@@ -368,20 +362,21 @@ Toutes les pistes de musique Atari ST originales des Rody.
 
 ## Partager vos creations
 
-### Localisation des jeux
-Vos jeux crees se trouvent dans : `RodyCollection_Data/StreamingAssets/`
+### Format de sauvegarde
+Vos jeux sont sauvegardes en fichiers `.rody.json`. Ce format portable contient tout : scenes, images, dialogues.
 
 ### Partager un jeu
-1. Copiez simplement le dossier de votre jeu (ex: "MonJeuPerso")
-2. Envoyez-le a un ami
+1. Sauvegardez votre jeu (bouton disquette)
+2. Choisissez un emplacement sur votre ordinateur
+3. Envoyez le fichier `.rody.json` a un ami (email, cloud, cle USB)
 
 ### Installer un jeu recu
-1. Collez le dossier dans `StreamingAssets`
-2. OU utilisez le bouton "Charger un dossier" dans le menu
+1. Cliquez sur le bouton **"Importer"** dans le menu principal
+2. Selectionnez le fichier `.rody.json` recu
 
 ### Partage collaboratif
 
-On peut faire un Dropbox/Google Drive collaboratif ou on met tous nos dossiers et comme ca on peut telecharger les dossiers des autres facilement !
+On peut faire un Dropbox/Google Drive collaboratif ou on met tous nos fichiers `.rody.json` et comme ca on peut telecharger les jeux des autres facilement !
 
 Si vous faites de nouvelles histoires, dites-le moi sur Twitter, YouTube, Facebook, n'importe ! Et si les histoires sont vraiment bien, je les integrerai directement dans le jeu.
 

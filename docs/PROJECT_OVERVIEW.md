@@ -24,25 +24,24 @@ A point-and-click adventure where players:
 ## Project Structure
 
 ### Story Organization
-Stories are stored in `Assets/StreamingAssets/` as separate folders:
+Official stories are embedded as JSON in `Assets/Resources/Stories/`:
 
 ```
-StreamingAssets/
-├── Rody Et Mastico/        # Original story
-│   ├── levels.rody         # Scene definitions (text file)
-│   ├── credits.txt         # Story credits
-│   └── Sprites/            # Scene images (320×130 each)
-├── Rody Et Mastico II/
-├── Rody Et Mastico III/
-├── Rody Et Mastico A Ibiza/
-├── Rody Et Mastico V/
-├── Rody Et Mastico VI/
-├── Rody Noël/              # Christmas special
-└── Rody0/                  # Test/template story
+Resources/Stories/
+├── index.json                          # Story list
+├── Rody Et Mastico.rody.json
+├── Rody Et Mastico II.rody.json
+├── Rody Et Mastico III.rody.json
+├── Rody Et Mastico A Ibiza.rody.json
+├── Rody Et Mastico V.rody.json
+├── Rody Et Mastico VI.rody.json
+└── Rody Noel.rody.json
 ```
+
+Each `.rody.json` file contains story metadata, scene definitions, and sprites encoded as base64.
 
 ### Scene Data Format
-Each scene in `levels.rody` contains:
+Each scene contains:
 - **Phoneme strings** - For TTS narration (intro, object hints, feedback)
 - **Display text** - Written text shown to player
 - **Music references** - Intro and loop music IDs
@@ -102,7 +101,7 @@ The game includes a full level editor allowing users to create custom stories.
 ### Editor Files (`Assets/Scripts/RodyMaker/`)
 | File | Purpose |
 |------|---------|
-| `RM_SaveLoad.cs` | Save/load story data to StreamingAssets |
+| `RM_SaveLoad.cs` | Save/load via WorkingStory |
 | `RM_MainLayout.cs` | Main editor interface |
 | `RM_DialLayout.cs` | Dialogue/phoneme editing |
 | `RM_ObjLayout.cs` | Object zone placement |

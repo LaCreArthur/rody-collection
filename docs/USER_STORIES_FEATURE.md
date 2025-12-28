@@ -1,154 +1,134 @@
 # User Stories Feature
 
-> Implemented: 2024-12-26
+> **Updated:** 2025-12-28 - Simplified to import/export model
 
 ## Overview
 
-This feature enables players to create, edit, save, and share their own stories with:
-- Local storage in `Application.persistentDataPath/UserStories/`
-- Fork-on-edit protection for official stories
-- Export/Import via portable `.rody.json` files
-- Desktop-first implementation (WebGL support planned for future)
+Users can create, edit, and share their own stories via:
+- **Import:** Load `.rody.json` files into memory
+- **Export:** Save edited stories as `.rody.json` files
+- **Fork-on-edit:** Editing official stories creates an in-memory copy
 
 ## Architecture
 
-### Storage Locations
+### Single Runtime Format
 
-| Type | Location | Provider |
-|------|----------|----------|
-| Official Stories (Desktop) | `StreamingAssets/` | `LocalStoryProvider` |
-| Official Stories (WebGL) | `Resources/Stories/` | `ResourcesStoryProvider` |
-| User Stories (Desktop) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
+All stories (official and user) use the same in-memory format via `WorkingStory`:
 
-### Key Design Decisions
+```
+WorkingStory.Current (ExportedStory)
+    ├── story: { id, title, sceneCount }
+    ├── credits: string
+    ├── scenes: SceneData[]
+    └── sprites: { "name.png": "base64..." }
+```
 
-1. **Fork-on-Edit**: When editing an official story, a copy is automatically created in user space with `_edit` suffix (e.g., "Rody Et Mastico_edit"). This protects original stories from modification.
+### Storage
 
-2. **Same File Format**: User stories use the same format as official stories (levels.rody, Sprites/, credits.txt) for compatibility.
+| Type | Location | Access |
+|------|----------|--------|
+| Official Stories | `Resources/Stories/*.rody.json` | Read-only, embedded in build |
+| User Stories | User's file system | Import/export via file picker |
 
-3. **Portable Export**: The `.rody.json` format bundles all story data including sprites as base64, making files ~1-2MB and easily shareable.
+**No persistent user storage.** Stories exist in memory while the app is running. Users must export to save.
 
-4. **UI Separation**: Story selection shows official stories first, then a separator, then user stories section.
+## User Flows
 
-## Files Created
+### Playing Official Story
 
-### `Assets/Scripts/Providers/UserStoryProvider.cs`
-Full `IStoryProvider` implementation for user stories with:
-- `ForkStory(sourcePath)` - Copies official story to user space
-- `DeleteStory(storyId)` - Removes user story
-- Standard provider methods (GetStories, LoadScene, SaveScene, etc.)
+1. Select story from list
+2. `WorkingStory.LoadOfficial(storyId)` loads into memory
+3. Play through scenes
+4. Exit - nothing to save (read-only)
 
-### `Assets/Scripts/Providers/StoryExporter.cs`
-Exports stories to portable JSON format:
-- `ExportToJson(storyPath)` - Returns JSON string
-- `ExportToFile(storyPath, outputPath)` - Writes .rody.json file
-- `GetExportFileName(storyPath)` - Suggests filename
+### Editing Official Story (Fork)
 
-Export format:
-```json
+1. Select official story, click Edit
+2. `WorkingStory.ForkForEditing()` creates deep copy
+3. Story marked as non-official, title gets "(copie)" suffix
+4. Edit in RodyMaker
+5. Click Save → file picker → export as `.rody.json`
+6. Exit without saving → changes lost (warning shown)
+
+### Importing User Story
+
+1. Click Import in menu
+2. Select `.rody.json` file
+3. `WorkingStory.LoadFromJson(json, path)` loads into memory
+4. `LastSavePath` remembered for quick-save
+5. Play or edit
+6. Save → overwrites original location (quick-save)
+
+### Creating New Story
+
+1. Click New Story, enter title
+2. `WorkingStory.CreateNew(title)` creates blank story
+3. RodyMaker opens
+4. Edit scenes
+5. First Save → file picker (no `LastSavePath` yet)
+6. Subsequent saves → quick-save to same location
+
+### Sharing Stories
+
+Just share the `.rody.json` file. Works on any platform.
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `WorkingStory.cs` | In-memory story state management |
+| `StoryExporter.cs` | `ExportedStory` data model |
+| `RA_NewGame.cs` | Import/export UI buttons |
+| `RM_SaveLoad.cs` | Editor save/load operations |
+
+## WorkingStory API
+
+```csharp
+public static class WorkingStory
 {
-  "formatVersion": 1,
-  "exportedAt": "2024-12-26T12:00:00Z",
-  "story": { "id": "...", "title": "...", "sceneCount": 5 },
-  "credits": "...",
-  "scenes": [ { "index": 1, "data": {...} } ],
-  "sprites": { "cover.png": "base64...", "1.1.png": "base64..." }
+    // State
+    public static ExportedStory Current { get; }
+    public static bool IsOfficial { get; }      // Read-only until forked
+    public static bool IsDirty { get; }         // Unsaved changes?
+    public static string LastSavePath { get; }  // Quick-save location
+    public static bool IsLoaded { get; }
+    public static string Title { get; }
+    public static int SceneCount { get; }
+
+    // Loading
+    public static void LoadOfficial(string storyId);
+    public static void LoadFromJson(string json, string savePath = null);
+    public static void CreateNew(string title);
+
+    // Editing
+    public static void ForkForEditing();
+    public static void SaveScene(int index, SceneData data);
+    public static void SaveSprite(string name, Texture2D texture);
+    public static void CreateNewScene(int sceneIndex);
+
+    // Reading
+    public static SceneData LoadScene(int sceneIndex);
+    public static Sprite LoadSprite(string spriteName);
+    public static List<Sprite> LoadSceneSprites(int sceneIndex);
+    public static string GetCredits();
+
+    // Export
+    public static string ExportToJson();
+    public static void MarkSaved(string path);
 }
 ```
 
-### `Assets/Scripts/Providers/StoryImporter.cs`
-Imports stories from .rody.json files:
-- `ImportFromJson(json)` - Creates story folder, returns path
-- `ImportFromFile(filePath)` - Reads file and imports
-- `ValidateJson(json)` - Validates without importing
+## WebGL Considerations
 
-## Files Modified
+- **Import:** Browser file picker via `StandaloneFileBrowser.jslib`
+- **Export:** Browser download trigger via `DownloadFile()` in jslib
+- **No persistent storage:** Same as desktop - memory only
 
-### `Assets/Scripts/Utils/PathManager.cs`
-Added:
-- `UserStoriesPath` - Path to user stories folder
-- `IsUserStory` - Checks if current game is a user story
-- `GetUserStoryPath(storyId)` - Gets path for specific user story
-- `EnsureUserStoriesDirectory()` - Creates folder if needed
-- `GetUniqueForkName(originalName)` - Generates _edit, _edit2, etc.
+## Future: Persistent User Stories
 
-### `Assets/Scripts/MenuManager.cs`
-Added `ForkAndEdit()` method:
-- Called when Edit button is pressed
-- Checks if story is user story (edit in place) or official (fork first)
-- Updates gamePath to forked location before loading editor
+If user feedback requests a "My Stories" list:
 
-### `Assets/Scripts/RodyAnthology/RA_ScrollView.cs`
-Added:
-- `slotSeparatorPrefab` - Visual separator between sections
-- `slotImportPrefab` - Import button slot
-- `userStorySlotIndices` - Tracks user story slots
-- `LoadUserStories()` - Loads user stories from persistentDataPath
-- `GetSlotPath(index)` - Handles both official and user paths
-- `GetSelectedUserStoryPath()` - For export functionality
-- Updated `OnSuppr()` to handle user story deletion
+- **Desktop:** Auto-save to `persistentDataPath/UserStories/`
+- **WebGL:** IndexedDB via jslib wrapper
 
-### `Assets/Scripts/RodyAnthology/RA_NewGame.cs`
-Added:
-- `OnImportClick()` - Opens file dialog, imports .rody.json
-- `OnExportClick()` - Exports selected user story
-- Updated delete logic to handle absolute paths (user stories)
-
-## Inspector Wiring Required
-
-On `RA_ScrollView` component in the scene, assign:
-- `slotSeparatorPrefab` - Prefab for visual separator
-- `slotImportPrefab` - Prefab for import button
-
-## User Flow
-
-### Creating a New Story
-1. Click "New Game" in story selection
-2. Story is created in StreamingAssets (existing behavior)
-3. First edit will fork to UserStories
-
-### Editing Official Story
-1. Select official story, click Edit
-2. System automatically forks to `UserStories/{name}_edit`
-3. All changes saved to forked copy
-4. Original remains unchanged
-
-### Editing User Story
-1. Select user story, click Edit
-2. Changes saved directly (no fork needed)
-
-### Exporting Story
-1. Select a user story
-2. Click Export button (or use menu)
-3. Choose save location
-4. .rody.json file created with all data
-
-### Importing Story
-1. Click Import button
-2. Select .rody.json file
-3. Story imported to UserStories folder
-4. Appears in "My Stories" section
-
-## Future Enhancements
-
-- [ ] WebGL support using IndexedDB for user stories
-- [ ] Cloud sync for user stories (Firebase)
-- [ ] Story thumbnail generation on export
-- [ ] Batch import/export
-- [ ] Story versioning
-
-## Discussion Context
-
-This feature was designed during a brainstorming session about UGC (user-generated content). Key constraints discussed:
-- Storage costs for cloud hosting
-- Moderation concerns
-- Authentication complexity
-
-The "local-first with export/import" approach was chosen as it:
-- Avoids cloud storage costs
-- Eliminates moderation needs
-- Enables sharing via files
-- Works offline
-- Gives users control of their data
-
-The implementation prioritizes desktop for easier debugging, with WebGL (IndexedDB) planned as a future iteration.
+Currently deferred - import/export is sufficient for MVP.

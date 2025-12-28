@@ -38,7 +38,7 @@ git push origin master  # Triggers .github/workflows/deploy-pages.yml
 | Menu Path | Purpose |
 |-----------|---------|
 | `Tools > Rody > Export Stories to JSON` | Opens batch export window |
-| `Tools > Rody > Export All Stories Now` | Quick export all to `static/Stories/` |
+| `Tools > Rody > Export All Stories Now` | Export from `./original-stories/` to `Resources/Stories/` |
 
 ## Local-Only Plugins
 
@@ -49,23 +49,22 @@ Note: DOTween is now included in the repo for CI builds.
 
 ## Architecture
 
-### Platform-Specific Storage
+### Story Storage (Unified)
 | Type | Location | Provider |
 |------|----------|----------|
-| Official Stories (Desktop) | `StreamingAssets/` | `LocalStoryProvider` |
-| Official Stories (WebGL) | `Resources/Stories/` | `ResourcesStoryProvider` |
-| User Stories (Desktop) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
-| JSON Stories (`.rody.json`) | Any location | `JsonStoryProvider` |
+| Official Stories (All platforms) | `Resources/Stories/*.rody.json` | `ResourcesStoryProvider` |
+| User Stories (Desktop only) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
 
 - **Abstraction**: `IStoryProvider` interface in `Assets/Scripts/Providers/`
-- Platform detection handled by `StoryProviderManager.cs` using `#if UNITY_WEBGL && !UNITY_EDITOR`
-- **JSON Stories**: Direct loading from `.rody.json` files with base64-encoded sprites (no folder extraction needed)
+- Runtime story type detection (not compile-time `#if UNITY_WEBGL`)
+- **JSON format**: `.rody.json` files with base64-encoded sprites
+- **Source stories**: `./original-stories/` (folder-based, for re-export only)
 
 ### User Stories Feature
-User-created content is stored separately from official stories:
-- **Fork-on-Edit**: Editing official story auto-forks to `UserStories/{name}_edit`
+User-created content uses import/export model (no persistent storage):
+- **Fork-on-Edit**: Editing official story creates in-memory copy via `WorkingStory.ForkForEditing()`
 - **Export/Import**: Portable `.rody.json` format with base64 sprites
-- **Key files**: `UserStoryProvider.cs`, `StoryExporter.cs`, `StoryImporter.cs`
+- **Key file**: `WorkingStory.cs` - single in-memory story state
 - **See**: `docs/USER_STORIES_FEATURE.md` for full documentation
 
 ### Scene Build Order
@@ -94,7 +93,8 @@ Scene 6 for editing (accessible via Edit button)
 | `Assets/Scripts/GameManager.cs` | Main gameplay controller |
 | `Assets/Scripts/RodyMaker/` | Level editor (RM_ prefix) |
 | `Assets/Scripts/RodyAnthology/` | Story selection (RA_ prefix) |
-| `Assets/Scripts/Providers/` | Storage abstraction layer |
+| `Assets/Scripts/Providers/WorkingStory.cs` | In-memory story state (THE source of truth) |
+| `Assets/Scripts/Providers/ResourcesStoryProvider.cs` | Loads official stories from Resources |
 | `Assets/Scripts/Models/SceneData.cs` | Typed scene data model |
 | `Assets/Scripts/Utils/PathManager.cs` | Cross-platform path handling |
 | `Assets/Scripts/SoundManager.cs` | Phoneme TTS and audio |
@@ -156,12 +156,31 @@ UnityReusables.*       - Shared utilities
 - Use conventional commits: `fix:`, `feat:`, `docs:`
 - **Never null-check serialized fields** - If a prefab/reference isn't assigned in the Inspector, let it fail loudly with NullReferenceException rather than silently skipping
 - **Cache static/constant data** - If generating the same data every time (e.g., blank textures, default configs), compute once and cache as static field or constant. Don't recreate identical data repeatedly.
+- **Always grep for patterns before declaring a fix complete** - When fixing platform-specific code (`#if UNITY_WEBGL`), always run `grep -r "PATTERN" Assets/Scripts/` to find ALL occurrences. Don't rely on testing alone—code paths may not be exercised until later scenes.
+- **Fix for simplicity, never add complexity** - When something doesn't work, INVESTIGATE THE ROOT CAUSE first. Don't jump to adding backward compatibility, abstractions, or workarounds. The simplest fix is usually the correct one. Example: If exports fail, check if the source path changed—don't add code to handle missing data.
+
+## Problem-Solving Principles
+
+**IMPORTANT: Investigate before adding complexity**
+
+When encountering a problem, follow this order:
+1. **Investigate root cause** - Why isn't it working? What changed?
+2. **Find the simple fix** - Can we fix the source of the problem?
+3. **Only then consider complexity** - Backward compatibility is a LAST resort
+
+❌ **Wrong thinking:** "No JSON generated → I must add backward compatibility"
+✅ **Correct thinking:** "No JSON generated → Why? → Source path changed → Fix the path"
+
+This principle applies broadly:
+- Data format issues → Fix the export, don't add parsers for broken formats
+- Missing files → Find where they moved, don't add fallback loading
+- API changes → Update the caller, don't add adapter layers
 
 ## Documentation
 
 | Doc | Purpose |
 |-----|---------|
+| `docs/ROADMAP.md` | Current progress and remaining work |
 | `docs/DEVLOG.md` | Session history and implementation details |
 | `docs/USER_STORIES_FEATURE.md` | User stories feature documentation |
-| `docs/REFACTORING_ROADMAP.md` | Active refactoring tasks |
 | `docs/INSPECTOR_WIRING.md` | Inspector event wiring reference |
