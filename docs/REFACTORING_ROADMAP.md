@@ -1,80 +1,98 @@
 # Refactoring Roadmap
 
 > Active tracking for improvements and technical debt.
-
-## Completed (2024-12-16)
-
-### PathManager
-`Assets/Scripts/Utils/PathManager.cs` - Centralized cross-platform path construction.
-
-### SceneData Model
-`Assets/Scripts/Models/` - Typed data model replacing magic string array indices.
-- `SceneData.cs` - PhonemeDialogues, DisplayTexts, MusicSettings, VoiceSettings, ObjectZones
-- `SceneDataParser.cs` - Index constants + parsing logic
-
-### IStoryProvider Interface
-`Assets/Scripts/Providers/` - Abstraction layer for local/remote storage.
-- `IStoryProvider.cs` - Interface + StoryMetadata/StoryData
-- `LocalStoryProvider.cs` - StreamingAssets implementation
-- `StoryProviderManager.cs` - Provider accessor
-
-```csharp
-var scene = StoryProviderManager.Provider.LoadScene("Rody Et Mastico", 1);
-```
+> **Updated: 2025-12-28**
 
 ---
 
-## Next Up: Phoneme Dictionary
+## Completed
 
-**Goal:** Natural French text → phoneme conversion
+### 2025-12-28: Firebase Removal
+- Removed all Firebase dependencies (FirebaseStoryProvider, FirebaseConfig, etc.)
+- WebGL now uses `ResourcesStoryProvider` with embedded JSON
+- No more HTTP requests, CORS, or async complexity
+- See `FIREBASE_REMOVAL_REVIEW.md` for details
 
-**Approach:**
-1. Dictionary of ~500 common French words
-2. "Learn" feature for unknown words
-3. Firebase sync for shared dictionary
-4. Future: ML training on existing corpus
+### 2024-12-16: Core Refactoring
 
-**Tasks:**
-- [ ] Create base dictionary
-- [ ] Build editor UI with learning feature
-- [ ] Firebase sync (after IStoryProvider migration)
+**PathManager** - `Assets/Scripts/Utils/PathManager.cs`
+- Centralized cross-platform path construction
+
+**SceneData Model** - `Assets/Scripts/Models/`
+- `SceneData.cs` - PhonemeDialogues, DisplayTexts, MusicSettings, VoiceSettings, ObjectZones
+- `SceneDataParser.cs` - Index constants + parsing logic
+
+**IStoryProvider Interface** - `Assets/Scripts/Providers/`
+- `IStoryProvider.cs` - Interface + StoryMetadata/StoryData
+- Multiple provider implementations (to be unified - see Next Up)
+
+---
+
+## Next Up: JSON-Only Migration ⚡ PRIORITY
+
+**Goal:** Unify all storage to `.rody.json` with single code path for all platforms.
+
+**Current mess:**
+- 4 providers: `LocalStoryProvider`, `UserStoryProvider`, `JsonStoryProvider`, `ResourcesStoryProvider`
+- Platform-specific code (`#if UNITY_WEBGL`)
+- Two formats: folders (`levels.rody` + `Sprites/`) and JSON
+
+**Target:**
+```
+ALL PLATFORMS:
+    Official Stories → Resources/Stories/*.rody.json (embedded, read-only)
+    User Stories     → Import/Export .rody.json files (no persistent storage)
+```
+
+**Files to delete:**
+- `LocalStoryProvider.cs` (296 lines)
+- `UserStoryProvider.cs` (421 lines)
+- `StoryImporter.cs` (~200 lines)
+- `StreamingAssets/` story folders
+
+**Code reduction:** ~1,500 lines removed
+
+**See:** `JSON_MIGRATION_PLAN.md` for detailed phases
 
 ---
 
 ## Future
 
-- **Firebase Storage** - Online story sharing (uses IStoryProvider)
-- **Observable Pattern** - Replace PlayerPrefs state
-- **SoundManager Refactor** - Break up 360-line monolith
+### Phoneme Dictionary
+**Goal:** Natural French text → phoneme conversion
+
+**Approach:**
+1. Dictionary of ~500 common French words
+2. "Learn" feature for unknown words
+3. Local JSON file storage
+4. Future: ML training on existing corpus
+
+**Tasks:**
+- [ ] Create base dictionary
+- [ ] Build editor UI with learning feature
+- [ ] Dictionary persistence
 
 ### ObjectZone Format Modernization
+**Goal:** Replace string parsing with typed JSON structure
 
-**Current state:** Object zones use legacy string format from `levels.rody`:
+**Current (fragile):**
 ```csharp
-// Position: "(x,y);(x2,y2);" - semicolon-separated, parentheses for grouping
-positionRaw = "(0,0);(50,20);"
-sizeRaw = "(10,10);(15,15);"
+positionRaw = "(0,0);(50,20);"  // String parsing in ReadObjects()
 ```
 
-**Problem:** Requires string parsing in `ReadObjects()` / `LoadObject()` with fragile split logic.
-
-**Goal:** Use proper typed JSON structure:
+**Target:**
 ```csharp
-public class ObjectZone
-{
-    public List<Vector2Int> positions;  // [(0,0), (50,20)]
-    public List<Vector2Int> sizes;      // [(10,10), (15,15)]
-    public List<Vector2Int> nearPositions;
-    public List<Vector2Int> nearSizes;
-}
+public List<Vector2Int> positions;  // Proper typed field
 ```
 
 **Tasks:**
 - [ ] Update `ObjectZone` class with typed fields
-- [ ] Add JSON serialization attributes for Vector2Int
-- [ ] Migrate `ReadObjects()` / `LoadObject()` to use typed data
-- [ ] Write migration for existing `.rody.json` files
-- [ ] Keep `levels.rody` parser backward-compatible
+- [ ] Add JSON serialization for Vector2Int
+- [ ] Migrate existing `.rody.json` files
+
+### Other
+- **Observable Pattern** - Replace PlayerPrefs state
+- **SoundManager Refactor** - Break up 360-line monolith
 
 ---
 
@@ -83,3 +101,4 @@ public class ObjectZone
 - **Explicit code** over Inspector wiring
 - **Observable pattern** for state
 - **Path.Combine()** always for paths
+- **No null checks** on serialized fields

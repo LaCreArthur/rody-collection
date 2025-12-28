@@ -8,13 +8,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Live URL**: https://lacrearthur.github.io/rody-collection/
 
+## Quick Reference
+
+| Key | Value |
+|-----|-------|
+| Unity Version | 6000.3.2f1 (Unity 6 LTS) |
+| Render Pipeline | Built-in (not URP) |
+| Input System | Both legacy and new |
+| Target Resolution | 960x600 (3x Atari ST 320x200) |
+
 ## Build Commands
 
 ```bash
 # Build WebGL from Unity Editor
 # File > Build Settings > WebGL > Build
 # Output: build/WebGL/
-# Resolution: 960x600 (3x Atari ST 320x200)
 
 # Build WebGL from CLI (used by CI)
 # Unity -batchmode -quit -projectPath . -buildTarget WebGL -executeMethod BuildScript.Build
@@ -24,6 +32,13 @@ git push origin master  # Triggers .github/workflows/deploy-pages.yml
 ```
 
 **⚠️ CI Note**: Do NOT push to `master` on every commit. CI builds WebGL on each push to master. Batch commits locally and push when ready for a build.
+
+## Editor Tools
+
+| Menu Path | Purpose |
+|-----------|---------|
+| `Tools > Rody > Export Stories to JSON` | Opens batch export window |
+| `Tools > Rody > Export All Stories Now` | Quick export all to `static/Stories/` |
 
 ## Local-Only Plugins
 
@@ -53,14 +68,24 @@ User-created content is stored separately from official stories:
 - **Key files**: `UserStoryProvider.cs`, `StoryExporter.cs`, `StoryImporter.cs`
 - **See**: `docs/USER_STORIES_FEATURE.md` for full documentation
 
+### Scene Build Order
+| Index | Scene | Purpose |
+|-------|-------|---------|
+| 0 | 0_MenuCollection | Story selection |
+| 1 | 1_TitleScene | Story title card |
+| 2 | 2_MenuScene | In-game menu |
+| 3 | 3_GameScene | Main gameplay |
+| 4 | 4_CreditsScene | Story credits |
+| 5 | 5_WinScene | Completion screen |
+| 6 | RM_Main | Level Editor |
+
 ### Initialization Flow
 ```
 Bootstrap.cs → StoryProviderManager.Initialize() → Provider ready
     ↓
-Scene 0 (0_MenuCollection) loads stories via Provider
+Scene 0 loads stories via Provider → User selects story → Scenes 1-5 for gameplay
     ↓
-Scene 1-5: Title → Menu → Game → Credits
-Scene 6: RM_Main (Level Editor)
+Scene 6 for editing (accessible via Edit button)
 ```
 
 ### Key Code Paths
@@ -131,3 +156,12 @@ UnityReusables.*       - Shared utilities
 - Use conventional commits: `fix:`, `feat:`, `docs:`
 - **Never null-check serialized fields** - If a prefab/reference isn't assigned in the Inspector, let it fail loudly with NullReferenceException rather than silently skipping
 - **Cache static/constant data** - If generating the same data every time (e.g., blank textures, default configs), compute once and cache as static field or constant. Don't recreate identical data repeatedly.
+
+## Documentation
+
+| Doc | Purpose |
+|-----|---------|
+| `docs/DEVLOG.md` | Session history and implementation details |
+| `docs/USER_STORIES_FEATURE.md` | User stories feature documentation |
+| `docs/REFACTORING_ROADMAP.md` | Active refactoring tasks |
+| `docs/INSPECTOR_WIRING.md` | Inspector event wiring reference |

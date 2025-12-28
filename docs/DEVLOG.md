@@ -65,6 +65,7 @@ var sprite = provider.LoadSprite(storyId, "cover.png", 320, 240);
 - [x] Update any callers of `LoadCoverAsync` to use `LoadCover` (done - `LoadCover` is synchronous)
 - [ ] Test WebGL build with embedded stories
 - [x] Update CLAUDE.md Firebase references (done - table shows ResourcesStoryProvider)
+- [x] Review for leftover dead code (see `FIREBASE_REMOVAL_REVIEW.md`)
 
 ---
 
@@ -409,7 +410,7 @@ On `RA_ScrollView`: assign `slotSeparatorPrefab` and `slotImportPrefab`
 
 | Key | Value |
 |-----|-------|
-| Unity Version | 2022.3 LTS |
+| Unity Version | 6000.3.2f1 (Unity 6 LTS) |
 | Render Pipeline | Built-in (not URP) |
 | Input System | Both legacy and new |
-| Key Plugins | Odin Inspector, DOTween, NiceVibrations |
+| Key Plugins | Odin Inspector (local), DOTween, NiceVibrations |
