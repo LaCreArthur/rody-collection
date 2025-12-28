@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -44,60 +43,12 @@ public class RM_MainLayout : RM_Layout
         objectsButton.interactable = introButton.interactable = (gm.currentScene != 0);
     }
 
+    /// <summary>
+    /// Loads sprites from WorkingStory for editor display.
+    /// </summary>
     public void LoadSprites()
     {
-        // JSON story loading
-        if (PathManager.IsJsonStory)
-        {
-            LoadSpritesFromJson();
-            return;
-        }
-
-        // Legacy folder-based loading
-        string spritePath = PathManager.SpritesPath + Path.DirectorySeparatorChar;
-        int i;
-
-        // Load scene thumbnails
-        sceneThumbnails[0].GetComponent<Image>().sprite =
-            RM_SaveLoad.LoadSprite(spritePath+0+".png",0,36,21);
-
-        for (i = 1; i < PlayerPrefs.GetInt("scenesCount") + 1; i++) {
-            Sprite thumbnail = RM_SaveLoad.LoadSprite(spritePath + (i), 1, 36, 21);
-            sceneThumbnails[i].GetComponent<Image>().sprite = thumbnail;
-        }
-
-        // Activate new scene button
-        if (i < 29) {
-            sceneThumbnails[i].GetComponent<Button>().interactable = true;
-            sceneThumbnails[i].GetComponent<Image>().sprite = addSceneSprite;
-        }
-
-        // Load main scene sprite
-        if (gm.currentScene == 0)
-            gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
-                RM_SaveLoad.LoadSprite(spritePath+0+".png",0,320,240);
-        else {
-            gm.scenePanel.GetComponent<SpriteRenderer>().sprite =
-                RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene),1,320,130);
-
-            // Load animation frames
-            DirectoryInfo dir = new DirectoryInfo(spritePath);
-            var files = dir.GetFiles(gm.currentScene + ".*.png");
-            gm.framesCount = files.Length - 1;
-
-            RM_ImgAnimLayout.frames.Clear();
-            for (i = 0; i < gm.framesCount; ++i) {
-			    RM_ImgAnimLayout.frames.Add(RM_SaveLoad.LoadSprite(spritePath+(gm.currentScene), i+2, 320, 130));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Loads sprites from JSON story using RM_SaveLoad helper methods.
-    /// </summary>
-    private void LoadSpritesFromJson()
-    {
-        int sceneCount = PlayerPrefs.GetInt("scenesCount");
+        int sceneCount = WorkingStory.SceneCount;
         int i;
 
         // Load scene thumbnails
@@ -122,7 +73,7 @@ public class RM_MainLayout : RM_Layout
         }
         else
         {
-            // Load scene sprites from JSON
+            // Load scene sprites from WorkingStory
             var sceneSprites = RM_SaveLoad.LoadSceneSprites(gm.currentScene);
             if (sceneSprites.Count > 0)
             {
@@ -182,13 +133,10 @@ public class RM_MainLayout : RM_Layout
     public void OnSaveClick()
     {
         Debug.Log("Save button clicked");
-#if UNITY_WEBGL && !UNITY_EDITOR
-        OnSaveClickAsync();
-#else
+        // Save works on all platforms now via WorkingStory (in-memory)
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
         StartCoroutine(ShowSaveFeedback());
-#endif
     }
 
     private IEnumerator ShowSaveFeedback()
@@ -220,15 +168,6 @@ public class RM_MainLayout : RM_Layout
 
         Debug.Log("[RM_MainLayout] Save feedback shown");
     }
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-    private void OnSaveClickAsync()
-    {
-        // WebGL with embedded Resources is read-only for official stories
-        // This shouldn't be reached as the editor is desktop-only
-        Debug.LogWarning("[RM_MainLayout] Save not supported on WebGL - stories are read-only");
-    }
-#endif
 
     public void OnRevertClick()
     {

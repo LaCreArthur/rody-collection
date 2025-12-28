@@ -3,7 +3,8 @@ using UnityEngine;
 
 /// <summary>
 /// Abstraction layer for story data access.
-/// Enables switching between local (StreamingAssets) and embedded (Resources) storage.
+/// Used by ResourcesStoryProvider for loading official stories from embedded Resources.
+/// Runtime story state is managed by WorkingStory.
 /// </summary>
 public interface IStoryProvider
 {

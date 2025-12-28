@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -37,16 +35,17 @@ public class RM_GameManager : MonoBehaviour {
 	[HideInInspector] 
 	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText,objText,ngpText,fswText, musicIntro, musicLoop;
 
-	void Start() { 
-		
-		// if gm is load from ingame
+	void Start() {
+
+		// Load from ingame
 		currentScene = PlayerPrefs.GetInt("currentScene");
-		
-		// Debug only
-		// PlayerPrefs.SetInt("currentScene", 1);
-		// currentScene = 1;
-		PlayerPrefs.SetInt("scenesCount", RM_SaveLoad.CountScenesTxt());
-		Debug.Log("scenes count : " + PlayerPrefs.GetInt("scenesCount"));
+
+		// Scene count is set from WorkingStory (loaded in RA_ScrollView/MenuManager)
+		if (WorkingStory.IsLoaded)
+		{
+			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+		}
+		Debug.Log($"[RM_GameManager] scenes count: {PlayerPrefs.GetInt("scenesCount")}");
 		
 		if (PlayerPrefs.GetInt("rodyMakerFirstTime") == 1) {
 			welcomePanel.SetActive(true);
@@ -108,66 +107,118 @@ public class RM_GameManager : MonoBehaviour {
 		}
 	}
 
-	 public void ReadSceneStr(){
-        
-        string[] sceneStr = new string[26];
+	/// <summary>
+	/// Loads scene data from WorkingStory and populates editor fields.
+	/// </summary>
+	public void ReadSceneStr()
+	{
+		int sceneToLoad = currentScene;
 
-		if (PlayerPrefs.GetInt("scenesCount") + 1 == currentScene) {
-			Debug.Log("Load last scene text...");
-			sceneStr = RM_SaveLoad.LoadSceneTxt(currentScene-1);
+		// If creating a new scene, load from the previous scene as template
+		if (PlayerPrefs.GetInt("scenesCount") + 1 == currentScene)
+		{
+			Debug.Log("[RM_GameManager] Load previous scene as template...");
+			sceneToLoad = currentScene - 1;
 		}
-		else
-			sceneStr = RM_SaveLoad.LoadSceneTxt(currentScene);
 
-		// get music string
-		musicIntro = sceneStr[11].Split(',')[0];
-		musicLoop  = sceneStr[11].Split(',')[1];			
+		// Load scene data from WorkingStory
+		SceneData data = WorkingStory.LoadScene(sceneToLoad);
+		if (data == null)
+		{
+			Debug.LogError($"[RM_GameManager] Failed to load scene {sceneToLoad}");
+			return;
+		}
 
-		string[] pitchs = sceneStr[12].Split(',');
-		pitch1     = float.Parse(pitchs[0]);
-		pitch2     = float.Parse(pitchs[1]);
-		pitch3     = float.Parse(pitchs[2]);
+		// Music
+		musicIntro = data.music?.introMusic ?? "i1";
+		musicLoop = data.music?.sceneMusic ?? "l1";
 
-		string[] booleans = sceneStr[13].Split(',');
-		isMastico1 = booleans[0] == "1";
-		isMastico2 = booleans[1] == "1";
-		isMastico3 = booleans[2] == "1";
-		isZambla   = booleans[3] == "1";
-		
-		// wow such refactoring
-		introDial1 = sceneStr[0];
-		introDial2 = sceneStr[1];
-		introDial3 = sceneStr[2];
-		objDial    = sceneStr[3];
-		ngpDial    = sceneStr[4];
-		fswDial    = sceneStr[5];
-		titleText  = sceneStr[6];
+		// Voice settings
+		pitch1 = data.voice?.pitch1 ?? 1f;
+		pitch2 = data.voice?.pitch2 ?? 1f;
+		pitch3 = data.voice?.pitch3 ?? 1f;
+		isMastico1 = data.voice?.isMastico1 ?? false;
+		isMastico2 = data.voice?.isMastico2 ?? false;
+		isMastico3 = data.voice?.isMastico3 ?? false;
+		isZambla = data.voice?.isZambla ?? false;
+
+		// Dialogues (phonemes)
+		introDial1 = data.dialogues?.intro1 ?? ".";
+		introDial2 = data.dialogues?.intro2 ?? ".";
+		introDial3 = data.dialogues?.intro3 ?? ".";
+		objDial = data.dialogues?.obj ?? ".";
+		ngpDial = data.dialogues?.ngp ?? ".";
+		fswDial = data.dialogues?.fsw ?? ".";
+
+		// Display texts
+		titleText = data.texts?.title ?? "glitch title";
 		title.GetComponent<Text>().text = titleText;
-		introText  = sceneStr[7];
+		introText = data.texts?.intro ?? "glitch intro";
 		introTextObj.GetComponent<Text>().text = introText;
-		objText    = sceneStr[8];
-		ngpText    = sceneStr[9];
-		fswText    = sceneStr[10];
+		objText = data.texts?.obj ?? ".";
+		ngpText = data.texts?.ngp ?? ".";
+		fswText = data.texts?.fsw ?? ".";
 
+		// Object zones
 		objNearTemplate.SetActive(true);
 		objTemplate.SetActive(true);
-		
-        objNear = RM_SaveLoad.ReadObjects("objNear", sceneStr[16], sceneStr[17], true);
-        ngpNear = RM_SaveLoad.ReadObjects("ngpNear", sceneStr[20], sceneStr[21], true);
-        fswNear = RM_SaveLoad.ReadObjects("fswNear", sceneStr[24], sceneStr[25], true);
-        
-        obj = RM_SaveLoad.ReadObjects("obj" , sceneStr[14], sceneStr[15]);
-		ngp = RM_SaveLoad.ReadObjects("ngp" , sceneStr[18], sceneStr[19]);
-		fsw = RM_SaveLoad.ReadObjects("fsw" , sceneStr[22], sceneStr[23]);
+
+		objNear = CreateZoneList("objNear", data.objects?.obj, true);
+		ngpNear = CreateZoneList("ngpNear", data.objects?.ngp, true);
+		fswNear = CreateZoneList("fswNear", data.objects?.fsw, true);
+
+		obj = CreateZoneList("obj", data.objects?.obj, false);
+		ngp = CreateZoneList("ngp", data.objects?.ngp, false);
+		fsw = CreateZoneList("fsw", data.objects?.fsw, false);
 
 		List<List<GameObject>> zonesList = new List<List<GameObject>>{objNear, ngpNear, fswNear};
 		foreach(List<GameObject> zones in zonesList)
 			foreach (GameObject zone in zones)
 				zone.SetActive(false);
-		
+
 		objNearTemplate.SetActive(false);
 		objTemplate.SetActive(false);
-    }
+	}
+
+	/// <summary>
+	/// Creates a list of zone GameObjects from typed ObjectZone data.
+	/// </summary>
+	private List<GameObject> CreateZoneList(string name, ObjectZone zone, bool isNear)
+	{
+		var result = new List<GameObject>();
+		if (zone == null) return result;
+
+		GameObject parent, zoneObj;
+		float x, y, width, height;
+
+		if (isNear)
+		{
+			parent = GameObject.Find("Objects");
+			zoneObj = Instantiate(objNearTemplate, parent.GetComponent<RectTransform>());
+			x = zone.nearX;
+			y = zone.nearY;
+			width = zone.nearWidth;
+			height = zone.nearHeight;
+		}
+		else
+		{
+			parent = GameObject.Find(name + "Near0");
+			zoneObj = Instantiate(objTemplate, parent.GetComponent<RectTransform>());
+			x = zone.x;
+			y = zone.y;
+			width = zone.width;
+			height = zone.height;
+		}
+
+		zoneObj.name = name + "0";
+
+		RectTransform rectTransform = zoneObj.GetComponent<RectTransform>();
+		rectTransform.localPosition = new Vector3(x, y, 0f);
+		rectTransform.sizeDelta = new Vector2(width, height);
+
+		result.Add(zoneObj);
+		return result;
+	}
 
 	void Update() {
 		if (Input.GetKeyUp(KeyCode.Escape)){

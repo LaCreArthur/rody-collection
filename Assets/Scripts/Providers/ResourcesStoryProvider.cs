@@ -4,9 +4,9 @@ using UnityEngine;
 using Newtonsoft.Json;
 
 /// <summary>
-/// Story provider that loads from Unity Resources folder.
-/// Stories are embedded in the build - no HTTP requests needed.
-/// Used for WebGL where StreamingAssets requires HTTP.
+/// Story provider that loads official stories from Unity Resources folder.
+/// Stories are embedded in the build as JSON files with base64 sprites.
+/// Used on all platforms - stories are loaded into WorkingStory for runtime.
 /// </summary>
 public class ResourcesStoryProvider : IStoryProvider
 {

@@ -37,7 +37,7 @@ public class SceneAnimator : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log("SceneAnimator : currentframe: " + currentFrame + ", firstDial: " + firstDial + ", currentDialIndex: " + gm.sm.currentDialIndex + ", sumDial: "+ sumDial);
+				// Debug.Log("SceneAnimator : currentframe: " + currentFrame + ", firstDial: " + firstDial + ", currentDialIndex: " + gm.sm.currentDialIndex + ", sumDial: "+ sumDial);
 				spriteRenderer.sprite = frames[currentFrame]; // change the sprite
 				
 				if (frames.Count > 1) {

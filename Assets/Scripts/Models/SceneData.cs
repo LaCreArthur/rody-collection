@@ -149,27 +149,20 @@ public class ObjectZones
 
 /// <summary>
 /// A single clickable object zone with position and size.
+/// The zone is the exact clickable area, nearZone is for "getting warmer" feedback.
 /// </summary>
 [Serializable]
 public class ObjectZone
 {
-    /// <summary>
-    /// Position data as raw string from levels.rody (e.g., "(10,20),(30,40)")
-    /// </summary>
-    public string positionRaw = "";
-    
-    /// <summary>
-    /// Size data as raw string from levels.rody
-    /// </summary>
-    public string sizeRaw = "";
-    
-    /// <summary>
-    /// Near zone position (for "getting warmer" feedback)
-    /// </summary>
-    public string nearPositionRaw = "";
-    
-    /// <summary>
-    /// Near zone size
-    /// </summary>
-    public string nearSizeRaw = "";
+    // The clickable target zone
+    public float x;
+    public float y;
+    public float width;
+    public float height;
+
+    // The "getting warmer" zone (slightly bigger, around the target)
+    public float nearX;
+    public float nearY;
+    public float nearWidth;
+    public float nearHeight;
 }

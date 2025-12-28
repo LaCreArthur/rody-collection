@@ -348,6 +348,102 @@ public static class WorkingStory
     }
 
     /// <summary>
+    /// Deletes a scene from the story and reindexes subsequent scenes.
+    /// </summary>
+    public static void DeleteScene(int sceneIndex)
+    {
+        if (Current == null)
+        {
+            Debug.LogError("WorkingStory: No story loaded");
+            return;
+        }
+
+        if (Current.scenes == null || Current.scenes.Count == 0)
+        {
+            Debug.LogError("WorkingStory: No scenes to delete");
+            return;
+        }
+
+        // Remove the scene data
+        Current.scenes.RemoveAll(s => s.index == sceneIndex);
+
+        // Remove associated sprites
+        if (Current.sprites != null)
+        {
+            var spritesToRemove = new List<string>();
+            foreach (var key in Current.sprites.Keys)
+            {
+                if (key.StartsWith($"{sceneIndex}.") && key.EndsWith(".png"))
+                {
+                    spritesToRemove.Add(key);
+                }
+            }
+            foreach (var key in spritesToRemove)
+            {
+                // Clear from cache
+                if (_spriteCache.ContainsKey(key))
+                {
+                    var sprite = _spriteCache[key];
+                    if (sprite != null && sprite.texture != null)
+                    {
+                        UnityEngine.Object.Destroy(sprite.texture);
+                        UnityEngine.Object.Destroy(sprite);
+                    }
+                    _spriteCache.Remove(key);
+                }
+                Current.sprites.Remove(key);
+            }
+        }
+
+        // Reindex subsequent scenes
+        foreach (var scene in Current.scenes)
+        {
+            if (scene.index > sceneIndex)
+            {
+                int oldIndex = scene.index;
+                int newIndex = oldIndex - 1;
+
+                // Rename sprites for this scene
+                if (Current.sprites != null)
+                {
+                    var spritesToRename = new List<string>();
+                    foreach (var key in Current.sprites.Keys)
+                    {
+                        if (key.StartsWith($"{oldIndex}.") && key.EndsWith(".png"))
+                        {
+                            spritesToRename.Add(key);
+                        }
+                    }
+                    foreach (var oldKey in spritesToRename)
+                    {
+                        string newKey = oldKey.Replace($"{oldIndex}.", $"{newIndex}.");
+                        Current.sprites[newKey] = Current.sprites[oldKey];
+                        Current.sprites.Remove(oldKey);
+
+                        // Update cache key if cached
+                        if (_spriteCache.ContainsKey(oldKey))
+                        {
+                            _spriteCache[newKey] = _spriteCache[oldKey];
+                            _spriteCache.Remove(oldKey);
+                        }
+                    }
+                }
+
+                scene.index = newIndex;
+            }
+        }
+
+        // Update scene count
+        if (Current.story != null)
+        {
+            Current.story.sceneCount = Mathf.Max(0, Current.story.sceneCount - 1);
+        }
+
+        IsDirty = true;
+        Debug.Log($"WorkingStory: Deleted scene {sceneIndex}");
+    }
+
+    /// <summary>
     /// Updates the story title.
     /// </summary>
     public static void SetTitle(string title)

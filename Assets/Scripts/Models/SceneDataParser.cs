@@ -68,23 +68,62 @@ public static class SceneDataParser
         // Parse voice settings
         ParseVoice(raw[IDX_PITCHES], raw[IDX_SPEAKERS], data.voice);
         
-        // Parse object zones
-        data.objects.obj.positionRaw = raw[IDX_OBJ_POS] ?? "";
-        data.objects.obj.sizeRaw = raw[IDX_OBJ_SIZE] ?? "";
-        data.objects.obj.nearPositionRaw = raw[IDX_OBJ_NEAR_POS] ?? "";
-        data.objects.obj.nearSizeRaw = raw[IDX_OBJ_NEAR_SIZE] ?? "";
-        
-        data.objects.ngp.positionRaw = raw[IDX_NGP_POS] ?? "";
-        data.objects.ngp.sizeRaw = raw[IDX_NGP_SIZE] ?? "";
-        data.objects.ngp.nearPositionRaw = raw[IDX_NGP_NEAR_POS] ?? "";
-        data.objects.ngp.nearSizeRaw = raw[IDX_NGP_NEAR_SIZE] ?? "";
-        
-        data.objects.fsw.positionRaw = raw[IDX_FSW_POS] ?? "";
-        data.objects.fsw.sizeRaw = raw[IDX_FSW_SIZE] ?? "";
-        data.objects.fsw.nearPositionRaw = raw[IDX_FSW_NEAR_POS] ?? "";
-        data.objects.fsw.nearSizeRaw = raw[IDX_FSW_NEAR_SIZE] ?? "";
-        
+        // Parse object zones into typed floats
+        ParseObjectZone(data.objects.obj,
+            raw[IDX_OBJ_POS], raw[IDX_OBJ_SIZE],
+            raw[IDX_OBJ_NEAR_POS], raw[IDX_OBJ_NEAR_SIZE]);
+
+        ParseObjectZone(data.objects.ngp,
+            raw[IDX_NGP_POS], raw[IDX_NGP_SIZE],
+            raw[IDX_NGP_NEAR_POS], raw[IDX_NGP_NEAR_SIZE]);
+
+        ParseObjectZone(data.objects.fsw,
+            raw[IDX_FSW_POS], raw[IDX_FSW_SIZE],
+            raw[IDX_FSW_NEAR_POS], raw[IDX_FSW_NEAR_SIZE]);
+
         return data;
+    }
+
+    /// <summary>
+    /// Parses raw position/size strings into typed ObjectZone floats.
+    /// Format: "(x, y);" for position, "(width, height);" for size.
+    /// </summary>
+    private static void ParseObjectZone(ObjectZone zone, string posRaw, string sizeRaw, string nearPosRaw, string nearSizeRaw)
+    {
+        // Parse main zone
+        var pos = ParseVector(posRaw);
+        var size = ParseVector(sizeRaw);
+        zone.x = pos.x;
+        zone.y = pos.y;
+        zone.width = size.x;
+        zone.height = size.y;
+
+        // Parse near zone
+        var nearPos = ParseVector(nearPosRaw);
+        var nearSize = ParseVector(nearSizeRaw);
+        zone.nearX = nearPos.x;
+        zone.nearY = nearPos.y;
+        zone.nearWidth = nearSize.x;
+        zone.nearHeight = nearSize.y;
+    }
+
+    /// <summary>
+    /// Parses a raw string like "(x, y);" into a tuple of floats.
+    /// </summary>
+    private static (float x, float y) ParseVector(string raw)
+    {
+        if (string.IsNullOrEmpty(raw)) return (0, 0);
+
+        // Remove trailing semicolon and parentheses
+        raw = raw.Trim().TrimEnd(';').Trim('(', ')');
+
+        var parts = raw.Split(',');
+        if (parts.Length < 2) return (0, 0);
+
+        float.TryParse(parts[0].Trim(), out float x);
+        float.TryParse(parts[1].Trim(), out float y);
+
+        return (x, y);
     }
     
     private static void ParseMusic(string raw, MusicSettings music)
@@ -127,19 +166,21 @@ public static class SceneDataParser
         data.dialogues = PhonemeDialogues.Glitch;
         data.texts = DisplayTexts.Glitch;
 
-        // Set valid object zone data (format: "(x,y);" for position, "(w,h);" for size)
-        data.objects.obj.positionRaw = "(0,0);";
-        data.objects.obj.sizeRaw = "(10,10);";
-        data.objects.obj.nearPositionRaw = "(0,0);";
-        data.objects.obj.nearSizeRaw = "(20,20);";
-        data.objects.ngp.positionRaw = "(50,0);";
-        data.objects.ngp.sizeRaw = "(10,10);";
-        data.objects.ngp.nearPositionRaw = "(50,0);";
-        data.objects.ngp.nearSizeRaw = "(20,20);";
-        data.objects.fsw.positionRaw = "(100,0);";
-        data.objects.fsw.sizeRaw = "(10,10);";
-        data.objects.fsw.nearPositionRaw = "(100,0);";
-        data.objects.fsw.nearSizeRaw = "(20,20);";
+        // Set default object zones
+        data.objects.obj.x = 0; data.objects.obj.y = 0;
+        data.objects.obj.width = 10; data.objects.obj.height = 10;
+        data.objects.obj.nearX = 0; data.objects.obj.nearY = 0;
+        data.objects.obj.nearWidth = 20; data.objects.obj.nearHeight = 20;
+
+        data.objects.ngp.x = 50; data.objects.ngp.y = 0;
+        data.objects.ngp.width = 10; data.objects.ngp.height = 10;
+        data.objects.ngp.nearX = 50; data.objects.ngp.nearY = 0;
+        data.objects.ngp.nearWidth = 20; data.objects.ngp.nearHeight = 20;
+
+        data.objects.fsw.x = 100; data.objects.fsw.y = 0;
+        data.objects.fsw.width = 10; data.objects.fsw.height = 10;
+        data.objects.fsw.nearX = 100; data.objects.fsw.nearY = 0;
+        data.objects.fsw.nearWidth = 20; data.objects.fsw.nearHeight = 20;
 
         return data;
     }

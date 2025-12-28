@@ -2,8 +2,6 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
-using System;
-using System.IO; // DirectoryInfo
 
 public class GameManager : MonoBehaviour {
 
@@ -26,83 +24,78 @@ public class GameManager : MonoBehaviour {
 	public SceneAnimator sceneAnimator;
 	[HideInInspector]
 	public List<GameObject> obj, objNear, ngp, ngpNear, fsw, fswNear;
-	[HideInInspector] 
+	[HideInInspector]
 	public bool introOver,objOver,ngpOver,fswOver,interObj,clickIntro = false,clickObj = false;
-	[HideInInspector] 
+	[HideInInspector]
 	public AudioClip[] currentFx;
-	[HideInInspector] 
+	[HideInInspector]
 	public List<Sprite> sceneSprites;
-	[HideInInspector] 
+	[HideInInspector]
 	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText,objText,ngpText,fswText;
 	[HideInInspector]
 	public int currentScene;
 
-	// Use this for initialization
-	void Start () {
-        // init the good dial for the current scene
-        currentScene = PlayerPrefs.GetInt("currentScene");
+	void Start()
+	{
+		currentScene = PlayerPrefs.GetInt("currentScene");
 
-		if (currentScene <= PlayerPrefs.GetInt("scenesCount")) {
-#if UNITY_WEBGL && !UNITY_EDITOR
-			StartCoroutine(InitSceneWebGL(currentScene));
-#else
-			InitScene(currentScene);
-			// init variables
-			introOver = false;
-			objOver = false;
-			// start the sequence of events
-			StartCoroutine(Play());
-#endif
+		if (!WorkingStory.IsLoaded)
+		{
+			Debug.LogError("[GameManager] WorkingStory not loaded - returning to menu");
+			SceneManager.LoadScene(0);
+			return;
 		}
-		else { // try to load a non existing scene
-			Debug.Log("How dare you do that !");
+
+		if (currentScene > WorkingStory.SceneCount)
+		{
+			Debug.Log("[GameManager] Scene index exceeds story length - going to win scene");
 			SceneManager.LoadScene(5);
+			return;
 		}
+
+		StartCoroutine(InitFromWorkingStory(currentScene));
 	}
 
 	/// <summary>
-	/// WebGL initialization - loads scene data from Resources (synchronous).
+	/// Initializes scene from WorkingStory (in-memory story data).
 	/// </summary>
-	IEnumerator InitSceneWebGL(int scene)
+	IEnumerator InitFromWorkingStory(int sceneIndex)
 	{
-		yield return null; // Yield once to let UI update
+		yield return null; // Let UI update
 
-		string storyId = PlayerPrefs.GetString("gamePath");
-		var provider = StoryProviderManager.Provider;
+		// Load scene data from WorkingStory
+		SceneData sceneData = WorkingStory.LoadScene(sceneIndex);
+		List<Sprite> loadedSprites = WorkingStory.LoadSceneSprites(sceneIndex);
 
-		// Load scene data from provider
-		SceneData sceneData = provider.LoadScene(storyId, scene);
-		List<Sprite> loadedSprites = provider.LoadSceneSprites(storyId, scene);
-
-		if (sceneData != null && loadedSprites != null && loadedSprites.Count > 0)
+		if (sceneData == null || loadedSprites == null || loadedSprites.Count == 0)
 		{
-			// Apply loaded data using SceneData directly
-			ApplySceneDataFromModel(sceneData);
-			sceneSprites = loadedSprites;
-
-			Debug.Log($"[GameManager] WebGL: Loaded {sceneSprites.Count} sprites for '{storyId}'");
-			sceneAnimator.baseFrame = sceneSprites[0];
-			sceneAnimator.frames = new List<Sprite>(sceneSprites);
-			sceneAnimator.frames.RemoveAt(0);
-
-			// Calculate dial counts
-			if (!sm.isMastico1) sceneAnimator.sumDial++;
-			if (getDial(2).Count > 0 && !sm.isMastico2) sceneAnimator.sumDial++;
-			if (getDial(6).Count > 0 && !sm.isMastico3) sceneAnimator.sumDial++;
-			sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1;
-
-			// init variables
-			introOver = false;
-			objOver = false;
-
-			// start the sequence of events
-			StartCoroutine(Play());
-		}
-		else
-		{
-			Debug.LogError($"[GameManager] Failed to load scene {scene} from '{storyId}' - returning to menu");
+			Debug.LogError($"[GameManager] Failed to load scene {sceneIndex} from WorkingStory");
 			SceneManager.LoadScene(2);
+			yield break;
 		}
+
+		// Apply scene data
+		ApplySceneDataFromModel(sceneData);
+		sceneSprites = loadedSprites;
+
+		Debug.Log($"[GameManager] Loaded scene {sceneIndex} from WorkingStory ({sceneSprites.Count} sprites)");
+
+		sceneAnimator.baseFrame = sceneSprites[0];
+		sceneAnimator.frames = new List<Sprite>(sceneSprites);
+		sceneAnimator.frames.RemoveAt(0);
+
+		// Calculate dial counts
+		if (!sm.isMastico1) sceneAnimator.sumDial++;
+		if (getDial(2).Count > 0 && !sm.isMastico2) sceneAnimator.sumDial++;
+		if (getDial(6).Count > 0 && !sm.isMastico3) sceneAnimator.sumDial++;
+		sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1;
+
+		// init variables
+		introOver = false;
+		objOver = false;
+
+		// start the sequence of events
+		StartCoroutine(Play());
 	}
 
 	/// <summary>
@@ -138,61 +131,40 @@ public class GameManager : MonoBehaviour {
 		sm.isMastico3 = data.voice?.isMastico3 ?? false;
 		sm.isZambla = data.voice?.isZambla ?? false;
 
-		// Objects (simplified - WebGL doesn't need interactive zones for now)
-		// Full object zone loading would require parsing the raw position/size strings
+		// Objects - create clickable zones from typed SceneData
+		if (data.objects != null)
+		{
+			// Create near zones first (they are parents for the target zones)
+			objNear = CreateZoneList("objNear", data.objects.obj, true);
+			ngpNear = CreateZoneList("ngpNear", data.objects.ngp, true);
+			fswNear = CreateZoneList("fswNear", data.objects.fsw, true);
+
+			// Create target zones
+			obj = CreateZoneList("obj", data.objects.obj, false);
+			ngp = CreateZoneList("ngp", data.objects.ngp, false);
+			fsw = CreateZoneList("fsw", data.objects.fsw, false);
+
+			// Hide all zones initially
+			List<List<GameObject>> zonesList = new List<List<GameObject>> { objNear, ngpNear, fswNear };
+			foreach (List<GameObject> zones in zonesList)
+				foreach (GameObject zone in zones)
+					zone.SetActive(false);
+
+			objNearTemplate.SetActive(false);
+			objTemplate.SetActive(false);
+		}
+		else
+		{
+			// Initialize empty lists if no object data
+			objNear = new List<GameObject>();
+			ngpNear = new List<GameObject>();
+			fswNear = new List<GameObject>();
+			obj = new List<GameObject>();
+			ngp = new List<GameObject>();
+			fsw = new List<GameObject>();
+		}
 	}
 
-	/// <summary>
-	/// Applies scene data from string array (used by WebGL path).
-	/// </summary>
-	void ApplySceneData(string[] sceneStr)
-	{
-		// Load musics from data
-		source.clip = sm.getMusic(sceneStr[11].Split(',')[0]);
-		intro.sceneMusic.clip = sm.getMusic(sceneStr[11].Split(',')[1]);
-
-		// Load pitchs
-		string[] pitchs = sceneStr[12].Split(',');
-		sm.pitch1 = float.Parse(pitchs[0]);
-		sm.pitch2 = float.Parse(pitchs[1]);
-		sm.pitch3 = float.Parse(pitchs[2]);
-
-		// Load mastico/zambla isSpeaking
-		string[] booleans = sceneStr[13].Split(',');
-		sm.isMastico1 = booleans[0] == "1";
-		sm.isMastico2 = booleans[1] == "1";
-		sm.isMastico3 = booleans[2] == "1";
-		sm.isZambla = booleans[3] == "1";
-
-		introDial1 = sceneStr[0];
-		introDial2 = sceneStr[1];
-		introDial3 = sceneStr[2];
-		objDial = sceneStr[3];
-		ngpDial = sceneStr[4];
-		fswDial = sceneStr[5];
-		titleText = sceneStr[6];
-		introText = sceneStr[7];
-		objText = sceneStr[8];
-		ngpText = sceneStr[9];
-		fswText = sceneStr[10];
-
-		objNear = RM_SaveLoad.ReadObjects("objNear", sceneStr[16], sceneStr[17], true);
-		ngpNear = RM_SaveLoad.ReadObjects("ngpNear", sceneStr[20], sceneStr[21], true);
-		fswNear = RM_SaveLoad.ReadObjects("fswNear", sceneStr[24], sceneStr[25], true);
-
-		obj = RM_SaveLoad.ReadObjects("obj", sceneStr[14], sceneStr[15]);
-		ngp = RM_SaveLoad.ReadObjects("ngp", sceneStr[18], sceneStr[19]);
-		fsw = RM_SaveLoad.ReadObjects("fsw", sceneStr[22], sceneStr[23]);
-
-		List<List<GameObject>> zonesList = new List<List<GameObject>> { objNear, ngpNear, fswNear };
-		foreach (List<GameObject> zones in zonesList)
-			foreach (GameObject zone in zones)
-				zone.SetActive(false);
-
-		objNearTemplate.SetActive(false);
-		objTemplate.SetActive(false);
-	}
-	
 	IEnumerator Play() {
 		// load the scene assets with lag
 		loading.Play();
@@ -247,37 +219,6 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void InitScene(int scene) {
-
-		introDial1 = "g_l_i_t_ch";
-		introDial2 = "g_l_i_t_ch";
-		objDial    = "g_l_i_t_ch";
-		ngpDial    = "g_l_i_t_ch";
-		fswDial    = "g_l_i_t_ch";
-		introText  = "intro glitch";
-		objText    = "object glitch";
-		ngpText    = "ngp object glitch";
-		fswText    = "fsw object glitch";
-
-		ReadSceneStr();
-
-		// Load Sprites
-		sceneSprites = new List<Sprite>();
-		sceneSprites = RM_SaveLoad.LoadSceneSprites(scene);
-		Debug.Log(sceneSprites.ToString());
-		sceneAnimator.baseFrame = sceneSprites[0];
-		// copie sceneSprite to scene animator frame
-		sceneAnimator.frames = new List<Sprite>(sceneSprites);
-		sceneAnimator.frames.RemoveAt(0); // remove the base image, not part of the animation
-		Debug.Log("GM : There are " + sceneAnimator.frames.Count + " animation frames in this scene");
-		// sum of the non-mastico dials
-		if (!sm.isMastico1) sceneAnimator.sumDial++;
-		if (getDial(2).Count > 0 && !sm.isMastico2) sceneAnimator.sumDial++;
-		if (getDial(6).Count > 0 && !sm.isMastico3) sceneAnimator.sumDial++;
-		sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1; // index of first non mastico dial
-		Debug.Log("GM : There are " + sceneAnimator.sumDial + " people speaking, the first is : " + sceneAnimator.firstDial);
-	}
-
 	public List<int> getDial(int dial) {
 		switch(dial) {
 			case 1: return sm.StringToPhonemes(introDial1);
@@ -290,63 +231,60 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	  public void ReadSceneStr(){
-        
-        string[] sceneStr = new string[26];
-        
-        Debug.Log("loaded scene : '" + currentScene + "' from " + PlayerPrefs.GetString("gamePath"));
-        sceneStr = RM_SaveLoad.LoadSceneTxt(currentScene);
-        
-        // Load musics from .txt
-        source.clip = sm.getMusic(sceneStr[11].Split(',')[0]);
-        intro.sceneMusic.clip = sm.getMusic(sceneStr[11].Split(',')[1]);
-
-        // Load pitchs  
-        string[] pitchs = sceneStr[12].Split(',');
-        sm.pitch1     = float.Parse(pitchs[0]);
-        sm.pitch2     = float.Parse(pitchs[1]);
-        sm.pitch3     = float.Parse(pitchs[2]);
-        
-        // Load mastico/zambla isSpeaking
-        string[] booleans = sceneStr[13].Split(',');
-        sm.isMastico1 = booleans[0] == "1";
-        sm.isMastico2 = booleans[1] == "1";
-        sm.isMastico3 = booleans[2] == "1";
-        sm.isZambla   = booleans[3] == "1";
-
-        introDial1 = sceneStr[0];
-        introDial2 = sceneStr[1];
-        introDial3 = sceneStr[2];
-        objDial    = sceneStr[3];
-        ngpDial    = sceneStr[4];
-        fswDial    = sceneStr[5];
-        titleText  = sceneStr[6];
-        introText  = sceneStr[7];
-        objText    = sceneStr[8];
-        ngpText    = sceneStr[9];
-        fswText    = sceneStr[10];
-
-        objNear = RM_SaveLoad.ReadObjects("objNear", sceneStr[16], sceneStr[17], true);
-        ngpNear = RM_SaveLoad.ReadObjects("ngpNear", sceneStr[20], sceneStr[21], true);
-        fswNear = RM_SaveLoad.ReadObjects("fswNear", sceneStr[24], sceneStr[25], true);
-        
-        obj = RM_SaveLoad.ReadObjects("obj" , sceneStr[14], sceneStr[15]);
-		ngp = RM_SaveLoad.ReadObjects("ngp" , sceneStr[18], sceneStr[19]);
-		fsw = RM_SaveLoad.ReadObjects("fsw" , sceneStr[22], sceneStr[23]);
-
-		List<List<GameObject>> zonesList = new List<List<GameObject>>{objNear, ngpNear, fswNear};
-		foreach(List<GameObject> zones in zonesList)
-			foreach (GameObject zone in zones)
-				zone.SetActive(false);
-		
-		objNearTemplate.SetActive(false);
-		objTemplate.SetActive(false);
-    }
-
 	void Update() {
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			SceneManager.LoadScene(2);
 		}
+	}
+
+	/// <summary>
+	/// Creates a list of zone GameObjects from typed ObjectZone data.
+	/// Each object has exactly one target zone and one near zone.
+	/// </summary>
+	/// <param name="name">Base name for the zone (e.g., "obj", "ngp", "fsw")</param>
+	/// <param name="zone">The typed ObjectZone data with position/size floats</param>
+	/// <param name="isNear">True to create the near zone, false for target zone</param>
+	/// <returns>List containing the single zone GameObject</returns>
+	List<GameObject> CreateZoneList(string name, ObjectZone zone, bool isNear)
+	{
+		var result = new List<GameObject>();
+
+		if (zone == null)
+			return result;
+
+		GameObject parent, obj;
+		float x, y, width, height;
+
+		if (isNear)
+		{
+			// Near zone - parent is "Objects", clone from objNearTemplate
+			parent = GameObject.Find("Objects");
+			obj = Instantiate(objNearTemplate, parent.GetComponent<RectTransform>());
+			x = zone.nearX;
+			y = zone.nearY;
+			width = zone.nearWidth;
+			height = zone.nearHeight;
+		}
+		else
+		{
+			// Target zone - parent is the corresponding near zone
+			parent = GameObject.Find(name + "Near0");
+			obj = Instantiate(objTemplate, parent.GetComponent<RectTransform>());
+			x = zone.x;
+			y = zone.y;
+			width = zone.width;
+			height = zone.height;
+		}
+
+		obj.name = name + "0";
+
+		// Apply position and size
+		RectTransform rectTransform = obj.GetComponent<RectTransform>();
+		rectTransform.localPosition = new Vector3(x, y, 0f);
+		rectTransform.sizeDelta = new Vector2(width, height);
+
+		result.Add(obj);
+		return result;
 	}
 
 }
