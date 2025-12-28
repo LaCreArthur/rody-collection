@@ -1,5 +1,56 @@
 var StandaloneFileBrowserWebGLPlugin = {
-    // Open file.
+    // Open file and return actual file content as text (for JSON import).
+    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
+    // methodNamePtr: Callback method name on given GameObject.
+    // filter: Filter files (e.g., ".json")
+    // Returns: File content as text string via SendMessage
+    UploadFileContent: function(gameObjectNamePtr, methodNamePtr, filterPtr) {
+        var gameObjectName = UTF8ToString(gameObjectNamePtr);
+        var methodName = UTF8ToString(methodNamePtr);
+        var filter = UTF8ToString(filterPtr);
+
+        // Delete if element exists
+        var fileInput = document.getElementById(gameObjectName + '_content');
+        if (fileInput) {
+            document.body.removeChild(fileInput);
+        }
+
+        fileInput = document.createElement('input');
+        fileInput.setAttribute('id', gameObjectName + '_content');
+        fileInput.setAttribute('type', 'file');
+        fileInput.setAttribute('style', 'display:none;');
+        if (filter) {
+            fileInput.setAttribute('accept', filter);
+        }
+        fileInput.onclick = function(event) {
+            this.value = null;
+        };
+        fileInput.onchange = function(event) {
+            if (event.target.files.length === 0) {
+                SendMessage(gameObjectName, methodName, '');
+                return;
+            }
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                SendMessage(gameObjectName, methodName, e.target.result);
+            };
+            reader.onerror = function(e) {
+                console.error('FileReader error:', e);
+                SendMessage(gameObjectName, methodName, '');
+            };
+            reader.readAsText(file);
+            document.body.removeChild(fileInput);
+        };
+        document.body.appendChild(fileInput);
+
+        document.onmouseup = function() {
+            fileInput.click();
+            document.onmouseup = null;
+        };
+    },
+
+    // Open file (legacy - returns blob URLs, not content).
     // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
     // methodNamePtr: Callback method name on given GameObject.
     // filter: Filter files. Example filters:
