@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T07:03:35.2824460Z",
+  "exportedAt": "2025-12-28T09:24:30.4813560Z",
   "story": {
     "id": "Rody Et Mastico II",
     "title": "RODY ET MASTICO 2",
@@ -41,22 +41,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-4.1, -1.9);",
-            "sizeRaw": "(11.8, 8.3);",
-            "nearPositionRaw": "(-143.5, 23.5);",
-            "nearSizeRaw": "(36.5, 51.0);"
+            "x": -4.1,
+            "y": -1.9,
+            "width": 11.8,
+            "height": 8.3,
+            "nearX": -143.5,
+            "nearY": 23.5,
+            "nearWidth": 36.5,
+            "nearHeight": 51.0
           },
           "ngp": {
-            "positionRaw": "(-3.1, 2.8);",
-            "sizeRaw": "(15.3, 8.3);",
-            "nearPositionRaw": "(43.0, -27.4);",
-            "nearSizeRaw": "(70.0, 44.8);"
+            "x": -3.1,
+            "y": 2.8,
+            "width": 15.3,
+            "height": 8.3,
+            "nearX": 43.0,
+            "nearY": -27.4,
+            "nearWidth": 70.0,
+            "nearHeight": 44.8
           },
           "fsw": {
-            "positionRaw": "(5.8, 15.1);",
-            "sizeRaw": "(13.8, 14.0);",
-            "nearPositionRaw": "(-26.1, 27.6);",
-            "nearSizeRaw": "(113.8, 74.8);"
+            "x": 5.8,
+            "y": 15.1,
+            "width": 13.8,
+            "height": 14.0,
+            "nearX": -26.1,
+            "nearY": 27.6,
+            "nearWidth": 113.8,
+            "nearHeight": 74.8
           }
         }
       }
@@ -94,22 +106,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(11.5, 13.0);",
-            "sizeRaw": "(31.3, 48.3);",
-            "nearPositionRaw": "(84.6, 26.1);",
-            "nearSizeRaw": "(98.8, 76.8);"
+            "x": 11.5,
+            "y": 13.0,
+            "width": 31.3,
+            "height": 48.3,
+            "nearX": 84.6,
+            "nearY": 26.1,
+            "nearWidth": 98.8,
+            "nearHeight": 76.8
           },
           "ngp": {
-            "positionRaw": "(5.0, -9.5);",
-            "sizeRaw": "(6.5, 9.3);",
-            "nearPositionRaw": "(43.0, -25.1);",
-            "nearSizeRaw": "(68.5, 54.3);"
+            "x": 5.0,
+            "y": -9.5,
+            "width": 6.5,
+            "height": 9.3,
+            "nearX": 43.0,
+            "nearY": -25.1,
+            "nearWidth": 68.5,
+            "nearHeight": 54.3
           },
           "fsw": {
-            "positionRaw": "(-6.9, 19.4);",
-            "sizeRaw": "(19.0, 11.3);",
-            "nearPositionRaw": "(25.4, 9.8);",
-            "nearSizeRaw": "(62.3, 74.5);"
+            "x": -6.9,
+            "y": 19.4,
+            "width": 19.0,
+            "height": 11.3,
+            "nearX": 25.4,
+            "nearY": 9.8,
+            "nearWidth": 62.3,
+            "nearHeight": 74.5
           }
         }
       }
@@ -147,22 +171,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-38.0, -5.5);",
-            "sizeRaw": "(74.3, 18.8);",
-            "nearPositionRaw": "(-65.4, -9.6);",
-            "nearSizeRaw": "(171.8, 49.3);"
+            "x": -38.0,
+            "y": -5.5,
+            "width": 74.3,
+            "height": 18.8,
+            "nearX": -65.4,
+            "nearY": -9.6,
+            "nearWidth": 171.8,
+            "nearHeight": 49.3
           },
           "ngp": {
-            "positionRaw": "(36.8, -3.8);",
-            "sizeRaw": "(23.5, 45.5);",
-            "nearPositionRaw": "(102.5, -10.0);",
-            "nearSizeRaw": "(112.0, 86.5);"
+            "x": 36.8,
+            "y": -3.8,
+            "width": 23.5,
+            "height": 45.5,
+            "nearX": 102.5,
+            "nearY": -10.0,
+            "nearWidth": 112.0,
+            "nearHeight": 86.5
           },
           "fsw": {
-            "positionRaw": "(-23.0, -6.8);",
-            "sizeRaw": "(20.0, 60.0);",
-            "nearPositionRaw": "(-100.5, 19.3);",
-            "nearSizeRaw": "(102.0, 90.0);"
+            "x": -23.0,
+            "y": -6.8,
+            "width": 20.0,
+            "height": 60.0,
+            "nearX": -100.5,
+            "nearY": 19.3,
+            "nearWidth": 102.0,
+            "nearHeight": 90.0
           }
         }
       }
@@ -200,22 +236,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-3.4, -10.6);",
-            "sizeRaw": "(38.5, 36.8);",
-            "nearPositionRaw": "(-33.4, -9.8);",
-            "nearSizeRaw": "(113.3, 82.5);"
+            "x": -3.4,
+            "y": -10.6,
+            "width": 38.5,
+            "height": 36.8,
+            "nearX": -33.4,
+            "nearY": -9.8,
+            "nearWidth": 113.3,
+            "nearHeight": 82.5
           },
           "ngp": {
-            "positionRaw": "(-17.8, -1.3);",
-            "sizeRaw": "(13.8, 8.3);",
-            "nearPositionRaw": "(-104.1, -12.4);",
-            "nearSizeRaw": "(93.8, 40.8);"
+            "x": -17.8,
+            "y": -1.3,
+            "width": 13.8,
+            "height": 8.3,
+            "nearX": -104.1,
+            "nearY": -12.4,
+            "nearWidth": 93.8,
+            "nearHeight": 40.8
           },
           "fsw": {
-            "positionRaw": "(59.4, 4.6);(-38.4, 11.5);",
-            "sizeRaw": "(24.3, 24.5);(21.5, 15.5);",
-            "nearPositionRaw": "(21.0, 0.6);(-0.4, -0.8);",
-            "nearSizeRaw": "(214.5, 86.8);(210.3, 97.0);"
+            "x": 59.4,
+            "y": 0.0,
+            "width": 24.3,
+            "height": 0.0,
+            "nearX": 21.0,
+            "nearY": 0.0,
+            "nearWidth": 214.5,
+            "nearHeight": 0.0
           }
         }
       }
@@ -253,22 +301,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-5.4, 1.3);",
-            "sizeRaw": "(5.5, 4.3);",
-            "nearPositionRaw": "(18.6, 5.6);",
-            "nearSizeRaw": "(99.8, 53.8);"
+            "x": -5.4,
+            "y": 1.3,
+            "width": 5.5,
+            "height": 4.3,
+            "nearX": 18.6,
+            "nearY": 5.6,
+            "nearWidth": 99.8,
+            "nearHeight": 53.8
           },
           "ngp": {
-            "positionRaw": "(1.8, 2.5);",
-            "sizeRaw": "(12.8, 21.0);",
-            "nearPositionRaw": "(97.4, 3.3);",
-            "nearSizeRaw": "(66.8, 58.5);"
+            "x": 1.8,
+            "y": 2.5,
+            "width": 12.8,
+            "height": 21.0,
+            "nearX": 97.4,
+            "nearY": 3.3,
+            "nearWidth": 66.8,
+            "nearHeight": 58.5
           },
           "fsw": {
-            "positionRaw": "(-11.6, -4.8);",
-            "sizeRaw": "(45.8, 46.0);",
-            "nearPositionRaw": "(-92.5, -28.3);",
-            "nearSizeRaw": "(134.0, 72.5);"
+            "x": -11.6,
+            "y": -4.8,
+            "width": 45.8,
+            "height": 46.0,
+            "nearX": -92.5,
+            "nearY": -28.3,
+            "nearWidth": 134.0,
+            "nearHeight": 72.5
           }
         }
       }
@@ -306,22 +366,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(6.4, 0.4);",
-            "sizeRaw": "(36.0, 12.5);",
-            "nearPositionRaw": "(47.1, -15.1);",
-            "nearSizeRaw": "(117.8, 73.3);"
+            "x": 6.4,
+            "y": 0.4,
+            "width": 36.0,
+            "height": 12.5,
+            "nearX": 47.1,
+            "nearY": -15.1,
+            "nearWidth": 117.8,
+            "nearHeight": 73.3
           },
           "ngp": {
-            "positionRaw": "(-0.4, -14.5);",
-            "sizeRaw": "(33.0, 30.3);",
-            "nearPositionRaw": "(-7.6, -26.6);",
-            "nearSizeRaw": "(160.8, 72.8);"
+            "x": -0.4,
+            "y": -14.5,
+            "width": 33.0,
+            "height": 30.3,
+            "nearX": -7.6,
+            "nearY": -26.6,
+            "nearWidth": 160.8,
+            "nearHeight": 72.8
           },
           "fsw": {
-            "positionRaw": "(33.6, -13.3);",
-            "sizeRaw": "(17.8, 19.5);",
-            "nearPositionRaw": "(56.8, -11.3);",
-            "nearSizeRaw": "(118.0, 76.0);"
+            "x": 33.6,
+            "y": -13.3,
+            "width": 17.8,
+            "height": 19.5,
+            "nearX": 56.8,
+            "nearY": -11.3,
+            "nearWidth": 118.0,
+            "nearHeight": 76.0
           }
         }
       }
@@ -359,22 +431,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(23.6, -16.5);",
-            "sizeRaw": "(31.5, 19.8);",
-            "nearPositionRaw": "(99.9, -9.9);",
-            "nearSizeRaw": "(117.8, 89.3);"
+            "x": 23.6,
+            "y": -16.5,
+            "width": 31.5,
+            "height": 19.8,
+            "nearX": 99.9,
+            "nearY": -9.9,
+            "nearWidth": 117.8,
+            "nearHeight": 89.3
           },
           "ngp": {
-            "positionRaw": "(-3.0, -4.8);",
-            "sizeRaw": "(10.3, 8.3);",
-            "nearPositionRaw": "(9.6, -12.1);",
-            "nearSizeRaw": "(117.3, 72.8);"
+            "x": -3.0,
+            "y": -4.8,
+            "width": 10.3,
+            "height": 8.3,
+            "nearX": 9.6,
+            "nearY": -12.1,
+            "nearWidth": 117.3,
+            "nearHeight": 72.8
           },
           "fsw": {
-            "positionRaw": "(7.9, -6.4);",
-            "sizeRaw": "(22.8, 18.0);",
-            "nearPositionRaw": "(128.3, 37.1);",
-            "nearSizeRaw": "(62.5, 44.8);"
+            "x": 7.9,
+            "y": -6.4,
+            "width": 22.8,
+            "height": 18.0,
+            "nearX": 128.3,
+            "nearY": 37.1,
+            "nearWidth": 62.5,
+            "nearHeight": 44.8
           }
         }
       }
@@ -412,22 +496,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-1.1, -3.1);",
-            "sizeRaw": "(31.0, 15.8);",
-            "nearPositionRaw": "(-15.1, -32.8);",
-            "nearSizeRaw": "(132.8, 52.5);"
+            "x": -1.1,
+            "y": -3.1,
+            "width": 31.0,
+            "height": 15.8,
+            "nearX": -15.1,
+            "nearY": -32.8,
+            "nearWidth": 132.8,
+            "nearHeight": 52.5
           },
           "ngp": {
-            "positionRaw": "(1.4, -1.4);",
-            "sizeRaw": "(9.0, 7.8);",
-            "nearPositionRaw": "(-14.4, 13.3);",
-            "nearSizeRaw": "(128.8, 83.5);"
+            "x": 1.4,
+            "y": -1.4,
+            "width": 9.0,
+            "height": 7.8,
+            "nearX": -14.4,
+            "nearY": 13.3,
+            "nearWidth": 128.8,
+            "nearHeight": 83.5
           },
           "fsw": {
-            "positionRaw": "(-2.9, 11.5);",
-            "sizeRaw": "(14.3, 10.0);",
-            "nearPositionRaw": "(60.0, 42.0);",
-            "nearSizeRaw": "(80.0, 43.5);"
+            "x": -2.9,
+            "y": 11.5,
+            "width": 14.3,
+            "height": 10.0,
+            "nearX": 60.0,
+            "nearY": 42.0,
+            "nearWidth": 80.0,
+            "nearHeight": 43.5
           }
         }
       }
@@ -465,22 +561,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-6.8, 1.8);",
-            "sizeRaw": "(13.0, 7.3);",
-            "nearPositionRaw": "(18.5, 9.1);",
-            "nearSizeRaw": "(80.5, 65.3);"
+            "x": -6.8,
+            "y": 1.8,
+            "width": 13.0,
+            "height": 7.3,
+            "nearX": 18.5,
+            "nearY": 9.1,
+            "nearWidth": 80.5,
+            "nearHeight": 65.3
           },
           "ngp": {
-            "positionRaw": "(3.5, -3.1);",
-            "sizeRaw": "(19.3, 28.3);",
-            "nearPositionRaw": "(39.9, 16.5);",
-            "nearSizeRaw": "(62.3, 76.0);"
+            "x": 3.5,
+            "y": -3.1,
+            "width": 19.3,
+            "height": 28.3,
+            "nearX": 39.9,
+            "nearY": 16.5,
+            "nearWidth": 62.3,
+            "nearHeight": 76.0
           },
           "fsw": {
-            "positionRaw": "(3.8, 1.8);",
-            "sizeRaw": "(23.0, 24.5);",
-            "nearPositionRaw": "(107.3, 29.0);",
-            "nearSizeRaw": "(62.0, 61.5);"
+            "x": 3.8,
+            "y": 1.8,
+            "width": 23.0,
+            "height": 24.5,
+            "nearX": 107.3,
+            "nearY": 29.0,
+            "nearWidth": 62.0,
+            "nearHeight": 61.5
           }
         }
       }
@@ -518,22 +626,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-14.8, 7.1);",
-            "sizeRaw": "(17.3, 42.5);",
-            "nearPositionRaw": "(122.4, -8.1);",
-            "nearSizeRaw": "(70.8, 91.3);"
+            "x": -14.8,
+            "y": 7.1,
+            "width": 17.3,
+            "height": 42.5,
+            "nearX": 122.4,
+            "nearY": -8.1,
+            "nearWidth": 70.8,
+            "nearHeight": 91.3
           },
           "ngp": {
-            "positionRaw": "(0.4, -0.4);",
-            "sizeRaw": "(26.3, 32.0);",
-            "nearPositionRaw": "(-42.0, 22.1);",
-            "nearSizeRaw": "(80.0, 61.3);"
+            "x": 0.4,
+            "y": -0.4,
+            "width": 26.3,
+            "height": 32.0,
+            "nearX": -42.0,
+            "nearY": 22.1,
+            "nearWidth": 80.0,
+            "nearHeight": 61.3
           },
           "fsw": {
-            "positionRaw": "(2.6, -1.9);",
-            "sizeRaw": "(12.0, 9.5);",
-            "nearPositionRaw": "(120.9, -27.6);",
-            "nearSizeRaw": "(56.8, 49.3);"
+            "x": 2.6,
+            "y": -1.9,
+            "width": 12.0,
+            "height": 9.5,
+            "nearX": 120.9,
+            "nearY": -27.6,
+            "nearWidth": 56.8,
+            "nearHeight": 49.3
           }
         }
       }
@@ -571,22 +691,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-2.9, 6.0);",
-            "sizeRaw": "(37.3, 21.0);",
-            "nearPositionRaw": "(2.5, 43.3);",
-            "nearSizeRaw": "(91.5, 43.0);"
+            "x": -2.9,
+            "y": 6.0,
+            "width": 37.3,
+            "height": 21.0,
+            "nearX": 2.5,
+            "nearY": 43.3,
+            "nearWidth": 91.5,
+            "nearHeight": 43.0
           },
           "ngp": {
-            "positionRaw": "(-2.3, -7.5);",
-            "sizeRaw": "(26.5, 12.3);",
-            "nearPositionRaw": "(-81.5, -46.6);",
-            "nearSizeRaw": "(79.0, 33.8);"
+            "x": -2.3,
+            "y": -7.5,
+            "width": 26.5,
+            "height": 12.3,
+            "nearX": -81.5,
+            "nearY": -46.6,
+            "nearWidth": 79.0,
+            "nearHeight": 33.8
           },
           "fsw": {
-            "positionRaw": "(-12.6, -9.6);",
-            "sizeRaw": "(10.8, 20.0);",
-            "nearPositionRaw": "(-131.8, -37.1);",
-            "nearSizeRaw": "(56.0, 54.3);"
+            "x": -12.6,
+            "y": -9.6,
+            "width": 10.8,
+            "height": 20.0,
+            "nearX": -131.8,
+            "nearY": -37.1,
+            "nearWidth": 56.0,
+            "nearHeight": 54.3
           }
         }
       }
@@ -624,22 +756,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-8.5, 1.6);",
-            "sizeRaw": "(61.5, 21.5);",
-            "nearPositionRaw": "(26.5, 9.4);",
-            "nearSizeRaw": "(119.5, 77.3);"
+            "x": -8.5,
+            "y": 1.6,
+            "width": 61.5,
+            "height": 21.5,
+            "nearX": 26.5,
+            "nearY": 9.4,
+            "nearWidth": 119.5,
+            "nearHeight": 77.3
           },
           "ngp": {
-            "positionRaw": "(1.1, 3.8);",
-            "sizeRaw": "(36.5, 33.3);",
-            "nearPositionRaw": "(-55.9, 37.6);",
-            "nearSizeRaw": "(95.8, 48.3);"
+            "x": 1.1,
+            "y": 3.8,
+            "width": 36.5,
+            "height": 33.3,
+            "nearX": -55.9,
+            "nearY": 37.6,
+            "nearWidth": 95.8,
+            "nearHeight": 48.3
           },
           "fsw": {
-            "positionRaw": "(-21.3, -9.5);",
-            "sizeRaw": "(40.8, 18.8);",
-            "nearPositionRaw": "(-117.6, -45.9);",
-            "nearSizeRaw": "(83.8, 38.3);"
+            "x": -21.3,
+            "y": -9.5,
+            "width": 40.8,
+            "height": 18.8,
+            "nearX": -117.6,
+            "nearY": -45.9,
+            "nearWidth": 83.8,
+            "nearHeight": 38.3
           }
         }
       }
@@ -677,22 +821,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-5.9, 5.9);",
-            "sizeRaw": "(48.0, 17.8);",
-            "nearPositionRaw": "(-57.6, 36.5);",
-            "nearSizeRaw": "(111.8, 48.5);"
+            "x": -5.9,
+            "y": 5.9,
+            "width": 48.0,
+            "height": 17.8,
+            "nearX": -57.6,
+            "nearY": 36.5,
+            "nearWidth": 111.8,
+            "nearHeight": 48.5
           },
           "ngp": {
-            "positionRaw": "(0.5, -1.5);",
-            "sizeRaw": "(37.5, 27.3);",
-            "nearPositionRaw": "(-29.3, 16.1);",
-            "nearSizeRaw": "(82.0, 57.8);"
+            "x": 0.5,
+            "y": -1.5,
+            "width": 37.5,
+            "height": 27.3,
+            "nearX": -29.3,
+            "nearY": 16.1,
+            "nearWidth": 82.0,
+            "nearHeight": 57.8
           },
           "fsw": {
-            "positionRaw": "(9.0, -0.8);",
-            "sizeRaw": "(38.5, 97.0);",
-            "nearPositionRaw": "(117.8, 7.8);",
-            "nearSizeRaw": "(74.5, 105.5);"
+            "x": 9.0,
+            "y": -0.8,
+            "width": 38.5,
+            "height": 97.0,
+            "nearX": 117.8,
+            "nearY": 7.8,
+            "nearWidth": 74.5,
+            "nearHeight": 105.5
           }
         }
       }
@@ -730,22 +886,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-0.1, -4.1);",
-            "sizeRaw": "(19.0, 26.8);",
-            "nearPositionRaw": "(112.6, 24.0);",
-            "nearSizeRaw": "(72.8, 76.5);"
+            "x": -0.1,
+            "y": -4.1,
+            "width": 19.0,
+            "height": 26.8,
+            "nearX": 112.6,
+            "nearY": 24.0,
+            "nearWidth": 72.8,
+            "nearHeight": 76.5
           },
           "ngp": {
-            "positionRaw": "(-26.3, -2.8);",
-            "sizeRaw": "(40.5, 20.8);",
-            "nearPositionRaw": "(-110.8, -32.6);",
-            "nearSizeRaw": "(96.0, 56.3);"
+            "x": -26.3,
+            "y": -2.8,
+            "width": 40.5,
+            "height": 20.8,
+            "nearX": -110.8,
+            "nearY": -32.6,
+            "nearWidth": 96.0,
+            "nearHeight": 56.3
           },
           "fsw": {
-            "positionRaw": "(-16.6, -17.0);",
-            "sizeRaw": "(56.8, 27.8);",
-            "nearPositionRaw": "(75.8, -18.6);",
-            "nearSizeRaw": "(131.0, 92.3);"
+            "x": -16.6,
+            "y": -17.0,
+            "width": 56.8,
+            "height": 27.8,
+            "nearX": 75.8,
+            "nearY": -18.6,
+            "nearWidth": 131.0,
+            "nearHeight": 92.3
           }
         }
       }
@@ -783,22 +951,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-10.3, 4.6);",
-            "sizeRaw": "(21.3, 12.5);",
-            "nearPositionRaw": "(24.1, -31.6);",
-            "nearSizeRaw": "(80.3, 54.8);"
+            "x": -10.3,
+            "y": 4.6,
+            "width": 21.3,
+            "height": 12.5,
+            "nearX": 24.1,
+            "nearY": -31.6,
+            "nearWidth": 80.3,
+            "nearHeight": 54.8
           },
           "ngp": {
-            "positionRaw": "(2.6, 4.5);",
-            "sizeRaw": "(17.8, 9.5);",
-            "nearPositionRaw": "(-16.0, -4.0);",
-            "nearSizeRaw": "(76.0, 54.0);"
+            "x": 2.6,
+            "y": 4.5,
+            "width": 17.8,
+            "height": 9.5,
+            "nearX": -16.0,
+            "nearY": -4.0,
+            "nearWidth": 76.0,
+            "nearHeight": 54.0
           },
           "fsw": {
-            "positionRaw": "(0.3, 15.4);",
-            "sizeRaw": "(240.8, 23.0);",
-            "nearPositionRaw": "(10.9, 37.1);",
-            "nearSizeRaw": "(287.3, 54.8);"
+            "x": 0.3,
+            "y": 15.4,
+            "width": 240.8,
+            "height": 23.0,
+            "nearX": 10.9,
+            "nearY": 37.1,
+            "nearWidth": 287.3,
+            "nearHeight": 54.8
           }
         }
       }
@@ -836,22 +1016,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-1.8, 11.6);",
-            "sizeRaw": "(9.5, 22.0);",
-            "nearPositionRaw": "(-78.8, -3.4);",
-            "nearSizeRaw": "(82.5, 82.8);"
+            "x": -1.8,
+            "y": 11.6,
+            "width": 9.5,
+            "height": 22.0,
+            "nearX": -78.8,
+            "nearY": -3.4,
+            "nearWidth": 82.5,
+            "nearHeight": 82.8
           },
           "ngp": {
-            "positionRaw": "(4.9, -5.4);",
-            "sizeRaw": "(20.5, 38.8);",
-            "nearPositionRaw": "(44.4, -34.8);",
-            "nearSizeRaw": "(71.3, 60.0);"
+            "x": 4.9,
+            "y": -5.4,
+            "width": 20.5,
+            "height": 38.8,
+            "nearX": 44.4,
+            "nearY": -34.8,
+            "nearWidth": 71.3,
+            "nearHeight": 60.0
           },
           "fsw": {
-            "positionRaw": "(1.5, 4.6);",
-            "sizeRaw": "(10.0, 5.0);",
-            "nearPositionRaw": "(80.5, 14.6);",
-            "nearSizeRaw": "(49.5, 44.3);"
+            "x": 1.5,
+            "y": 4.6,
+            "width": 10.0,
+            "height": 5.0,
+            "nearX": 80.5,
+            "nearY": 14.6,
+            "nearWidth": 49.5,
+            "nearHeight": 44.3
           }
         }
       }
@@ -889,22 +1081,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(7.4, 11.9);",
-            "sizeRaw": "(154.5, 59.5);",
-            "nearPositionRaw": "(5.1, 16.1);",
-            "nearSizeRaw": "(237.3, 93.8);"
+            "x": 7.4,
+            "y": 11.9,
+            "width": 154.5,
+            "height": 59.5,
+            "nearX": 5.1,
+            "nearY": 16.1,
+            "nearWidth": 237.3,
+            "nearHeight": 93.8
           },
           "ngp": {
-            "positionRaw": "(3.0, 12.1);(0.6, 11.9);",
-            "sizeRaw": "(26.0, 41.3);(29.3, 45.0);",
-            "nearPositionRaw": "(-57.3, 24.8);(2.0, 26.1);",
-            "nearSizeRaw": "(71.0, 75.5);(71.5, 76.3);"
+            "x": 3.0,
+            "y": 0.0,
+            "width": 26.0,
+            "height": 0.0,
+            "nearX": -57.3,
+            "nearY": 0.0,
+            "nearWidth": 71.0,
+            "nearHeight": 0.0
           },
           "fsw": {
-            "positionRaw": "(-3.6, 5.4);",
-            "sizeRaw": "(16.3, 15.0);",
-            "nearPositionRaw": "(-113.3, 18.1);",
-            "nearSizeRaw": "(62.0, 60.3);"
+            "x": -3.6,
+            "y": 5.4,
+            "width": 16.3,
+            "height": 15.0,
+            "nearX": -113.3,
+            "nearY": 18.1,
+            "nearWidth": 62.0,
+            "nearHeight": 60.3
           }
         }
       }
@@ -942,22 +1146,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(6.2, -0.1);",
-            "sizeRaw": "(37.6, 20.8);",
-            "nearPositionRaw": "(-86.4, 33.7);",
-            "nearSizeRaw": "(71.2, 52.6);"
+            "x": 6.2,
+            "y": -0.1,
+            "width": 37.6,
+            "height": 20.8,
+            "nearX": -86.4,
+            "nearY": 33.7,
+            "nearWidth": 71.2,
+            "nearHeight": 52.6
           },
           "ngp": {
-            "positionRaw": "(0.0, 0.0);",
-            "sizeRaw": "(0.0, 0.0);",
-            "nearPositionRaw": "(0.0, 0.0);",
-            "nearSizeRaw": "(0.0, 0.0);"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 0.0,
+            "nearHeight": 0.0
           },
           "fsw": {
-            "positionRaw": "(0.0, 0.0);",
-            "sizeRaw": "(0.0, 0.0);",
-            "nearPositionRaw": "(0.0, 0.0);",
-            "nearSizeRaw": "(0.0, 0.0);"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 0.0,
+            "nearHeight": 0.0
           }
         }
       }

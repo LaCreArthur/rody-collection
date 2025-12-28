@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "exportedAt": "2025-12-28T07:03:35.2642280Z",
+  "exportedAt": "2025-12-28T09:24:30.4659480Z",
   "story": {
     "id": "Rody Et Mastico A Ibiza",
     "title": "RODY A IBIZA",
@@ -41,22 +41,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-0.26, 0.87)",
-            "sizeRaw": "(11.58, 15.13)",
-            "nearPositionRaw": "(-10.9, -2.1)",
-            "nearSizeRaw": "(42.2, 34.2)"
+            "x": -0.26,
+            "y": 0.87,
+            "width": 11.58,
+            "height": 15.13,
+            "nearX": -10.9,
+            "nearY": -2.1,
+            "nearWidth": 42.2,
+            "nearHeight": 34.2
           },
           "ngp": {
-            "positionRaw": "(-1.5, -0.3)",
-            "sizeRaw": "(8.7, 9.8)",
-            "nearPositionRaw": "(99.1, 42.4)",
-            "nearSizeRaw": "(35.8, 31.6)"
+            "x": -1.5,
+            "y": -0.3,
+            "width": 8.7,
+            "height": 9.8,
+            "nearX": 99.1,
+            "nearY": 42.4,
+            "nearWidth": 35.8,
+            "nearHeight": 31.6
           },
           "fsw": {
-            "positionRaw": "(-1.03, -0.38)",
-            "sizeRaw": "(8.11, 17.56)",
-            "nearPositionRaw": "(-132.8, 43.5)",
-            "nearSizeRaw": "(33.3, 29.4)"
+            "x": -1.03,
+            "y": -0.38,
+            "width": 8.11,
+            "height": 17.56,
+            "nearX": -132.8,
+            "nearY": 43.5,
+            "nearWidth": 33.3,
+            "nearHeight": 29.4
           }
         }
       }
@@ -94,22 +106,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(1.9, -5)",
-            "sizeRaw": "(46.1, 48.3)",
-            "nearPositionRaw": "(75.7, 20.7)",
-            "nearSizeRaw": "(90.8, 72)"
+            "x": 1.9,
+            "y": -5.0,
+            "width": 46.1,
+            "height": 48.3,
+            "nearX": 75.7,
+            "nearY": 20.7,
+            "nearWidth": 90.8,
+            "nearHeight": 72.0
           },
           "ngp": {
-            "positionRaw": "(0.6, -4.4)",
-            "sizeRaw": "(25.1, 21.3)",
-            "nearPositionRaw": "(148.6, 28.1)",
-            "nearSizeRaw": "(44.9, 43)"
+            "x": 0.6,
+            "y": -4.4,
+            "width": 25.1,
+            "height": 21.3,
+            "nearX": 148.6,
+            "nearY": 28.1,
+            "nearWidth": 44.9,
+            "nearHeight": 43.0
           },
           "fsw": {
-            "positionRaw": "(-3.5, 0.6)",
-            "sizeRaw": "(22.1, 13.7)",
-            "nearPositionRaw": "(-145.4, 51.9)",
-            "nearSizeRaw": "(29.1, 26.2)"
+            "x": -3.5,
+            "y": 0.6,
+            "width": 22.1,
+            "height": 13.7,
+            "nearX": -145.4,
+            "nearY": 51.9,
+            "nearWidth": 29.1,
+            "nearHeight": 26.2
           }
         }
       }
@@ -147,22 +171,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(17.1, -5.9)",
-            "sizeRaw": "(37.2, 31.7)",
-            "nearPositionRaw": "(109.2, -24.1)",
-            "nearSizeRaw": "(101.6, 81.8)"
+            "x": 17.1,
+            "y": -5.9,
+            "width": 37.2,
+            "height": 31.7,
+            "nearX": 109.2,
+            "nearY": -24.1,
+            "nearWidth": 101.6,
+            "nearHeight": 81.8
           },
           "ngp": {
-            "positionRaw": "(-1, -6.6)",
-            "sizeRaw": "(27, 10.2)",
-            "nearPositionRaw": "(28.3, -53.3)",
-            "nearSizeRaw": "(47.2, 23.4)"
+            "x": -1.0,
+            "y": -6.6,
+            "width": 27.0,
+            "height": 10.2,
+            "nearX": 28.3,
+            "nearY": -53.3,
+            "nearWidth": 47.2,
+            "nearHeight": 23.4
           },
           "fsw": {
-            "positionRaw": "(15.7, 10.3)",
-            "sizeRaw": "(31.5, 31.9)",
-            "nearPositionRaw": "(117.6, 38.7)",
-            "nearSizeRaw": "(84.9, 52.4)"
+            "x": 15.7,
+            "y": 10.3,
+            "width": 31.5,
+            "height": 31.9,
+            "nearX": 117.6,
+            "nearY": 38.7,
+            "nearWidth": 84.9,
+            "nearHeight": 52.4
           }
         }
       }
@@ -200,22 +236,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(0, 0.6)",
-            "sizeRaw": "(24.1, 5.2)",
-            "nearPositionRaw": "(-49.3, -39)",
-            "nearSizeRaw": "(74.7, 28.1)"
+            "x": 0.0,
+            "y": 0.6,
+            "width": 24.1,
+            "height": 5.2,
+            "nearX": -49.3,
+            "nearY": -39.0,
+            "nearWidth": 74.7,
+            "nearHeight": 28.1
           },
           "ngp": {
-            "positionRaw": "(-0.39, 1.94)",
-            "sizeRaw": "(5.22, 2.84)",
-            "nearPositionRaw": "(-113.1, -21.3)",
-            "nearSizeRaw": "(33.8, 24.1)"
+            "x": -0.39,
+            "y": 1.94,
+            "width": 5.22,
+            "height": 2.84,
+            "nearX": -113.1,
+            "nearY": -21.3,
+            "nearWidth": 33.8,
+            "nearHeight": 24.1
           },
           "fsw": {
-            "positionRaw": "(22.78, 17.81)",
-            "sizeRaw": "(7.11, 5.24)",
-            "nearPositionRaw": "(126.7, 40.7)",
-            "nearSizeRaw": "(66.8, 48.6)"
+            "x": 22.78,
+            "y": 17.81,
+            "width": 7.11,
+            "height": 5.24,
+            "nearX": 126.7,
+            "nearY": 40.7,
+            "nearWidth": 66.8,
+            "nearHeight": 48.6
           }
         }
       }
@@ -253,22 +301,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(1.7, -0.2)",
-            "sizeRaw": "(36.3, 18.2)",
-            "nearPositionRaw": "(103.4, 44.1)",
-            "nearSizeRaw": "(75.9, 29.7)"
+            "x": 1.7,
+            "y": -0.2,
+            "width": 36.3,
+            "height": 18.2,
+            "nearX": 103.4,
+            "nearY": 44.1,
+            "nearWidth": 75.9,
+            "nearHeight": 29.7
           },
           "ngp": {
-            "positionRaw": "(-1.4, -0.9)",
-            "sizeRaw": "(18.4, 13)",
-            "nearPositionRaw": "(101.8, -49.7)",
-            "nearSizeRaw": "(38.2, 28.5)"
+            "x": -1.4,
+            "y": -0.9,
+            "width": 18.4,
+            "height": 13.0,
+            "nearX": 101.8,
+            "nearY": -49.7,
+            "nearWidth": 38.2,
+            "nearHeight": 28.5
           },
           "fsw": {
-            "positionRaw": "(4.1, -24.9)",
-            "sizeRaw": "(48.7, 77)",
-            "nearPositionRaw": "(-79.9, -26.7)",
-            "nearSizeRaw": "(121.7, 81)"
+            "x": 4.1,
+            "y": -24.9,
+            "width": 48.7,
+            "height": 77.0,
+            "nearX": -79.9,
+            "nearY": -26.7,
+            "nearWidth": 121.7,
+            "nearHeight": 81.0
           }
         }
       }
@@ -306,22 +366,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-7.6, -0.5)",
-            "sizeRaw": "(41.8, 23.3)",
-            "nearPositionRaw": "(100.4, 6.5)",
-            "nearSizeRaw": "(77.2, 48.3)"
+            "x": -7.6,
+            "y": -0.5,
+            "width": 41.8,
+            "height": 23.3,
+            "nearX": 100.4,
+            "nearY": 6.5,
+            "nearWidth": 77.2,
+            "nearHeight": 48.3
           },
           "ngp": {
-            "positionRaw": "(-4.4, 2.8)",
-            "sizeRaw": "(5.5, 9.9)",
-            "nearPositionRaw": "(-92.9, -10.5)",
-            "nearSizeRaw": "(36.3, 59.8)"
+            "x": -4.4,
+            "y": 2.8,
+            "width": 5.5,
+            "height": 9.9,
+            "nearX": -92.9,
+            "nearY": -10.5,
+            "nearWidth": 36.3,
+            "nearHeight": 59.8
           },
           "fsw": {
-            "positionRaw": "(5.3, 19.5)",
-            "sizeRaw": "(6.7, 17.8)",
-            "nearPositionRaw": "(-110.5, 8.2)",
-            "nearSizeRaw": "(66.8, 82.8)"
+            "x": 5.3,
+            "y": 19.5,
+            "width": 6.7,
+            "height": 17.8,
+            "nearX": -110.5,
+            "nearY": 8.2,
+            "nearWidth": 66.8,
+            "nearHeight": 82.8
           }
         }
       }
@@ -359,22 +431,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-2.9, -1.3)",
-            "sizeRaw": "(18.3, 30.2)",
-            "nearPositionRaw": "(-18.2, 38.15)",
-            "nearSizeRaw": "(74.7, 53.7)"
+            "x": -2.9,
+            "y": -1.3,
+            "width": 18.3,
+            "height": 30.2,
+            "nearX": -18.2,
+            "nearY": 38.15,
+            "nearWidth": 74.7,
+            "nearHeight": 53.7
           },
           "ngp": {
-            "positionRaw": "(2.9, 14)",
-            "sizeRaw": "(15.1, 11.6)",
-            "nearPositionRaw": "(79.8, 43.3)",
-            "nearSizeRaw": "(51.2, 43.3)"
+            "x": 2.9,
+            "y": 14.0,
+            "width": 15.1,
+            "height": 11.6,
+            "nearX": 79.8,
+            "nearY": 43.3,
+            "nearWidth": 51.2,
+            "nearHeight": 43.3
           },
           "fsw": {
-            "positionRaw": "(-0.3, 0.5)",
-            "sizeRaw": "(6.6, 6.3)",
-            "nearPositionRaw": "(45.9, 43.2)",
-            "nearSizeRaw": "(29.3, 17.6)"
+            "x": -0.3,
+            "y": 0.5,
+            "width": 6.6,
+            "height": 6.3,
+            "nearX": 45.9,
+            "nearY": 43.2,
+            "nearWidth": 29.3,
+            "nearHeight": 17.6
           }
         }
       }
@@ -412,22 +496,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(1.3, 9.8)",
-            "sizeRaw": "(38.3, 23.5)",
-            "nearPositionRaw": "(39.1, 40.7)",
-            "nearSizeRaw": "(104.9, 48.6)"
+            "x": 1.3,
+            "y": 9.8,
+            "width": 38.3,
+            "height": 23.5,
+            "nearX": 39.1,
+            "nearY": 40.7,
+            "nearWidth": 104.9,
+            "nearHeight": 48.6
           },
           "ngp": {
-            "positionRaw": "(2.3, -0.6)",
-            "sizeRaw": "(15, 22.7)",
-            "nearPositionRaw": "(90.7, 14.9)",
-            "nearSizeRaw": "(75, 55.9)"
+            "x": 2.3,
+            "y": -0.6,
+            "width": 15.0,
+            "height": 22.7,
+            "nearX": 90.7,
+            "nearY": 14.9,
+            "nearWidth": 75.0,
+            "nearHeight": 55.9
           },
           "fsw": {
-            "positionRaw": "(-3.4, -9.53)",
-            "sizeRaw": "(19.7, 29.5)",
-            "nearPositionRaw": "(-74.4, 21.4)",
-            "nearSizeRaw": "(66.8, 48.6)"
+            "x": -3.4,
+            "y": -9.53,
+            "width": 19.7,
+            "height": 29.5,
+            "nearX": -74.4,
+            "nearY": 21.4,
+            "nearWidth": 66.8,
+            "nearHeight": 48.6
           }
         }
       }
@@ -465,22 +561,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-13.8, 17.6)",
-            "sizeRaw": "(36.2, 43.5)",
-            "nearPositionRaw": "(-109, 25.6)",
-            "nearSizeRaw": "(102, 78.8)"
+            "x": -13.8,
+            "y": 17.6,
+            "width": 36.2,
+            "height": 43.5,
+            "nearX": -109.0,
+            "nearY": 25.6,
+            "nearWidth": 102.0,
+            "nearHeight": 78.8
           },
           "ngp": {
-            "positionRaw": "(11.9, -3.3)",
-            "sizeRaw": "(14.8, 12.5)",
-            "nearPositionRaw": "(140.8, -37.3)",
-            "nearSizeRaw": "(38.5, 30.3)"
+            "x": 11.9,
+            "y": -3.3,
+            "width": 14.8,
+            "height": 12.5,
+            "nearX": 140.8,
+            "nearY": -37.3,
+            "nearWidth": 38.5,
+            "nearHeight": 30.3
           },
           "fsw": {
-            "positionRaw": "(0, 0)",
-            "sizeRaw": "(10.9, 15.5)",
-            "nearPositionRaw": "(-42.35, -3.9)",
-            "nearSizeRaw": "(84.7, 70.1)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 10.9,
+            "height": 15.5,
+            "nearX": -42.35,
+            "nearY": -3.9,
+            "nearWidth": 84.7,
+            "nearHeight": 70.1
           }
         }
       }
@@ -518,22 +626,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-13.8, 17.6)",
-            "sizeRaw": "(36.2, 43.5)",
-            "nearPositionRaw": "(-109, 25.6)",
-            "nearSizeRaw": "(102, 78.8)"
+            "x": -13.8,
+            "y": 17.6,
+            "width": 36.2,
+            "height": 43.5,
+            "nearX": -109.0,
+            "nearY": 25.6,
+            "nearWidth": 102.0,
+            "nearHeight": 78.8
           },
           "ngp": {
-            "positionRaw": "(11.9, -3.3)",
-            "sizeRaw": "(14.8, 12.5)",
-            "nearPositionRaw": "(140.8, -37.3)",
-            "nearSizeRaw": "(38.5, 30.3)"
+            "x": 11.9,
+            "y": -3.3,
+            "width": 14.8,
+            "height": 12.5,
+            "nearX": 140.8,
+            "nearY": -37.3,
+            "nearWidth": 38.5,
+            "nearHeight": 30.3
           },
           "fsw": {
-            "positionRaw": "(0, 0)",
-            "sizeRaw": "(10.9, 15.5)",
-            "nearPositionRaw": "(-42.35, -3.9)",
-            "nearSizeRaw": "(84.7, 70.1)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 10.9,
+            "height": 15.5,
+            "nearX": -42.35,
+            "nearY": -3.9,
+            "nearWidth": 84.7,
+            "nearHeight": 70.1
           }
         }
       }
@@ -571,22 +691,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(4.3, 1.4)",
-            "sizeRaw": "(19.2, 15.6)",
-            "nearPositionRaw": "(-71.1, -12.6)",
-            "nearSizeRaw": "(123.2, 44.9)"
+            "x": 4.3,
+            "y": 1.4,
+            "width": 19.2,
+            "height": 15.6,
+            "nearX": -71.1,
+            "nearY": -12.6,
+            "nearWidth": 123.2,
+            "nearHeight": 44.9
           },
           "ngp": {
-            "positionRaw": "(1.7, 10.3)",
-            "sizeRaw": "(60.2, 34.5)",
-            "nearPositionRaw": "(-25.7, -23.8)",
-            "nearSizeRaw": "(109.5, 84.6)"
+            "x": 1.7,
+            "y": 10.3,
+            "width": 60.2,
+            "height": 34.5,
+            "nearX": -25.7,
+            "nearY": -23.8,
+            "nearWidth": 109.5,
+            "nearHeight": 84.6
           },
           "fsw": {
-            "positionRaw": "(0, -14.4)",
-            "sizeRaw": "(16.6, 5.8)",
-            "nearPositionRaw": "(33.9, -30.75)",
-            "nearSizeRaw": "(163.4, 68.5)"
+            "x": 0.0,
+            "y": -14.4,
+            "width": 16.6,
+            "height": 5.8,
+            "nearX": 33.9,
+            "nearY": -30.75,
+            "nearWidth": 163.4,
+            "nearHeight": 68.5
           }
         }
       }
@@ -624,22 +756,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-1.1, -2.7)",
-            "sizeRaw": "(19.7, 20.9)",
-            "nearPositionRaw": "(-22.6, -5.7)",
-            "nearSizeRaw": "(181.2, 111.4)"
+            "x": -1.1,
+            "y": -2.7,
+            "width": 19.7,
+            "height": 20.9,
+            "nearX": -22.6,
+            "nearY": -5.7,
+            "nearWidth": 181.2,
+            "nearHeight": 111.4
           },
           "ngp": {
-            "positionRaw": "(8.7, -3.55)",
-            "sizeRaw": "(5.5, 7.1)",
-            "nearPositionRaw": "(61.8, -54.2)",
-            "nearSizeRaw": "(75.4, 21.5)"
+            "x": 8.7,
+            "y": -3.55,
+            "width": 5.5,
+            "height": 7.1,
+            "nearX": 61.8,
+            "nearY": -54.2,
+            "nearWidth": 75.4,
+            "nearHeight": 21.5
           },
           "fsw": {
-            "positionRaw": "(3.9, -2.7)",
-            "sizeRaw": "(4.4, 7.7)",
-            "nearPositionRaw": "(134.3, -14.7)",
-            "nearSizeRaw": "(37.5, 49.3)"
+            "x": 3.9,
+            "y": -2.7,
+            "width": 4.4,
+            "height": 7.7,
+            "nearX": 134.3,
+            "nearY": -14.7,
+            "nearWidth": 37.5,
+            "nearHeight": 49.3
           }
         }
       }
@@ -677,22 +821,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-0.6, -0.5)",
-            "sizeRaw": "(17, 52.9)",
-            "nearPositionRaw": "(98.6, 28.15)",
-            "nearSizeRaw": "(103.6, 73.7)"
+            "x": -0.6,
+            "y": -0.5,
+            "width": 17.0,
+            "height": 52.9,
+            "nearX": 98.6,
+            "nearY": 28.15,
+            "nearWidth": 103.6,
+            "nearHeight": 73.7
           },
           "ngp": {
-            "positionRaw": "(3.3, 0.1)",
-            "sizeRaw": "(26.4, 14.2)",
-            "nearPositionRaw": "(-120.3, -42)",
-            "nearSizeRaw": "(79.4, 45.9)"
+            "x": 3.3,
+            "y": 0.1,
+            "width": 26.4,
+            "height": 14.2,
+            "nearX": -120.3,
+            "nearY": -42.0,
+            "nearWidth": 79.4,
+            "nearHeight": 45.9
           },
           "fsw": {
-            "positionRaw": "(6.7, -5.7)",
-            "sizeRaw": "(19.1, 22)",
-            "nearPositionRaw": "(-115, -14)",
-            "nearSizeRaw": "(90.2, 60.1)"
+            "x": 6.7,
+            "y": -5.7,
+            "width": 19.1,
+            "height": 22.0,
+            "nearX": -115.0,
+            "nearY": -14.0,
+            "nearWidth": 90.2,
+            "nearHeight": 60.1
           }
         }
       }
@@ -730,22 +886,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(2.9, -0.8)",
-            "sizeRaw": "(9.2, 15.7)",
-            "nearPositionRaw": "(120.5, 22.4)",
-            "nearSizeRaw": "(103.6, 73.7)"
+            "x": 2.9,
+            "y": -0.8,
+            "width": 9.2,
+            "height": 15.7,
+            "nearX": 120.5,
+            "nearY": 22.4,
+            "nearWidth": 103.6,
+            "nearHeight": 73.7
           },
           "ngp": {
-            "positionRaw": "(0.5, -1.5)",
-            "sizeRaw": "(9, 28.1)",
-            "nearPositionRaw": "(134.7, 41.4)",
-            "nearSizeRaw": "(55.3, 43.2)"
+            "x": 0.5,
+            "y": -1.5,
+            "width": 9.0,
+            "height": 28.1,
+            "nearX": 134.7,
+            "nearY": 41.4,
+            "nearWidth": 55.3,
+            "nearHeight": 43.2
           },
           "fsw": {
-            "positionRaw": "(-58.9, 16.7)",
-            "sizeRaw": "(10.1, 13)",
-            "nearPositionRaw": "(-63.1, 13.5)",
-            "nearSizeRaw": "(193.8, 103.1)"
+            "x": -58.9,
+            "y": 16.7,
+            "width": 10.1,
+            "height": 13.0,
+            "nearX": -63.1,
+            "nearY": 13.5,
+            "nearWidth": 193.8,
+            "nearHeight": 103.1
           }
         }
       }
@@ -783,22 +951,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-2.2, 0.4)",
-            "sizeRaw": "(8.5, 12.5)",
-            "nearPositionRaw": "(-3.4, 6.1)",
-            "nearSizeRaw": "(103.6, 73.7)"
+            "x": -2.2,
+            "y": 0.4,
+            "width": 8.5,
+            "height": 12.5,
+            "nearX": -3.4,
+            "nearY": 6.1,
+            "nearWidth": 103.6,
+            "nearHeight": 73.7
           },
           "ngp": {
-            "positionRaw": "(-1.11, 1.9)",
-            "sizeRaw": "(2.7, 2.57)",
-            "nearPositionRaw": "(104.7, -20.4)",
-            "nearSizeRaw": "(55.3, 43.2)"
+            "x": -1.11,
+            "y": 1.9,
+            "width": 2.7,
+            "height": 2.57,
+            "nearX": 104.7,
+            "nearY": -20.4,
+            "nearWidth": 55.3,
+            "nearHeight": 43.2
           },
           "fsw": {
-            "positionRaw": "(20.89, -9.83)",
-            "sizeRaw": "(16.37, 24.65)",
-            "nearPositionRaw": "(120.1, -34)",
-            "nearSizeRaw": "(79.7, 57.6)"
+            "x": 20.89,
+            "y": -9.83,
+            "width": 16.37,
+            "height": 24.65,
+            "nearX": 120.1,
+            "nearY": -34.0,
+            "nearWidth": 79.7,
+            "nearHeight": 57.6
           }
         }
       }
@@ -836,22 +1016,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(-0.1, -0.7)",
-            "sizeRaw": "(9.5, 17.2)",
-            "nearPositionRaw": "(-16.7, 0)",
-            "nearSizeRaw": "(75.9, 52.8)"
+            "x": -0.1,
+            "y": -0.7,
+            "width": 9.5,
+            "height": 17.2,
+            "nearX": -16.7,
+            "nearY": 0.0,
+            "nearWidth": 75.9,
+            "nearHeight": 52.8
           },
           "ngp": {
-            "positionRaw": "(-28.3, 0.9)",
-            "sizeRaw": "(30, 7.2)",
-            "nearPositionRaw": "(-106.4, 2.9)",
-            "nearSizeRaw": "(112.5, 73.9)"
+            "x": -28.3,
+            "y": 0.9,
+            "width": 30.0,
+            "height": 7.2,
+            "nearX": -106.4,
+            "nearY": 2.9,
+            "nearWidth": 112.5,
+            "nearHeight": 73.9
           },
           "fsw": {
-            "positionRaw": "(0.0, 0.0)",
-            "sizeRaw": "(320, 130)",
-            "nearPositionRaw": "(0.0, 0.0)",
-            "nearSizeRaw": "(320, 130)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 320.0,
+            "height": 130.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 320.0,
+            "nearHeight": 130.0
           }
         }
       }
@@ -889,22 +1081,34 @@
         },
         "objects": {
           "obj": {
-            "positionRaw": "(0.0, 0.0)",
-            "sizeRaw": "(0.0, 0.0)",
-            "nearPositionRaw": "(0.0, 0.0)",
-            "nearSizeRaw": "(0.0, 0.0)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 0.0,
+            "nearHeight": 0.0
           },
           "ngp": {
-            "positionRaw": "(0.0, 0.0)",
-            "sizeRaw": "(0.0, 0.0)",
-            "nearPositionRaw": "(0.0, 0.0)",
-            "nearSizeRaw": "(0.0, 0.0)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 0.0,
+            "nearHeight": 0.0
           },
           "fsw": {
-            "positionRaw": "(0.0, 0.0)",
-            "sizeRaw": "(0.0, 0.0)",
-            "nearPositionRaw": "(0.0, 0.0)",
-            "nearSizeRaw": "(0.0, 0.0)"
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "nearX": 0.0,
+            "nearY": 0.0,
+            "nearWidth": 0.0,
+            "nearHeight": 0.0
           }
         }
       }

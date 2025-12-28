@@ -20,14 +20,22 @@ public class StoryExportTool : EditorWindow
     [MenuItem("Tools/Rody/Export All Stories Now")]
     public static void ExportAllStoriesNow()
     {
-        string outputPath = Path.Combine(Application.dataPath, "..", "static", "Stories");
+        string outputPath = Path.Combine(Application.dataPath, "Resources", "Stories");
 
         if (!Directory.Exists(outputPath))
         {
             Directory.CreateDirectory(outputPath);
         }
 
-        string[] storyFolders = Directory.GetDirectories(Application.streamingAssetsPath);
+        // Look for original stories in ./original-stories (moved from StreamingAssets)
+        string originalStoriesPath = Path.Combine(Application.dataPath, "..", "original-stories");
+        if (!Directory.Exists(originalStoriesPath))
+        {
+            Debug.LogError($"[StoryExportTool] Original stories not found at: {originalStoriesPath}");
+            return;
+        }
+
+        string[] storyFolders = Directory.GetDirectories(originalStoriesPath);
         int successCount = 0;
 
         foreach (var folder in storyFolders)
