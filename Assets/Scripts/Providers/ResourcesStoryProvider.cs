@@ -207,6 +207,18 @@ public class ResourcesStoryProvider : IStoryProvider
         return storiesCache.ContainsKey(storyId);
     }
 
+    /// <summary>
+    /// Gets the full exported story data for loading into WorkingStory.
+    /// </summary>
+    public StoryExporter.ExportedStory GetExportedStory(string storyId)
+    {
+        if (storiesCache.TryGetValue(storyId, out var story))
+        {
+            return story;
+        }
+        return null;
+    }
+
     public void ClearSpriteCache()
     {
         foreach (var sprite in spriteCache.Values)
