@@ -1,0 +1,799 @@
+#######################
+###### scene 1 ########
+#######################
+## phonems
+d_oh_r_v_i_t_,_r_o_d_i_._t_u_t_e_l_ai_v_t_o_d_e_m_in_p_ou_r_l_a_p_ai_ch_._t_i_in_,_c_e_s_e_p_a_s_t_i_l_._l_a_n_u_i_t_on_b_et_l_e_f_a_r__r_ai_s_t_et_t_in_
+
+
+m_on_t_r_l_e_f_a_r_
+a_t_u_v_u_l_et_g_o_et_l_an_
+t_ou_ch_l_a_b_i_t_d_a_m_a_r_a_j_._c_o_c_in
+## texts [string]
+VUE SUR LE PORT
+"Dors vite! Rody. Tu te lèves tôt demain pour la pêche. Tiens! Que se passe-t-il? La nuit tombe et le phare reste éteint!"
+Montre le phare.
+As tu vu les goélands?
+touche la bitte d'amarrage.
+## musics [i1..i3 | l1..l15]
+l14,l3
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-1.9, 7.1);
+## obj size
+(7.3, 23.0);
+## objNear position
+(114.5, 45.6);
+## objNear size
+(31.5, 38.8);
+## NGP position
+(10.0, -19.1);
+## NGP size
+(57.3, 23.5);
+## NgpNear position
+(102.6, -32.9);
+## NgpNear size
+(110.8, 62.8);
+## FSW position
+(11.5, -1.0);
+## FSW size
+(28.3, 35.0);
+## fswNear position
+(125.9, -23.5);
+## fswNear size
+(66.3, 73.0);
+~
+#######################
+###### scene 2 ########
+#######################
+## phonems
+j_ai_v_et_r_i_f_i_et_l_et_s_i_r_c_u_i_z_et_l_et_c_t_r_i_c_._t_ou_f_on_c_s_i_oh_n_,__m_ai_._l_e_f_a_r__r_e_f_u_z_d_e_s_a_l_u_m_et_
+s_et_t_an_n_u_i_y_e_._l_et_b_a_t_o_c_i_r_an_t_r_s_ai_t_n_u_i_r_i_s_c_d_e_m_an_c_et_l_an_t_r_et_d_u_p_oh_r_
+
+a_p_ai_r_s_oi_t_u_r_o_d_i_,_c_i_et_v_e_n_u_v_oi_r_s_e_c_i_s_p_a_s_
+u_n_s_t_ai_r_n_v_oh_l_a_r_a_d_et_z_o_,_m_on_t_r_l_a_
+c_ai_l_et_l_a_m_ai_z_on_d_e_r_o_d_i_
+## texts [string]
+DANS LE PHARE
+"J'ai vérifié les circuits électriques. Tout fonctionne, mais... le phare refuse de s'allumer!" "C'est ennuyeux. Les bateaux qui rentrent cette nuit risquent de manquer l'entrée du port." 
+Aperçois-tu Rody, qui est venu voir ce qui se passe?
+Une sterne vole à ras des eaux. Montre-la.
+Quelle est la maison de Rody?
+## musics [i1..i3 | l1..l15]
+l13,l13
+## pitch [float]
+0.9,0.8,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(4.6, 1.1);
+## obj size
+(11.5, 10.8);
+## objNear position
+(136.4, -7.5);
+## objNear size
+(44.3, 48.5);
+## NGP position
+(-2.8, 2.3);
+## NGP size
+(13.8, 11.8);
+## NgpNear position
+(26.9, 13.9);
+## NgpNear size
+(77.3, 51.3);
+## FSW position
+(-5.3, 8.0);
+## FSW size
+(12.0, 11.3);
+## fswNear position
+(74.8, 50.9);
+## fswNear size
+(113.5, 27.8);
+~
+#######################
+###### scene 3 ########
+#######################
+## phonems
+r_e_g_a_r_d_l_et_z_i_e_d_u_f_a_r_,_r_o_d_i_._i_l_s_on_p_l_in_d_e_l_a_r_m_._i_l_p_a_r_l_._et_c_ou_t_on
+s_n_i_f_._j_e_s_u_i_m_a_l_e_r_e_._ou_et_p_a_s_et_m_on_n_a_m_i_l_a_v_a_g_._ai_l_n_et_p_a_v_e_n_u_m_e_d_i_r_b_on_j_ou_r__a_l_a_d_ai_r_n_i_ai_r_m_a_r_et_._s_n_i_f_
+
+d_et_b_ou_t_ai_y_d_ai_r_c_on_p_r_i_m_et_s_on_c_a_ch_et_s_ou_l_e_b_a_t_o_._l_et_z_a_t_u_r_e_m_a_r_c_et_
+m_on_t_r_l_a_c_i_y_d_u_v_oi_l_i_et_
+ou_s_e_c_a_ch_l_e_c_oh_r_d_e_s_an_d_r_i_n_,_l_a_m_i_d_u_p_ai_r_d_e_r_o_d_i_
+## texts [string]
+LE PHARE TRISTE
+"Regarde les yeux du phare, Rody. Ils sont pleins de larmes. Il parle. Ecoutons:" "Snif! Je suis malheureux! Où est passée mon amie la vague? Elle n'est pas venue me dire bonjour à la dernière marée! Snif!" 
+Des bouteilles d'air comprimé sont cachée sous le bateau. Les as-tu remarquées?
+Montre la quille du voilier...
+Où se cache le corps de Sandrine, l'amie du père de Rody?
+## musics [i1..i3 | l1..l15]
+l5,l5
+## pitch [float]
+1,1.1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-11.9, -9.4);
+## obj size
+(12.0, 10.0);
+## objNear position
+(57.6, -36.6);
+## objNear size
+(99.8, 55.3);
+## NGP position
+(-1.0, 3.0);
+## NGP size
+(23.5, 23.3);
+## NgpNear position
+(-43.5, -11.6);
+## NgpNear size
+(76.0, 49.8);
+## FSW position
+(4.8, -3.9);
+## FSW size
+(70.5, 18.5);
+## fswNear position
+(82.0, -40.1);
+## fswNear size
+(111.0, 47.3);
+~
+#######################
+###### scene 4 ########
+#######################
+## phonems
+j_e_t_e_c_on_f_i_s_ai_t_a_b_i_d_oh_m_g_r_e_n_ou_i_y_,_r_o_d_i_._s_et_p_ou_v_oi_r_m_a_j_i_c_t_ai_d_e_r_on_._r_e_t_r_ou_v_i_t_s_ai_t_v_a_g_
+an_n_a_v_an_p_ou_r_l_a_v_an_t_u_r_o_f_on_d_et_m_ai_r_
+
+m_on_t_r_l_et_p_a_l_m
+ou_et_l_e_g_ou_v_ai_r_n_a_y_d_u_b_a_t_o_s_u_r_l_e_c_ai_
+s_ai_t_u_ou_r_o_d_i_s_et_ch_an_j_et_
+## texts [string]
+RODY, HOMME-GRENOUILLE
+"Je te confie cet habit d'homme grenouille, Rody. Ses pouvoirs magiques t'aideront. Retrouve vite cette vague." "En avant pour l'aventure au fond des mers!"
+Montre les palmes.
+Où est le gouvernail du bateau sur le quai?
+Sais-tu où rodi s'est changé?
+## musics [i1..i3 | l1..l15]
+i2,l2
+## pitch [float]
+1.2,1,1
+## is mastico speaking [booleans] ?
+0,1,0,0
+## obj position
+(-4.3, -13.8);
+## obj size
+(21.0, 23.3);
+## objNear position
+(-39.8, -36.6);
+## objNear size
+(75.0, 56.8);
+## NGP position
+(-0.9, 8.0);
+## NGP size
+(11.5, 16.8);
+## NgpNear position
+(87.4, -13.4);
+## NgpNear size
+(82.3, 64.8);
+## FSW position
+(-15.9, 19.4);
+## FSW size
+(53.3, 78.0);
+## fswNear position
+(-115.8, 6.4);
+## fswNear size
+(86.0, 117.3);
+~
+#######################
+###### scene 5 ########
+#######################
+## phonems
+in_c_ou_r_an_f_oh_r_d_i_r_i_j_t_ou_t_l_o_d_an_l_a_m_ai_m_d_i_r_ai_c_s_i_on_._l_ai_s_t_oi_an_p_oh_r_t_et_,_r_o_d_i_
+
+
+ou_et_l_e_t_u_b_a_d_e_r_o_d_i_
+m_on_t_r_l_i_p_o_c_an_p_
+l_o_t_r_n_u_i_,_n_ou_z_a_v_i_on_p_ai_r_d_u_n_oh_t_r_b_u_t_in__,_r_e_t_r_ou_v_l_e_
+## texts [string]
+DANS LA MER
+"Un courant fort dirige toute l'eau dans la même direction. Laisse toi emporter, Rody."
+Où est le tuba de Rody?
+Montre l'hippocampe.
+L'autre nuit, nous avions perdu notre butin, retrouve-le!
+## musics [i1..i3 | l1..l15]
+l4,l4
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(4.5, -2.4);
+## obj size
+(17.8, 9.0);
+## objNear position
+(-2.4, 18.4);
+## objNear size
+(61.8, 42.3);
+## NGP position
+(0.4, -1.3);
+## NGP size
+(17.8, 26.5);
+## NgpNear position
+(-48.5, -29.3);
+## NgpNear size
+(64.5, 67.0);
+## FSW position
+(1.5, -8.8);
+## FSW size
+(23.3, 29.0);
+## fswNear position
+(68.4, -12.3);
+## fswNear size
+(89.3, 89.5);
+~
+#######################
+###### scene 6 ########
+#######################
+## phonems
+r_e_v_ai_r_ai_j_in_j_ou_r_m_on_n_a_m_i_l_e_f_a_r_
+m_ai_s_et_l_a_v_a_g_c_e_n_ou_ch_ai_r_ch_on_._et_s_ai_y_d_e_l_a_s_u_i_v_r_,_r_o_d_i_.__a_t_an_s_i_on_._s_et_t_in_g_ou_f_r_
+
+v_oi_ti_u__u_n_et_t_oi_l_d_e_m_ai_r_
+u_n_u_i_t_r_a_p_ai_r_d_u_s_a_p_ai_r_l_._ai_d_l_a__a_l_a_r_e_t_r_ou_v_et_
+d_i_s_t_in_g_t_u_l_e_m_a_ou_w_a_ch_i_g_et_r_i_d_e_r_o_d_i_
+## texts [string]
+LE GOUFFRE
+"Reverrai-je un jour mon ami le phare?" "Mais c'est la vague que nous cherchons! Essaie de la suivre, Rody. ...Attention! C'est un gouffre!"
+Vois-tu une étoile de mer?
+Une huitre a perdu sa perle. Aide-la à la retrouver.
+Distingues-tu le mawashi-geri de Rody?
+## musics [i1..i3 | l1..l15]
+l10,l10
+## pitch [float]
+1.2,1,1
+## is mastico speaking [booleans] ?
+0,1,0,0
+## obj position
+(-1.6, -9.9);
+## obj size
+(18.5, 19.5);
+## objNear position
+(-128.1, -33.6);
+## objNear size
+(57.3, 59.3);
+## NGP position
+(-9.6, -1.1);
+## NGP size
+(7.8, 7.3);
+## NgpNear position
+(62.0, -42.0);
+## NgpNear size
+(66.5, 44.0);
+## FSW position
+(5.6, -1.6);
+## FSW size
+(69.5, 51.3);
+## fswNear position
+(14.6, 8.0);
+## fswNear size
+(135.8, 110.5);
+~
+#######################
+###### scene 7 ########
+#######################
+## phonems
+a_i_,__t_u_v_a_b_i_in_,_r_o_d_i_._s_eu_l_l_o_p_e_t_r_a_v_ai_r_s_et_s_ai_t_t_r_a_p_._l_a_v_a_g__a_d_i_s_p_a_r_u_._c_e_f_ai_r_
+
+
+v_oi_t_u_l_e_p_oi_s_on_c_i_s_a_p_ai_l_in_n_et_s_p_a_d_on_
+on_n_a_p_ai_r_s_oi_in_b_ai_r_n_a_r_l_ai_r_m_i_t_._t_r_ou_v_l_e_
+b_oh_b_l_e_p_oi_s_on_r_ou_j_v_i_in_d_e_p_ai_r_d_r_s_a_f_a_m_._ou_et_t_ai_l_
+## texts [string]
+LA TRAPPE
+"Aie! Tu vas bien, Rody? Seule l'eau peut traverser cette trappe. La vague a disparu. Que faire?"
+Vois-tu le poisson qui s'appelle un espadon?
+On aperoit un Bernard l'hermite. Trouve-le.
+Bob le poisson rouge vient de perdre sa femme. Où est-t-elle?
+## musics [i1..i3 | l1..l15]
+l1,l1
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-4.6, 4.0);
+## obj size
+(32.8, 52.8);
+## objNear position
+(38.0, 22.1);
+## objNear size
+(111.5, 85.8);
+## NGP position
+(2.3, -11.4);
+## NGP size
+(20.3, 25.0);
+## NgpNear position
+(67.4, -40.6);
+## NgpNear size
+(66.8, 48.8);
+## FSW position
+(0.4, -5.9);
+## FSW size
+(25.3, 20.5);
+## fswNear position
+(-59.0, -19.6);
+## fswNear size
+(94.5, 61.3);
+~
+#######################
+###### scene 8 ########
+#######################
+## phonems
+j_e_p_e_v_ou_z_ai_d_et_an_p_ai_r_s_an_in_t_r_ou_d_an_s_e_g_r_i_y_a_j_._l_ai_s_et_m_oi_f_ai_r_
+
+
+m_on_t_r_l_e_r_oh_s_t_r_d_e_l_et_s_p_a_d_on_
+in__o_m_a_r_et_t_r_ai_z_et_f_r_ai_y_et_._l_e_v_oi_t_u_
+d_e_c_oi_b_oh_b_et_t_r_ai_z_et_t_o_n_et_
+## texts [string]
+LE POISSON-SCIE
+"Je peux vous aider en percant un trou dans ce grillage. Laissez-moi faire."
+Montre le rostre de l'espadon.
+Un homard est effrayée. Le vois-tu?
+De quoi Bob est très étonné?
+## musics [i1..i3 | l1..l15]
+i1,i1
+## pitch [float]
+1.1,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-11.0, 2.9);
+## obj size
+(33.8, 9.8);
+## objNear position
+(5.4, 20.5);
+## objNear size
+(111.8, 63.0);
+## NGP position
+(-0.4, -7.8);
+## NGP size
+(25.3, 27.8);
+## NgpNear position
+(40.5, -31.1);
+## NgpNear size
+(72.0, 64.3);
+## FSW position
+(0.0, -4.1);
+## FSW size
+(38.3, 22.8);
+## fswNear position
+(-60.4, -0.3);
+## fswNear size
+(107.8, 77.5);
+~
+#######################
+###### scene 9 ########
+#######################
+## phonems
+m_i_a_m_._m_i_a_m_._j_e_s_u_i_l_e_m_on_s_t_r_d_e_l_a_t_ai_r_._b_i_in_t_o_,_j_e_s_oh_r_t_i_r_ai_d_i_s_i_._l_e_p_r_in_s_d_et_v_o_l_c_an_m_e_l_a_p_r_o_m_i_,_c_an_j_o_r_ai_b_u_t_ou_t_l_o_d_e_l_a_m_ai_r_._c_ai_l_d_r_o_l_d_e_p_oi_s_on_
+
+
+c_ai_l_et_s_e_d_r_o_l_d_e_p_oi_s_on_d_on_p_a_r_l_l_e_m_on_s_t_r_
+a_p_ai_r_s_oi_t_u_l_e_f_u_z_i_a_a_r_p_on_d_e_r_o_d_i_
+p_ai_r_ch_m_oi_s_u_r_l_an_t_ai_n_et_r_o_j_ai_n_d_u_m_on_s_t_r_
+## texts [string]
+LA GROTTE
+"Miam! Miam! Je suis le monstre de la terre. Bientôt, je sortirai d'ici! Le prince des volcans me l'a promis: quand j'aurai bu toute l'eau de la mer... Quel drôle de poisson!"
+Quel est ce drôle de poisson dont parle le monstre?
+Aperçois-tu le fusil à harpon de Rody?
+Pèrche moi sur l'antenne érogène du monstre.
+## musics [i1..i3 | l1..l15]
+l8,l6
+## pitch [float]
+0.7,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(1.1, 12.9);
+## obj size
+(41.8, 28.0);
+## objNear position
+(44.8, 37.4);
+## objNear size
+(86.5, 54.3);
+## NGP position
+(-0.8, 8.3);
+## NGP size
+(19.0, 12.3);
+## NgpNear position
+(14.3, 46.6);
+## NgpNear size
+(62.0, 35.8);
+## FSW position
+(-6.5, 2.5);
+## FSW size
+(23.3, 16.8);
+## fswNear position
+(-68.6, 40.9);
+## fswNear size
+(90.3, 44.3);
+~
+#######################
+###### scene 10 ########
+#######################
+## phonems
+s_ai_r_t_oi_d_e_t_on_f_u_z_i_a_a_r_p_on_,_r_o_d_i_._v_i_z_l_eu_y_,_s_et_l_an_d_r_oi_l_e_p_l_u_s_an_s_i_b_l_.
+
+
+c_ai_l_eu_y_r_o_d_i_v_a_t_i_l_a_t_in_d_r_
+u_n_l_i_m_an_d_et_t_on_b_et_d_an_l_e_v_ai_r_an_m_ai_m_t_an_c_e_r_o_d_i_._t_r_ou_v_l_a_
+l_et_z_on_g_l_s_on_c_a_r_a_c_t_et_r_i_s_t_i_c_d_et_p_r_i_m_a_t_d_on_l_ai_ti_r__u_m_in_._v_oi_t_u_s_e_l_u_i_d_u_m_on_s_t_r_
+## texts [string]
+DANS LE VERRE
+"Sers-toi de ton fusil à harpon, Rody. Vise l'oeil, c'est l'endroit le plus sensible."	
+Quel oeil rody va-t-il atteindre?
+Une limande est tombée dans le verre en même temps que Rody. Trouve-la.
+Les ongles sont caractéristiques des primates dont l'être humain. Vois-tu celui du 'monstre'?
+## musics [i1..i3 | l1..l15]
+l11,l11
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(-8.5, 5.8);
+## obj size
+(57.3, 40.0);
+## objNear position
+(-63.9, 23.3);
+## objNear size
+(127.8, 82.0);
+## NGP position
+(-4.9, -10.5);
+## NGP size
+(20.5, 13.5);
+## NgpNear position
+(55.1, -26.3);
+## NgpNear size
+(132.8, 46.5);
+## FSW position
+(8.3, 1.0);
+## FSW size
+(27.3, 10.0);
+## fswNear position
+(58.6, 17.5);
+## fswNear size
+(107.3, 64.5);
+~
+#######################
+###### scene 11 ########
+#######################
+## phonems
+b_r_a_v_o_r_o_d_i_._l_e_m_on_s_t_r_et_t_ou_ch_et_._r_e_g_a_r_d_._l_o_s_e_d_i_r_i_j_v_ai_r_u_n_r_i_v_i_ai_r_d_e_l_a_v_._m_et_f_i_t_oi_._s_et_l_e_p_r_in_s_d_et_v_o_l_c_an_
+
+
+ou_et_l_a_r_i_v_i_ai_r_d_e_l_a_v_
+v_oi_t_u_l_a_c_e_d_u_m_on_s_t_r_
+a_t_u_r_e_m_a_r_c_et_l_et_m_a_r_m_o_t_on_d_e_l_a_g_r_oh_t_,_d_et_z_oh_r_m_ai_et_s_e_l_et_
+## texts [string]
+LE MONSTRE TOUCHE
+"Bravo Rody! Le monstre est touché. Regarde. L'eau se dirige vers une rivière de lave. Méfie-toi! C'est le prince des volcans!"
+Où est la rivière de lave?
+Vois-tu la queue du monstre?
+As-tu remarqué les marmottons de la grotte, désormais esseulés?
+## musics [i1..i3 | l1..l15]
+i2,l13
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(15.5, -6.5);
+## obj size
+(92.5, 25.3);
+## objNear position
+(97.0, 11.6);
+## objNear size
+(125.5, 58.3);
+## NGP position
+(1.9, -5.5);
+## NGP size
+(21.3, 18.5);
+## NgpNear position
+(-17.5, 15.3);
+## NgpNear size
+(94.0, 54.0);
+## FSW position
+(-1.5, -5.5);
+## FSW size
+(64.5, 30.5);
+## fswNear position
+(-110.8, -42.8);
+## fswNear size
+(94.0, 43.0);
+~
+#######################
+###### scene 12 ########
+#######################
+## phonems
+a_r_ai_t_et_s_ai_t_o_._j_ai_p_eu_r_._j_e_v_ou_l_ai_j_u_s_t_c_a_l_m_et_l_e_m_on_s_t_r_d_e_l_a_t_ai_r_._i_l_m_e_n_a_s_ai_d_e_p_r_o_v_o_c_et_in_t_r_an_b_l_e_m_an_d_e_t_ai_r_._o_s_e_c_ou_r_._m_on_f_r_ai_r_ai_n_et_,_p_r_in_s_d_et_z_o_s_et_an_,_ai_d_m_oi_
+
+
+a_v_ai_c_c_oi_l_e_p_r_in_s_d_et_v_o_l_c_an_a_p_ai_l_t_i_l_s_on_f_r_ai_r_
+m_on_t_r_l_a_t_ai_t_d_e_l_a_p_i_eu_v_r_c_i_d_et_p_l_oi_s_et_t_an_t_a_c_u_l_
+l_e_c_ai_l_d_et_o_m_a_r_s_e_r_a_p_r_ai_a_ai_t_r_s_ai_r_v_i_an_p_r_e_m_i_et_
+## texts [string]
+LE PRINCE DES VOLCANS
+"Arrêtez cette eau! J'ai peur! Je voulais juste calmer le monstre de la terre. Il menaçait de provoquer un tremblement de terre. Au secours! Mon frère ainé, prince des océans, aide-moi!"
+Avec quoi le prince des volcans appelle-t-il son frère?
+Montre la tête de la pieuvre qui déploie ses tentacules.
+Lequel des homards sera prêt à être servi en premier?
+## musics [i1..i3 | l1..l15]
+l5,l6
+## pitch [float]
+0.8,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-2.4, 1.3);
+## obj size
+(6.0, 20.5);
+## objNear position
+(112.1, -29.8);
+## objNear size
+(68.8, 70.5);
+## NGP position
+(-36.8, -10.6);
+## NGP size
+(27.0, 23.5);
+## NgpNear position
+(68.3, -11.4);
+## NgpNear size
+(143.5, 93.3);
+## FSW position
+(6.5, 1.4);
+## FSW size
+(23.0, 11.8);
+## fswNear position
+(-10.0, -37.5);
+## fswNear size
+(65.0, 43.5);
+~
+#######################
+###### scene 13 ########
+#######################
+## phonems
+m_on_p_e_t_i_f_r_ai_r_et_t_in_c_o_r_i_j_i_b_l_._j_an_v_oi_m_on_r_et_j_i_m_an_d_e_b_a_l_ai_n_p_ou_r_an_p_ai_ch_et_t_ou_t_s_ai_t_o_d_e_c_ou_l_et_s_u_r_s_on_v_o_l_c_an_._m_ai_z_i_l_n_ou_f_o_t_r_ou_v_et_d_u_s_a_b_l_p_ou_r_r_e_f_ai_r_m_et_s_e_g_ou_f_r_
+
+
+ou_s_on_l_et_b_a_l_ai_n_
+m_on_t_r_l_a_n_et_m_oh_n_d_e_m_ai_r_
+a_t_u_a_p_ai_r_s_u_l_a_t_a_r_i_ai_s_t_et_s_u_r_l_e_c_ai_l_t_ou_r_n_s_e_j_e_a_l_o_r_i_j_i_n_
+## texts [string]
+QUELQUE PART AU FOND DE L'OCEAN
+"Mon petit frère est incorrigible. J'envoie mon régiment de baleines pour empêcher toute cette eau de couler sur son volcan. Mais il nous faut trouver du sable pour refermer ce gouffre."
+Où sont les baleines?
+Montre une anémone de mer.
+As-tu aperçu l'Atari ST sur lequel tourne ce jeu à l'origine?
+## musics [i1..i3 | l1..l15]
+l9,l9
+## pitch [float]
+1.1,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(1.6, -2.9);
+## obj size
+(87.0, 46.3);
+## objNear position
+(42.4, -3.3);
+## objNear size
+(152.3, 104.5);
+## NGP position
+(-4.8, 9.5);
+## NGP size
+(20.0, 16.0);
+## NgpNear position
+(-130.3, 43.5);
+## NgpNear size
+(56.0, 42.5);
+## FSW position
+(-3.4, -14.0);
+## FSW size
+(59.3, 15.0);
+## fswNear position
+(11.8, -39.0);
+## fswNear size
+(104.5, 50.5);
+~
+#######################
+###### scene 14 ########
+#######################
+## phonems
+t_r_an_s_f_oh_r_m_t_et_b_ou_t_ai_y_an_p_r_o_p_u_l_s_eu_r_et_t_et_p_a_l_m_an_n_et_l_i_s_,_r_o_d_i_._a_l_on_d_e_m_an_d_et_l_ai_d_d_u_m_ai_t_r_d_et_s_a_b_l_.
+b_oh_n_ch_an_s_et_m_ai_r_s_i_,_r_o_d_i_._j_e_v_ai_r_a_c_on_t_et_m_on_n_a_v_an_t_u_r_a_m_on_n_a_m_i_l_e_f_a_r_
+
+a_c_ai_l_an_d_r_oi_r_o_d_i_d_oi_t_i_l_a_p_u_y_et_p_ou_r_t_r_an_s_f_oh_r_m_et_s_on_m_a_t_ai_r_i_ai_l_d_e_p_l_on_j_et_
+v_oi_t_u_l_a_m_et_d_u_z_
+d_i_s_t_in_g_t_u_l_e_j_ai_d_o_d_et_b_a_l_ai_n_a_l_oh_r_c_e_n_ou_s_oh_m_d_an_l_o_
+## texts [string]
+RODY, HOMME-HELICOPTERE
+"Transforme tes bouteilles en propulseur et tes palmes en hélice, Rody. Allons demander l'aide du maitre des sables." "Bonne chance et merci, Rody. Je vais raconter mon aventure à mon ami le phare."
+A quel endroit Rody doit-il appuyer pour transformer son matériel de plongée?
+Vois-tu la méduse?
+Distingues-tu le jet d'eau des baleines alors que nous sommes dans l'eau?
+## musics [i1..i3 | l1..l15]
+l2,l4
+## pitch [float]
+1,1.2,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(1.4, 0.4);
+## obj size
+(6.0, 7.3);
+## objNear position
+(-36.6, -27.3);
+## objNear size
+(43.3, 45.0);
+## NGP position
+(-1.6, 9.6);
+## NGP size
+(22.5, 33.5);
+## NgpNear position
+(-117.4, 25.1);
+## NgpNear size
+(74.8, 79.3);
+## FSW position
+(4.6, 2.9);
+## FSW size
+(41.8, 20.0);
+## fswNear position
+(124.5, 51.1);
+## fswNear size
+(66.0, 26.8);
+~
+#######################
+###### scene 15 ########
+#######################
+## phonems
+j_a_p_ai_l_t_ou_d_e_s_u_i_t_l_e_v_an_v_i_o_l_an_._i_l_t_r_an_s_p_oh_r_t_e_r_a_l_e_s_a_b_l_d_u_d_et_z_ai_r_j_u_s_c_a_l_a_m_ai_r_._an_s_u_i_t_l_et_s_a_b_l_m_ou_v_an_b_ou_ch_e_r_on_l_a_g_r_oh_t_d_u_m_on_s_t_r_et_s_on_n_an_t_r_et_
+
+
+m_on_t_r_l_a_r_o_z_d_et_v_an_
+v_oi_t_u_l_et_l_i_s_c_i_p_ai_r_m_ai_a_r_o_d_i_d_e_v_o_l_et_
+d_i_s_ai_r_n_ti_u_b_oh_b_c_i_p_r_o_f_i_t_a_n_ou_v_o_d_e_s_a_l_i_b_ai_r_t_et_g_r_a_s_a_r_o_d_i_
+## texts [string]
+LE MAITRE DES SABLES
+"J'appelle tout de suite le vent violent. Il transportera le sable du désert jusqu'à la mer. Ensuite les sables mouvants boucheront la grotte du monstre et son entrée."
+Montre la rose des vents.
+Vois-tu l'hélice qui permet à Rody de voler?
+Discernes-tu Bob qui profite à nouveau de sa liberté grâce à Rody?
+## musics [i1..i3 | l1..l15]
+l13,l13
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-1.3, 1.4);
+## obj size
+(11.0, 12.8);
+## objNear position
+(-86.5, 18.5);
+## objNear size
+(51.5, 45.0);
+## NGP position
+(9.4, 15.6);
+## NGP size
+(61.5, 16.0);
+## NgpNear position
+(63.6, 15.1);
+## NgpNear size
+(118.3, 94.3);
+## FSW position
+(7.3, -7.6);
+## FSW size
+(29.5, 36.5);
+## fswNear position
+(114.3, -20.9);
+## fswNear size
+(90.0, 83.8);
+~
+#######################
+###### scene 16 ########
+#######################
+## phonems
+c_ai_l_t_an_p_ai_t_,_s_e_m_a_t_in_._t_u_p_e_d_oh_r_m_i_r_an_c_oh_r_in_p_e_r_o_d_i_._l_et_p_ai_ch_eu_r_n_i_r_on_p_a_z_an_m_ai_r_o_j_ou_r_d_u_i_._l_e_f_a_r_f_on_c_s_i_oh_n_a_n_ou_v_o_,_l_e_s_ai_t_u_._n_ou_n_e_c_o_n_ai_t_r_on_j_a_m_ai_l_a_c_l_et_d_u_m_i_s_t_ai_r_an_ch_o_c_o_l_a_
+
+
+l_a_c_on_b_i_n_ai_z_on_d_e_p_l_on_j_et_d_e_r_o_d_i_et_c_ai_l_c_e_p_a_r_d_an_l_a_ch_an_b_r_._l_a_v_oi_t_u_
+on_n_a_p_ai_r_s_oi_in_n_ai_i_d_ai_r_d_an_l_a_t_an_p_ai_t_,_ou_et_t_i_l_
+t_ou_ch_l_a_p_r_i_z_et_l_et_c_t_r_i_c_,_c_on_n_an_f_i_n_i_s_
+## texts [string]
+LA TEMPETE
+"Quelle tempête, ce matin! Tu peux dormir encore un peu Rody. Les pêcheurs n'iront pas en mer aujourd'hui. Le phare fonctionne à nouveau, le sais-tu? Nous ne connaitrons jamais la clé du mystère"
+La combinaison de plongée de Rody est quelque part dans la chambre. La vois-tu?
+On aperçoit un eider dans la tempête, où est-il ?
+Touche la prise éléctrique, qu'on en finisse!
+## musics [i1..i3 | l1..l15]
+l15,l15
+## pitch [float]
+0.9,1,1
+## is mastico speaking [booleans] ?
+0,0,0,0
+## obj position
+(-0.9, -4.3);
+## obj size
+(26.5, 13.5);
+## objNear position
+(-82.9, -40.0);
+## objNear size
+(82.3, 42.0);
+## NGP position
+(0.9, -0.1);
+## NGP size
+(11.3, 7.8);
+## NgpNear position
+(50.0, 25.0);
+## NgpNear size
+(50.0, 44.0);
+## FSW position
+(-0.1, -1.1);
+## FSW size
+(4.8, 2.5);
+## fswNear position
+(66.8, -17.4);
+## fswNear size
+(62.5, 55.3);
+~
+#######################
+###### scene 17 ########
+#######################
+## phonems
+m_oi_j_e_p_r_et_f_ai_r_n_a_j_et_d_an_z_u_n_m_ai_r_d_e_s_a_b_l_,_s_et_m_ou_in_d_an_j_e_r_e_
+
+
+
+
+
+## texts [string]
+MASTICO, ROBOT-GRENOUILLE
+"Moi je préfère nager dans une mer de sable, c'est moins dangereux."
+
+
+
+## musics [i1..i3 | l1..l15]
+l9,l9
+## pitch [float]
+1,1,1
+## is mastico speaking [booleans] ?
+1,0,0,0
+## obj position
+(0.0, 0.0);
+## obj size
+(0.0, 0.0);
+## objNear position
+(0.0, 0.0);
+## objNear size
+(0.0, 0.0);
+## NGP position
+(0.0, 0.0);
+## NGP size
+(0.0, 0.0);
+## NgpNear position
+(0.0, 0.0);
+## NgpNear size
+(0.0, 0.0);
+## FSW position
+(0.0, 0.0);
+## FSW size
+(0.0, 0.0);
+## fswNear position
+(0.0, 0.0);
+## fswNear size
+(0.0, 0.0);
+~
