@@ -5,6 +5,41 @@
 
 ---
 
+## In Progress: JSON-Only Migration 🔄
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1 | ✅ Done | Unified to ResourcesStoryProvider |
+| Phase 1.5 | ✅ Done | Fixed Editor + WebGL target loading |
+| Phase 2 | 🔄 Partial | WorkingStory created, UI pending |
+| Phase 3 | ⏳ | Simplify JsonStoryProvider |
+| Phase 4 | ⏳ | Clean up RM_SaveLoad |
+| Phase 5 | ⏳ | Final cleanup (7 files with platform checks) |
+
+**Completed so far:**
+- Deleted `LocalStoryProvider.cs` (296 lines)
+- Deleted `StreamingAssets/` story folders (backed up to `original-stories/`)
+- Created `WorkingStory.cs` - in-memory story state management
+- Both desktop/WebGL now use `ResourcesStoryProvider`
+- Fixed Editor loading with runtime story type detection
+- Unified `RA_ScrollView.cs`, `GameManager.cs`, `Title.cs`
+
+**Key pattern - Runtime story detection:**
+```csharp
+// Official = just ID, User = has path/prefix
+bool isUserStory = gamePath.Contains("/") || gamePath.StartsWith("json:");
+```
+
+**Next steps:**
+- Integrate `WorkingStory` into `MenuManager.cs` and `RA_NewGame.cs`
+- Delete `UserStoryProvider.cs`, `StoryImporter.cs`, `JsonStoryProvider.cs`
+- Update `RM_SaveLoad.cs` to use `WorkingStory`
+- Remove remaining `#if UNITY_WEBGL` checks (7 files)
+
+**See:** `JSON_MIGRATION_PLAN.md` for detailed phases
+
+---
+
 ## Completed
 
 ### 2025-12-28: Firebase Removal
@@ -24,35 +59,7 @@
 
 **IStoryProvider Interface** - `Assets/Scripts/Providers/`
 - `IStoryProvider.cs` - Interface + StoryMetadata/StoryData
-- Multiple provider implementations (to be unified - see Next Up)
-
----
-
-## Next Up: JSON-Only Migration ⚡ PRIORITY
-
-**Goal:** Unify all storage to `.rody.json` with single code path for all platforms.
-
-**Current mess:**
-- 4 providers: `LocalStoryProvider`, `UserStoryProvider`, `JsonStoryProvider`, `ResourcesStoryProvider`
-- Platform-specific code (`#if UNITY_WEBGL`)
-- Two formats: folders (`levels.rody` + `Sprites/`) and JSON
-
-**Target:**
-```
-ALL PLATFORMS:
-    Official Stories → Resources/Stories/*.rody.json (embedded, read-only)
-    User Stories     → Import/Export .rody.json files (no persistent storage)
-```
-
-**Files to delete:**
-- `LocalStoryProvider.cs` (296 lines)
-- `UserStoryProvider.cs` (421 lines)
-- `StoryImporter.cs` (~200 lines)
-- `StreamingAssets/` story folders
-
-**Code reduction:** ~1,500 lines removed
-
-**See:** `JSON_MIGRATION_PLAN.md` for detailed phases
+- Provider implementations (being unified)
 
 ---
 

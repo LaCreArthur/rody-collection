@@ -4,6 +4,188 @@
 
 ---
 
+## 2025-12-28: JSON-Only Migration (In Progress)
+
+### Goal
+Unify all story storage to `.rody.json` with single code path. No more platform-specific storage.
+
+### Phase 1 ✅ COMPLETE - Unified Official Stories
+
+**Changes:**
+- `StoryProviderManager` now always uses `ResourcesStoryProvider` (removed `#if UNITY_WEBGL`)
+- Deleted `LocalStoryProvider.cs` (296 lines of folder-based loading)
+- Deleted all `StreamingAssets/` story folders (backed up to `original-stories/`)
+- Both desktop and WebGL now load official stories identically
+
+**Files Deleted:**
+| File | Lines |
+|------|-------|
+| `LocalStoryProvider.cs` | 296 |
+| `StreamingAssets/` stories | ~1,200 files |
+
+### Hotfix: Editor + WebGL Target Loading Issue
+
+**Problem:** Official stories didn't load when running in Editor with WebGL build target.
+
+**Root Cause:** `#if UNITY_WEBGL && !UNITY_EDITOR` evaluates to FALSE in Editor (even with WebGL target), so code fell back to folder-based loading paths that no longer exist.
+
+**Solution:** Removed platform checks from loading code - now both official and user stories use runtime detection:
+
+```csharp
+// Detect story type by path format
+bool isUserStory = gamePath.StartsWith("json:") || gamePath.StartsWith("user:") ||
+                   gamePath.Contains("/") || gamePath.Contains("\\");
+
+if (isUserStory)
+    InitUserStory();    // File-based loading
+else
+    InitFromProvider(); // ResourcesStoryProvider
+```
+
+**Files Fixed:**
+| File | Changes |
+|------|---------|
+| `RA_ScrollView.cs` | Unified `Start()` → `InitWithProvider()`, removed `Init()` |
+| `GameManager.cs` | Added story type detection, renamed `InitSceneWebGL()` → `InitSceneFromProvider()` |
+| `Title.cs` | Added story type detection, renamed methods |
+| `MenuManager.cs` | Added story type detection, renamed `init()` → `InitUserStory()`, `InitWebGL()` → `InitFromProvider()` |
+
+**Key Insight:** Official stories now use just the story ID (e.g., "Rody Et Mastico") as `gamePath`, while user stories use full paths or prefixed paths.
+
+### Phase 2 🔄 IN PROGRESS - WorkingStory Class
+
+**Created `WorkingStory.cs`** - Static class for in-memory story state:
+
+```csharp
+public static class WorkingStory
+{
+    public static ExportedStory Current { get; }  // One story in memory
+    public static bool IsOfficial { get; }         // Read-only until forked
+    public static bool IsDirty { get; }            // Unsaved changes?
+    public static string LastSavePath { get; }     // Quick-save location
+
+    // Loading
+    public static void LoadOfficial(string storyId);
+    public static void LoadFromJson(string json, string savePath);
+    public static void CreateNew(string title);
+
+    // Editing
+    public static void ForkForEditing();  // Deep copy, mark as user story
+    public static void SaveScene(int index, SceneData data);
+    public static void SaveSprite(string name, Texture2D texture);
+
+    // Export
+    public static string ExportToJson();
+}
+```
+
+**Key Design:**
+- ONE story in memory at a time (volatile)
+- Official stories are read-only until forked
+- User stories exist only as `.rody.json` files (no persistent directory)
+- Export = Save (same operation)
+
+**Pending:**
+- Integrate with `MenuManager.cs` (fork flow)
+- Integrate with `RA_NewGame.cs` (import flow)
+- Delete `UserStoryProvider.cs`, `StoryImporter.cs`, `JsonStoryProvider.cs`
+
+### ObjectZone Refactoring ✅ COMPLETE
+
+**Goal:** Replace raw string format (`"(-1.8, 0.0);"`) with typed floats in JSON.
+
+**Before (raw strings in JSON):**
+```json
+"objects": {
+  "obj": {
+    "positionRaw": "(-1.8, 0.0);",
+    "sizeRaw": "(13.5, 14.0);",
+    "nearPositionRaw": "(115.3, -36.0);",
+    "nearSizeRaw": "(62.5, 47.0);"
+  }
+}
+```
+
+**After (typed floats):**
+```json
+"objects": {
+  "obj": {
+    "x": -1.8, "y": 0.0,
+    "width": 13.5, "height": 14.0,
+    "nearX": 115.3, "nearY": -36.0,
+    "nearWidth": 62.5, "nearHeight": 47.0
+  }
+}
+```
+
+**Files Modified:**
+| File | Changes |
+|------|---------|
+| `SceneData.cs` | ObjectZone now uses typed floats |
+| `SceneDataParser.cs` | Parses raw strings → typed floats |
+| `GameManager.cs` | Added `CreateZoneList()` for typed data |
+| `RM_SaveLoad.cs` | Updated save/load for typed format |
+| `StoryImporter.cs` | Format typed floats for folder export |
+| `JsonStoryProvider.cs` | Use typed defaults |
+| `StoryExportTool.cs` | Export from `./original-stories` to `Resources/Stories/` |
+
+**Re-exported all 7 stories** with new typed format.
+
+### Learnings
+
+**⚠️ CRITICAL: Fix for simplicity, never add complexity**
+
+When the story export returned 0 stories, the WRONG approach was to add backward compatibility to parse the old format. The CORRECT approach was to investigate: "Why no exports? → Stories moved to `./original-stories/` → Fix the export path."
+
+❌ **Wrong thinking:** "Old JSON format → Add backward compatibility parser"
+✅ **Correct thinking:** "Old JSON format → Re-export with correct format"
+
+This applies broadly:
+- Don't add complexity to handle broken states
+- Investigate root cause before adding code
+- The simplest fix is usually correct
+
+**⚠️ CRITICAL: Always grep ALL files when fixing a pattern**
+When removing `#if UNITY_WEBGL` checks, we missed `MenuManager.cs` initially because we only fixed files we noticed during testing. This caused a runtime error when the scene menu loaded. **Always run `grep -r "UNITY_WEBGL" Assets/Scripts/` to find ALL occurrences before declaring a fix complete.**
+
+**`#if UNITY_WEBGL && !UNITY_EDITOR` is problematic:**
+- Evaluates to FALSE in Editor regardless of build target
+- Can't test WebGL code paths in Editor
+- **Solution:** Use runtime detection instead of compile-time switches
+
+**PlayerPrefs("gamePath") patterns:**
+- Official stories: just story ID (e.g., `"Rody Et Mastico"`)
+- User folders: full path (e.g., `/Users/.../UserStories/mystory`)
+- JSON stories: prefixed (e.g., `json:/path/to/story.rody.json`)
+- Use path separators/prefixes to detect story type at runtime
+
+**Remaining platform checks** (6 files still have `#if UNITY_WEBGL`):
+- `Bootstrap.cs` - WebGLResizeHandler (OK to keep)
+- `MenuManager.cs` - ✅ FIXED
+- `RM_MainLayout.cs` - RodyMaker editor (needs update)
+- `RM_ImagesLayout.cs` - RodyMaker editor (needs update)
+- `RA_NewGame.cs` - needs update
+- `WebGLResizeHandler.cs` - OK (WebGL-only component)
+- `RM_ImgAnimLayout.cs` - RodyMaker editor (needs update)
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `StoryProviderManager.cs` | Removed platform checks, always ResourcesStoryProvider |
+| `ResourcesStoryProvider.cs` | Added `GetExportedStory()` for WorkingStory |
+| `RA_ScrollView.cs` | Unified initialization, removed folder-based code |
+| `GameManager.cs` | Runtime story type detection |
+| `Title.cs` | Runtime story type detection |
+| `MenuManager.cs` | Runtime story type detection |
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `WorkingStory.cs` | In-memory story state management |
+| `original-stories/` | Backup of StreamingAssets stories |
+
+---
+
 ## 2025-12-28: Firebase Removal & Static JSON Migration
 
 ### Goal

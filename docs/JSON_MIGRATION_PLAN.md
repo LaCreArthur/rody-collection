@@ -1,11 +1,54 @@
 # JSON Migration Plan
 
 > Goal: Unify all story storage to `.rody.json` format with a single code path for all platforms.
-> **Updated: 2025-12-28** - Simplified to truly uniform architecture
+> **Updated: 2025-12-28** - Phase 1 complete + hotfix, Phase 2 in progress
 
 ---
 
-## Current State (Messy)
+## Migration Status
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1 | ✅ COMPLETE | Unified to ResourcesStoryProvider |
+| Phase 1.5 | ✅ COMPLETE | Fixed Editor + WebGL target loading |
+| Phase 2 | 🔄 IN PROGRESS | WorkingStory class created, UI integration pending |
+| Phase 3 | ⏳ PENDING | Simplify JsonStoryProvider |
+| Phase 4 | ⏳ PENDING | Clean up RM_SaveLoad |
+| Phase 5 | ⏳ PENDING | Final cleanup (remaining platform checks) |
+
+---
+
+## Current State (After Phase 1.5)
+
+| Component | Desktop | WebGL | Editor (any target) |
+|-----------|---------|-------|---------------------|
+| Official Stories | `ResourcesStoryProvider` | `ResourcesStoryProvider` | `ResourcesStoryProvider` |
+| User Stories | `UserStoryProvider` (to be removed) | N/A | `UserStoryProvider` |
+| Story Detection | Runtime (path format) | Runtime (path format) | Runtime (path format) |
+
+**Progress:**
+- Deleted `LocalStoryProvider.cs` and `StreamingAssets/` folders
+- Fixed loading in Editor with WebGL target (removed `#if UNITY_WEBGL && !UNITY_EDITOR`)
+- Unified `RA_ScrollView.cs`, `GameManager.cs`, `Title.cs`, `MenuManager.cs` to use runtime detection
+
+**⚠️ Lesson Learned:** Always `grep -r "UNITY_WEBGL" Assets/Scripts/` to find ALL occurrences when fixing platform-specific code. We missed `MenuManager.cs` initially, causing runtime errors.
+
+**Story Type Detection Pattern:**
+```csharp
+// Official story: just the ID (no path separators)
+gamePath = "Rody Et Mastico"
+
+// User story: has path separators or prefix
+gamePath = "json:/path/to/story.rody.json"
+gamePath = "user:MyStory"
+gamePath = "/Users/.../UserStories/mystory"
+```
+
+**Remaining:** UI integration with `WorkingStory`, delete `UserStoryProvider`, `StoryImporter`, `JsonStoryProvider`
+
+---
+
+## Original State (Before Migration)
 
 | Component | Desktop | WebGL |
 |-----------|---------|-------|
