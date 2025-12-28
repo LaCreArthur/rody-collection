@@ -50,6 +50,12 @@ public static class WorkingStory
     /// </summary>
     public static int SceneCount => Current?.story?.sceneCount ?? 0;
 
+    /// <summary>
+    /// Current scene index being played/edited (1-based).
+    /// Replaces PlayerPrefs "currentScene" usage.
+    /// </summary>
+    public static int CurrentSceneIndex { get; set; } = 1;
+
     // Sprite cache for loaded sprites
     private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
 
@@ -611,6 +617,7 @@ public static class WorkingStory
         IsOfficial = false;
         IsDirty = false;
         LastSavePath = null;
+        CurrentSceneIndex = 1;
     }
 
     /// <summary>

@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour {
 
 	void Start()
 	{
-		currentScene = PlayerPrefs.GetInt("currentScene");
+		currentScene = WorkingStory.CurrentSceneIndex;
 
 		if (!WorkingStory.IsLoaded)
 		{

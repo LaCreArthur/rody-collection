@@ -4,6 +4,50 @@
 
 ---
 
+## 2025-12-28: PlayerPrefs Cleanup (IN PROGRESS)
+
+**Goal:** Replace PlayerPrefs state passing with WorkingStory properties.
+
+### Completed
+
+| Task | Status |
+|------|--------|
+| Added `WorkingStory.CurrentSceneIndex` property | ✅ |
+| Reset `CurrentSceneIndex` in `WorkingStory.Clear()` | ✅ |
+| Replace in `RM_GameManager.cs` | ✅ |
+| Replace in `GameManager.cs` | ✅ |
+
+### Remaining
+
+| File | Changes Needed |
+|------|----------------|
+| `MenuManager.cs` | Replace `PlayerPrefs.SetInt("currentScene", x)` → `WorkingStory.CurrentSceneIndex = x` |
+| `ClickHandler.cs` | Replace Get/Set currentScene |
+| `RM_WarningLayout.cs` | Replace Get/Set currentScene |
+| `Intro.cs` | Replace `PlayerPrefs.GetInt("scenesCount")` → `WorkingStory.SceneCount` |
+| Multiple files | Remove redundant `PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount)` |
+
+### Pattern to Apply
+
+```csharp
+// BEFORE
+currentScene = PlayerPrefs.GetInt("currentScene");
+PlayerPrefs.SetInt("currentScene", x);
+
+// AFTER
+currentScene = WorkingStory.CurrentSceneIndex;
+WorkingStory.CurrentSceneIndex = x;
+```
+
+### Files to Grep
+
+```bash
+grep -rn 'PlayerPrefs.*"currentScene"' Assets/Scripts/
+grep -rn 'PlayerPrefs.*"scenesCount"' Assets/Scripts/
+```
+
+---
+
 ## 2025-12-28: Phase 2 - WebGL File Picker
 
 **Goal:** Enable import/export of `.rody.json` stories on WebGL builds.

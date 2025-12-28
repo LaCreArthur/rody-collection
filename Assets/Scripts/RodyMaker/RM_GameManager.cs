@@ -37,15 +37,10 @@ public class RM_GameManager : MonoBehaviour {
 
 	void Start() {
 
-		// Load from ingame
-		currentScene = PlayerPrefs.GetInt("currentScene");
+		// Load current scene from WorkingStory
+		currentScene = WorkingStory.CurrentSceneIndex;
 
-		// Scene count is set from WorkingStory (loaded in RA_ScrollView/MenuManager)
-		if (WorkingStory.IsLoaded)
-		{
-			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-		}
-		Debug.Log($"[RM_GameManager] scenes count: {PlayerPrefs.GetInt("scenesCount")}");
+		Debug.Log($"[RM_GameManager] scenes count: {WorkingStory.SceneCount}");
 		
 		if (PlayerPrefs.GetInt("rodyMakerFirstTime") == 1) {
 			welcomePanel.SetActive(true);
@@ -115,7 +110,7 @@ public class RM_GameManager : MonoBehaviour {
 		int sceneToLoad = currentScene;
 
 		// If creating a new scene, load from the previous scene as template
-		if (PlayerPrefs.GetInt("scenesCount") + 1 == currentScene)
+		if (WorkingStory.SceneCount + 1 == currentScene)
 		{
 			Debug.Log("[RM_GameManager] Load previous scene as template...");
 			sceneToLoad = currentScene - 1;
@@ -229,7 +224,7 @@ public class RM_GameManager : MonoBehaviour {
 	void OnApplicationQuit()
     {
         // delete non-saved new level images
-		if(currentScene > PlayerPrefs.GetInt("scenesCount")) {
+		if(currentScene > WorkingStory.SceneCount) {
 			RM_SaveLoad.DeleteScene(currentScene);
 		}
     }
