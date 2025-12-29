@@ -168,6 +168,10 @@ UnityReusables.*       - Shared utilities
 - Prefer explicit code over Inspector wiring for new features
 - Use conventional commits: `fix:`, `feat:`, `docs:`
 - **Never null-check serialized fields** - If a prefab/reference isn't assigned in the Inspector, let it fail loudly with NullReferenceException rather than silently skipping
+- **Static events for singleton/manager classes** - Use `public static event Action OnFired` instead of instance events to avoid Inspector wiring for subscribers
+- **[RequireComponent] + GetComponent for same-object deps** - Use `[RequireComponent(typeof(T))]` + `GetComponent<T>()` in Awake instead of serialized fields for guaranteed same-object components
+- **Expression-bodied members** - Use `void Awake() => _x = GetComponent<T>();` for simple one-liners
+- **Omit redundant `private`** - C# defaults to private, write `void Update()` not `private void Update()`
 - **Cache static/constant data** - If generating the same data every time (e.g., blank textures, default configs), compute once and cache as static field or constant. Don't recreate identical data repeatedly.
 - **Always grep for patterns before declaring a fix complete** - When fixing platform-specific code (`#if UNITY_WEBGL`), always run `grep -r "PATTERN" Assets/Scripts/` to find ALL occurrences. Don't rely on testing alone—code paths may not be exercised until later scenes.
 - **Fix for simplicity, never add complexity** - When something doesn't work, INVESTIGATE THE ROOT CAUSE first. Don't jump to adding backward compatibility, abstractions, or workarounds. The simplest fix is usually the correct one. Example: If exports fail, check if the source path changed—don't add code to handle missing data.
