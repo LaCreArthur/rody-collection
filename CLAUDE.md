@@ -50,15 +50,14 @@ Note: DOTween is now included in the repo for CI builds.
 ## Architecture
 
 ### Story Storage (Unified)
-| Type | Location | Provider |
-|------|----------|----------|
-| Official Stories (All platforms) | `Resources/Stories/*.rody.json` | `ResourcesStoryProvider` |
-| User Stories (Desktop only) | `persistentDataPath/UserStories/` | `UserStoryProvider` |
+| Type | Location | Access |
+|------|----------|--------|
+| Official Stories | `Resources/Stories/*.rody.json` | Read-only, embedded in build |
+| User Stories | User's file system | Import/export via file picker (no persistent storage) |
 
 - **Abstraction**: `IStoryProvider` interface in `Assets/Scripts/Providers/`
-- Runtime story type detection (not compile-time `#if UNITY_WEBGL`)
 - **JSON format**: `.rody.json` files with base64-encoded sprites
-- **Source stories**: `./original-stories/` (folder-based, for re-export only)
+- **Source stories**: `./original-stories/` (folder-based, for re-export only via Editor tools)
 
 ### User Stories Feature
 User-created content uses import/export model (no persistent storage):
@@ -95,8 +94,10 @@ Scene 6 for editing (accessible via Edit button)
 | `Assets/Scripts/RodyAnthology/` | Story selection (RA_ prefix) |
 | `Assets/Scripts/Providers/WorkingStory.cs` | In-memory story state (THE source of truth) |
 | `Assets/Scripts/Providers/ResourcesStoryProvider.cs` | Loads official stories from Resources |
+| `Assets/Scripts/Providers/StoryProviderManager.cs` | Singleton provider access |
 | `Assets/Scripts/Models/SceneData.cs` | Typed scene data model |
 | `Assets/Scripts/Utils/PathManager.cs` | Cross-platform path handling |
+| `Assets/Scripts/WebGL/WebGLFileBrowser.cs` | WebGL file import/export via browser |
 | `Assets/Scripts/SoundManager.cs` | Phoneme TTS and audio |
 | `Assets/Editor/StoryExportTool.cs` | Batch export stories to JSON |
 
@@ -109,14 +110,26 @@ Custom TTS concatenates pre-recorded phonemes. Syntax: `b_r_a_v_o` (underscores 
 ### Inspector Wiring
 **Critical**: Heavy use of Inspector-based wiring (BetterEvents, ScriptableObject Events, UnityEvents). Code alone won't show full behavior—check prefabs and scenes for event connections.
 
-## Story Data Format
+## Story Data Formats
 
-Stories live in `StreamingAssets/{StoryName}/`:
+### Runtime Format (`.rody.json`)
+Self-contained JSON files in `Resources/Stories/` with embedded base64 sprites:
+```json
+{
+  "story": { "id": "StoryName", "title": "Display Title", "sceneCount": 7 },
+  "credits": "Author credits...",
+  "scenes": [{ "intro1": "phoneme_text", "objectZones": [...], ... }],
+  "sprites": { "cover.png": "base64...", "0.0.png": "base64..." }
+}
+```
+
+### Source Format (for export tool only)
+Original stories in `./original-stories/{StoryName}/` for re-export:
 ```
 ├── levels.rody     # Scene definitions (26 lines per scene, ~ separator)
 ├── credits.txt     # Story credits
 └── Sprites/
-    ├── cover.png   # Story thumbnail
+    ├── cover.png   # Story thumbnail (320×200)
     └── {scene}.{frame}.png  # Scene images (320×130)
 ```
 
@@ -180,7 +193,8 @@ This principle applies broadly:
 
 | Doc | Purpose |
 |-----|---------|
-| `docs/ROADMAP.md` | Current progress and remaining work |
+| `docs/ROADMAP.md` | Current progress and remaining work (single source of truth) |
 | `docs/DEVLOG.md` | Session history and implementation details |
-| `docs/USER_STORIES_FEATURE.md` | User stories feature documentation |
+| `docs/USER_STORIES_FEATURE.md` | User stories import/export documentation |
 | `docs/INSPECTOR_WIRING.md` | Inspector event wiring reference |
+| `docs/ARCHITECTURE.md` | Deep-dive architecture reference |
