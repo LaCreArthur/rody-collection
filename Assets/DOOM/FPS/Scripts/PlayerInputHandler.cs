@@ -42,12 +42,10 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (CanProcessInput())
         {
+            // Unity uses physical key positions (scancodes), not characters
+            // So WASD works on both QWERTY and AZERTY keyboards (same physical positions)
             float h = Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal);
             float v = Input.GetAxisRaw(GameConstants.k_AxisNameVertical);
-
-            // AZERTY support: Z for forward, Q for left
-            if (Input.GetKey(KeyCode.Z)) v = 1f;
-            if (Input.GetKey(KeyCode.Q)) h = -1f;
 
             Vector3 move = new Vector3(h, 0f, v);
 

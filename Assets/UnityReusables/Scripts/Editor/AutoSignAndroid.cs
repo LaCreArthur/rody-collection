@@ -5,8 +5,8 @@ public class AutoSignAndroid {
 #if UNITY_ANDROID
     static AutoSignAndroid() {
  
-        PlayerSettings.keystorePass = "oittanos0103";
-        PlayerSettings.keyaliasPass = "010392";
+        PlayerSettings.Android.keystorePass = "oittanos0103";
+        PlayerSettings.Android.keyaliasPass = "010392";
     }
 #endif
 }

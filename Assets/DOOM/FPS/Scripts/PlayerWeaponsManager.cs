@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityReusables.ScriptableObjects.Events;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerWeaponsManager : MonoBehaviour
@@ -61,7 +60,6 @@ public class PlayerWeaponsManager : MonoBehaviour
     [Tooltip("Layer to set FPS weapon gameObjects to")]
     public LayerMask FPSWeaponLayer;
 
-    public SimpleEventSO fireEvent;
     public static event Action OnFired;
     public TMP_Text[] currentAmmoTexts;
 
@@ -134,7 +132,6 @@ public class PlayerWeaponsManager : MonoBehaviour
             {
                 // m_AccumulatedRecoil += Vector3.back * activeWeapon.recoilForce;
                 // m_AccumulatedRecoil = Vector3.ClampMagnitude(m_AccumulatedRecoil, maxRecoilDistance);
-                fireEvent.Raise();
                 OnFired?.Invoke();
             }
         }

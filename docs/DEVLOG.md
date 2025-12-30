@@ -4,6 +4,48 @@
 
 ---
 
+## 2025-12-30: Unity Editor Reference Scanner Tool
+
+**Changes**: Created new Editor tool for scanning ScriptableObject references across project.
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `Assets/Editor/ReferenceScanner/ReferenceScannerWindow.cs` | Main EditorWindow with tabbed UI |
+| `Assets/Editor/ReferenceScanner/SOReferenceFinder.cs` | GUID-based scanning logic |
+| `Assets/Editor/ReferenceScanner/ScanResult.cs` | Result data structure |
+| `Assets/Editor/ReferenceScanner/BuildReportAnalyzer.cs` | Parses Unity build reports for unused assets |
+
+### Features
+
+**SO References Tab**
+- Drag any ScriptableObject to find all scene/prefab references
+- Project-wide GUID-based text search in YAML files
+- Click-to-select and Open Scene buttons
+
+**Build Report Tab** (Unified unused asset detection)
+- Two detection methods with smart switching:
+  - **Build Report**: Most accurate - shows assets NOT included in last build
+  - **GUID Scan**: Fallback - finds orphaned SOs with no scene/prefab refs
+- Bulk deletion with checkboxes, Select All/None, confirmation dialog
+- Different warnings based on detection method used
+
+**Access**: `Tools > Reference Scanner`
+
+### Hindsight
+
+- BuildReport requires copying to Assets folder to load (API quirk) - uses temp file with cleanup
+- Build report method is more accurate than GUID scan (catches dynamic loading via Resources)
+- GUID scan misses script-to-SO references but catches Inspector wiring
+- Merged orphaned SO finder into Build Report tab to avoid duplicate UI and code
+
+### Context
+
+Created to support BetterEvent/ScriptableObject Variable migration work. Replaces manual shell script workflows with integrated Editor UI. Related: `tools/unity-migration-toolkit.sh`.
+
+---
+
 ## 2025-12-28: Intro Text Format Refactor ✅
 
 **Problem:** Intro text wasn't being saved in Rody Maker. The old format stored intro dialogs as a single string with embedded quotes (`"Dialog1" "Dialog2" "Dialog3"`), which broke when parsed on new scenes.

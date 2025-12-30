@@ -98,6 +98,6 @@ Use `tools/find-missing-scripts.sh` to scan for missing scripts:
 ./tools/find-missing-scripts.sh 2b5924a:Assets/DOOM/FPS/Scenes/MainScene.unity
 ```
 
-See `docs/UNITY_MISSING_SCRIPTS_RECOVERY.md` for investigation techniques.
+See `docs/MIGRATION_GUIDE.md` for investigation techniques and the migration toolkit.
 
 **Original data source**: Git commit `665f705` (pre-migration state with intact serialization)

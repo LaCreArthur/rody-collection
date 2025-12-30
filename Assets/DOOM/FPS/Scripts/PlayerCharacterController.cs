@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
-using UnityReusables.ScriptableObjects.Variables;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInputHandler), typeof(AudioSource))]
 public class PlayerCharacterController : MonoBehaviour
@@ -83,16 +83,16 @@ public class PlayerCharacterController : MonoBehaviour
     [Tooltip("Damage recieved when falling at the maximum speed")]
     public float fallDamageAtMaxSpeed = 50f;
 
-    private bool _wasWalking;
-    public BoolVariable isWalking;
-    private bool IsWalking
+    public static event Action<bool> OnWalkingChanged;
+    bool _isWalking;
+    bool IsWalking
     {
-        get => isWalking.v;
+        get => _isWalking;
         set
         {
-            if (_wasWalking == value) return;
-            _wasWalking = isWalking.v;
-            isWalking.v = value;
+            if (_isWalking == value) return;
+            _isWalking = value;
+            OnWalkingChanged?.Invoke(value);
         }
     }
     public UnityAction<bool> onStanceChanged;
