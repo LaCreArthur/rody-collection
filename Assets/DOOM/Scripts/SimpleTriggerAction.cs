@@ -3,24 +3,13 @@ using UnityEngine.Events;
 
 namespace DOOM.FPS
 {
-    /// <summary>
-    ///     Simple trigger enter handler with auto-discovered actions.
-    ///     Replaces lost BetterTriggerEnter component.
-    ///     Use Cases:
-    ///     - ZamblaAllongé: action=PlayAudio, triggerOnce=false
-    ///     - Pickup_Shotgun: action=EnableTarget, target=AfterShotgunPickedUp, triggerOnce=true
-    ///     Auto-discovers AudioSource on same object for PlayAudio action.
-    ///     For EnableTarget, assign the target GameObject in Inspector.
-    ///     For Custom action, use the onTriggerEnter UnityEvent.
-    /// </summary>
     [RequireComponent(typeof(Collider))]
     public class SimpleTriggerAction : MonoBehaviour
     {
-        public enum ActionType
+        enum ActionType
         {
             PlayAudio, // Plays AudioSource on this object (auto-found)
             EnableTarget, // Enables (SetActive true) the target GameObject
-            Custom, // Uses onTriggerEnter UnityEvent
         }
 
         [Header("Trigger Settings")]
@@ -73,16 +62,9 @@ namespace DOOM.FPS
                 case ActionType.EnableTarget:
                     target?.SetActive(true);
                     break;
-
-                case ActionType.Custom:
-                    onTriggerEnter?.Invoke();
-                    break;
             }
         }
 
-        /// <summary>
-        ///     Reset the trigger state to allow it to fire again.
-        /// </summary>
         public void ResetTrigger() => _hasTriggered = false;
     }
 }
