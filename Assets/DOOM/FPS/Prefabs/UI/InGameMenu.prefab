@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Invincibility
+  m_text: "Invincibilit\xE9 pour les faibles"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Look Sensitivity
+  m_text: "Sensibilit\xE9 du regard"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Shadows
+  m_text: Afficher les Ombres
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -685,7 +685,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Framerate Counter
+  m_text: Afficher le framerate
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -823,9 +823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Controls
-
-'
+  m_text: Controles
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -1814,7 +1812,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Show
+  m_text: Voir
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7985ac0a605e07444ae4d9afdc619512, type: 2}
   m_sharedMaterial: {fileID: 7139367879282305725, guid: 7985ac0a605e07444ae4d9afdc619512,
@@ -2495,7 +2493,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 144.57, y: 20}
+  m_SizeDelta: {x: 110, y: 20}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &8824232396625668155
 MonoBehaviour:
