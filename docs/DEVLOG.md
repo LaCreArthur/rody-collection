@@ -4,6 +4,54 @@
 
 ---
 
+## 2026-01-02: URP Migration Complete
+
+**Changes**: Migrated entire project from Built-in Render Pipeline to Universal Render Pipeline (URP).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `ProjectSettings/GraphicsSettings.asset` | Set URP as render pipeline |
+| `ProjectSettings/QualitySettings.asset` | Fixed to use `Assets/Settings/URPAsset.asset` |
+| `Assets/Settings/URPAsset.asset` | Created, upscaling filter set to Point (2) |
+| `Assets/DefaultVolumeProfile.asset` | Updated with DOOM post-processing (ACES, saturation=-10, contrast=10, grain=0.098) |
+| `Packages/manifest.json` | Removed `com.unity.postprocessing` package |
+| `Assets/Scripts/RodyAnthology/RA_Menu.cs` | Replaced Pixelation with render scale animation |
+| `Assets/Scripts/RodyAnthology/RA_ScrollView.cs` | Updated to use `AnimateExitTransition()` |
+| `Assets/RollToInfinity/Scripts/CameraController.cs` | Migrated to URP Volume API |
+| `Assets/RollToInfinity/Scripts/RollGameManager.cs` | Migrated to URP Volume API |
+
+### Deleted
+
+- `Assets/Pixelation/` - Legacy pixelation shaders/scripts (incompatible with URP)
+- `Assets/URPDefaultResources/` - Duplicate URP assets (using `Assets/Settings/` instead)
+
+### Key Decisions
+
+1. **Full project URP migration** instead of runtime pipeline switching between modules
+2. **Render scale animation** for pixelation transitions (simpler than custom URP Renderer Features)
+3. **Point upscaling filter** for sharp chunky pixels (not bilinear)
+
+### Hindsight
+
+- **URP upscaling filter must be Point (2)** for retro pixel effects - default Auto uses bilinear which blurs pixels
+- **QualitySettings overrides GraphicsSettings** for render pipeline - both must reference same URP Asset
+- **Post-Processing Stack V2 → URP Volume API mapping**:
+  - `PostProcessVolume` → `Volume`
+  - `ColorGrading.hueShift` → `ColorAdjustments.hueShift`
+  - `ColorGrading.tint` → `WhiteBalance.tint` (scale values x100 for URP range)
+- **Render scale trick** for pixelation: animate `URPAsset.renderScale` from 0.1→1.0 (or reverse for exit)
+- Legacy Projector components (fake shadows) need replacement with URP Decal Projector (in progress)
+
+### Remaining
+
+- [ ] Replace ProjectorMultiply shader with URP Decal Projector (user started in Editor)
+- [ ] Enable post-processing on DOOM cameras in Unity Editor
+- [ ] Test all 11 scenes for visual regression
+
+---
+
 ## 2025-12-30: Unity Editor Reference Scanner Tool
 
 **Changes**: Created new Editor tool for scanning ScriptableObject references across project.

@@ -447,12 +447,8 @@ public class RA_ScrollView : MonoBehaviour {
 		}
 		// Load the selected game (official or user)
 		else {
-			while(menu.pix.BlockCount > 32) {
-				menu.pix.enabled = true;
-				menu.pix.BlockCount -= (menu.pixAcceleration * menu.pix.BlockCount / 100);
-				Debug.Log(menu.pix.BlockCount);
-				yield return new WaitForEndOfFrame();
-			}
+			// Animate pixelation transition before loading
+			yield return StartCoroutine(menu.AnimateExitTransition());
 
 			// Load story into WorkingStory BEFORE scene transition
 			if (slotName.StartsWith("json:"))

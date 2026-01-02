@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -60,7 +61,8 @@ public class RollGameManager : MonoBehaviour {
 	}
 	
 	float levelPlayerPos = 0.0f;
-	public PostProcessVolume postProcess;
+	public Volume postProcess;
+	WhiteBalance _whiteBalance;
 	PlayerController pc;
 	float distanceToNextLvl = 1.0f;
 	AudioSource audioSource;
@@ -76,10 +78,14 @@ public class RollGameManager : MonoBehaviour {
 	void Start() {
 		pc = player.GetComponent<PlayerController>();
 
+		// Cache the WhiteBalance component from the Volume profile
+		if (postProcess != null)
+			postProcess.profile.TryGet(out _whiteBalance);
+
 		// display the starting menu at the beginning
 		menuCanvas.SetActive(true);
 		// Menu color fade
-		FadeColor(-0.1f);
+		FadeColor(-10f);
 
 		// setup the start button properties for a first lauch since the menu is dynamic
 		startButton.GetComponent<Button>().onClick.AddListener(LaunchGame);
@@ -138,7 +144,7 @@ public class RollGameManager : MonoBehaviour {
 		// game start again
 		isStarted = true;
 		// Restore color fade
-		FadeColor(0.05f);
+		FadeColor(5f);
 		// display the level with fading effect
 		StartCoroutine(FadeInOutText(1f, lvlText));
 		StartCoroutine(FadeInOutText(1f, instructionText));
@@ -156,14 +162,16 @@ public class RollGameManager : MonoBehaviour {
 	}
 
 	void FadeColor(float fade) {
-		
-		// Update the post processing hueShift
-		postProcess.profile.TryGetSettings(out ColorGrading colorGradingLayer);
-		colorGradingLayer.tint.value = fade;
+		// Update the post processing tint (URP WhiteBalance)
+		if (_whiteBalance != null)
+		{
+			_whiteBalance.tint.overrideState = true;
+			_whiteBalance.tint.value = fade;
+		}
 	}
 	void ContinueGame() {
 		player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-		FadeColor(0.05f);
+		FadeColor(5f);
 	}
 
 	public void UpdateScore(int s) {
@@ -213,7 +221,7 @@ public class RollGameManager : MonoBehaviour {
 		// display the menu
 		menuCanvas.SetActive(true);
 		// darken the colors
-		FadeColor(-0.1f);
+		FadeColor(-10f);
 		// freeze the player
 		player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 	}
