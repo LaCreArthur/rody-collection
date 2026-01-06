@@ -16,7 +16,7 @@ MonoBehaviour:
   settings:
     pixelationMaterial: {fileID: 2100000, guid: 1ffce7f3c4508492ea7a4413cc176c07,
       type: 2}
-    blockCountX: 320
+    blockCountX: 640
     isEnabled: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -47,7 +47,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 5125410775826514056}
   - {fileID: -135759912022244055}
-  m_RendererFeatureMap: 884019edf11d214729052d4d14af1dfe
+  - {fileID: 1594216847803705944}
+  m_RendererFeatureMap: 884019edf11d214729052d4d14af1dfe586a48ccc6cb1f16
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -76,6 +77,29 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &1594216847803705944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c644caa205a46389956f68f1e52469, type: 3}
+  m_Name: UnderwaterRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::UnderwaterRendererFeature
+  m_Active: 1
+  settings:
+    underwaterMaterial: {fileID: 2100000, guid: df6d9bbeb1b3b4e49bae7d63634e4991,
+      type: 2}
+    waterLevel: 0
+    tintColor: {r: 0, g: 0.5863812, b: 1, a: 1}
+    tintStrength: 0.5
+    distortionStrength: 0.0035
+    distortionSpeed: 2
+    blockSize: 8
+    isEnabled: 0
 --- !u!114 &5125410775826514056
 MonoBehaviour:
   m_ObjectHideFlags: 0
