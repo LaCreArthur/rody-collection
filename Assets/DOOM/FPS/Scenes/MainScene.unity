@@ -76616,10 +76616,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterController
   waterLevel: 0
   enableUnderwaterEffect: 1
-  underwaterTint: {r: 0, g: 0.5863812, b: 1, a: 1}
-  tintStrength: 0.5
+  underwaterTint: {r: 0, g: 0.54588175, b: 1, a: 1}
+  tintStrength: 1
   distortionStrength: 0.0035
   blockSize: 8
+  depthDarkening: 0.7
+  maxDepth: 11
 --- !u!95 &1858887501
 Animator:
   serializedVersion: 7

@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2991380311368000578}
-  attackStopDistanceRatio: 0.08
+  attackStopDistanceRatio: 0.2
   randomHitSparks:
   - {fileID: 6004611864241011334}
   - {fileID: 6686665933433604586}

@@ -215,6 +215,10 @@ public class PlayerInputHandler : MonoBehaviour
 
             // apply sensitivity multiplier
             i *= lookSensitivity;
+#if UNITY_EDITOR
+            // Editor has lower sensitivity than builds (known Unity quirk)
+            i *= 2f;
+#endif
 
             if (isGamepad)
             {
