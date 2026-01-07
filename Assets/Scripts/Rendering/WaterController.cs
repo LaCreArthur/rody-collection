@@ -15,7 +15,7 @@ public class WaterController : MonoBehaviour
     [SerializeField] bool enableUnderwaterEffect = true;
 
     [Tooltip("Color tint when underwater")]
-    [SerializeField] Color underwaterTint = new Color(0.2f, 0.4f, 0.8f, 1f);
+    [SerializeField] Color underwaterTint = new Color(0.2f, 0.5f, 1f, 1f);
 
     [Tooltip("Tint strength (0-1)")]
     [Range(0f, 1f)]
@@ -28,6 +28,14 @@ public class WaterController : MonoBehaviour
     [Tooltip("Distortion block size for retro look")]
     [Range(1, 32)]
     [SerializeField] int blockSize = 8;
+
+    [Header("Depth Darkening")]
+    [Tooltip("How much to darken at max depth (0 = none, 1 = black)")]
+    [Range(0f, 1f)]
+    [SerializeField] float depthDarkening = 0.8f;
+
+    [Tooltip("Depth at which maximum darkness is reached")]
+    [SerializeField] float maxDepth = 20f;
 
     UnderwaterRendererFeature _underwaterFeature;
 
@@ -55,6 +63,8 @@ public class WaterController : MonoBehaviour
         _underwaterFeature.SetTintStrength(tintStrength);
         _underwaterFeature.SetDistortionStrength(distortionStrength);
         _underwaterFeature.SetBlockSize(blockSize);
+        _underwaterFeature.SetDepthDarkening(depthDarkening);
+        _underwaterFeature.SetMaxDepth(maxDepth);
     }
 
     void OnDestroy()
