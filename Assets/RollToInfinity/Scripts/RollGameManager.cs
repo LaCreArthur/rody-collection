@@ -64,6 +64,7 @@ public class RollGameManager : MonoBehaviour {
 	public Volume postProcess;
 	WhiteBalance _whiteBalance;
 	PlayerController pc;
+	Rigidbody playerRb;
 	float distanceToNextLvl = 1.0f;
 	AudioSource audioSource;
 
@@ -77,6 +78,7 @@ public class RollGameManager : MonoBehaviour {
 
 	void Start() {
 		pc = player.GetComponent<PlayerController>();
+		playerRb = player.GetComponent<Rigidbody>();
 
 		// Cache the WhiteBalance component from the Volume profile
 		if (postProcess != null)
@@ -96,9 +98,9 @@ public class RollGameManager : MonoBehaviour {
 	}
 
 	void Update () {
-		
+
 		// Print currentSpeed
-		float currentSpeed = Mathf.Round(player.GetComponent<Rigidbody>().linearVelocity.magnitude);
+		float currentSpeed = Mathf.Round(playerRb.linearVelocity.magnitude);
 		speedText.text = currentSpeed.ToString() + " KMH";
 
 		// update scrollbars
@@ -121,8 +123,10 @@ public class RollGameManager : MonoBehaviour {
 		ResetGame();
 		// active the HUD
 		HUD.SetActive(true);
-	
-		// listen if the player get a pick Up
+
+		// Unsubscribe first to prevent duplicate handlers
+		PlayerController.Picked -= UpdateScore;
+		PlayerController.Damaged -= UpdateHealth;
 		PlayerController.Picked += UpdateScore;
 		PlayerController.Damaged += UpdateHealth;
 	}
@@ -170,7 +174,7 @@ public class RollGameManager : MonoBehaviour {
 		}
 	}
 	void ContinueGame() {
-		player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+		playerRb.constraints = RigidbodyConstraints.None;
 		FadeColor(5f);
 	}
 
@@ -223,7 +227,7 @@ public class RollGameManager : MonoBehaviour {
 		// darken the colors
 		FadeColor(-10f);
 		// freeze the player
-		player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+		playerRb.constraints = RigidbodyConstraints.FreezeAll;
 	}
 
 	public void OnClickStart() {
@@ -244,6 +248,12 @@ public class RollGameManager : MonoBehaviour {
 	public void OnClickExit() {
 		SceneManager.UnloadSceneAsync("RollToInfinity");
 		SceneManager.LoadScene(0);
+	}
+
+	void OnDestroy() {
+		PlayerController.Picked -= UpdateScore;
+		PlayerController.Damaged -= UpdateHealth;
+		isStarted = false; // Reset static state
 	}
 
 	IEnumerator FadeInOutText(float t, Text i) {

@@ -15,21 +15,23 @@ public class ObstacleController : MonoBehaviour {
 	public float min;
 	[Range(-3.5f, 3.5f)]
 	public float max;
-	private GameObject Player; 
-	private bool isGoingRight;
-	
-	// Use this for initialization
+
+	static Transform s_playerTransform;
+	MeshRenderer meshRenderer;
+	bool isGoingRight;
+
 	void Start () {
-		GetComponent<MeshRenderer>().material = mat_normal;
-		Player = GameObject.Find("Player");
-		isGoingRight = (Random.value > 0.5f)? true:false;
+		meshRenderer = GetComponent<MeshRenderer>();
+		meshRenderer.material = mat_normal;
+		if (s_playerTransform == null)
+			s_playerTransform = GameObject.FindWithTag("Player").transform;
+		isGoingRight = Random.value > 0.5f;
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		// make mat_transparent the obstacles that are before the player and in altitude
-		if (transform.position.y > 1.0f && transform.position.z + 1f < Player.transform.position.z) {
-			GetComponent<MeshRenderer>().material = mat_transparent;
+		if (transform.position.y > 1.0f && transform.position.z + 1f < s_playerTransform.position.z) {
+			meshRenderer.material = mat_transparent;
 		}
 
 		if (isMoving) {

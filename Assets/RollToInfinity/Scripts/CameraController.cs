@@ -15,7 +15,6 @@ public class CameraController : MonoBehaviour
     public float colorSpeed;
 
     public float rotationX;
-    public Vector2 sceneSize;
     public Volume postProcess;
 
     Vector3 _offset;
@@ -42,10 +41,11 @@ public class CameraController : MonoBehaviour
         Quaternion newRot = Quaternion.Euler(rotationX, 0.0f, player.transform.position.x);
         transform.rotation = Quaternion.Slerp(transform.rotation, newRot, Time.deltaTime * smooth);
 
-        // Update the post processing hueShift
+        // Update the post processing hueShift (wrap at -180/180)
         if (_colorAdjustments != null)
         {
-            _colorAdjustments.hueShift.value += Time.deltaTime * colorSpeed;
+            float hue = _colorAdjustments.hueShift.value + Time.deltaTime * colorSpeed;
+            _colorAdjustments.hueShift.value = Mathf.Repeat(hue + 180f, 360f) - 180f;
         }
     }
 }

@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour {
 	
 	void FixedUpdate() {
 		
-		float moveHorizontal = Input.GetAxis ("Horizontal");
+		float moveHorizontal = Input.GetAxisRaw("Horizontal");
 		touchSpeedUp.text = pressTime.ToString();
 
 		#if UNITY_ANDROID
@@ -61,13 +61,16 @@ public class PlayerController : MonoBehaviour {
 		}
 		else pressTime = 1.0f;
 		#elif UNITY_WEBGL || UNITY_EDITOR || UNITY_STANDALONE
-		moveHorizontal *= (sensitivity / 2);
+		moveHorizontal *= sensitivity;
 		#endif
-		// always moves forward, -0.25f in y to reduce the flying time
-		Vector3 movement = new Vector3(moveHorizontal, -0.25f, 1.0f);
-		
-		// apply force to the RB to move it
-		rb.AddForce(movement * speed);
+
+		// Direct velocity for snappy horizontal control, physics for forward momentum
+		Vector3 vel = rb.linearVelocity;
+		vel.x = moveHorizontal;
+		rb.linearVelocity = vel;
+
+		// Forward force + slight downward to reduce flying time
+		rb.AddForce(new Vector3(0f, -0.25f, 1.0f) * speed);
 		
 		if (Moved != null) Moved((int)transform.position.z); // send new position to SegmentController
 

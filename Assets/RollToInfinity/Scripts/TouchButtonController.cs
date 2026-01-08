@@ -11,13 +11,20 @@ public class TouchButtonController : MonoBehaviour {
 
 	public GameObject player;
 
+	Rigidbody playerRb;
+	PlayerController playerController;
+
 	void Start () {
 		GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width / 2, Screen.height / 2);
+		playerRb = player.GetComponent<Rigidbody>();
+		playerController = player.GetComponent<PlayerController>();
 	}
-	
+
 	public void OnClick(bool isRight) {
-		float x = (isRight)? 1.0f : -1.0f;
-		Vector3 movement = new Vector3(x, 0.0f, 0.0f);
-		player.GetComponent<Rigidbody>().AddForce(movement * player.GetComponent<PlayerController>().speed);
+		// Direct velocity for snappy control (matches PlayerController)
+		float x = isRight ? playerController.sensitivity : -playerController.sensitivity;
+		Vector3 vel = playerRb.linearVelocity;
+		vel.x = x;
+		playerRb.linearVelocity = vel;
 	}
 }

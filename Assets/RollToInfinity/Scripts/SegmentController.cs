@@ -48,12 +48,14 @@ public class SegmentController : MonoBehaviour {
 		while (segQueue.Count > 0)
 			Destroy(segQueue.Dequeue());
 		}
-		
+
 		offset = 0.0f;
 		SetCurrentSegment();
 		randomBuildings();
-		PlayerController.Moved += NewSegment; // get player position and create new segment if needed
 
+		// Unsubscribe first to prevent duplicate handlers on reset
+		PlayerController.Moved -= NewSegment;
+		PlayerController.Moved += NewSegment;
 	}
 
 	void NewSegment (int position) {
@@ -99,12 +101,12 @@ public class SegmentController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// This function is called when the MonoBehaviour will be destroyed.
-	/// </summary>
 	void OnDestroy()
 	{
-		while (segQueue.Count > 0)
-			Destroy(segQueue.Dequeue());	
+		PlayerController.Moved -= NewSegment;
+		if (segQueue != null) {
+			while (segQueue.Count > 0)
+				Destroy(segQueue.Dequeue());
+		}
 	}
 }
