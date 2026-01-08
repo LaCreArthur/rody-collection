@@ -17,8 +17,7 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject content;
 	public Transform slotPrefab;
 	public Transform slotNewGamePrefab;
-	public Transform slotLoadGamePrefab; // Now used for importing .rody.json files
-	public Transform slotExportPrefab; // For exporting user stories
+	public Transform slotLoadGamePrefab; // Used for import/export .rody.json files
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -149,13 +148,10 @@ public class RA_ScrollView : MonoBehaviour {
 			slotIndex++;
 
 			// SLOT EXPORT - only when user story is loaded
-			if (slotExportPrefab != null)
-			{
-				GameObject exportSlot = Instantiate(slotExportPrefab, content.transform).gameObject;
-				exportSlot.name = "exportStory";
-				slots.Add(exportSlot);
-				slotIndex++;
-			}
+			GameObject exportSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
+			exportSlot.name = "exportStory";
+			slots.Add(exportSlot);
+			slotIndex++;
 		}
 
 		// SLOT IMPORT - ALL platforms (including WebGL)
