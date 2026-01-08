@@ -48,8 +48,9 @@ public class WebGLResizeHandler : MonoBehaviour
     void DoResize()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        TriggerResize();
-        Debug.Log($"[WebGLResizeHandler] Triggered resize for scene: {SceneManager.GetActiveScene().name}");
+        // Force Unity to recalculate resolution (960x600 is the target)
+        Screen.SetResolution(960, 600, false);
+        Debug.Log($"[WebGLResizeHandler] Reset resolution for scene: {SceneManager.GetActiveScene().name}");
 #endif
     }
 }
