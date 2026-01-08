@@ -1,10 +1,12 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Runtime.InteropServices;
 
 /// <summary>
-/// Fixes WebGL canvas resolution issues when loading new scenes.
-/// Triggers a browser resize event which forces Unity to recalculate canvas size.
+///     Fixes WebGL canvas resolution issues when loading new scenes.
+///     Triggers a browser resize event which forces Unity to recalculate canvas size.
 /// </summary>
 public class WebGLResizeHandler : MonoBehaviour
 {
@@ -13,7 +15,7 @@ public class WebGLResizeHandler : MonoBehaviour
     private static extern void TriggerResize();
 #endif
 
-    private static WebGLResizeHandler _instance;
+    static WebGLResizeHandler _instance;
 
     void Awake()
     {
@@ -23,32 +25,31 @@ public class WebGLResizeHandler : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         _instance = this;
         DontDestroyOnLoad(gameObject);
-        
+
         // Subscribe to scene loaded event
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
+    void OnDestroy() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
-    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // Small delay to ensure scene is fully loaded before resize
+        // Multiple resize attempts at different timings to ensure canvas is properly sized
         Invoke(nameof(DoResize), 0.1f);
+        Invoke(nameof(DoResize), 2f);
+        Invoke(nameof(DoResize), 5f);
 #endif
     }
 
-    private void DoResize()
+    void DoResize()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         TriggerResize();
-        Debug.Log($"[WebGLResizeHandler] Triggered resize after scene load");
+        Debug.Log($"[WebGLResizeHandler] Triggered resize for scene: {SceneManager.GetActiveScene().name}");
 #endif
     }
 }

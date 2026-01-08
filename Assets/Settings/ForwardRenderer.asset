@@ -16,7 +16,7 @@ MonoBehaviour:
   settings:
     pixelationMaterial: {fileID: 2100000, guid: 1ffce7f3c4508492ea7a4413cc176c07,
       type: 2}
-    blockCountX: 640
+    blockCountX: 32
     isEnabled: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -94,8 +94,10 @@ MonoBehaviour:
     underwaterMaterial: {fileID: 2100000, guid: df6d9bbeb1b3b4e49bae7d63634e4991,
       type: 2}
     waterLevel: 0
-    tintColor: {r: 0, g: 0.5863812, b: 1, a: 1}
-    tintStrength: 0.5
+    tintColor: {r: 0, g: 0.54588175, b: 1, a: 1}
+    tintStrength: 1
+    depthDarkening: 0.7
+    maxDepth: 11
     distortionStrength: 0.0035
     distortionSpeed: 2
     blockSize: 8

@@ -15,28 +15,31 @@ public class RA_Menu : MonoBehaviour
     [Tooltip("Exit resolution - animate back to chunky before scene change")]
     [SerializeField] int exitBlockCount = 32;
 
-    int _currentBlockCount;
     bool _loading = true;
     float _transitionTime;
 
     /// <summary>
-    /// Current block count (32 = chunky, 320 = native resolution)
+    ///     Current block count (32 = chunky, 320 = native resolution)
     /// </summary>
-    public int BlockCount => _currentBlockCount;
+    public int BlockCount { get; private set; }
 
     /// <summary>
-    /// True when exit transition is complete
+    ///     True when exit transition is complete
     /// </summary>
     public bool ExitTransitionComplete { get; private set; }
 
     PixelationRendererFeature Feature => PixelationRendererFeature.Instance;
 
+    void OnDestroy() =>
+        // Disable pixelation when leaving scene
+        Feature?.SetEnabled(false);
+
     void Start()
     {
         if (Feature != null)
         {
-            _currentBlockCount = startBlockCount;
-            Feature.SetBlockCount(_currentBlockCount);
+            BlockCount = startBlockCount;
+            Feature.SetBlockCount(BlockCount);
             Feature.SetEnabled(true);
             _transitionTime = 0f;
         }
@@ -52,8 +55,8 @@ public class RA_Menu : MonoBehaviour
         // Ease-out curve for smooth transition
         float easedT = 1f - (1f - t) * (1f - t);
 
-        _currentBlockCount = Mathf.RoundToInt(Mathf.Lerp(startBlockCount, targetBlockCount, easedT));
-        Feature.SetBlockCount(_currentBlockCount);
+        BlockCount = Mathf.RoundToInt(Mathf.Lerp(startBlockCount, targetBlockCount, easedT));
+        Feature.SetBlockCount(BlockCount);
 
         if (t >= 1f)
         {
@@ -64,8 +67,8 @@ public class RA_Menu : MonoBehaviour
     }
 
     /// <summary>
-    /// Animates block count down to chunky pixels before scene exit.
-    /// Use in a coroutine: yield return StartCoroutine(menu.AnimateExitTransition());
+    ///     Animates block count down to chunky pixels before scene exit.
+    ///     Use in a coroutine: yield return StartCoroutine(menu.AnimateExitTransition());
     /// </summary>
     public IEnumerator AnimateExitTransition()
     {
@@ -85,19 +88,13 @@ public class RA_Menu : MonoBehaviour
             // Ease-in curve for exit
             float easedT = t * t;
 
-            _currentBlockCount = Mathf.RoundToInt(Mathf.Lerp(startValue, exitBlockCount, easedT));
-            Feature.SetBlockCount(_currentBlockCount);
+            BlockCount = Mathf.RoundToInt(Mathf.Lerp(startValue, exitBlockCount, easedT));
+            Feature.SetBlockCount(BlockCount);
             yield return null;
         }
 
-        _currentBlockCount = exitBlockCount;
-        Feature.SetBlockCount(_currentBlockCount);
+        BlockCount = exitBlockCount;
+        Feature.SetBlockCount(BlockCount);
         ExitTransitionComplete = true;
-    }
-
-    void OnDestroy()
-    {
-        // Disable pixelation when leaving scene
-        Feature?.SetEnabled(false);
     }
 }

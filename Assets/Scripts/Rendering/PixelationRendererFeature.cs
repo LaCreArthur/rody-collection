@@ -1,44 +1,32 @@
+using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// URP Renderer Feature that applies a pixelation post-process effect.
-/// Uses RenderGraph API (Unity 6+).
-///
-/// Supports two modes:
-/// 1. Static: Always-on at fixed resolution (e.g., DOOM at 320x200)
-/// 2. Animated: Block count controlled at runtime (e.g., menu transitions)
+///     URP Renderer Feature that applies a pixelation post-process effect.
+///     Uses RenderGraph API (Unity 6+).
+///     Supports two modes:
+///     1. Static: Always-on at fixed resolution (e.g., DOOM at 320x200)
+///     2. Animated: Block count controlled at runtime (e.g., menu transitions)
 /// </summary>
 public class PixelationRendererFeature : ScriptableRendererFeature
 {
-    [System.Serializable]
-    public class Settings
-    {
-        [Tooltip("Pixelation shader material")]
-        public Material pixelationMaterial;
-
-        [Tooltip("Number of pixel blocks horizontally (e.g., 320 for Atari ST resolution)")]
-        [Range(32, 640)] public int blockCountX = 320;
-
-        [Tooltip("Enable/disable the effect at runtime")]
-        public bool isEnabled = false;
-    }
-
-    public Settings settings = new Settings();
-    PixelationRenderPass _pass;
 
     // Static instance for easy runtime access
     static PixelationRendererFeature _instance;
 
+    public Settings settings = new Settings();
+    PixelationRenderPass _pass;
+
     /// <summary>
-    /// Gets the PixelationRendererFeature instance. Uses cached instance or finds via reflection.
+    ///     Gets the PixelationRendererFeature instance. Uses cached instance or finds via reflection.
     /// </summary>
     public static PixelationRendererFeature Instance
     {
-        get
-        {
+        get {
             if (_instance != null) return _instance;
 
             // Fallback: find via URP pipeline
@@ -47,21 +35,26 @@ public class PixelationRendererFeature : ScriptableRendererFeature
         }
     }
 
+    /// <summary>
+    ///     Check if pixelation is enabled
+    /// </summary>
+    public bool IsEnabled => settings.isEnabled;
+
     static PixelationRendererFeature FindFeatureInPipeline()
     {
-        var pipeline = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+        var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
         if (pipeline == null) return null;
 
         // Access renderer data list via reflection
-        var field = typeof(UniversalRenderPipelineAsset).GetField("m_RendererDataList",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        FieldInfo field = typeof(UniversalRenderPipelineAsset).GetField("m_RendererDataList",
+            BindingFlags.NonPublic | BindingFlags.Instance);
 
         if (field?.GetValue(pipeline) is ScriptableRendererData[] rendererDataList)
         {
-            foreach (var rendererData in rendererDataList)
+            foreach (ScriptableRendererData rendererData in rendererDataList)
             {
                 if (rendererData == null) continue;
-                foreach (var feature in rendererData.rendererFeatures)
+                foreach (ScriptableRendererFeature feature in rendererData.rendererFeatures)
                 {
                     if (feature is PixelationRendererFeature pixelation)
                         return pixelation;
@@ -92,36 +85,37 @@ public class PixelationRendererFeature : ScriptableRendererFeature
     }
 
     /// <summary>
-    /// Runtime control: Set the horizontal block count (vertical is computed from aspect ratio)
+    ///     Runtime control: Set the horizontal block count (vertical is computed from aspect ratio)
     /// </summary>
-    public void SetBlockCount(int blockCountX)
-    {
-        settings.blockCountX = Mathf.Clamp(blockCountX, 32, 640);
-    }
+    public void SetBlockCount(int blockCountX) => settings.blockCountX = Mathf.Clamp(blockCountX, 32, 960);
 
     /// <summary>
-    /// Runtime control: Enable/disable pixelation
+    ///     Runtime control: Enable/disable pixelation
     /// </summary>
-    public void SetEnabled(bool enabled)
-    {
-        settings.isEnabled = enabled;
-    }
+    public void SetEnabled(bool enabled) => settings.isEnabled = enabled;
 
     /// <summary>
-    /// Get current block count
+    ///     Get current block count
     /// </summary>
     public int GetBlockCount() => settings.blockCountX;
+    [Serializable]
+    public class Settings
+    {
+        [Tooltip("Pixelation shader material")]
+        public Material pixelationMaterial;
 
-    /// <summary>
-    /// Check if pixelation is enabled
-    /// </summary>
-    public bool IsEnabled => settings.isEnabled;
+        [Tooltip("Number of pixel blocks horizontally (e.g., 320 for Atari ST resolution)")]
+        [Range(32, 960)] public int blockCountX = 320;
+
+        [Tooltip("Enable/disable the effect at runtime")]
+        public bool isEnabled;
+    }
 
     class PixelationRenderPass : ScriptableRenderPass
     {
-        Settings _settings;
         static readonly int BlockCountID = Shader.PropertyToID("_BlockCount");
         static readonly int BlockSizeID = Shader.PropertyToID("_BlockSize");
+        readonly Settings _settings;
 
         public PixelationRenderPass(Settings settings)
         {
@@ -129,21 +123,12 @@ public class PixelationRendererFeature : ScriptableRendererFeature
             profilingSampler = new ProfilingSampler("Pixelation");
         }
 
-        public void Dispose() { }
-
-        // Unity 6 RenderGraph API
-        class PassData
-        {
-            internal TextureHandle source;
-            internal Material material;
-            internal Vector2 blockCount;
-            internal Vector2 blockSize;
-        }
+        public void Dispose() {}
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
+            var resourceData = frameData.Get<UniversalResourceData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
 
             TextureHandle source = resourceData.activeColorTexture;
             if (!source.IsValid())
@@ -151,11 +136,11 @@ public class PixelationRendererFeature : ScriptableRendererFeature
 
             // Compute block count respecting aspect ratio
             float aspect = (float)cameraData.camera.pixelWidth / cameraData.camera.pixelHeight;
-            Vector2 blockCount = new Vector2(
+            var blockCount = new Vector2(
                 _settings.blockCountX,
                 Mathf.RoundToInt(_settings.blockCountX / aspect)
             );
-            Vector2 blockSize = new Vector2(1f / blockCount.x, 1f / blockCount.y);
+            var blockSize = new Vector2(1f / blockCount.x, 1f / blockCount.y);
 
             // Create destination texture
             RenderTextureDescriptor desc = cameraData.cameraTargetDescriptor;
@@ -163,15 +148,15 @@ public class PixelationRendererFeature : ScriptableRendererFeature
             TextureHandle destination = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph, desc, "_PixelationTex", false);
 
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Pixelation Pass", out var passData, profilingSampler))
+            using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass("Pixelation Pass", out PassData passData, profilingSampler))
             {
                 passData.source = source;
                 passData.material = _settings.pixelationMaterial;
                 passData.blockCount = blockCount;
                 passData.blockSize = blockSize;
 
-                builder.UseTexture(source, AccessFlags.Read);
-                builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
+                builder.UseTexture(source);
+                builder.SetRenderAttachment(destination, 0);
 
                 builder.SetRenderFunc((PassData data, RasterGraphContext ctx) =>
                 {
@@ -183,6 +168,15 @@ public class PixelationRendererFeature : ScriptableRendererFeature
 
             // Swap to make destination the new camera color
             resourceData.cameraColor = destination;
+        }
+
+        // Unity 6 RenderGraph API
+        class PassData
+        {
+            internal Vector2 blockCount;
+            internal Vector2 blockSize;
+            internal Material material;
+            internal TextureHandle source;
         }
     }
 }
