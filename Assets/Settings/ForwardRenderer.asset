@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c2101cf1442e417882403b34ece8c0a, type: 3}
   m_Name: PixelationRendererFeature
   m_EditorClassIdentifier: Assembly-CSharp::PixelationRendererFeature
-  m_Active: 1
+  m_Active: 0
   settings:
     pixelationMaterial: {fileID: 2100000, guid: 1ffce7f3c4508492ea7a4413cc176c07,
       type: 2}
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c644caa205a46389956f68f1e52469, type: 3}
   m_Name: UnderwaterRendererFeature
   m_EditorClassIdentifier: Assembly-CSharp::UnderwaterRendererFeature
-  m_Active: 1
+  m_Active: 0
   settings:
     underwaterMaterial: {fileID: 2100000, guid: df6d9bbeb1b3b4e49bae7d63634e4991,
       type: 2}
