@@ -17,8 +17,13 @@ public class WebGLFileBrowser : MonoBehaviour
     private static extern void UploadFileContent(string gameObjectName, string methodName, string filter);
 
     [DllImport("__Internal")]
+    private static extern void UploadFileAsBase64(string gameObjectName, string methodName, string filter);
+
+    [DllImport("__Internal")]
     private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
 #endif
+
+    private Action<string> _onImageLoaded;
 
     /// <summary>
     /// Gets or creates the singleton instance.
@@ -103,5 +108,48 @@ public class WebGLFileBrowser : MonoBehaviour
         Debug.Log("[WebGLFileBrowser] Download complete");
         _onDownloadComplete?.Invoke();
         _onDownloadComplete = null;
+    }
+
+    /// <summary>
+    /// Opens image picker and returns base64 data URL.
+    /// </summary>
+    /// <param name="filter">Image filter (e.g., "image/png,image/jpeg")</param>
+    /// <param name="onComplete">Callback with data URL (empty string if cancelled)</param>
+    public void OpenImageAsBase64(string filter, Action<string> onComplete)
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        _onImageLoaded = onComplete;
+        UploadFileAsBase64(gameObject.name, "OnImageLoaded", filter);
+#else
+        Debug.LogWarning("[WebGLFileBrowser] OpenImageAsBase64 only works in WebGL builds");
+        onComplete?.Invoke("");
+#endif
+    }
+
+    // Called from jslib via SendMessage
+    public void OnImageLoaded(string dataUrl)
+    {
+        Debug.Log($"[WebGLFileBrowser] Image received: {(string.IsNullOrEmpty(dataUrl) ? "cancelled" : dataUrl.Length + " chars")}");
+        _onImageLoaded?.Invoke(dataUrl);
+        _onImageLoaded = null;
+    }
+
+    /// <summary>
+    /// Converts base64 data URL to Texture2D.
+    /// </summary>
+    public static Texture2D DataUrlToTexture(string dataUrl)
+    {
+        if (string.IsNullOrEmpty(dataUrl)) return null;
+
+        // Strip "data:image/png;base64," prefix
+        int commaIndex = dataUrl.IndexOf(',');
+        if (commaIndex < 0) return null;
+
+        string base64 = dataUrl.Substring(commaIndex + 1);
+        byte[] bytes = Convert.FromBase64String(base64);
+
+        var tex = new Texture2D(2, 2);
+        tex.LoadImage(bytes);
+        return tex;
     }
 }

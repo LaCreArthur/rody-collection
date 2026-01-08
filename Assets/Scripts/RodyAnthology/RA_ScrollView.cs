@@ -18,6 +18,7 @@ public class RA_ScrollView : MonoBehaviour {
 	public Transform slotPrefab;
 	public Transform slotNewGamePrefab;
 	public Transform slotLoadGamePrefab; // Now used for importing .rody.json files
+	public Transform slotExportPrefab; // For exporting user stories
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -121,20 +122,49 @@ public class RA_ScrollView : MonoBehaviour {
 			slotIndex++;
 		}
 
-		// On desktop: also load user stories and show import/newGame slots
+		// On desktop: also load user stories from file system
 		bool hasFileSystem = Bootstrap.HasFileSystem;
 		if (hasFileSystem)
 		{
 			LoadUserStories(ref slotIndex);
-
-			// SLOT IMPORT (import .rody.json) - reuses the old "Load Game" prefab
-			GameObject importSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
-			importSlot.name = "importStory";
-			slots.Add(importSlot);
-			slotIndex++;
 		}
 
-		FinalizeSlots(slotIndex, hasFileSystem);
+		// Show current WorkingStory if it's a user story (fork/new/import)
+		if (WorkingStory.IsLoaded && WorkingStory.IsUserStory)
+		{
+			GameObject storySlot = Instantiate(slotPrefab, content.transform).gameObject;
+			storySlot.name = "workingStory";
+			storySlot.GetComponentInChildren<Text>().text = WorkingStory.Title + " *";
+
+			// Load cover from WorkingStory
+			var cover = WorkingStory.LoadSprite("cover.png", 320, 200);
+			if (cover != null)
+			{
+				var img = storySlot.transform.GetChild(0).GetComponent<Image>();
+				if (img != null) img.sprite = cover;
+			}
+
+			slots.Add(storySlot);
+			userStorySlotIndices.Add(slotIndex);
+			slotIndex++;
+
+			// SLOT EXPORT - only when user story is loaded
+			if (slotExportPrefab != null)
+			{
+				GameObject exportSlot = Instantiate(slotExportPrefab, content.transform).gameObject;
+				exportSlot.name = "exportStory";
+				slots.Add(exportSlot);
+				slotIndex++;
+			}
+		}
+
+		// SLOT IMPORT - ALL platforms (including WebGL)
+		GameObject importSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
+		importSlot.name = "importStory";
+		slots.Add(importSlot);
+		slotIndex++;
+
+		FinalizeSlots(slotIndex);
 	}
 
 	List<StoryMetadata> OrderStories(List<StoryMetadata> stories)
@@ -180,16 +210,13 @@ public class RA_ScrollView : MonoBehaviour {
 		}
 	}
 
-	void FinalizeSlots(int slotCount, bool includeFileSystemSlots)
+	void FinalizeSlots(int slotCount)
 	{
-		if (includeFileSystemSlots)
-		{
-			// SLOT NEW GAME
-			GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
-			newGameSlot.name = "newGame";
-			slots.Add(newGameSlot);
-			slotCount += 1;
-		}
+		// SLOT NEW GAME - ALL platforms (including WebGL)
+		GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
+		newGameSlot.name = "newGame";
+		slots.Add(newGameSlot);
+		slotCount += 1;
 
 		// Handle empty slot list
 		if (slots.Count == 0)
@@ -437,13 +464,25 @@ public class RA_ScrollView : MonoBehaviour {
 
 		string slotName = content.transform.GetChild(index).name;
 
-		// new empty game (desktop only)
+		// new empty game
 		if (slotName == "newGame") {
 			newGamePanel.SetActive(true);
 		}
-		// import a .rody.json file (desktop only)
+		// import a .rody.json file
 		else if (slotName == "importStory") {
 			ngScript.OnImportClick();
+		}
+		// export the current user story
+		else if (slotName == "exportStory") {
+			ngScript.OnExportClick();
+		}
+		// play the current working story
+		else if (slotName == "workingStory") {
+			// WorkingStory is already loaded, just start playing
+			yield return StartCoroutine(menu.AnimateExitTransition());
+			PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
+			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+			SceneManager.LoadScene(1);
 		}
 		// Load the selected game (official or user)
 		else {

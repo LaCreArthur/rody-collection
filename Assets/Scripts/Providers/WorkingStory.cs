@@ -36,6 +36,12 @@ public static class WorkingStory
     public static bool IsLoaded => Current != null;
 
     /// <summary>
+    /// True if the current story is a user story (fork, import, or new creation).
+    /// False if it's an official story from Resources.
+    /// </summary>
+    public static bool IsUserStory => IsLoaded && !IsOfficial;
+
+    /// <summary>
     /// Story title for display.
     /// </summary>
     public static string Title => Current?.story?.title ?? "Sans titre";

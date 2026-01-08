@@ -35,8 +35,7 @@ public class RM_ImagesLayout : RM_Layout {
     public void ImportClick()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        Debug.Log("[RM_ImagesLayout] File browser not available on WebGL");
-        return;
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLImageImported);
 #else
         Debug.Log("Import button clicked");
         var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
@@ -56,4 +55,32 @@ public class RM_ImagesLayout : RM_Layout {
         gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(path,0,36,21);
 #endif
     }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    void OnWebGLImageImported(string dataUrl)
+    {
+        if (string.IsNullOrEmpty(dataUrl)) return;
+
+        var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
+        if (tex == null) return;
+
+        // Resize to Atari ST resolution
+        // Cover (scene 0): 320x200, Scene images: 320x130
+        int width = 320;
+        int height = gm.currentScene == 0 ? 200 : 130;
+        RM_TextureScale.Point(tex, width, height);
+
+        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+
+        gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0, -35, 0);
+        gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sprite;
+
+        // Update thumbnail
+        var thumbTex = new Texture2D(tex.width, tex.height);
+        thumbTex.SetPixels(tex.GetPixels());
+        RM_TextureScale.Point(thumbTex, 36, 21);
+        var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 100);
+        gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = thumbSprite;
+    }
+#endif
 }

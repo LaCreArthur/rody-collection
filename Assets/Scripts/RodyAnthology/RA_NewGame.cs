@@ -73,8 +73,7 @@ public class RA_NewGame : MonoBehaviour {
 	public void NG_ImgClick()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        Debug.Log("[RA_NewGame] File browser not available on WebGL");
-        return;
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLCoverImported);
 #else
         Debug.Log("Import Img clicked");
         var extensions = new[] {new ExtensionFilter("Images", "png", "jpg", "jpeg" ),};
@@ -91,6 +90,21 @@ public class RA_NewGame : MonoBehaviour {
 		coverImgSprite = RM_SaveLoad.LoadSprite(imgPath,0,340,480);
 #endif
     }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    void OnWebGLCoverImported(string dataUrl)
+    {
+        if (string.IsNullOrEmpty(dataUrl)) return;
+
+        var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
+        if (tex == null) return;
+
+        // Resize to Atari ST cover resolution: 320x200
+        RM_TextureScale.Point(tex, 320, 200);
+        coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+        imgInput.text = "cover.png"; // Placeholder to indicate image was selected
+    }
+#endif
 
 	/// <summary>
 	/// Imports a .rody.json story file into memory for play/edit.
