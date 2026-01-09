@@ -121,7 +121,7 @@ Les images suivent le format : `{scene}.{frame}.png`
 
 - **Dimensions** : 320x130 pixels (zone de scene)
 - **Couverture** : 320x200 pixels
-- **Palette** : 16 couleurs (utilisez `palette_rody.png` ou `.act` du dossier Assets)
+- **Palette** : 16 couleurs (voir [`paletteRody.png`](bonus/paletteRody.png) ou [`.ACT`](bonus/paletteRody.ACT))
 
 ---
 
@@ -341,11 +341,11 @@ Toutes les pistes de musique Atari ST originales des Rody.
 3. Selectionnez le type de fichier : ACT
 4. Choisissez le fichier de palette
 
-**Alternative :** Utilisez `palette_rody.png` - contient les 16 couleurs directement.
+**Alternative :** Utilisez [`paletteRody.png`](bonus/paletteRody.png) - contient les 16 couleurs directement.
 
 ### Police
 
-`rody.ttf` - La police originale Rody & Mastico, recreee pixel par pixel.
+[`Rody.ttf`](bonus/Rody.ttf) - La police originale Rody & Mastico, recreee pixel par pixel.
 
 > **Attention** : La police ne contient pas tous les caracteres speciaux !
 
