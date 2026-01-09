@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Key | Value |
 |-----|-------|
 | Unity Version | 6000.3.2f1 (Unity 6 LTS) |
-| Render Pipeline | Built-in (not URP) |
+| Render Pipeline | Universal Render Pipeline (URP) |
 | Input System | Both legacy and new |
 | Target Resolution | 960x600 (3x Atari ST 320x200) |
 
@@ -66,7 +66,26 @@ User-created content uses import/export model (no persistent storage):
 - **Fork-on-Edit**: Editing official story creates in-memory copy via `WorkingStory.ForkForEditing()`
 - **Export/Import**: Portable `.rody.json` format with base64 sprites
 - **Key file**: `WorkingStory.cs` - single in-memory story state
-- **See**: `docs/USER_STORIES_FEATURE.md` for full documentation
+
+**WorkingStory API** (key methods):
+```csharp
+// Loading
+WorkingStory.LoadOfficial(storyId)      // Load from Resources
+WorkingStory.LoadFromJson(json, path)   // Import user story
+WorkingStory.CreateNew(title)           // Blank story
+
+// Editing
+WorkingStory.ForkForEditing()           // Copy official for editing
+WorkingStory.SaveScene(index, data)     // Update scene
+WorkingStory.CreateNewScene(index)      // Add scene
+
+// Export
+WorkingStory.ExportToJson()             // Get JSON string
+WorkingStory.MarkSaved(path)            // Clear dirty flag
+
+// State
+WorkingStory.IsLoaded, .IsOfficial, .IsDirty, .Title, .SceneCount
+```
 
 ### Scene Build Order
 | Index | Scene | Purpose |
@@ -199,8 +218,6 @@ This principle applies broadly:
 
 | Doc | Purpose |
 |-----|---------|
-| `docs/ROADMAP.md` | Current progress and remaining work (single source of truth) |
+| `docs/ROADMAP.md` | Current progress and remaining work |
 | `docs/DEVLOG.md` | Session history and implementation details |
-| `docs/USER_STORIES_FEATURE.md` | User stories import/export documentation |
-| `docs/INSPECTOR_WIRING.md` | Inspector event wiring reference |
-| `docs/ARCHITECTURE.md` | Deep-dive architecture reference |
+| `docs/LEARNINGS.md` | Meta-knowledge from past migrations (reusable) |

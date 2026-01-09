@@ -2,43 +2,43 @@
 
 > A Unity 6 recreation of classic Atari ST adventure games with a built-in level editor.
 
-## Quick Start
+## For Players (French)
 
 | Document | Description |
 |----------|-------------|
-| [Project Overview](PROJECT_OVERVIEW.md) | Game concept, Atari ST heritage, phoneme TTS |
-| [Player Guide](PLAYER_GUIDE.md) | How to play (French) |
-| [Rody Maker Tutorial](RODY_MAKER_TUTORIAL.md) | Level editor guide (French) |
+| [Player Guide](PLAYER_GUIDE.md) | How to play |
+| [Rody Maker Tutorial](RODY_MAKER_TUTORIAL.md) | Level editor guide |
 
-## Development
+## For Developers
 
 | Document | Description |
 |----------|-------------|
-| [Roadmap](ROADMAP.md) | Current progress and remaining work |
 | [Development Log](DEVLOG.md) | Session history and implementation details |
-| [Architecture](ARCHITECTURE.md) | Code patterns and namespaces |
-| [Inspector Wiring](INSPECTOR_WIRING.md) | Understanding serialized logic |
+| [Roadmap](ROADMAP.md) | Current progress and remaining work |
 
-## Reference
-
-| Document | Description |
-|----------|-------------|
-| [User Stories Feature](USER_STORIES_FEATURE.md) | Import/export system for user content |
-| [Third-Party Plugins](THIRD_PARTY.md) | External dependencies |
-| [UnityReusables Library](UNITY_REUSABLES.md) | Shared utility components |
-| [Migration Notes](MIGRATION_2022.md) | Unity 2019 to 2022.3 changes |
+> **Note:** Main developer reference is in `/CLAUDE.md` (project root).
 
 ## Sub-Projects
 
 | Document | Description |
 |----------|-------------|
 | [DOOM FPS Module](DOOM_FPS.md) | FPS minigame documentation |
+| [Doomastico Gameplay Audit](DOOMASTICO_GAMEPLAY_AUDIT.md) | Future gameplay improvements |
 
-## Unity Version
+## Reference (Reusable)
 
-- **Current**: Unity 6 (6000.3.2f1)
-- **Render Pipeline**: Built-in (not URP)
-- **Input System**: Both legacy and new
+| Document | Description |
+|----------|-------------|
+| [Migration Guide](MIGRATION_GUIDE.md) | BetterEvent/Odin serialization migration toolkit |
+| [Learnings](LEARNINGS.md) | Meta-knowledge from past migrations and cleanups |
+
+## Quick Reference
+
+| Key | Value |
+|-----|-------|
+| Unity Version | 6000.3.2f1 (Unity 6 LTS) |
+| Render Pipeline | Universal Render Pipeline (URP) |
+| Input System | Both legacy and new |
 
 ## Links
 

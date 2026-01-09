@@ -852,6 +852,6 @@ On `RA_ScrollView`: assign `slotSeparatorPrefab` and `slotImportPrefab`
 | Key | Value |
 |-----|-------|
 | Unity Version | 6000.3.2f1 (Unity 6 LTS) |
-| Render Pipeline | Built-in (not URP) |
+| Render Pipeline | Universal Render Pipeline (URP) |
 | Input System | Both legacy and new |
 | Key Plugins | Odin Inspector (local), DOTween, NiceVibrations |
