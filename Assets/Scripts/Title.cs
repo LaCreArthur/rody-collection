@@ -15,7 +15,6 @@ public class Title : MonoBehaviour {
 
 	void Start()
 	{
-		Screen.SetResolution(1280, 800, false);
 		isTitle = (SceneManager.GetActiveScene().buildIndex == 1);
 
 		if (!WorkingStory.IsLoaded)
