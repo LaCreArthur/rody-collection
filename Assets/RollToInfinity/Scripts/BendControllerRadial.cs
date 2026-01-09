@@ -46,7 +46,7 @@ public class BendControllerRadial : MonoBehaviour
 	private float newCurve = 0f;
 
 	
-	void Start() 
+	void Awake()
 	{
 		m_curveOriginId = Shader.PropertyToID("_CurveOrigin");
 		m_referenceDirectionId = Shader.PropertyToID("_ReferenceDirection");
@@ -55,7 +55,10 @@ public class BendControllerRadial : MonoBehaviour
 		m_flatMarginId = Shader.PropertyToID("_FlatMargin");
 		m_horizonWaveFrequencyId = Shader.PropertyToID("_HorizonWaveFrequency");
 		m_curveMultiplierId = Shader.PropertyToID("_curveMultiplier");
-		
+	}
+
+	void Start()
+	{
 		if (m_curveOrigin == null)
 			SetCurveOrigin();
 	}
@@ -107,6 +110,9 @@ public class BendControllerRadial : MonoBehaviour
 	
 	private void OnDisable()
 	{
+		// Guard: only reset if property IDs have been initialized
+		if (m_curvatureId == 0) return;
+
 		Shader.SetGlobalVector(m_curveOriginId, Vector3.zero);
 		Shader.SetGlobalFloat(m_curvatureId, 0);
 	}
