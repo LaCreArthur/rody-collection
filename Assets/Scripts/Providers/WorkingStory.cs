@@ -23,6 +23,7 @@ public static class WorkingStory
     /// Has the story been modified since load/last save?
     /// </summary>
     public static bool IsDirty { get; private set; }
+    
 
     /// <summary>
     /// Last file path where this story was saved.
@@ -65,7 +66,7 @@ public static class WorkingStory
     // Sprite cache for loaded sprites
     private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
 
-    // Pre-computed blank sprite base64
+    // Pre-computed blank sprite base64 (320x130 for scenes)
     private static string _blankSpriteBase64;
     private static string BlankSpriteBase64
     {
@@ -82,6 +83,26 @@ public static class WorkingStory
                 UnityEngine.Object.Destroy(tex);
             }
             return _blankSpriteBase64;
+        }
+    }
+
+    // Pre-computed blank title sprite base64 (320x200 for title screen)
+    private static string _blankTitleSpriteBase64;
+    private static string BlankTitleSpriteBase64
+    {
+        get
+        {
+            if (_blankTitleSpriteBase64 == null)
+            {
+                var tex = new Texture2D(320, 200, TextureFormat.RGBA32, false);
+                var pixels = new Color[320 * 200];
+                for (int i = 0; i < pixels.Length; i++) pixels[i] = Color.white;
+                tex.SetPixels(pixels);
+                tex.Apply();
+                _blankTitleSpriteBase64 = Convert.ToBase64String(tex.EncodeToPNG());
+                UnityEngine.Object.Destroy(tex);
+            }
+            return _blankTitleSpriteBase64;
         }
     }
 
@@ -131,7 +152,20 @@ public static class WorkingStory
 
         try
         {
-            Current = JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+            var parsed = JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+
+            // Validate required fields
+            if (parsed == null ||
+                parsed.story == null ||
+                string.IsNullOrEmpty(parsed.story.id) ||
+                string.IsNullOrEmpty(parsed.story.title) ||
+                parsed.scenes == null)
+            {
+                Debug.LogError("WorkingStory: Invalid story format - missing required fields");
+                return;
+            }
+
+            Current = parsed;
             IsOfficial = false;
             IsDirty = false;
             LastSavePath = savePath;
@@ -179,7 +213,8 @@ public static class WorkingStory
             data = defaultScene
         });
 
-        // Add blank sprite for first scene
+        // Add blank sprite for title screen and first scene
+        Current.sprites["0.png"] = BlankTitleSpriteBase64;
         Current.sprites["1.1.png"] = BlankSpriteBase64;
 
         IsOfficial = false;

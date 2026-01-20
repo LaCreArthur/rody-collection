@@ -9,10 +9,10 @@ var StandaloneFileBrowserWebGLPlugin = {
         var methodName = UTF8ToString(methodNamePtr);
         var filter = UTF8ToString(filterPtr);
 
-        // Delete if element exists
+        // Delete if element exists (safe removal via parentNode)
         var fileInput = document.getElementById(gameObjectName + '_content');
-        if (fileInput) {
-            document.body.removeChild(fileInput);
+        if (fileInput && fileInput.parentNode) {
+            fileInput.parentNode.removeChild(fileInput);
         }
 
         fileInput = document.createElement('input');
@@ -40,14 +40,20 @@ var StandaloneFileBrowserWebGLPlugin = {
                 SendMessage(gameObjectName, methodName, '');
             };
             reader.readAsText(file);
-            document.body.removeChild(fileInput);
+            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
         };
         document.body.appendChild(fileInput);
 
-        document.onmouseup = function() {
+        // Try direct click first (works if user gesture context is preserved)
+        // Fall back to next mouseup if blocked by browser security
+        try {
             fileInput.click();
-            document.onmouseup = null;
-        };
+        } catch (e) {
+            document.addEventListener('mouseup', function handler() {
+                fileInput.click();
+                document.removeEventListener('mouseup', handler);
+            }, { once: true });
+        }
     },
 
     // Open file and return content as base64 data URL (for image import)
@@ -60,10 +66,10 @@ var StandaloneFileBrowserWebGLPlugin = {
         var methodName = UTF8ToString(methodNamePtr);
         var filter = UTF8ToString(filterPtr);
 
-        // Delete if element exists
+        // Delete if element exists (safe removal via parentNode)
         var fileInput = document.getElementById(gameObjectName + '_base64');
-        if (fileInput) {
-            document.body.removeChild(fileInput);
+        if (fileInput && fileInput.parentNode) {
+            fileInput.parentNode.removeChild(fileInput);
         }
 
         fileInput = document.createElement('input');
@@ -92,14 +98,20 @@ var StandaloneFileBrowserWebGLPlugin = {
                 SendMessage(gameObjectName, methodName, '');
             };
             reader.readAsDataURL(file);
-            document.body.removeChild(fileInput);
+            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
         };
         document.body.appendChild(fileInput);
 
-        document.onmouseup = function() {
+        // Try direct click first (works if user gesture context is preserved)
+        // Fall back to next mouseup if blocked by browser security
+        try {
             fileInput.click();
-            document.onmouseup = null;
-        };
+        } catch (e) {
+            document.addEventListener('mouseup', function handler() {
+                fileInput.click();
+                document.removeEventListener('mouseup', handler);
+            }, { once: true });
+        }
     },
 
     // Open file (legacy - returns blob URLs, not content).
@@ -116,10 +128,10 @@ var StandaloneFileBrowserWebGLPlugin = {
         var methodName = UTF8ToString(methodNamePtr);
         var filter = UTF8ToString(filterPtr);
 
-        // Delete if element exist
+        // Delete if element exists (safe removal via parentNode)
         var fileInput = document.getElementById(gameObjectName)
-        if (fileInput) {
-            document.body.removeChild(fileInput);
+        if (fileInput && fileInput.parentNode) {
+            fileInput.parentNode.removeChild(fileInput);
         }
 
         fileInput = document.createElement('input');
@@ -146,14 +158,20 @@ var StandaloneFileBrowserWebGLPlugin = {
             // File selected
             SendMessage(gameObjectName, methodName, urls.join());
 
-            // Remove after file selected
-            document.body.removeChild(fileInput);
+            // Remove after file selected (safe removal via parentNode)
+            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
         }
         document.body.appendChild(fileInput);
 
-        document.onmouseup = function() {
+        // Try direct click first (works if user gesture context is preserved)
+        // Fall back to next mouseup if blocked by browser security
+        try {
             fileInput.click();
-            document.onmouseup = null;
+        } catch (e) {
+            document.addEventListener('mouseup', function handler() {
+                fileInput.click();
+                document.removeEventListener('mouseup', handler);
+            }, { once: true });
         }
     },
 
@@ -180,12 +198,20 @@ var StandaloneFileBrowserWebGLPlugin = {
         downloader.download = filename;
         document.body.appendChild(downloader);
 
-        document.onmouseup = function() {
+        // Try direct click first, fall back to mouseup
+        var doDownload = function() {
             downloader.click();
-            document.body.removeChild(downloader);
-        	document.onmouseup = null;
-
+            if (downloader.parentNode) downloader.parentNode.removeChild(downloader);
             SendMessage(gameObjectName, methodName);
+        };
+
+        try {
+            doDownload();
+        } catch (e) {
+            document.addEventListener('mouseup', function handler() {
+                doDownload();
+                document.removeEventListener('mouseup', handler);
+            }, { once: true });
         }
     }
 };
