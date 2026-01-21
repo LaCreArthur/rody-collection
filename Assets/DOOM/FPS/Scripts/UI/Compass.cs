@@ -21,7 +21,7 @@ public class Compass : MonoBehaviour
 
     void Awake()
     {
-        PlayerCharacterController playerCharacterController = FindObjectOfType<PlayerCharacterController>();
+        PlayerCharacterController playerCharacterController = FindAnyObjectByType<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, Compass>(playerCharacterController, this);
         m_PlayerTransform = playerCharacterController.transform;
 

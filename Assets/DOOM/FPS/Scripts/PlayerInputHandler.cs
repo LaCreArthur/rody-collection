@@ -21,7 +21,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         m_PlayerCharacterController = GetComponent<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerInputHandler>(m_PlayerCharacterController, this, gameObject);
-        m_GameFlowManager = FindObjectOfType<GameFlowManager>();
+        m_GameFlowManager = FindAnyObjectByType<GameFlowManager>();
         DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
 
         Cursor.lockState = CursorLockMode.Locked;

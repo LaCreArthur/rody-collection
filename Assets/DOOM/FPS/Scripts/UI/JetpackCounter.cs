@@ -14,7 +14,7 @@ public class JetpackCounter : MonoBehaviour
 
     void Awake()
     {
-        m_Jetpack = FindObjectOfType<Jetpack>();
+        m_Jetpack = FindAnyObjectByType<Jetpack>();
         DebugUtility.HandleErrorIfNullFindObject<Jetpack, JetpackCounter>(m_Jetpack, this);
 
         fillBarColorChange.Initialize(1f, 0f);

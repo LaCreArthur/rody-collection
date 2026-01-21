@@ -27,7 +27,7 @@ public class DetectionModule : MonoBehaviour
 
     private void Start()
     {
-        m_ActorsManager = FindObjectOfType<ActorsManager>();
+        m_ActorsManager = FindAnyObjectByType<ActorsManager>();
         DebugUtility.HandleErrorIfNullFindObject<ActorsManager, EnemyController>(m_ActorsManager, this);
     }
 

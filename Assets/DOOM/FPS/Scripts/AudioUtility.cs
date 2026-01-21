@@ -38,7 +38,7 @@ public class AudioUtility
     public static AudioMixerGroup GetAudioGroup(AudioGroups group)
     {
         if (m_AudioManager == null)
-            m_AudioManager = GameObject.FindObjectOfType<AudioManager>();
+            m_AudioManager = GameObject.FindAnyObjectByType<AudioManager>();
 
         var groups = m_AudioManager.audioMixer.FindMatchingGroups(group.ToString());
 
@@ -52,7 +52,7 @@ public class AudioUtility
     public static void SetMasterVolume(float value)
     {
         if (m_AudioManager == null)
-            m_AudioManager = GameObject.FindObjectOfType<AudioManager>();
+            m_AudioManager = GameObject.FindAnyObjectByType<AudioManager>();
 
         if (value <= 0)
             value = 0.001f;
@@ -64,7 +64,7 @@ public class AudioUtility
     public static float GetMasterVolume()
     {
         if (m_AudioManager == null)
-            m_AudioManager = GameObject.FindObjectOfType<AudioManager>();
+            m_AudioManager = GameObject.FindAnyObjectByType<AudioManager>();
 
         m_AudioManager.audioMixer.GetFloat("MasterVolume", out var valueInDB);
         return Mathf.Pow(10f, valueInDB / 20.0f);

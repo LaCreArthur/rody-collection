@@ -14,7 +14,7 @@ public class WeaponHUDManager : MonoBehaviour
 
     void Start()
     {
-        m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
+        m_PlayerWeaponsManager = FindAnyObjectByType<PlayerWeaponsManager>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, WeaponHUDManager>(m_PlayerWeaponsManager, this);
 
         WeaponController activeWeapon = m_PlayerWeaponsManager.GetActiveWeapon();

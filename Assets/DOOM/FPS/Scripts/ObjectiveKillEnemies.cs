@@ -21,7 +21,7 @@ public class ObjectiveKillEnemies : MonoBehaviour
         m_Objective = GetComponent<Objective>();
         DebugUtility.HandleErrorIfNullGetComponent<Objective, ObjectiveKillEnemies>(m_Objective, this, gameObject);
 
-        m_EnemyManager = FindObjectOfType<EnemyManager>();
+        m_EnemyManager = FindAnyObjectByType<EnemyManager>();
         DebugUtility.HandleErrorIfNullFindObject<EnemyManager, ObjectiveKillEnemies>(m_EnemyManager, this);
         m_EnemyManager.onRemoveEnemy += OnKillEnemy;
 

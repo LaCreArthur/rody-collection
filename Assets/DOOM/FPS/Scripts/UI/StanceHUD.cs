@@ -12,7 +12,7 @@ public class StanceHUD : MonoBehaviour
 
     private void Start()
     {
-        PlayerCharacterController character = FindObjectOfType<PlayerCharacterController>();
+        PlayerCharacterController character = FindAnyObjectByType<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, StanceHUD>(character, this);
         character.onStanceChanged += OnStanceChanged;
 

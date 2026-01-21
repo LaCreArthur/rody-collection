@@ -9,7 +9,7 @@ public class TeleportPlayer : MonoBehaviour
 
     void Awake()
     {
-        m_PlayerCharacterController = FindObjectOfType<PlayerCharacterController>();
+        m_PlayerCharacterController = FindAnyObjectByType<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, TeleportPlayer>(m_PlayerCharacterController, this);
     }
 

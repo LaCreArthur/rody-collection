@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour
 
     private void Awake()
     {
-        m_PlayerController = FindObjectOfType<PlayerCharacterController>();
+        m_PlayerController = FindAnyObjectByType<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, EnemyManager>(m_PlayerController, this);
 
         enemies = new List<EnemyController>();

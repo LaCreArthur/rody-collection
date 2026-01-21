@@ -11,7 +11,7 @@ public class EnemyCounter : MonoBehaviour
 
     void Awake()
     {
-        m_EnemyManager = FindObjectOfType<EnemyManager>();
+        m_EnemyManager = FindAnyObjectByType<EnemyManager>();
         DebugUtility.HandleErrorIfNullFindObject<EnemyManager, EnemyCounter>(m_EnemyManager, this);
     }
 

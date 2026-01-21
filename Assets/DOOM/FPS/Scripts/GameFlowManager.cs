@@ -36,10 +36,10 @@ public class GameFlowManager : MonoBehaviour
 
     void Start()
     {
-        m_Player = FindObjectOfType<PlayerCharacterController>();
+        m_Player = FindAnyObjectByType<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, GameFlowManager>(m_Player, this);
 
-        m_ObjectiveManager = FindObjectOfType<ObjectiveManager>();
+        m_ObjectiveManager = FindAnyObjectByType<ObjectiveManager>();
 		DebugUtility.HandleErrorIfNullFindObject<ObjectiveManager, GameFlowManager>(m_ObjectiveManager, this);
 
         AudioUtility.SetMasterVolume(1);
