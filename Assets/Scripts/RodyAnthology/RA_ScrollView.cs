@@ -17,7 +17,8 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject content;
 	public Transform slotPrefab;
 	public Transform slotNewGamePrefab;
-	public Transform slotLoadGamePrefab; // Used for import/export .rody.json files
+	public Transform slotLoadGamePrefab; // Used for import .rody.json files (shows "Importer")
+	public Transform slotExportPrefab;   // Used for export .rody.json files (shows "Exporter")
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -135,7 +136,7 @@ public class RA_ScrollView : MonoBehaviour {
 			storySlot.name = "workingStory";
 			storySlot.GetComponentInChildren<Text>().text = WorkingStory.Title + " *";
 
-			// Load cover from WorkingStory
+			// Load cover from WorkingStory (menu thumbnail)
 			var cover = WorkingStory.LoadSprite("cover.png", 320, 200);
 			if (cover != null)
 			{
@@ -147,8 +148,8 @@ public class RA_ScrollView : MonoBehaviour {
 			userStorySlotIndices.Add(slotIndex);
 			slotIndex++;
 
-			// SLOT EXPORT - only when user story is loaded
-			GameObject exportSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
+			// SLOT EXPORT - only when user story is loaded (use distinct prefab)
+			GameObject exportSlot = Instantiate(slotExportPrefab != null ? slotExportPrefab : slotLoadGamePrefab, content.transform).gameObject;
 			exportSlot.name = "exportStory";
 			slots.Add(exportSlot);
 			slotIndex++;
@@ -280,7 +281,7 @@ public class RA_ScrollView : MonoBehaviour {
 					// Instantiate a slot
 					GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
 
-					// Try to load cover from the JSON sprites
+					// Try to load cover from the JSON sprites (menu thumbnail)
 					if (story.sprites != null && story.sprites.ContainsKey("cover.png"))
 					{
 						try

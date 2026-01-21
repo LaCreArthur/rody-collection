@@ -18,7 +18,10 @@ namespace UnityReusables.CharacterControllers
 
         protected override int GetOverlapCollidersSize()
         {
-            return Physics2D.OverlapCircleNonAlloc(_groundCheck.position, _groundedRadius, _colliders, _whatIsGround);
+            var filter = new ContactFilter2D();
+            filter.SetLayerMask(_whatIsGround);
+            filter.useTriggers = true;
+            return Physics2D.OverlapCircle(_groundCheck.position, _groundedRadius, filter, _colliders);
         }
     }
 }

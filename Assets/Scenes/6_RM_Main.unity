@@ -9915,6 +9915,7 @@ MonoBehaviour:
   targetScene: 0
   isTestMode: 0
   isDeleteMode: 0
+  isRevertMode: 0
   messageText: {fileID: 1203889517}
 --- !u!114 &777413969
 MonoBehaviour:
@@ -17863,7 +17864,9 @@ MonoBehaviour:
   ngpDial: 
   fswDial: 
   titleText: 
-  introText: 
+  introText1: 
+  introText2: 
+  introText3: 
   objText: 
   ngpText: 
   fswText: 
@@ -20728,7 +20731,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 147565002}
         m_TargetAssemblyTypeName: RM_MainLayout, Assembly-CSharp
-        m_MethodName: OnDeleteClick
+        m_MethodName: OnRevertClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

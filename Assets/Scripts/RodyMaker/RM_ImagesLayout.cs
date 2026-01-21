@@ -70,7 +70,7 @@ public class RM_ImagesLayout : RM_Layout {
         int height = gm.currentScene == 0 ? 200 : 130;
         RM_TextureScale.Point(tex, width, height);
 
-        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
 
         gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0, -35, 0);
         gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sprite;
@@ -79,8 +79,20 @@ public class RM_ImagesLayout : RM_Layout {
         var thumbTex = new Texture2D(tex.width, tex.height);
         thumbTex.SetPixels(tex.GetPixels());
         RM_TextureScale.Point(thumbTex, 36, 21);
-        var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 100);
+        var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 1f);
         gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = thumbSprite;
+
+        // Persist to WorkingStory immediately so it survives scene changes
+        // Scene 0 = title scene image (0.png). cover.png is set separately in story creation.
+        if (gm.currentScene == 0)
+        {
+            WorkingStory.SaveSprite("0.png", tex);
+        }
+        else
+        {
+            // Save as the first frame for this scene
+            WorkingStory.SaveSprite($"{gm.currentScene}.1.png", tex);
+        }
     }
 #endif
 }

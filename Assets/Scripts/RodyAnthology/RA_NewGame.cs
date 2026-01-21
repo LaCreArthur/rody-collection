@@ -47,7 +47,7 @@ public class RA_NewGame : MonoBehaviour {
 		// Handle cover image if specified
 		if (imgInput.text.Length > 0 && coverImgSprite != null)
 		{
-			// Save cover sprite to WorkingStory
+			// Save cover sprite to WorkingStory (menu thumbnail)
 			WorkingStory.SaveSprite("cover.png", coverImgSprite.texture);
 		}
 
@@ -101,15 +101,41 @@ public class RA_NewGame : MonoBehaviour {
 
         // Resize to Atari ST cover resolution: 320x200
         RM_TextureScale.Point(tex, 320, 200);
-        coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+        coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
         imgInput.text = "cover.png"; // Placeholder to indicate image was selected
     }
 #endif
 
 	/// <summary>
 	/// Imports a .rody.json story file into memory for play/edit.
+	/// Shows confirmation if a story is already loaded.
 	/// </summary>
 	public void OnImportClick()
+	{
+		// If a story is already loaded, show confirmation before replacing
+		if (WorkingStory.IsLoaded)
+		{
+			feedbackTxt.text = "Une histoire est déjà chargée.\nVoulez-vous la remplacer?";
+			yeapTxt.text = "oui";
+			buttonYeap.SetActive(true);
+			buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
+			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {
+				feedbackPanel.SetActive(false);
+				buttonYeap.SetActive(false);
+				buttonNop.SetActive(false);
+				DoImport();
+			});
+			buttonNop.SetActive(true);
+			feedbackPanel.SetActive(true);
+			return;
+		}
+		DoImport();
+	}
+
+	/// <summary>
+	/// Actually performs the import after confirmation (if needed).
+	/// </summary>
+	void DoImport()
 	{
 #if UNITY_WEBGL && !UNITY_EDITOR
 		// WebGL: Use browser file picker via jslib
