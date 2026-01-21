@@ -209,6 +209,23 @@ Add floating action buttons to story slots in the menu.
 
 ---
 
+### Multiple User Stories (Phase 6) - PLANNED
+
+Support multiple user stories in-memory with per-slot action buttons.
+
+**Plan:** `~/.claude/plans/atomic-wondering-wren.md`
+
+**Summary:**
+- `UserStoryCollection` class to hold multiple imported stories in-memory
+- Each user story slot has Edit + Export buttons (top corners)
+- Official story slots have Fork button
+- No auto-persistence (keeps it simple)
+- Import adds to collection, Export downloads specific story
+
+**Estimated effort:** 4-5 hours
+
+---
+
 ### Phoneme Dictionary
 
 Natural French text → phoneme conversion for easier dialogue editing.
