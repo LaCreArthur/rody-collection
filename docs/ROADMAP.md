@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2025-12-28 (audit verified)
+> **Updated:** 2026-01-21 (Save Awareness plan added)
 
 ---
 
@@ -173,14 +173,41 @@ All dead code removed.
 
 ## Future (Not Blocking)
 
-### User Story Persistence (Phase 4)
+### Save Awareness & Rody Maker UX (Phase 4) - PLANNED
 
-Currently, user stories exist only in memory until exported. For a "My Stories" list:
+Improve UX to prevent users losing their custom stories.
 
-**Desktop:** Auto-save to `persistentDataPath/UserStories/` on export
-**WebGL:** IndexedDB via jslib wrapper
+**Plan:** [SAVE_AWARENESS_PLAN.md](SAVE_AWARENESS_PLAN.md)
 
-**Complexity:** ~200 lines, platform-specific. Defer until user feedback requests it.
+**Key Changes:**
+- Save button → Export directly to JSON file (clearer mental model)
+- Tooltips on all Rody Maker buttons
+- Exit warnings when leaving editor with unsaved work
+- Browser `beforeunload` warning (WebGL)
+- "Non exporté" visual indicator on user story slots
+- First-time export guidance tooltip
+
+**Decision:** IndexedDB persistence rejected (Safari eviction issues). Focus on export awareness instead.
+
+**Estimated effort:** ~400 lines across 10 files
+
+---
+
+### Menu Story Slot Buttons (Phase 5) - PLANNED
+
+Add floating action buttons to story slots in the menu.
+
+**Plan:** [plan.md](../plan.md)
+
+**Summary:**
+- Fork button on official stories (top-right)
+- Edit + Export buttons on user stories
+- Buttons show only on selected slot
+- Reuse create popup for edit mode
+
+**Estimated effort:** 7-11 hours
+
+---
 
 ### Phoneme Dictionary
 
