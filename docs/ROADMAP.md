@@ -173,23 +173,32 @@ All dead code removed.
 
 ## Future (Not Blocking)
 
-### Save Awareness & Rody Maker UX (Phase 4) - PLANNED
+### Save Awareness & Rody Maker UX (Phase 4) - ✅ DONE
 
 Improve UX to prevent users losing their custom stories.
 
 **Plan:** [SAVE_AWARENESS_PLAN.md](SAVE_AWARENESS_PLAN.md)
 
-**Key Changes:**
-- Save button → Export directly to JSON file (clearer mental model)
-- Tooltips on all Rody Maker buttons
-- Exit warnings when leaving editor with unsaved work
-- Browser `beforeunload` warning (WebGL)
-- "Non exporté" visual indicator on user story slots
-- First-time export guidance tooltip
+**Implemented:**
+- [x] Save button → Export directly to JSON file
+- [x] Exit warning when leaving editor with unsaved work
+- [x] Menu return reminder (WebGL: browser confirm)
+- [x] Browser `beforeunload` warning (WebGL)
+- [x] Visual indicator (orange tint + asterisk) on unexported stories
 
-**Decision:** IndexedDB persistence rejected (Safari eviction issues). Focus on export awareness instead.
+**Deferred:**
+- [ ] Tooltips on all Rody Maker buttons
+- [ ] First-time export guidance tooltip
 
-**Estimated effort:** ~400 lines across 10 files
+**Files changed:** 11 files, +231/-26 lines
+- `RM_MainLayout.cs` - Save = Export
+- `RM_GameManager.cs`, `RM_WarningLayout.cs` - Exit warning
+- `Title.cs`, `MenuManager.cs` - Menu return reminder
+- `ExportReminder.cs` (NEW) - Utility for reminders
+- `StandaloneFileBrowser.jslib` - beforeunload handler
+- `WorkingStory.cs` - IsDirty triggers unsaved flag update
+- `RA_ScrollView.cs` - Visual indicator
+- `Bootstrap.cs` - Initialize ExportReminder
 
 ---
 
