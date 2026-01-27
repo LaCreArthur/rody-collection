@@ -22,7 +22,16 @@ public static class WorkingStory
     /// <summary>
     /// Has the story been modified since load/last save?
     /// </summary>
-    public static bool IsDirty { get; private set; }
+    private static bool _isDirty;
+    public static bool IsDirty
+    {
+        get => _isDirty;
+        private set
+        {
+            _isDirty = value;
+            ExportReminder.UpdateUnsavedFlag();
+        }
+    }
     
 
     /// <summary>

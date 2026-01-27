@@ -19,6 +19,8 @@ public class RM_WarningLayout : RM_Layout {
 
 	public bool isRevertMode = false;
 
+	public bool isExitMode = false;
+
 	[FormerlySerializedAs("warningText")]
 	public Text messageText;
 
@@ -30,9 +32,15 @@ public class RM_WarningLayout : RM_Layout {
 
 	public void OnConfirmClick(){
 		Debug.Log($"[RM_WarningLayout] OnConfirmClick - targetScene: {targetScene}, currentScene: {gm.currentScene}, scenesCount: {WorkingStory.SceneCount}");
-		Debug.Log($"[RM_WarningLayout] Modes - Test: {isTestMode}, Delete: {isDeleteMode}, Revert: {isRevertMode}");
+		Debug.Log($"[RM_WarningLayout] Modes - Test: {isTestMode}, Delete: {isDeleteMode}, Revert: {isRevertMode}, Exit: {isExitMode}");
 
-		if (isTestMode){
+		if (isExitMode){
+			// Exit mode - leave editor without saving
+			ResetFlags();
+			SceneManager.LoadScene(2); // Return to in-game menu
+			return;
+		}
+		else if (isTestMode){
 			// Test mode - load play scene
 			ResetFlags();
 			if (targetScene == 0)
@@ -93,6 +101,7 @@ public class RM_WarningLayout : RM_Layout {
 		isTestMode = false;
 		isDeleteMode = false;
 		isRevertMode = false;
+		isExitMode = false;
 	}
 
 	private void CloseDialog(){

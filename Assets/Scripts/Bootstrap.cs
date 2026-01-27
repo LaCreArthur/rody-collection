@@ -90,6 +90,9 @@ public class Bootstrap : MonoBehaviour
         if (loadingUI != null)
             loadingUI.SetActive(false);
 
+        // Initialize export reminder (beforeunload handler for WebGL)
+        ExportReminder.Initialize();
+
         if (nextSceneIndex >= 0)
         {
             SceneManager.LoadScene(nextSceneIndex);

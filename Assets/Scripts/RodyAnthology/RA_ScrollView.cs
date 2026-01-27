@@ -134,14 +134,23 @@ public class RA_ScrollView : MonoBehaviour {
 		{
 			GameObject storySlot = Instantiate(slotPrefab, content.transform).gameObject;
 			storySlot.name = "workingStory";
-			storySlot.GetComponentInChildren<Text>().text = WorkingStory.Title + " *";
+
+			// Show unexported indicator if story has unsaved changes
+			string titleSuffix = WorkingStory.IsDirty ? " *" : "";
+			storySlot.GetComponentInChildren<Text>().text = WorkingStory.Title + titleSuffix;
+
+			// Tint cover orange if unexported
+			var coverImg = storySlot.transform.GetChild(0).GetComponent<Image>();
+			if (WorkingStory.IsDirty && coverImg != null)
+			{
+				coverImg.color = new Color(1f, 0.85f, 0.7f); // Light orange tint
+			}
 
 			// Load cover from WorkingStory (menu thumbnail)
 			var cover = WorkingStory.LoadSprite("cover.png", 320, 200);
-			if (cover != null)
+			if (cover != null && coverImg != null)
 			{
-				var img = storySlot.transform.GetChild(0).GetComponent<Image>();
-				if (img != null) img.sprite = cover;
+				coverImg.sprite = cover;
 			}
 
 			slots.Add(storySlot);

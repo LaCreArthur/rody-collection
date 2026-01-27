@@ -1,7 +1,9 @@
 ﻿using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using SFB;
 
 /// <summary>
 /// Main editor layout controller. Handles scene thumbnails, button clicks,
@@ -133,40 +135,85 @@ public class RM_MainLayout : RM_Layout
     public void OnSaveClick()
     {
         Debug.Log("Save button clicked");
-        // Save works on all platforms now via WorkingStory (in-memory)
+        // Save to memory first
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
-        StartCoroutine(ShowSaveFeedback());
+
+        // Then trigger export to file
+        StartCoroutine(SaveAndExport());
     }
 
-    private IEnumerator ShowSaveFeedback()
+    private IEnumerator SaveAndExport()
     {
-        // Flash the current scene thumbnail to indicate save
+        // Flash thumbnail to indicate save started
         if (gm.currentScene < sceneThumbnails.Length)
         {
             var thumbnailImage = sceneThumbnails[gm.currentScene].GetComponent<Image>();
             Color originalColor = thumbnailImage.color;
-
-            // Flash white briefly
             thumbnailImage.color = Color.white;
-            yield return new WaitForSeconds(0.15f);
-            thumbnailImage.color = originalColor;
             yield return new WaitForSeconds(0.1f);
-            thumbnailImage.color = Color.white;
-            yield return new WaitForSeconds(0.15f);
             thumbnailImage.color = originalColor;
         }
 
-        // Also show text feedback if available
+        // Export to file
+        string json = WorkingStory.ExportToJson();
+        if (string.IsNullOrEmpty(json))
+        {
+            ShowSaveStatus("Export échoué!", 2f);
+            yield break;
+        }
+
+        string filename = WorkingStory.Id + ".rody.json";
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // WebGL: Download via browser
+        WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () => {
+            ShowSaveStatus($"Téléchargé: {filename}", 2f);
+        });
+#else
+        // Desktop: Save file dialog
+        string suggestedPath = "";
+        if (!string.IsNullOrEmpty(WorkingStory.LastSavePath))
+            suggestedPath = Path.GetDirectoryName(WorkingStory.LastSavePath);
+
+        string savePath = StandaloneFileBrowser.SaveFilePanel("Exporter l'histoire", suggestedPath, filename, "rody.json");
+
+        if (string.IsNullOrEmpty(savePath))
+        {
+            ShowSaveStatus("Export annulé", 1.5f);
+            yield break;
+        }
+
+        try
+        {
+            File.WriteAllText(savePath, json);
+            WorkingStory.MarkSaved(savePath);
+            ShowSaveStatus($"Exporté: {Path.GetFileName(savePath)}", 2f);
+            Debug.Log($"[RM_MainLayout] Exported to {savePath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[RM_MainLayout] Export failed: {e.Message}");
+            ShowSaveStatus($"Erreur: {e.Message}", 3f);
+        }
+#endif
+    }
+
+    private void ShowSaveStatus(string message, float duration)
+    {
         if (saveStatusText != null)
         {
-            saveStatusText.text = "Sauvegardé !";
+            saveStatusText.text = message;
             saveStatusText.gameObject.SetActive(true);
-            yield return new WaitForSeconds(1.5f);
-            saveStatusText.gameObject.SetActive(false);
+            StartCoroutine(HideSaveStatusAfter(duration));
         }
+    }
 
-        Debug.Log("[RM_MainLayout] Save feedback shown");
+    private IEnumerator HideSaveStatusAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if (saveStatusText != null)
+            saveStatusText.gameObject.SetActive(false);
     }
 
     public void OnRevertClick()

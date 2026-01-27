@@ -89,7 +89,7 @@ public class Title : MonoBehaviour {
 
 			if (Input.GetKeyDown(KeyCode.Escape)) {
 				Cursor.visible = true;
-				SceneManager.LoadScene(0);
+				ExportReminder.NavigateToMenuWithCheck();
 			}
 			else if (Input.GetKeyDown(KeyCode.Return)) {
 				skipCredit();

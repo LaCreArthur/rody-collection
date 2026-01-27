@@ -222,8 +222,25 @@ public class RM_GameManager : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKeyUp(KeyCode.Escape)){
-			SceneManager.LoadScene(2);
+			// Check if there are unsaved changes
+			if (WorkingStory.IsDirty && !WorkingStory.IsOfficial)
+			{
+				ShowExitWarning();
+			}
+			else
+			{
+				SceneManager.LoadScene(2);
+			}
 		}
+	}
+
+	void ShowExitWarning()
+	{
+		var warning = warningLayout.GetComponent<RM_WarningLayout>();
+		warning.isExitMode = true;
+		warning.messageText.text = "TU QUITTES L'ÉDITEUR\nAttention Rody, ton histoire n'est pas exportée!\nElle sera perdue si tu fermes le navigateur.";
+		mainLayout.SetActive(false);
+		warningLayout.SetActive(true);
 	}
 
 	void OnApplicationQuit()

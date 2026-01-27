@@ -95,9 +95,9 @@ public class MenuManager : MonoBehaviour {
 				WorkingStory.CurrentSceneIndex = 0;
 				ForkAndEdit();
 				break;
-			case 2: // Bouton intro
+			case 2: // Bouton intro (return to story selection)
 				WorkingStory.CurrentSceneIndex = 0;
-				SceneManager.LoadScene(0);
+				ExportReminder.NavigateToMenuWithCheck();
 				break;
 			default: break;
 		}

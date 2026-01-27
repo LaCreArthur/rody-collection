@@ -1,4 +1,30 @@
 var StandaloneFileBrowserWebGLPlugin = {
+    // Show browser confirm dialog
+    // Returns: true if user confirmed, false if cancelled
+    ShowConfirmDialog: function(messagePtr) {
+        var message = UTF8ToString(messagePtr);
+        return confirm(message);
+    },
+
+    // Set flag for beforeunload warning
+    // hasUnsaved: 1 = show warning, 0 = no warning
+    SetUnsavedWorkFlag: function(hasUnsaved) {
+        window._rodyHasUnsavedWork = (hasUnsaved === 1);
+    },
+
+    // Initialize beforeunload handler (call once at startup)
+    InitBeforeUnloadHandler: function() {
+        if (!window._rodyBeforeUnloadInitialized) {
+            window._rodyBeforeUnloadInitialized = true;
+            window.addEventListener('beforeunload', function(e) {
+                if (window._rodyHasUnsavedWork) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+        }
+    },
+
     // Open file and return actual file content as text (for JSON import).
     // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
     // methodNamePtr: Callback method name on given GameObject.
