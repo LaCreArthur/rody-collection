@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
+using SFB;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using SFB;
 
 /// <summary>
-/// Main editor layout controller. Handles scene thumbnails, button clicks,
-/// and navigation between editor panels.
+///     Main editor layout controller. Handles scene thumbnails, button clicks,
+///     and navigation between editor panels.
 /// </summary>
 public class RM_MainLayout : RM_Layout
 {
@@ -35,18 +36,19 @@ public class RM_MainLayout : RM_Layout
     public Button introButton;
 
     [Header("Feedback")]
+    public GameObject saveStatusPanel;
     public Text saveStatusText;
 
-    void Start() {
+    void Start()
+    {
         UpdateButtonStates();
+        saveStatusPanel.SetActive(false);
     }
 
-    public void UpdateButtonStates(){
-        objectsButton.interactable = introButton.interactable = (gm.currentScene != 0);
-    }
+    public void UpdateButtonStates() => objectsButton.interactable = introButton.interactable = gm.currentScene != 0;
 
     /// <summary>
-    /// Loads sprites from WorkingStory for editor display.
+    ///     Loads sprites from WorkingStory for editor display.
     /// </summary>
     public void LoadSprites()
     {
@@ -101,7 +103,7 @@ public class RM_MainLayout : RM_Layout
     public void OnIntroClick()
     {
         Debug.Log("Intro button clicked");
-        SetLayouts(gm.introLayout,gm.introTextObj);
+        SetLayouts(gm.introLayout, gm.introTextObj);
         UnsetLayouts(gm.mainLayout);
         gm.introLayout.GetComponent<RM_IntroLayout>().titleInputField.text = gm.titleText;
     }
@@ -143,7 +145,7 @@ public class RM_MainLayout : RM_Layout
         StartCoroutine(SaveAndExport());
     }
 
-    private IEnumerator SaveAndExport()
+    IEnumerator SaveAndExport()
     {
         // Flash thumbnail to indicate save started
         if (gm.currentScene < sceneThumbnails.Length)
@@ -191,7 +193,7 @@ public class RM_MainLayout : RM_Layout
             ShowSaveStatus($"Exporté: {Path.GetFileName(savePath)}", 2f);
             Debug.Log($"[RM_MainLayout] Exported to {savePath}");
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError($"[RM_MainLayout] Export failed: {e.Message}");
             ShowSaveStatus($"Erreur: {e.Message}", 3f);
@@ -199,21 +201,21 @@ public class RM_MainLayout : RM_Layout
 #endif
     }
 
-    private void ShowSaveStatus(string message, float duration)
+    void ShowSaveStatus(string message, float duration)
     {
         if (saveStatusText != null)
         {
             saveStatusText.text = message;
-            saveStatusText.gameObject.SetActive(true);
+            saveStatusPanel.SetActive(true);
             StartCoroutine(HideSaveStatusAfter(duration));
         }
     }
 
-    private IEnumerator HideSaveStatusAfter(float seconds)
+    IEnumerator HideSaveStatusAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         if (saveStatusText != null)
-            saveStatusText.gameObject.SetActive(false);
+            saveStatusPanel.SetActive(false);
     }
 
     public void OnRevertClick()
@@ -233,50 +235,58 @@ public class RM_MainLayout : RM_Layout
     {
         int scenesCount = WorkingStory.SceneCount;
         Debug.Log($"[RM_MainLayout] OnSceneThumbnailClick({scene}) - currentScene: {gm.currentScene}, scenesCount: {scenesCount}");
-        RM_WarningLayout warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
+        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
 
         string strChangeScene = "TU CHANGES DE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
         string strRemoveScene = "TU SUPPRIMES LA SCENE " + scene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
         string strCancelScene = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
-        string strNewScene    = "TU AJOUTES UNE NOUVELLE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
+        string strNewScene = "TU AJOUTES UNE NOUVELLE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
 
-        if (scene == gm.currentScene) {
+        if (scene == gm.currentScene)
+        {
             // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
-            if (scene >= 18) {
+            if (scene >= 18)
+            {
                 // Check if scene has sprites - empty scenes shouldn't trigger delete on click
                 var sceneSprites = RM_SaveLoad.LoadSceneSprites(scene);
                 bool hasContent = sceneSprites != null && sceneSprites.Count > 0;
 
-                if (scene > scenesCount) {
+                if (scene > scenesCount)
+                {
                     // Scene beyond scenesCount - cancel new scene creation
                     warningLayout.isDeleteMode = true;
                     Debug.Log($"[RM_MainLayout] Action: CANCEL new scene (scene {scene} > scenesCount {scenesCount})");
                     warningLayout.messageText.text = strCancelScene;
                 }
-                else if (hasContent) {
+                else if (hasContent)
+                {
                     // Scene with content - offer to delete
                     warningLayout.isDeleteMode = true;
                     Debug.Log($"[RM_MainLayout] Action: DELETE scene {scene} (scene <= scenesCount {scenesCount})");
                     warningLayout.messageText.text = strRemoveScene;
                 }
-                else {
+                else
+                {
                     // Empty scene (no sprites) - just ignore the click
                     Debug.Log($"[RM_MainLayout] Action: NONE (scene {scene} is empty, ignoring click)");
                     return;
                 }
             }
-            else {
+            else
+            {
                 // Scenes 1-17 cannot be deleted by clicking
                 Debug.Log($"[RM_MainLayout] Action: NONE (clicking current scene {scene} < 18, returning)");
                 return;
             }
         }
-        else if (scene > scenesCount) {
+        else if (scene > scenesCount)
+        {
             // Adding a new scene
             Debug.Log($"[RM_MainLayout] Action: ADD new scene (scene {scene} > scenesCount {scenesCount})");
             warningLayout.messageText.text = strNewScene;
         }
-        else {
+        else
+        {
             // Changing to a different existing scene
             Debug.Log($"[RM_MainLayout] Action: CHANGE to scene {scene}");
             warningLayout.messageText.text = strChangeScene;
@@ -288,24 +298,23 @@ public class RM_MainLayout : RM_Layout
         SetLayouts(gm.warningLayout);
     }
 
-    public void UpdateActiveThumbnail() {
-        for (int i = 0; i < 30; i++) {
+    public void UpdateActiveThumbnail()
+    {
+        for (int i = 0; i < 30; i++)
+        {
             sceneThumbnails[i].GetComponent<Image>().color = inactiveSceneColor;
         }
         sceneThumbnails[gm.currentScene].GetComponent<Image>().color = activeSceneColor;
         UpdateThumbnailPositions((int)thumbnailSlider.value);
     }
 
-    public void OnThumbnailSliderChanged()
-    {
-        UpdateThumbnailPositions((int)thumbnailSlider.value);
-    }
+    public void OnThumbnailSliderChanged() => UpdateThumbnailPositions((int)thumbnailSlider.value);
 
     public void UpdateThumbnailPositions(int sliderValue)
     {
         for (int i = 0; i < 5; ++i) // for each row
         {
-            for (int j = 6*i; j < 6*i+6; ++j) // 6 thumbnails per row
+            for (int j = 6 * i; j < 6 * i + 6; ++j) // 6 thumbnails per row
             {
                 if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > WorkingStory.SceneCount + 1)
                     sceneThumbnails[j].SetActive(false);
@@ -314,7 +323,7 @@ public class RM_MainLayout : RM_Layout
                     if (j <= WorkingStory.SceneCount + 1)
                         sceneThumbnails[j].SetActive(true);
                     Vector3 pos = sceneThumbnails[j].GetComponent<Transform>().localPosition;
-                    sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - ((i-sliderValue) * 22.0f), pos.z);
+                    sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - (i - sliderValue) * 22.0f, pos.z);
                 }
             }
         }
