@@ -1,4 +1,4 @@
-﻿using SFB;
+using SFB;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,14 +9,14 @@ public class RM_ImagesLayout : RM_Layout {
 	void Start(){
         SetActiveBtn();
 	}
-	
+
 	public void SetActiveBtn(){
 		imgAnimBtn1.interactable = imgAnimBtn2.interactable = (gm.currentScene == 0)?false:true; // launch screen doesn't have animations
-		
+
 		// if 3 or more frames, the 4 to 6 frames editor is accessible
 		if (RM_ImgAnimLayout.frames.Count < 3)
 			imgAnimBtn2.interactable = false;
-		else 
+		else
 			imgAnimBtn2.interactable = true;
 	}
 	public void ReturnClick(){
@@ -25,7 +25,7 @@ public class RM_ImagesLayout : RM_Layout {
 		UnsetLayouts(gm.imagesLayout);
 	}
 	public void ImgAnimClick(bool isSecond){
-		
+
 		gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>().offset = isSecond ? 3 : 0;
 		gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>().SetActiveBtn();
 		Debug.Log("Img Animes button clicked");
@@ -39,20 +39,13 @@ public class RM_ImagesLayout : RM_Layout {
 #else
         Debug.Log("Import button clicked");
         var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
-        string path = null;
         string[] files = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false);
-        if (files.Length != 0)
-            path = files[0];
-        else
-            return;
+        if (files.Length == 0) return;
 
-		gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0,-35,0);
-        if (gm.currentScene == 0)
-			gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadSprite(path,0,640,400); // the title is a bigger img
-		else
-			gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadSprite(path,0,320,130);
-        // update the miniature
-        gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = RM_SaveLoad.LoadSprite(path,0,36,21);
+        byte[] bytes = System.IO.File.ReadAllBytes(files[0]);
+        var tex = new Texture2D(2, 2);
+        tex.LoadImage(bytes);
+        ProcessImportedTexture(tex);
 #endif
     }
 
@@ -64,35 +57,32 @@ public class RM_ImagesLayout : RM_Layout {
         var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
         if (tex == null) return;
 
-        // Resize to Atari ST resolution
-        // Cover (scene 0): 320x200, Scene images: 320x130
+        ProcessImportedTexture(tex);
+    }
+#endif
+
+    void ProcessImportedTexture(Texture2D tex)
+    {
         int width = 320;
         int height = gm.currentScene == 0 ? 200 : 130;
         RM_TextureScale.Point(tex, width, height);
+        AtariPalette.ApplyPalette(tex);
 
         var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-
         gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0, -35, 0);
         gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sprite;
 
-        // Update thumbnail
+        // Thumbnail
         var thumbTex = new Texture2D(tex.width, tex.height);
         thumbTex.SetPixels(tex.GetPixels());
         RM_TextureScale.Point(thumbTex, 36, 21);
         var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 1f);
         gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = thumbSprite;
 
-        // Persist to WorkingStory immediately so it survives scene changes
-        // Scene 0 = title scene image (0.png). cover.png is set separately in story creation.
+        // Persist to WorkingStory
         if (gm.currentScene == 0)
-        {
             WorkingStory.SaveSprite("0.png", tex);
-        }
         else
-        {
-            // Save as the first frame for this scene
             WorkingStory.SaveSprite($"{gm.currentScene}.1.png", tex);
-        }
     }
-#endif
 }

@@ -323,6 +323,7 @@ public static class WorkingStory
         try
         {
             Texture2D readableTex = MakeTextureReadable(texture);
+            AtariPalette.ApplyPalette(readableTex);
             byte[] pngData = readableTex.EncodeToPNG();
 
             if (readableTex != texture)
