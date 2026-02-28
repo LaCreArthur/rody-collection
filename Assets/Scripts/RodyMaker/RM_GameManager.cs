@@ -37,6 +37,18 @@ public class RM_GameManager : MonoBehaviour {
 
 	void Start() {
 
+#if UNITY_EDITOR
+		if (!WorkingStory.IsLoaded)
+		{
+			var stories = StoryProviderManager.Provider.GetStories();
+			if (stories.Count > 0)
+				WorkingStory.LoadOfficial(stories[0].id);
+			else
+				WorkingStory.CreateNew("Test");
+			Debug.Log("[RM_GameManager] Editor: auto-loaded story for quick test");
+		}
+#endif
+
 		// Load current scene from WorkingStory
 		currentScene = WorkingStory.CurrentSceneIndex;
 

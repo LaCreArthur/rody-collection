@@ -65,21 +65,11 @@ MonoBehaviour:
       - rid: 4463858456922685744
       - rid: 4463858456922685745
       - rid: 4463858456922685746
+      - rid: 3413797293668696064
+      - rid: 3413797293668696065
     m_RuntimeSettings:
-      m_List:
-      - rid: 4463858456922685719
-      - rid: 4463858456922685720
-      - rid: 4463858456922685722
-      - rid: 4463858456922685725
-      - rid: 4463858456922685726
-      - rid: 4463858456922685731
-      - rid: 4463858456922685732
-      - rid: 4463858456922685735
-      - rid: 4463858456922685736
-      - rid: 4463858456922685737
-      - rid: 4463858456922685740
-      - rid: 4463858456922685741
-  m_AssetVersion: 9
+      m_List: []
+  m_AssetVersion: 10
   m_ObsoleteDefaultVolumeProfile: {fileID: 0}
   m_RenderingLayerNames:
   - Default
@@ -102,6 +92,23 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 3413797293668696064
+      type: {class: URPTerrainShaderSetting, ns: UnityEngine.Rendering.Universal,
+        asm: Unity.RenderPipelines.Universal.Runtime}
+      data:
+        m_Version: 0
+        m_IncludeTerrainShaders: 1
+    - rid: 3413797293668696065
+      type: {class: UniversalRenderPipelineRuntimeTerrainShaders, ns: UnityEngine.Rendering.Universal,
+        asm: Unity.RenderPipelines.Universal.Runtime}
+      data:
+        m_Version: 0
+        m_TerrainDetailLit: {fileID: 4800000, guid: f6783ab646d374f94b199774402a5144,
+          type: 3}
+        m_TerrainDetailGrassBillboard: {fileID: 4800000, guid: 29868e73b638e48ca99a19ea58c48d90,
+          type: 3}
+        m_TerrainDetailGrass: {fileID: 4800000, guid: e507fdfead5ca47e8b9a768b51c291a1,
+          type: 3}
     - rid: 4463858456922685715
       type: {class: RayTracingRenderPipelineResources, ns: UnityEngine.Rendering.UnifiedRayTracing,
         asm: Unity.UnifiedRayTracing.Runtime}
@@ -314,12 +321,9 @@ MonoBehaviour:
         m_CoreBlitColorAndDepthPS: {fileID: 4800000, guid: d104b2fc1ca6445babb8e90b0758136b,
           type: 3}
         m_SamplingPS: {fileID: 4800000, guid: 04c410c9937594faa893a11dceb85f7e, type: 3}
-        m_TerrainDetailLit: {fileID: 4800000, guid: f6783ab646d374f94b199774402a5144,
-          type: 3}
-        m_TerrainDetailGrassBillboard: {fileID: 4800000, guid: 29868e73b638e48ca99a19ea58c48d90,
-          type: 3}
-        m_TerrainDetailGrass: {fileID: 4800000, guid: e507fdfead5ca47e8b9a768b51c291a1,
-          type: 3}
+        m_TerrainDetailLit: {fileID: 0}
+        m_TerrainDetailGrassBillboard: {fileID: 0}
+        m_TerrainDetailGrass: {fileID: 0}
     - rid: 4463858456922685732
       type: {class: UniversalRendererResources, ns: UnityEngine.Rendering.Universal,
         asm: Unity.RenderPipelines.Universal.Runtime}
