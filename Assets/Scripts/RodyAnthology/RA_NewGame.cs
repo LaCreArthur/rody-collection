@@ -271,6 +271,9 @@ public class RA_NewGame : MonoBehaviour {
 
 		string filename = WorkingStory.Id + ".rody.json";
 		WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () => {
+			WorkingStory.MarkSaved("download:" + filename);
+			if (sv != null)
+				sv.Reset();
 			feedbackTxt.text = $"L'histoire a été téléchargée!\n{filename}";
 			yeapTxt.text = "ok";
 			buttonYeap.SetActive(true);
@@ -302,6 +305,8 @@ public class RA_NewGame : MonoBehaviour {
 		{
 			File.WriteAllText(savePath, json);
 			WorkingStory.MarkSaved(savePath);
+			if (sv != null)
+				sv.Reset();
 
 			feedbackTxt.text = $"L'histoire a été exportée!\n{Path.GetFileName(savePath)}";
 			yeapTxt.text = "ok";

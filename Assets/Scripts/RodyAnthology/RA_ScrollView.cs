@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class RA_ScrollView : MonoBehaviour {
 
@@ -19,6 +20,15 @@ public class RA_ScrollView : MonoBehaviour {
 	public Transform slotNewGamePrefab;
 	public Transform slotLoadGamePrefab; // Used for import .rody.json files (shows "Importer")
 	public Transform slotExportPrefab;   // Used for export .rody.json files (shows "Exporter")
+
+	[Header("Selected Story Actions")]
+	public GameObject selectedPanel;
+	public Button selectedEditButton;
+	public Button selectedExportButton;
+	public TMP_Text selectedEditLabel;
+	public TMP_Text selectedExportLabel;
+	public Color selectedActionEnabledTextColor = Color.white;
+	public Color selectedActionDisabledTextColor = new Color(0.25f, 0.25f, 0.25f, 1f);
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -42,7 +52,16 @@ public class RA_ScrollView : MonoBehaviour {
 	public RA_NewGame ngScript;
 	bool isScrollViewDisabled = true;
 
+	enum SelectedSlotKind
+	{
+		Official,
+		UserStory,
+		Special,
+		Unknown
+	}
+
 	void Start () {
+		BindSelectedActionButtons();
 		// Always use provider-based initialization for official stories
 		StartCoroutine(InitWithProvider());
 	}
@@ -156,12 +175,6 @@ public class RA_ScrollView : MonoBehaviour {
 			slots.Add(storySlot);
 			userStorySlotIndices.Add(slotIndex);
 			slotIndex++;
-
-			// SLOT EXPORT - only when user story is loaded (use distinct prefab)
-			GameObject exportSlot = Instantiate(slotExportPrefab != null ? slotExportPrefab : slotLoadGamePrefab, content.transform).gameObject;
-			exportSlot.name = "exportStory";
-			slots.Add(exportSlot);
-			slotIndex++;
 		}
 
 		// SLOT IMPORT - ALL platforms (including WebGL)
@@ -257,6 +270,7 @@ public class RA_ScrollView : MonoBehaviour {
 		scrollRect.horizontalNormalizedPosition = selectedButton * step;
 		slotImages[selectedButton].GetComponent<Image>().sprite = selected;
 		slotTitles[selectedButton].SetActive(true);
+		UpdateSelectedActions();
 	}
 
 	/// <summary>
@@ -437,6 +451,160 @@ public class RA_ScrollView : MonoBehaviour {
 				slotTitles[i].SetActive(false);
 			}
 		}
+		UpdateSelectedActions();
+	}
+
+	void BindSelectedActionButtons()
+	{
+		if (selectedEditButton != null)
+		{
+			selectedEditButton.onClick.RemoveListener(OnSelectedEditClick);
+			selectedEditButton.onClick.AddListener(OnSelectedEditClick);
+		}
+
+		if (selectedExportButton != null)
+		{
+			selectedExportButton.onClick.RemoveListener(OnSelectedExportClick);
+			selectedExportButton.onClick.AddListener(OnSelectedExportClick);
+		}
+	}
+
+	void UpdateSelectedActions()
+	{
+		if (selectedPanel == null)
+			return;
+
+		bool hasSelection = slots != null && slots.Count > 0 && selectedButton >= 0 && selectedButton < slots.Count;
+		selectedPanel.SetActive(hasSelection);
+		if (!hasSelection)
+			return;
+
+		if (selectedEditLabel != null)
+			selectedEditLabel.text = "Edit";
+
+		if (selectedExportLabel != null)
+			selectedExportLabel.text = "Export";
+
+		SelectedSlotKind slotKind = GetSelectedSlotKind();
+		bool canEdit = slotKind == SelectedSlotKind.Official || slotKind == SelectedSlotKind.UserStory;
+		bool canExport = slotKind == SelectedSlotKind.UserStory;
+
+		if (selectedEditButton != null)
+			selectedEditButton.interactable = canEdit;
+		if (selectedEditLabel != null)
+			selectedEditLabel.color = canEdit ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
+
+		if (selectedExportButton != null)
+			selectedExportButton.interactable = canExport;
+		if (selectedExportLabel != null)
+			selectedExportLabel.color = canExport ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
+
+		if (slotKind == SelectedSlotKind.Official && selectedEditLabel != null)
+			selectedEditLabel.text = "Fork";
+	}
+
+	SelectedSlotKind GetSelectedSlotKind()
+	{
+		if (slots == null || selectedButton < 0 || selectedButton >= slots.Count)
+			return SelectedSlotKind.Unknown;
+
+		return GetSlotKind(content.transform.GetChild(selectedButton).name);
+	}
+
+	SelectedSlotKind GetSlotKind(string slotName)
+	{
+		if (string.IsNullOrEmpty(slotName))
+			return SelectedSlotKind.Unknown;
+
+		if (slotName == "newGame" || slotName == "importStory")
+			return SelectedSlotKind.Special;
+
+		if (slotName == "workingStory" || slotName.StartsWith("json:"))
+			return SelectedSlotKind.UserStory;
+
+		return SelectedSlotKind.Official;
+	}
+
+	bool LoadSelectedStoryForAction(int index)
+	{
+		if (index < 0 || index >= slots.Count)
+			return false;
+
+		string slotName = content.transform.GetChild(index).name;
+
+		if (slotName == "newGame" || slotName == "importStory")
+			return false;
+
+		if (slotName == "workingStory")
+			return WorkingStory.IsLoaded;
+
+		if (slotName.StartsWith("json:"))
+		{
+			string jsonPath = slotName.Substring(5);
+			try
+			{
+				string json = File.ReadAllText(jsonPath);
+				WorkingStory.LoadFromJson(json, jsonPath);
+			}
+			catch (System.Exception e)
+			{
+				Debug.LogError($"[RA] Failed to load JSON story: {e.Message}");
+				return false;
+			}
+		}
+		else
+		{
+			WorkingStory.LoadOfficial(slotName);
+		}
+
+		if (!WorkingStory.IsLoaded)
+			return false;
+
+		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
+		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+		return true;
+	}
+
+	public void OnSelectedEditClick()
+	{
+		if (isScrollViewDisabled)
+			return;
+
+		if (GetSelectedSlotKind() == SelectedSlotKind.Special)
+			return;
+
+		StartCoroutine(EditSelectedStory());
+	}
+
+	IEnumerator EditSelectedStory()
+	{
+		if (!LoadSelectedStoryForAction(selectedButton))
+			yield break;
+
+		if (WorkingStory.IsOfficial)
+		{
+			WorkingStory.ForkForEditing();
+			PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
+			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+		}
+
+		WorkingStory.CurrentSceneIndex = 0;
+		yield return StartCoroutine(menu.AnimateExitTransition());
+		SceneManager.LoadScene(6);
+	}
+
+	public void OnSelectedExportClick()
+	{
+		if (isScrollViewDisabled)
+			return;
+
+		if (GetSelectedSlotKind() != SelectedSlotKind.UserStory)
+			return;
+
+		if (!LoadSelectedStoryForAction(selectedButton))
+			return;
+
+		ngScript.OnExportClick();
 	}
 
 	void OnClick() {
@@ -478,10 +646,6 @@ public class RA_ScrollView : MonoBehaviour {
 		else if (slotName == "importStory") {
 			ngScript.OnImportClick();
 		}
-		// export the current user story
-		else if (slotName == "exportStory") {
-			ngScript.OnExportClick();
-		}
 		// play the current working story
 		else if (slotName == "workingStory") {
 			// WorkingStory is already loaded, just start playing
@@ -498,26 +662,14 @@ public class RA_ScrollView : MonoBehaviour {
 			// Load story into WorkingStory BEFORE scene transition
 			if (slotName.StartsWith("json:"))
 			{
-				// JSON user story - load from file
-				string jsonPath = slotName.Substring(5);
-				try
-				{
-					string json = File.ReadAllText(jsonPath);
-					WorkingStory.LoadFromJson(json, jsonPath);
-					PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-					Debug.Log($"[RA] Loaded JSON story: {WorkingStory.Title}");
-				}
-				catch (System.Exception e)
-				{
-					Debug.LogError($"[RA] Failed to load JSON story: {e.Message}");
+				if (!LoadSelectedStoryForAction(index))
 					yield break;
-				}
+				Debug.Log($"[RA] Loaded JSON story: {WorkingStory.Title}");
 			}
 			else
 			{
-				// Official story - load from Resources via WorkingStory
-				WorkingStory.LoadOfficial(slotName);
-				PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+				if (!LoadSelectedStoryForAction(index))
+					yield break;
 				Debug.Log($"[RA] Loaded official story: {WorkingStory.Title}");
 			}
 
