@@ -548,8 +548,12 @@ MonoBehaviour:
   selectedPanel: {fileID: 1395575914}
   selectedEditButton: {fileID: 853070597}
   selectedExportButton: {fileID: 1138676548}
+  selectedImportButton: {fileID: 625240008}
+  selectedNewButton: {fileID: 2030729837}
   selectedEditLabel: {fileID: 1351121999}
   selectedExportLabel: {fileID: 1193261899}
+  selectedImportLabel: {fileID: 2056663654}
+  selectedNewLabel: {fileID: 982254592}
   selectedActionEnabledTextColor: {r: 1, g: 1, b: 1, a: 1}
   selectedActionDisabledTextColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
   loadingUI: {fileID: 235686194}

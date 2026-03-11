@@ -25,8 +25,12 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject selectedPanel;
 	public Button selectedEditButton;
 	public Button selectedExportButton;
+	public Button selectedImportButton;
+	public Button selectedNewButton;
 	public TMP_Text selectedEditLabel;
 	public TMP_Text selectedExportLabel;
+	public TMP_Text selectedImportLabel;
+	public TMP_Text selectedNewLabel;
 	public Color selectedActionEnabledTextColor = Color.white;
 	public Color selectedActionDisabledTextColor = new Color(0.25f, 0.25f, 0.25f, 1f);
 
@@ -56,7 +60,6 @@ public class RA_ScrollView : MonoBehaviour {
 	{
 		Official,
 		UserStory,
-		Special,
 		Unknown
 	}
 
@@ -177,12 +180,6 @@ public class RA_ScrollView : MonoBehaviour {
 			slotIndex++;
 		}
 
-		// SLOT IMPORT - ALL platforms (including WebGL)
-		GameObject importSlot = Instantiate(slotLoadGamePrefab, content.transform).gameObject;
-		importSlot.name = "importStory";
-		slots.Add(importSlot);
-		slotIndex++;
-
 		FinalizeSlots(slotIndex);
 	}
 
@@ -231,12 +228,6 @@ public class RA_ScrollView : MonoBehaviour {
 
 	void FinalizeSlots(int slotCount)
 	{
-		// SLOT NEW GAME - ALL platforms (including WebGL)
-		GameObject newGameSlot = Instantiate(slotNewGamePrefab, content.transform).gameObject;
-		newGameSlot.name = "newGame";
-		slots.Add(newGameSlot);
-		slotCount += 1;
-
 		// Handle empty slot list
 		if (slots.Count == 0)
 		{
@@ -467,6 +458,18 @@ public class RA_ScrollView : MonoBehaviour {
 			selectedExportButton.onClick.RemoveListener(OnSelectedExportClick);
 			selectedExportButton.onClick.AddListener(OnSelectedExportClick);
 		}
+
+		if (selectedImportButton != null)
+		{
+			selectedImportButton.onClick.RemoveListener(OnSelectedImportClick);
+			selectedImportButton.onClick.AddListener(OnSelectedImportClick);
+		}
+
+		if (selectedNewButton != null)
+		{
+			selectedNewButton.onClick.RemoveListener(OnSelectedNewClick);
+			selectedNewButton.onClick.AddListener(OnSelectedNewClick);
+		}
 	}
 
 	void UpdateSelectedActions()
@@ -485,6 +488,12 @@ public class RA_ScrollView : MonoBehaviour {
 		if (selectedExportLabel != null)
 			selectedExportLabel.text = "Export";
 
+		if (selectedImportLabel != null)
+			selectedImportLabel.text = "Import";
+
+		if (selectedNewLabel != null)
+			selectedNewLabel.text = "New";
+
 		SelectedSlotKind slotKind = GetSelectedSlotKind();
 		bool canEdit = slotKind == SelectedSlotKind.Official || slotKind == SelectedSlotKind.UserStory;
 		bool canExport = slotKind == SelectedSlotKind.UserStory;
@@ -498,6 +507,16 @@ public class RA_ScrollView : MonoBehaviour {
 			selectedExportButton.interactable = canExport;
 		if (selectedExportLabel != null)
 			selectedExportLabel.color = canExport ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
+
+		if (selectedImportButton != null)
+			selectedImportButton.interactable = true;
+		if (selectedImportLabel != null)
+			selectedImportLabel.color = selectedActionEnabledTextColor;
+
+		if (selectedNewButton != null)
+			selectedNewButton.interactable = true;
+		if (selectedNewLabel != null)
+			selectedNewLabel.color = selectedActionEnabledTextColor;
 
 		if (slotKind == SelectedSlotKind.Official && selectedEditLabel != null)
 			selectedEditLabel.text = "Fork";
@@ -516,9 +535,6 @@ public class RA_ScrollView : MonoBehaviour {
 		if (string.IsNullOrEmpty(slotName))
 			return SelectedSlotKind.Unknown;
 
-		if (slotName == "newGame" || slotName == "importStory")
-			return SelectedSlotKind.Special;
-
 		if (slotName == "workingStory" || slotName.StartsWith("json:"))
 			return SelectedSlotKind.UserStory;
 
@@ -531,9 +547,6 @@ public class RA_ScrollView : MonoBehaviour {
 			return false;
 
 		string slotName = content.transform.GetChild(index).name;
-
-		if (slotName == "newGame" || slotName == "importStory")
-			return false;
 
 		if (slotName == "workingStory")
 			return WorkingStory.IsLoaded;
@@ -570,9 +583,6 @@ public class RA_ScrollView : MonoBehaviour {
 		if (isScrollViewDisabled)
 			return;
 
-		if (GetSelectedSlotKind() == SelectedSlotKind.Special)
-			return;
-
 		StartCoroutine(EditSelectedStory());
 	}
 
@@ -607,6 +617,22 @@ public class RA_ScrollView : MonoBehaviour {
 		ngScript.OnExportClick();
 	}
 
+	public void OnSelectedImportClick()
+	{
+		if (isScrollViewDisabled)
+			return;
+
+		ngScript.OnImportClick();
+	}
+
+	public void OnSelectedNewClick()
+	{
+		if (isScrollViewDisabled)
+			return;
+
+		newGamePanel.SetActive(true);
+	}
+
 	void OnClick() {
 		if (isScrollViewDisabled)
 			return; // don't do anything if scroll view is disabled
@@ -638,16 +664,8 @@ public class RA_ScrollView : MonoBehaviour {
 
 		string slotName = content.transform.GetChild(index).name;
 
-		// new empty game
-		if (slotName == "newGame") {
-			newGamePanel.SetActive(true);
-		}
-		// import a .rody.json file
-		else if (slotName == "importStory") {
-			ngScript.OnImportClick();
-		}
 		// play the current working story
-		else if (slotName == "workingStory") {
+		if (slotName == "workingStory") {
 			// WorkingStory is already loaded, just start playing
 			yield return StartCoroutine(menu.AnimateExitTransition());
 			PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
