@@ -10,8 +10,15 @@ public class ClickHandler : MonoBehaviour {
 
 		if (gm.clickIntro) {
 			Debug.Log ("next clicked in intro");
-			if (nextScene > WorkingStory.SceneCount) // it was the last scene, load credits, no objects to found
+
+			// Final scenes can still have an object phase. Only skip straight to credits
+			// when there is no primary object target to enter after the intro.
+			if (nextScene > WorkingStory.SceneCount && !HasPrimaryObjectPhase()) {
+				gm.intro.sceneMusic.Stop();
+				gm.clickIntro = false;
 				SceneManager.LoadScene(5);
+				return;
+			}
 
 			gm.intro.sceneMusic.Stop();
 			gm.introOver = true;
@@ -23,6 +30,11 @@ public class ClickHandler : MonoBehaviour {
             WorkingStory.CurrentSceneIndex = nextScene;
 			SceneManager.LoadScene(3);
         }
+	}
+
+	bool HasPrimaryObjectPhase()
+	{
+		return gm.obj != null && gm.obj.Count > 0 && gm.objNear != null && gm.objNear.Count > 0;
 	}
 
 	public void LaunchCredit() {

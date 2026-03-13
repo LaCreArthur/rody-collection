@@ -153,6 +153,21 @@ public class Scene : MonoBehaviour {
 		}
 	}
 
+	void ActivateNextObjectTargets(List<GameObject> nearTargets, List<GameObject> targets, string stepName)
+	{
+		int next = targets.Count - objectsToFind;
+		if (next <= 0 || next >= targets.Count || next >= nearTargets.Count)
+		{
+			Debug.LogWarning($"[Scene] Ignoring malformed {stepName} target list progression (next={next}, targets={targets.Count}, nearTargets={nearTargets.Count})");
+			return;
+		}
+
+		nearTargets[next - 1].SetActive(false);
+		targets[next - 1].SetActive(false);
+		nearTargets[next].SetActive(true);
+		targets[next].SetActive(true);
+	}
+
 	IEnumerator oui() {
 		gm.MasticoAnimator.SetTrigger("Process");
 		yield return new WaitForSeconds(gm.MasticoAnimator.GetCurrentAnimatorClipInfo(0).Length);
@@ -171,28 +186,15 @@ public class Scene : MonoBehaviour {
 		objectsToFind--;
 		if (objectsToFind > 0) {
 			gm.clickObj = true; // other objects need to be found
-			int next;
 			switch (step) {
 				case 1: // obj
-					next = gm.obj.Count - objectsToFind;
-					gm.objNear[next-1].SetActive(false);
-					gm.obj[next-1].SetActive(false);
-					gm.objNear[next].SetActive(true);
-					gm.obj[next].SetActive(true);
+					ActivateNextObjectTargets(gm.objNear, gm.obj, "obj");
 					break;
 				case 2: // ngp
-					next = gm.ngp.Count - objectsToFind;
-					gm.ngpNear[next-1].SetActive(false);
-					gm.ngp[next-1].SetActive(false);
-					gm.ngpNear[next].SetActive(true);
-					gm.ngp[next].SetActive(true);
+					ActivateNextObjectTargets(gm.ngpNear, gm.ngp, "ngp");
 					break;
 				case 3: // fsw
-					next = gm.fsw.Count - objectsToFind;
-					gm.fswNear[next-1].SetActive(false);
-					gm.fsw[next-1].SetActive(false);
-					gm.fswNear[next].SetActive(true);
-					gm.fsw[next].SetActive(true);
+					ActivateNextObjectTargets(gm.fswNear, gm.fsw, "fsw");
 					break;
 				default: break;
 			}

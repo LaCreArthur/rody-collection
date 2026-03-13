@@ -39,10 +39,23 @@ public class SoundManager : MonoBehaviour
     // Takes a list of phonemes to be played
     public void PlayDialog(List<int> phonemeList, float pitch = 1f)
     {
+        if (phonemeList == null)
+        {
+            Debug.LogWarning("[SoundManager] PlayDialog called with null phoneme list");
+            isPlaying = false;
+            soundSource.pitch = 1f;
+            return;
+        }
+
         if (phonemeList.Count > 0)
         {
-            soundSource.clip = phonemes[phonemeList[0]];
-            //Debug.Log(phonemeList [0]);
+            if (!TryAssignPhonemeClip(phonemeList))
+            {
+                phonemeList.RemoveAt(0);
+                PlayDialog(phonemeList, pitch);
+                return;
+            }
+
             StartCoroutine(playPhoneme(phonemeList, pitch));
         }
         else
@@ -56,6 +69,13 @@ public class SoundManager : MonoBehaviour
     // Times phonemes
     IEnumerator playPhoneme(List<int> phonemeList, float pitch = 1f)
     {
+        if (soundSource.clip == null)
+        {
+            Debug.LogWarning($"[SoundManager] playPhoneme started without a clip. Remaining sequence: {FormatPhonemeSequence(phonemeList)}");
+            isPlaying = false;
+            yield break;
+        }
+
         soundSource.Play();
         float crossTime = 0.01f;
         if (pitch < 1f) {
@@ -82,6 +102,43 @@ public class SoundManager : MonoBehaviour
             soundSource.pitch = pitch;
             PlayDialog(phonemeList, pitch);
         }
+    }
+
+    bool TryAssignPhonemeClip(List<int> phonemeList)
+    {
+        int phonemeIndex = phonemeList[0];
+        if (phonemes == null)
+        {
+            Debug.LogError($"[SoundManager] Phoneme array is null. Cannot play sequence: {FormatPhonemeSequence(phonemeList)}");
+            return false;
+        }
+
+        if (phonemeIndex < 0 || phonemeIndex >= phonemes.Length)
+        {
+            Debug.LogWarning($"[SoundManager] Ignoring out-of-range phoneme index {phonemeIndex}. Array length={phonemes.Length}. Remaining sequence: {FormatPhonemeSequence(phonemeList)}");
+            return false;
+        }
+
+        AudioClip clip = phonemes[phonemeIndex];
+        if (clip == null)
+        {
+            Debug.LogWarning($"[SoundManager] Ignoring missing phoneme clip at index {phonemeIndex}. Remaining sequence: {FormatPhonemeSequence(phonemeList)}");
+            return false;
+        }
+
+        soundSource.clip = clip;
+        return true;
+    }
+
+    string FormatPhonemeSequence(List<int> phonemeList)
+    {
+        if (phonemeList == null)
+            return "<null>";
+
+        if (phonemeList.Count == 0)
+            return "<empty>";
+
+        return string.Join(",", phonemeList);
     }
 
     public IEnumerator MasticoSpeak(List<int> phonemes, bool process)
