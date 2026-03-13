@@ -242,6 +242,9 @@ Natural French text → phoneme conversion for easier dialogue editing.
 - Dictionary of ~500 common French words
 - "Learn" feature for unknown words
 - Local JSON storage
+- First ship this as assisted conversion, not full automation: suggest phonemes from corpus + rules, highlight low-confidence segments, and let the author correct them.
+- Add a normalization pass before dictionary lookup. Current shipped phoneme strings contain dirty tokens (`!`, `.p`, `M`, `ca`, `il`, `w`) that should not be treated as valid canonical phonemes.
+- Source of truth for the alphabet is the runtime parser in `SoundManager` / `P.cs`, not the story corpus. The corpus is useful training data, but it is not perfectly clean.
 
 ### Other
 

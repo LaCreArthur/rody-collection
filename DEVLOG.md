@@ -4,6 +4,79 @@
 
 ---
 
+## 2026-03-12: Phoneme Conversion Investigation
+
+**Changes**:
+- Studied the runtime phoneme parser and token inventory in `SoundManager` / `P.cs`.
+- Audited the bundled story JSONs as a text-to-phoneme corpus instead of treating them as opaque content.
+- Logged the conclusion that assisted conversion is the right first implementation, not naive full automation.
+
+**What worked**:
+- The shipped stories already provide hundreds of aligned French text and phoneme examples, which is enough to bootstrap a dictionary and rule set.
+- The current runtime contract is simple and stable: underscore-separated tokens, spaces between words, automatic pause per word.
+- The roadmap already points in the right direction with a phoneme dictionary and learn feature.
+
+**Hindsight**:
+- The system is a custom retro spelling language, not generic French phonetics. Treating it like IPA would be wrong from the start.
+- The corpus has dirty tokens (`!`, `.p`, `M`, `ca`, `il`, `w`) that the runtime does not recognize cleanly, so normalization has to happen before any converter work.
+- The first useful version should generate suggestions, expose uncertainty, and let authors correct them in-editor. Pretending it can be perfect on day one would be bullshit.
+
+## 2026-03-12: RM_Main Tooltip Prototype Stabilized
+
+**Changes**:
+- Added a reusable hover tooltip component for editor UI controls.
+- Replaced the bad save-status-panel tooltip hack with a dedicated tooltip panel authored in `6_RM_Main` and wired into `RM_MainLayout`.
+- Verified the pattern on two buttons first: save and intro.
+
+**What worked**:
+- A dedicated tooltip panel avoids hover flicker and keeps the user visually anchored on the hovered button.
+- Auto-sizing from text plus padding produces a cleaner retro UI fit than a fixed banner.
+- Edge handling matters immediately: the tooltip needs horizontal clamping and vertical flipping to stay inside the canvas.
+
+**Hindsight**:
+- Prototype one tooltip, then two, before touching the rest of a complex scene. That catches architectural mistakes early.
+- Inspector-wired scene references are better than runtime-generated tooltip UI for a Unity editor screen like this; the object is visible, styleable, and debuggable in-scene.
+- Animation polish should be treated as a later pass. Behavior stability matters first.
+
+## 2026-03-12: 2_Menu Fixed Grid Placeholder Rules
+
+**Changes**:
+- Documented the 16-slot preview grid in `2_Menu` as an intentional Atari-style limitation, not a pagination bug.
+- Recorded the safe runtime rule for short stories: unused slots keep placeholder art, tint their inner image dark grey, and are non-interactable.
+
+**Root cause**:
+- `MenuManager` originally only replaced preview art when a scene thumbnail existed.
+- For stories with fewer than 16 scenes, unused slots could keep stale or misleading visuals and still behave like selectable scenes unless disabled explicitly.
+
+**Hindsight**:
+- Fixed-layout nostalgia UIs still need explicit empty-state rules.
+- Placeholder behavior should be designed, not left as whatever the serialized scene happened to contain.
+- Future refactor should move selection ownership out of `Clickable.Update()` polling and into explicit menu-state events.
+
+## 2026-03-12: Final Scene Intro Skip Bug
+
+**Changes**:
+- Fixed `ClickHandler.NextClick()` so pressing `Next` during intro on the final scene no longer jumps straight to credits when that scene still has an object phase.
+- Added a safe fallback: only skip directly to credits from intro if the current scene has no primary `obj` target phase at all.
+
+**Root cause**:
+- `ClickHandler.NextClick()` treated `CurrentSceneIndex + 1 > SceneCount` as proof that the current scene had no gameplay left.
+- That assumption is wrong: the object-search phase belongs to the current scene, including the last one.
+- This was easy to misdiagnose because `2_Menu.unity` also serializes `MenuManager.sceneToLoad`; manually selecting scene 2 in-editor made the bug look like malformed UGC was skipping object gameplay.
+
+**Observed failure mode**:
+- Start directly on the final scene of a 2-scene story.
+- Click `Next` in intro.
+- Log shows `next clicked in intro`, then credits load immediately.
+- Object handlers (`Founded`, `Near`, `Miss`) never become relevant because gameplay never enters the object phase.
+
+**Hindsight**:
+- Do not decide credits routing from scene count inside intro UI handlers.
+- Let scene progression own the transition: last-scene object completion can still advance to credits naturally on the next gameplay transition.
+- When testing from `2_Menu`, treat serialized scene-selection state as part of the repro. The scene asset can preserve a non-default starting scene across runs.
+
+---
+
 ## 2026-01-09: UI/UX Enhancement Planning
 
 **Changes**: Created implementation plan for menu story slot floating action buttons
