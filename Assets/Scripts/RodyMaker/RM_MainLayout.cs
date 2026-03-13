@@ -12,6 +12,13 @@ using UnityEngine.UI;
 /// </summary>
 public class RM_MainLayout : RM_Layout
 {
+	const string SaveButtonName = "SaveButton";
+	const string SaveButtonTooltipText = "Exporte l'histoire en fichier .rody.json";
+    const string IntroButtonTooltipText = "Modifie le titre, les dialogues et la musique de la scène";
+    const float TooltipHorizontalPadding = 10f;
+    const float TooltipVerticalPadding = 6f;
+    const float TooltipMaxInnerWidth = 260f;
+
     [Header("Scene Thumbnails")]
     [FormerlySerializedAs("notActiveColor")]
     public Color inactiveSceneColor;
@@ -39,10 +46,188 @@ public class RM_MainLayout : RM_Layout
     public GameObject saveStatusPanel;
     public Text saveStatusText;
 
+	[Header("Tooltip")]
+	public GameObject tooltipPanel;
+	public Text tooltipPanelText;
+
+    Coroutine hideSaveStatusCoroutine;
+    Canvas rootCanvas;
+    Camera uiCamera;
+	RectTransform tooltipTextRect;
+
     void Start()
     {
         UpdateButtonStates();
         saveStatusPanel.SetActive(false);
+        InitializeTooltip();
+        ConfigurePrototypeTooltips();
+    }
+
+    void InitializeTooltip()
+    {
+        if (tooltipPanel == null || tooltipPanelText == null)
+        {
+            Debug.LogWarning("[RM_MainLayout] Tooltip panel references are not wired");
+            return;
+        }
+
+        Canvas buttonCanvas = tooltipPanel.GetComponentInParent<Canvas>();
+        if (buttonCanvas == null)
+        {
+            Debug.LogWarning("[RM_MainLayout] Cannot initialize tooltip without parent Canvas");
+            return;
+        }
+
+        rootCanvas = buttonCanvas.rootCanvas != null ? buttonCanvas.rootCanvas : buttonCanvas;
+        uiCamera = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera;
+
+        CanvasGroup tooltipGroup = tooltipPanel.GetComponent<CanvasGroup>();
+        if (tooltipGroup != null)
+        {
+            tooltipGroup.blocksRaycasts = false;
+            tooltipGroup.interactable = false;
+        }
+
+        Image background = tooltipPanel.GetComponent<Image>();
+        if (background != null)
+            background.raycastTarget = false;
+
+        tooltipPanelText.raycastTarget = false;
+        tooltipTextRect = tooltipPanelText.rectTransform;
+        tooltipTextRect.anchorMin = new Vector2(0f, 1f);
+        tooltipTextRect.anchorMax = new Vector2(0f, 1f);
+        tooltipTextRect.pivot = new Vector2(0f, 1f);
+        tooltipPanel.SetActive(false);
+    }
+
+    void ConfigurePrototypeTooltips()
+    {
+        AttachTooltipToButton(SaveButtonName, SaveButtonTooltipText);
+		AttachTooltipToButton(introButton, IntroButtonTooltipText);
+    }
+
+    void AttachTooltipToButton(string buttonName, string tooltipText)
+    {
+        GameObject buttonObject = GameObject.Find(buttonName);
+        if (buttonObject == null)
+        {
+            Debug.LogWarning($"[RM_MainLayout] Tooltip target not found: {buttonName}");
+            return;
+        }
+
+        RM_ButtonTooltip tooltip = buttonObject.GetComponent<RM_ButtonTooltip>();
+        if (tooltip == null)
+            tooltip = buttonObject.AddComponent<RM_ButtonTooltip>();
+
+        tooltip.Configure(this, tooltipText);
+    }
+
+    void AttachTooltipToButton(Button button, string tooltipMessage)
+    {
+        if (button == null)
+        {
+            Debug.LogWarning("[RM_MainLayout] Tooltip target button reference is not wired");
+            return;
+        }
+
+        RM_ButtonTooltip tooltip = button.GetComponent<RM_ButtonTooltip>();
+        if (tooltip == null)
+            tooltip = button.gameObject.AddComponent<RM_ButtonTooltip>();
+
+        tooltip.Configure(this, tooltipMessage);
+    }
+
+    public void ShowTooltip(string message, RectTransform target)
+    {
+        if (tooltipPanel == null || tooltipPanelText == null || target == null)
+            return;
+
+        tooltipPanelText.text = message;
+		UpdateTooltipSize();
+        PositionTooltip(target);
+        tooltipPanel.SetActive(true);
+    }
+
+    public void HideTooltip()
+    {
+        if (tooltipPanel == null)
+            return;
+
+        tooltipPanel.SetActive(false);
+    }
+
+    void PositionTooltip(RectTransform target)
+    {
+        Vector3[] corners = new Vector3[4];
+        target.GetWorldCorners(corners);
+        Vector3 bottomCenterWorld = (corners[0] + corners[3]) * 0.5f;
+        Vector3 topCenterWorld = (corners[1] + corners[2]) * 0.5f;
+
+        RectTransform canvasRect = rootCanvas.transform as RectTransform;
+        RectTransform panelRect = tooltipPanel.transform as RectTransform;
+        if (canvasRect == null || panelRect == null)
+            return;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
+
+        Vector2 belowPosition = ScreenToCanvasPoint(canvasRect, bottomCenterWorld) + new Vector2(0f, -8f);
+        Vector2 abovePosition = ScreenToCanvasPoint(canvasRect, topCenterWorld) + new Vector2(0f, 8f);
+        Vector2 tooltipSize = panelRect.rect.size;
+        Rect canvasBounds = canvasRect.rect;
+
+        panelRect.pivot = new Vector2(0.5f, 1f);
+        Vector2 finalPosition = belowPosition;
+
+        float belowBottom = finalPosition.y - tooltipSize.y;
+        if (belowBottom < canvasBounds.yMin)
+        {
+            panelRect.pivot = new Vector2(0.5f, 0f);
+            finalPosition = abovePosition;
+        }
+
+        float halfWidth = tooltipSize.x * 0.5f;
+        finalPosition.x = Mathf.Clamp(finalPosition.x, canvasBounds.xMin + halfWidth, canvasBounds.xMax - halfWidth);
+
+        if (panelRect.pivot.y > 0.5f)
+            finalPosition.y = Mathf.Clamp(finalPosition.y, canvasBounds.yMin + tooltipSize.y, canvasBounds.yMax);
+        else
+            finalPosition.y = Mathf.Clamp(finalPosition.y, canvasBounds.yMin, canvasBounds.yMax - tooltipSize.y);
+
+        panelRect.anchoredPosition = finalPosition;
+    }
+
+    void UpdateTooltipSize()
+    {
+        RectTransform panelRect = tooltipPanel.transform as RectTransform;
+        if (panelRect == null || tooltipTextRect == null)
+            return;
+
+        TextGenerationSettings settings = tooltipPanelText.GetGenerationSettings(new Vector2(TooltipMaxInnerWidth, 0f));
+        float preferredWidth = tooltipPanelText.cachedTextGeneratorForLayout.GetPreferredWidth(tooltipPanelText.text, settings) / tooltipPanelText.pixelsPerUnit;
+        float innerWidth = Mathf.Min(preferredWidth, TooltipMaxInnerWidth);
+
+        settings = tooltipPanelText.GetGenerationSettings(new Vector2(innerWidth, 0f));
+        float innerHeight = tooltipPanelText.cachedTextGeneratorForLayout.GetPreferredHeight(tooltipPanelText.text, settings) / tooltipPanelText.pixelsPerUnit;
+        innerHeight = Mathf.Max(innerHeight, tooltipPanelText.fontSize);
+
+        tooltipTextRect.sizeDelta = new Vector2(innerWidth, innerHeight);
+        tooltipTextRect.anchoredPosition = new Vector2(TooltipHorizontalPadding, -TooltipVerticalPadding);
+        panelRect.sizeDelta = new Vector2(innerWidth + (TooltipHorizontalPadding * 2f), innerHeight + (TooltipVerticalPadding * 2f));
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipTextRect);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
+    }
+
+    Vector2 ScreenToCanvasPoint(RectTransform canvasRect, Vector3 worldPoint)
+    {
+        Vector2 anchoredPosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect,
+            RectTransformUtility.WorldToScreenPoint(uiCamera, worldPoint),
+            uiCamera,
+            out anchoredPosition);
+
+        return anchoredPosition;
     }
 
     public void UpdateButtonStates() => objectsButton.interactable = introButton.interactable = gm.currentScene != 0;
@@ -205,15 +390,19 @@ public class RM_MainLayout : RM_Layout
     {
         if (saveStatusText != null)
         {
+			if (hideSaveStatusCoroutine != null)
+				StopCoroutine(hideSaveStatusCoroutine);
+
             saveStatusText.text = message;
             saveStatusPanel.SetActive(true);
-            StartCoroutine(HideSaveStatusAfter(duration));
+			hideSaveStatusCoroutine = StartCoroutine(HideSaveStatusAfter(duration));
         }
     }
 
     IEnumerator HideSaveStatusAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);
+		hideSaveStatusCoroutine = null;
         if (saveStatusText != null)
             saveStatusPanel.SetActive(false);
     }

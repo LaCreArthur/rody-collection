@@ -16,7 +16,7 @@ public class RM_ImgAnimLayout : RM_Layout {
     public void SetActiveBtn() {
         Debug.Log("RM_ImgAnimLayout::SetButton : frameCount = " + frames.Count);
         for (int i=0; i<3; i++) {
-            frameBtn[i].interactable = i + offset <= frames.Count ? true: false;
+            frameBtn[i].interactable = i + offset < frames.Count;
         }
     }
 
@@ -41,10 +41,17 @@ public class RM_ImgAnimLayout : RM_Layout {
         else
             return;
 
-        // i + offset <= frames.Count because it should not be possible to add the i+1 frame if the i doesn't exist
-        if ((i + offset) >= frames.Count)
+        // Allow replacing an existing frame or appending the next sequential frame only.
+        int frameIndex = i + offset;
+        if (frameIndex > frames.Count)
+        {
+            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring frame import at missing index {frameIndex} (count={frames.Count})");
+            return;
+        }
+
+        if (frameIndex == frames.Count)
             frames.Add(RM_SaveLoad.LoadSprite(path,0,320,130));
-		else frames[i + offset] = RM_SaveLoad.LoadSprite(path,0,320,130);
+		else frames[frameIndex] = RM_SaveLoad.LoadSprite(path,0,320,130);
 
         SetActiveBtn();
 #endif
@@ -63,7 +70,13 @@ public class RM_ImgAnimLayout : RM_Layout {
         var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
 
         int frameIndex = _pendingFrameIndex + offset;
-        if (frameIndex >= frames.Count)
+        if (frameIndex > frames.Count)
+        {
+            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring WebGL frame import at missing index {frameIndex} (count={frames.Count})");
+            return;
+        }
+
+        if (frameIndex == frames.Count)
             frames.Add(sprite);
         else
             frames[frameIndex] = sprite;
