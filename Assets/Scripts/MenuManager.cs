@@ -4,12 +4,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour {
+	static readonly Color EnabledPreviewColor = Color.white;
+	static readonly Color DisabledPreviewColor = new Color(0.25f, 0.25f, 0.25f, 1f);
 
 	public GameObject[] buttons;
 	public GameObject[] scenes;
 
 	public int sceneToLoad = 1;
 	public int actionToLoad = 0;
+
+	Sprite[] defaultScenePreviewSprites;
 
 	public void ClickButton(GameObject button) {
 		Debug.Log(button.name);
@@ -40,15 +44,41 @@ public class MenuManager : MonoBehaviour {
 	/// </summary>
 	IEnumerator InitFromWorkingStory()
 	{
+		CacheDefaultScenePreviewSprites();
+
 		// Load scene thumbnails from WorkingStory
-		for (int i = 0; i < 16; i++)
+		int visibleSceneCount = Mathf.Min(WorkingStory.SceneCount, scenes.Length);
+		Toggle firstAvailableToggle = null;
+		for (int i = 0; i < scenes.Length; i++)
 		{
 			int sceneIndex = i + 1;
-			GameObject image = scenes[i].transform.GetChild(0).gameObject;
+			GameObject sceneSlot = scenes[i];
+			GameObject image = sceneSlot.transform.GetChild(0).gameObject;
+			Image previewImage = image != null ? image.GetComponent<Image>() : null;
+			Toggle toggle = sceneSlot.GetComponent<Toggle>();
+			bool hasScene = sceneIndex <= visibleSceneCount;
 
-			var sprite = WorkingStory.LoadSprite($"{sceneIndex}.1.png", 320, 130);
-			if (sprite != null && image != null)
-				image.GetComponent<Image>().sprite = sprite;
+			if (previewImage != null)
+			{
+				Sprite sprite = hasScene ? WorkingStory.LoadSprite($"{sceneIndex}.1.png", 320, 130) : null;
+				previewImage.sprite = sprite != null ? sprite : defaultScenePreviewSprites[i];
+				previewImage.color = hasScene ? EnabledPreviewColor : DisabledPreviewColor;
+			}
+
+			if (toggle != null)
+			{
+				toggle.interactable = hasScene;
+				if (!hasScene)
+					toggle.isOn = false;
+				else if (firstAvailableToggle == null)
+					firstAvailableToggle = toggle;
+			}
+		}
+
+		if (firstAvailableToggle != null)
+		{
+			sceneToLoad = 1;
+			firstAvailableToggle.isOn = true;
 		}
 
 		yield return null; // Allow frame to render
@@ -83,6 +113,23 @@ public class MenuManager : MonoBehaviour {
 		}
 
 		Cursor.visible = true;
+	}
+
+	void CacheDefaultScenePreviewSprites()
+	{
+		if (defaultScenePreviewSprites != null && defaultScenePreviewSprites.Length == scenes.Length)
+			return;
+
+		defaultScenePreviewSprites = new Sprite[scenes.Length];
+		for (int i = 0; i < scenes.Length; i++)
+		{
+			if (scenes[i] == null || scenes[i].transform.childCount == 0)
+				continue;
+
+			Image previewImage = scenes[i].transform.GetChild(0).GetComponent<Image>();
+			if (previewImage != null)
+				defaultScenePreviewSprites[i] = previewImage.sprite;
+		}
 	}
 
 	public void OnNext() {
