@@ -8,6 +8,11 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 public class RA_ScrollView : MonoBehaviour {
+	const string EditActionLabel = "Éditer";
+	const string ExportActionLabel = "Exporter";
+	const string ImportActionLabel = "Importer";
+	const string NewActionLabel = "Nouveau";
+	const string ForkActionLabel = "Dupliquer";
 
 	public Sprite selected;
 	public Sprite notSelected;
@@ -77,7 +82,7 @@ public class RA_ScrollView : MonoBehaviour {
 	IEnumerator InitWithProvider()
 	{
 		Debug.Log("[RA_ScrollView] InitWithProvider() started");
-		if (loadingUI != null) loadingUI.SetActive(true);
+		loadingUI.SetActive(true);
 
 		// Wait for provider to be ready
 		if (!StoryProviderManager.IsReady)
@@ -102,7 +107,7 @@ public class RA_ScrollView : MonoBehaviour {
 			Debug.Log("[RA_ScrollView] StoryProviderManager already ready");
 		}
 
-		if (loadingUI != null) loadingUI.SetActive(false);
+		loadingUI.SetActive(false);
 		Debug.Log("[RA_ScrollView] Loading stories from provider...");
 		InitFromProvider();
 		Debug.Log("[RA_ScrollView] InitWithProvider() complete");
@@ -357,6 +362,41 @@ public class RA_ScrollView : MonoBehaviour {
 		InitFromProvider();
 	}
 
+	public void ResetAndSelectWorkingStory()
+	{
+		Reset();
+		StartCoroutine(ScrollToSlotByName("workingStory"));
+	}
+
+	IEnumerator ScrollToSlotByName(string slotName)
+	{
+		yield return null;
+		Canvas.ForceUpdateCanvases();
+
+		int index = -1;
+		for (int i = 0; i < slots.Count; i++)
+		{
+			if (content.transform.GetChild(i).name == slotName)
+			{
+				index = i;
+				break;
+			}
+		}
+
+		if (index < 0)
+			yield break;
+
+		if (selectedButton == index)
+		{
+			float targetPos = (index * step) + (middleSlot - index) * 2f / 100f;
+			scrollRect.horizontalNormalizedPosition = targetPos;
+			updateSlotSprites(index);
+			yield break;
+		}
+
+		SetMoveToValues(index);
+	}
+
 	// Update is called once per frame
 	void Update () {
 		isScrollViewDisabled = ngScript.errorPanel.activeSelf || ngScript.feedbackPanel.activeSelf || ngScript.newGamePanel.activeSelf || sm.isRollPlaying;
@@ -447,79 +487,49 @@ public class RA_ScrollView : MonoBehaviour {
 
 	void BindSelectedActionButtons()
 	{
-		if (selectedEditButton != null)
-		{
-			selectedEditButton.onClick.RemoveListener(OnSelectedEditClick);
-			selectedEditButton.onClick.AddListener(OnSelectedEditClick);
-		}
+		selectedEditButton.onClick.RemoveListener(OnSelectedEditClick);
+		selectedEditButton.onClick.AddListener(OnSelectedEditClick);
 
-		if (selectedExportButton != null)
-		{
-			selectedExportButton.onClick.RemoveListener(OnSelectedExportClick);
-			selectedExportButton.onClick.AddListener(OnSelectedExportClick);
-		}
+		selectedExportButton.onClick.RemoveListener(OnSelectedExportClick);
+		selectedExportButton.onClick.AddListener(OnSelectedExportClick);
 
-		if (selectedImportButton != null)
-		{
-			selectedImportButton.onClick.RemoveListener(OnSelectedImportClick);
-			selectedImportButton.onClick.AddListener(OnSelectedImportClick);
-		}
+		selectedImportButton.onClick.RemoveListener(OnSelectedImportClick);
+		selectedImportButton.onClick.AddListener(OnSelectedImportClick);
 
-		if (selectedNewButton != null)
-		{
-			selectedNewButton.onClick.RemoveListener(OnSelectedNewClick);
-			selectedNewButton.onClick.AddListener(OnSelectedNewClick);
-		}
+		selectedNewButton.onClick.RemoveListener(OnSelectedNewClick);
+		selectedNewButton.onClick.AddListener(OnSelectedNewClick);
 	}
 
 	void UpdateSelectedActions()
 	{
-		if (selectedPanel == null)
-			return;
-
 		bool hasSelection = slots != null && slots.Count > 0 && selectedButton >= 0 && selectedButton < slots.Count;
 		selectedPanel.SetActive(hasSelection);
 		if (!hasSelection)
 			return;
 
-		if (selectedEditLabel != null)
-			selectedEditLabel.text = "Edit";
-
-		if (selectedExportLabel != null)
-			selectedExportLabel.text = "Export";
-
-		if (selectedImportLabel != null)
-			selectedImportLabel.text = "Import";
-
-		if (selectedNewLabel != null)
-			selectedNewLabel.text = "New";
+		selectedEditLabel.text = EditActionLabel;
+		selectedExportLabel.text = ExportActionLabel;
+		selectedImportLabel.text = ImportActionLabel;
+		selectedNewLabel.text = NewActionLabel;
 
 		SelectedSlotKind slotKind = GetSelectedSlotKind();
 		bool canEdit = slotKind == SelectedSlotKind.Official || slotKind == SelectedSlotKind.UserStory;
 		bool canExport = slotKind == SelectedSlotKind.UserStory;
 
-		if (selectedEditButton != null)
-			selectedEditButton.interactable = canEdit;
-		if (selectedEditLabel != null)
-			selectedEditLabel.color = canEdit ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
+		selectedEditButton.interactable = canEdit;
+		selectedEditLabel.color = canEdit ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
 
-		if (selectedExportButton != null)
-			selectedExportButton.interactable = canExport;
-		if (selectedExportLabel != null)
-			selectedExportLabel.color = canExport ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
+		selectedExportButton.interactable = canExport;
+		selectedExportLabel.color = canExport ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
 
-		if (selectedImportButton != null)
-			selectedImportButton.interactable = true;
-		if (selectedImportLabel != null)
-			selectedImportLabel.color = selectedActionEnabledTextColor;
+		selectedImportButton.interactable = true;
+		selectedImportLabel.color = selectedActionEnabledTextColor;
 
-		if (selectedNewButton != null)
-			selectedNewButton.interactable = true;
-		if (selectedNewLabel != null)
-			selectedNewLabel.color = selectedActionEnabledTextColor;
+		selectedNewButton.interactable = true;
+		selectedNewLabel.color = selectedActionEnabledTextColor;
 
-		if (slotKind == SelectedSlotKind.Official && selectedEditLabel != null)
-			selectedEditLabel.text = "Fork";
+		if (slotKind == SelectedSlotKind.Official)
+			selectedEditLabel.text = ForkActionLabel;
 	}
 
 	SelectedSlotKind GetSelectedSlotKind()

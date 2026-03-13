@@ -182,18 +182,7 @@ public class RA_NewGame : MonoBehaviour {
 		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
 		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
-		// Success - offer to play or edit
-		feedbackTxt.text = $"L'histoire \"{WorkingStory.Title}\" a été importée!\n({WorkingStory.SceneCount} scènes)";
-		yeapTxt.text = "Jouer";
-		buttonYeap.SetActive(true);
-		buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {
-			feedbackPanel.SetActive(false);
-			buttonYeap.SetActive(false);
-			buttonNop.SetActive(false);
-			SceneManager.LoadScene(1); // Load title scene
-		});
-		feedbackPanel.SetActive(true);
+		sv.ResetAndSelectWorkingStory();
 
 		Debug.Log($"[RA_NewGame] Story imported: {WorkingStory.Title}");
 #endif
@@ -228,18 +217,7 @@ public class RA_NewGame : MonoBehaviour {
 		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
 		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
-		// Success - offer to play
-		feedbackTxt.text = $"L'histoire \"{WorkingStory.Title}\" a été importée!\n({WorkingStory.SceneCount} scènes)";
-		yeapTxt.text = "Jouer";
-		buttonYeap.SetActive(true);
-		buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {
-			feedbackPanel.SetActive(false);
-			buttonYeap.SetActive(false);
-			buttonNop.SetActive(false);
-			SceneManager.LoadScene(1); // Load title scene
-		});
-		feedbackPanel.SetActive(true);
+		sv.ResetAndSelectWorkingStory();
 
 		Debug.Log($"[RA_NewGame] WebGL story imported: {WorkingStory.Title}");
 	}
