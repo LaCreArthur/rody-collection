@@ -220,4 +220,3 @@ This principle applies broadly:
 |-----|---------|
 | `docs/ROADMAP.md` | Current progress and remaining work |
 | `docs/DEVLOG.md` | Session history and implementation details |
-| `docs/LEARNINGS.md` | Meta-knowledge from past migrations (reusable) |
