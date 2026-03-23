@@ -5,15 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class RA_ScrollView : MonoBehaviour {
-	const string EditActionLabel = "Éditer";
-	const string ExportActionLabel = "Exporter";
-	const string ImportActionLabel = "Importer";
-	const string NewActionLabel = "Nouveau";
-	const string ForkActionLabel = "Dupliquer";
-
 	public Sprite selected;
 	public Sprite notSelected;
 	public float lerpSpeed = 0.5f;
@@ -25,19 +18,8 @@ public class RA_ScrollView : MonoBehaviour {
 	public Transform slotNewGamePrefab;
 	public Transform slotLoadGamePrefab; // Used for import .rody.json files (shows "Importer")
 	public Transform slotExportPrefab;   // Used for export .rody.json files (shows "Exporter")
-
-	[Header("Selected Story Actions")]
-	public GameObject selectedPanel;
-	public Button selectedEditButton;
-	public Button selectedExportButton;
-	public Button selectedImportButton;
-	public Button selectedNewButton;
-	public TMP_Text selectedEditLabel;
-	public TMP_Text selectedExportLabel;
-	public TMP_Text selectedImportLabel;
-	public TMP_Text selectedNewLabel;
-	public Color selectedActionEnabledTextColor = Color.white;
-	public Color selectedActionDisabledTextColor = new Color(0.25f, 0.25f, 0.25f, 1f);
+	public RA_ActionPanel actionPanel;
+	[SerializeField] RA_FeedbackPanel feedbackPanel;
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -61,17 +43,25 @@ public class RA_ScrollView : MonoBehaviour {
 	public RA_NewGame ngScript;
 	bool isScrollViewDisabled = true;
 
-	enum SelectedSlotKind
-	{
-		Official,
-		UserStory,
-		Unknown
-	}
-
 	void Start () {
-		BindSelectedActionButtons();
 		// Always use provider-based initialization for official stories
 		StartCoroutine(InitWithProvider());
+	}
+
+	void OnEnable()
+	{
+		RA_ActionPanel.OnEditClicked += HandleEditClicked;
+		RA_ActionPanel.OnExportClicked += HandleExportClicked;
+		RA_ActionPanel.OnImportClicked += HandleImportClicked;
+		RA_ActionPanel.OnNewClicked += HandleNewClicked;
+	}
+
+	void OnDisable()
+	{
+		RA_ActionPanel.OnEditClicked -= HandleEditClicked;
+		RA_ActionPanel.OnExportClicked -= HandleExportClicked;
+		RA_ActionPanel.OnImportClicked -= HandleImportClicked;
+		RA_ActionPanel.OnNewClicked -= HandleNewClicked;
 	}
 
 	/// <summary>
@@ -266,7 +256,7 @@ public class RA_ScrollView : MonoBehaviour {
 		scrollRect.horizontalNormalizedPosition = selectedButton * step;
 		slotImages[selectedButton].GetComponent<Image>().sprite = selected;
 		slotTitles[selectedButton].SetActive(true);
-		UpdateSelectedActions();
+		UpdateActionPanel();
 	}
 
 	/// <summary>
@@ -399,7 +389,7 @@ public class RA_ScrollView : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		isScrollViewDisabled = ngScript.errorPanel.activeSelf || ngScript.feedbackPanel.activeSelf || ngScript.newGamePanel.activeSelf || sm.isRollPlaying;
+		isScrollViewDisabled = feedbackPanel.gameObject.activeSelf || newGamePanel.activeSelf || sm.isRollPlaying;
 		if (isScrollViewDisabled) {
 			t = 1.0f; // reset the lerping properly
 			scrollRect.horizontal = false; // disable scroll by mouse
@@ -434,7 +424,7 @@ public class RA_ScrollView : MonoBehaviour {
 				StartCoroutine(LoadFolder(selectedButton));
 			}
 			if (Input.GetKey(KeyCode.Escape)) {
-				ngScript.OnEscape();
+				HandleEscape();
 			}
 			if (Input.GetKey(KeyCode.Delete)) {
 				OnSuppr(selectedButton);
@@ -482,73 +472,35 @@ public class RA_ScrollView : MonoBehaviour {
 				slotTitles[i].SetActive(false);
 			}
 		}
-		UpdateSelectedActions();
+		UpdateActionPanel();
 	}
 
-	void BindSelectedActionButtons()
-	{
-		selectedEditButton.onClick.RemoveListener(OnSelectedEditClick);
-		selectedEditButton.onClick.AddListener(OnSelectedEditClick);
-
-		selectedExportButton.onClick.RemoveListener(OnSelectedExportClick);
-		selectedExportButton.onClick.AddListener(OnSelectedExportClick);
-
-		selectedImportButton.onClick.RemoveListener(OnSelectedImportClick);
-		selectedImportButton.onClick.AddListener(OnSelectedImportClick);
-
-		selectedNewButton.onClick.RemoveListener(OnSelectedNewClick);
-		selectedNewButton.onClick.AddListener(OnSelectedNewClick);
-	}
-
-	void UpdateSelectedActions()
+	void UpdateActionPanel()
 	{
 		bool hasSelection = slots != null && slots.Count > 0 && selectedButton >= 0 && selectedButton < slots.Count;
-		selectedPanel.SetActive(hasSelection);
-		if (!hasSelection)
-			return;
-
-		selectedEditLabel.text = EditActionLabel;
-		selectedExportLabel.text = ExportActionLabel;
-		selectedImportLabel.text = ImportActionLabel;
-		selectedNewLabel.text = NewActionLabel;
-
-		SelectedSlotKind slotKind = GetSelectedSlotKind();
-		bool canEdit = slotKind == SelectedSlotKind.Official || slotKind == SelectedSlotKind.UserStory;
-		bool canExport = slotKind == SelectedSlotKind.UserStory;
-
-		selectedEditButton.interactable = canEdit;
-		selectedEditLabel.color = canEdit ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
-
-		selectedExportButton.interactable = canExport;
-		selectedExportLabel.color = canExport ? selectedActionEnabledTextColor : selectedActionDisabledTextColor;
-
-		selectedImportButton.interactable = true;
-		selectedImportLabel.color = selectedActionEnabledTextColor;
-
-		selectedNewButton.interactable = true;
-		selectedNewLabel.color = selectedActionEnabledTextColor;
-
-		if (slotKind == SelectedSlotKind.Official)
-			selectedEditLabel.text = ForkActionLabel;
+		if (hasSelection)
+			actionPanel.Show(GetSelectedSlotKind());
+		else
+			actionPanel.Hide();
 	}
 
-	SelectedSlotKind GetSelectedSlotKind()
+	RA_ActionPanel.SlotKind GetSelectedSlotKind()
 	{
 		if (slots == null || selectedButton < 0 || selectedButton >= slots.Count)
-			return SelectedSlotKind.Unknown;
+			return RA_ActionPanel.SlotKind.Unknown;
 
 		return GetSlotKind(content.transform.GetChild(selectedButton).name);
 	}
 
-	SelectedSlotKind GetSlotKind(string slotName)
+	RA_ActionPanel.SlotKind GetSlotKind(string slotName)
 	{
 		if (string.IsNullOrEmpty(slotName))
-			return SelectedSlotKind.Unknown;
+			return RA_ActionPanel.SlotKind.Unknown;
 
 		if (slotName == "workingStory" || slotName.StartsWith("json:"))
-			return SelectedSlotKind.UserStory;
+			return RA_ActionPanel.SlotKind.UserStory;
 
-		return SelectedSlotKind.Official;
+		return RA_ActionPanel.SlotKind.Official;
 	}
 
 	bool LoadSelectedStoryForAction(int index)
@@ -588,58 +540,67 @@ public class RA_ScrollView : MonoBehaviour {
 		return true;
 	}
 
-	public void OnSelectedEditClick()
+	void HandleEditClicked()
 	{
-		if (isScrollViewDisabled)
-			return;
-
-		StartCoroutine(EditSelectedStory());
-	}
-
-	IEnumerator EditSelectedStory()
-	{
+		if (isScrollViewDisabled) return;
 		if (!LoadSelectedStoryForAction(selectedButton))
-			yield break;
+		{
+			feedbackPanel.ShowMessage("Impossible de charger l'histoire!");
+			return;
+		}
 
 		if (WorkingStory.IsOfficial)
 		{
-			WorkingStory.ForkForEditing();
-			PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+			feedbackPanel.ShowConfirm(
+				$"Dupliquer «{WorkingStory.Title}» pour l'éditer ?",
+				"ok",
+				() => {
+					WorkingStory.ForkForEditing();
+					PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
+					PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+					WorkingStory.CurrentSceneIndex = 0;
+					StartCoroutine(TransitionToEditor());
+				});
 		}
+		else
+		{
+			feedbackPanel.ShowMessage(
+				$"Édition de «{WorkingStory.Title}»...",
+				() => {
+					WorkingStory.CurrentSceneIndex = 0;
+					StartCoroutine(TransitionToEditor());
+				});
+		}
+	}
 
-		WorkingStory.CurrentSceneIndex = 0;
+	IEnumerator TransitionToEditor()
+	{
 		yield return StartCoroutine(menu.AnimateExitTransition());
 		SceneManager.LoadScene(6);
 	}
 
-	public void OnSelectedExportClick()
+	void HandleEscape()
 	{
-		if (isScrollViewDisabled)
-			return;
+		feedbackPanel.ShowConfirm("Veux-tu quitter le jeu ?", "oui", () => Application.Quit());
+	}
 
-		if (GetSelectedSlotKind() != SelectedSlotKind.UserStory)
-			return;
-
-		if (!LoadSelectedStoryForAction(selectedButton))
-			return;
-
+	void HandleExportClicked()
+	{
+		if (isScrollViewDisabled) return;
+		if (GetSelectedSlotKind() != RA_ActionPanel.SlotKind.UserStory) return;
+		if (!LoadSelectedStoryForAction(selectedButton)) return;
 		ngScript.OnExportClick();
 	}
 
-	public void OnSelectedImportClick()
+	void HandleImportClicked()
 	{
-		if (isScrollViewDisabled)
-			return;
-
+		if (isScrollViewDisabled) return;
 		ngScript.OnImportClick();
 	}
 
-	public void OnSelectedNewClick()
+	void HandleNewClicked()
 	{
-		if (isScrollViewDisabled)
-			return;
-
+		if (isScrollViewDisabled) return;
 		newGamePanel.SetActive(true);
 	}
 

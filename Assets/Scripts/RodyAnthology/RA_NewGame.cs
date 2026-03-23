@@ -1,5 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,100 +8,71 @@ public class RA_NewGame : MonoBehaviour {
 
 	public InputField titleInput;
 	public InputField imgInput;
-	public GameObject errorPanel;
-	public GameObject feedbackPanel, newGamePanel, buttonYeap, buttonNop;
+	public GameObject newGamePanel;
 
 	public Button buttonAccept, buttonCancel;
-	public Text yeapTxt;
 	public RA_ScrollView sv;
+	[SerializeField] RA_FeedbackPanel feedbackPanel;
 	Sprite coverImgSprite;
-	Text feedbackTxt;
 
-	void Start () {
+	void Start() {
 		titleInput.characterValidation = InputField.CharacterValidation.Name;
-		feedbackTxt = feedbackPanel.GetComponentInChildren<Text>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		buttonAccept.interactable = titleInput.text.Length == 0  ? false : true;
+
+	void Update() {
+		buttonAccept.interactable = titleInput.text.Length > 0;
 	}
 
 	public void NG_OnAcceptClick() {
 		string title = titleInput.text;
 		if (string.IsNullOrEmpty(title))
 		{
-			feedbackTxt.text = "Entre un titre pour ton histoire, Rody!";
-			buttonNop.SetActive(true);
 			newGamePanel.SetActive(false);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("Entre un titre pour ton histoire, Rody!");
 			return;
 		}
 
-		// Create new story in memory using WorkingStory
 		Debug.Log($"[RA_NewGame] Creating new story: {title}");
 		WorkingStory.CreateNew(title);
 
-		// Handle cover image if specified
 		if (imgInput.text.Length > 0 && coverImgSprite != null)
-		{
-			// Save cover sprite to WorkingStory (menu thumbnail)
 			WorkingStory.SaveSprite("cover.png", coverImgSprite.texture);
-		}
 
-		// Set PlayerPrefs for backward compatibility during migration
-		// Use a special prefix to indicate in-memory story
 		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
 		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
-		// Success feedback
-		feedbackTxt.text = $"L'histoire \"{title}\" a été créée!\nRendez-vous dans Rody Maker pour l'éditer.";
-		yeapTxt.text = "ok";
-		buttonYeap.SetActive(true);
-		buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {UnsetfeedbackPanel(2);});
 		newGamePanel.SetActive(false);
-		feedbackPanel.SetActive(true);
+		feedbackPanel.ShowMessage(
+			$"L'histoire \"{title}\" a été créée!\nRendez-vous dans Rody Maker pour l'éditer.",
+			() => SceneManager.LoadScene(6));
 	}
 
-	public void NG_OnCancelClick() {
-		newGamePanel.SetActive(false);
-	}
+	public void NG_OnCancelClick() => newGamePanel.SetActive(false);
 
 	public void NG_ImgClick()
-    {
+	{
 #if UNITY_WEBGL && !UNITY_EDITOR
-        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLCoverImported);
+		WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLCoverImported);
 #else
-        Debug.Log("Import Img clicked");
-        var extensions = new[] {new ExtensionFilter("Images", "png", "jpg", "jpeg" ),};
-        string imgPath = null;
-        string[] files = StandaloneFileBrowser.OpenFilePanel("Choix de l'image de couverture", "", extensions, false);
-        if (files.Length != 0)
-            imgPath = files[0];
-        else
-            return;
+		var extensions = new[] { new ExtensionFilter("Images", "png", "jpg", "jpeg") };
+		string[] files = StandaloneFileBrowser.OpenFilePanel("Choix de l'image de couverture", "", extensions, false);
+		if (files.Length == 0) return;
 
-		imgInput.text = imgPath;
-
-		// load the sprite
-		coverImgSprite = RM_SaveLoad.LoadSprite(imgPath,0,340,480);
+		imgInput.text = files[0];
+		coverImgSprite = RM_SaveLoad.LoadSprite(files[0], 0, 340, 480);
 #endif
-    }
+	}
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    void OnWebGLCoverImported(string dataUrl)
-    {
-        if (string.IsNullOrEmpty(dataUrl)) return;
-
-        var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
-        if (tex == null) return;
-
-        // Resize to Atari ST cover resolution: 320x200
-        RM_TextureScale.Point(tex, 320, 200);
-        coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-        imgInput.text = "cover.png"; // Placeholder to indicate image was selected
-    }
+	void OnWebGLCoverImported(string dataUrl)
+	{
+		if (string.IsNullOrEmpty(dataUrl)) return;
+		var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
+		if (tex == null) return;
+		RM_TextureScale.Point(tex, 320, 200);
+		coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
+		imgInput.text = "cover.png";
+	}
 #endif
 
 	/// <summary>
@@ -112,47 +81,30 @@ public class RA_NewGame : MonoBehaviour {
 	/// </summary>
 	public void OnImportClick()
 	{
-		// If a story is already loaded, show confirmation before replacing
 		if (WorkingStory.IsLoaded)
 		{
-			feedbackTxt.text = "Une histoire est déjà chargée.\nVoulez-vous la remplacer?";
-			yeapTxt.text = "oui";
-			buttonYeap.SetActive(true);
-			buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate {
-				feedbackPanel.SetActive(false);
-				buttonYeap.SetActive(false);
-				buttonNop.SetActive(false);
-				DoImport();
-			});
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowConfirm(
+				"Une histoire est déjà chargée.\nVoulez-vous la remplacer?",
+				"oui",
+				DoImport);
 			return;
 		}
 		DoImport();
 	}
 
-	/// <summary>
-	/// Actually performs the import after confirmation (if needed).
-	/// </summary>
 	void DoImport()
 	{
 #if UNITY_WEBGL && !UNITY_EDITOR
-		// WebGL: Use browser file picker via jslib
 		WebGLFileBrowser.Instance.OpenFileAsText(".json,application/json", OnWebGLImportComplete);
 #else
 		var extensions = new[] { new ExtensionFilter("Rody Story", "rody.json", "json") };
 		string[] files = StandaloneFileBrowser.OpenFilePanel("Importer une histoire", "", extensions, false);
 
-		if (files.Length == 0)
-		{
-			return; // User cancelled
-		}
+		if (files.Length == 0) return;
 
 		string filePath = files[0];
 		Debug.Log($"[RA_NewGame] Importing story from: {filePath}");
 
-		// Read and load into WorkingStory
 		string json;
 		try
 		{
@@ -161,64 +113,49 @@ public class RA_NewGame : MonoBehaviour {
 		catch (System.Exception e)
 		{
 			Debug.LogError($"[RA_NewGame] Failed to read file: {e.Message}");
-			feedbackTxt.text = $"Impossible de lire le fichier!\n{e.Message}";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage($"Impossible de lire le fichier!\n{e.Message}");
 			return;
 		}
 
-		// Load into WorkingStory (remembers file path for quick save)
 		WorkingStory.LoadFromJson(json, filePath);
-
 		if (!WorkingStory.IsLoaded)
 		{
-			feedbackTxt.text = "Le fichier n'est pas valide!";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("Le fichier n'est pas une histoire valide!");
 			return;
 		}
 
-		// Set PlayerPrefs for backward compatibility during migration
 		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
 		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
 		sv.ResetAndSelectWorkingStory();
-
+		feedbackPanel.ShowMessage($"Histoire «{WorkingStory.Title}» importée avec succès!");
 		Debug.Log($"[RA_NewGame] Story imported: {WorkingStory.Title}");
 #endif
 	}
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-	/// <summary>
-	/// Callback for WebGL file import - receives JSON content from browser.
-	/// </summary>
-	private void OnWebGLImportComplete(string json)
+	void OnWebGLImportComplete(string json)
 	{
 		if (string.IsNullOrEmpty(json))
 		{
 			Debug.Log("[RA_NewGame] WebGL import cancelled or failed");
-			return; // User cancelled or error
+			return;
 		}
 
 		Debug.Log($"[RA_NewGame] WebGL import received {json.Length} chars");
-
-		// Load into WorkingStory (no file path for WebGL - story exists only in memory)
 		WorkingStory.LoadFromJson(json, null);
 
 		if (!WorkingStory.IsLoaded)
 		{
-			feedbackTxt.text = "Le fichier n'est pas valide!";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("Le fichier n'est pas une histoire valide!");
 			return;
 		}
 
-		// Set PlayerPrefs for backward compatibility
 		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
 		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
 
 		sv.ResetAndSelectWorkingStory();
-
+		feedbackPanel.ShowMessage($"Histoire «{WorkingStory.Title}» importée avec succès!");
 		Debug.Log($"[RA_NewGame] WebGL story imported: {WorkingStory.Title}");
 	}
 #endif
@@ -230,52 +167,34 @@ public class RA_NewGame : MonoBehaviour {
 	{
 		if (!WorkingStory.IsLoaded)
 		{
-			feedbackTxt.text = "Aucune histoire n'est chargée pour l'export!";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("Aucune histoire n'est chargée pour l'export!");
 			return;
 		}
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-		// WebGL: Download via browser
 		string json = WorkingStory.ExportToJson();
 		if (string.IsNullOrEmpty(json))
 		{
-			feedbackTxt.text = "L'export a échoué!";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("L'export a échoué!");
 			return;
 		}
 
 		string filename = WorkingStory.Id + ".rody.json";
 		WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () => {
 			WorkingStory.MarkSaved("download:" + filename);
-			if (sv != null)
-				sv.Reset();
-			feedbackTxt.text = $"L'histoire a été téléchargée!\n{filename}";
-			yeapTxt.text = "ok";
-			buttonYeap.SetActive(true);
-			buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate { UnsetfeedbackPanel(0); });
-			feedbackPanel.SetActive(true);
+			if (sv != null) sv.Reset();
+			feedbackPanel.ShowMessage($"L'histoire a été téléchargée!\n{filename}");
 		});
 #else
-		// Desktop: Save file dialog
 		string suggestedName = WorkingStory.Id + ".rody.json";
 		string savePath = StandaloneFileBrowser.SaveFilePanel("Exporter l'histoire", "", suggestedName, "rody.json");
 
-		if (string.IsNullOrEmpty(savePath))
-		{
-			return; // User cancelled
-		}
+		if (string.IsNullOrEmpty(savePath)) return;
 
-		// Export to file
 		string json = WorkingStory.ExportToJson();
 		if (string.IsNullOrEmpty(json))
 		{
-			feedbackTxt.text = "L'export a échoué!";
-			buttonNop.SetActive(true);
-			feedbackPanel.SetActive(true);
+			feedbackPanel.ShowMessage("L'export a échoué!");
 			return;
 		}
 
@@ -283,98 +202,50 @@ public class RA_NewGame : MonoBehaviour {
 		{
 			File.WriteAllText(savePath, json);
 			WorkingStory.MarkSaved(savePath);
-			if (sv != null)
-				sv.Reset();
-
-			feedbackTxt.text = $"L'histoire a été exportée!\n{Path.GetFileName(savePath)}";
-			yeapTxt.text = "ok";
-			buttonYeap.SetActive(true);
-			buttonYeap.GetComponent<Button>().onClick.RemoveAllListeners();
-			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate { UnsetfeedbackPanel(0); });
+			if (sv != null) sv.Reset();
+			feedbackPanel.ShowMessage($"L'histoire a été exportée!\n{Path.GetFileName(savePath)}");
 		}
 		catch (System.Exception e)
 		{
 			Debug.LogError($"[RA_NewGame] Export failed: {e.Message}");
-			feedbackTxt.text = $"L'export a échoué!\n{e.Message}";
-			buttonNop.SetActive(true);
+			feedbackPanel.ShowMessage($"L'export a échoué!\n{e.Message}");
 		}
-		feedbackPanel.SetActive(true);
 #endif
 	}
 
-	public void SG_onDelete(bool isDeletable) {
-		if (isDeletable) {
-			feedbackTxt.text = "Es-tu sur de vouloir définivement supprimer ce jeu ?";
-			yeapTxt.text = "oui";
-			buttonYeap.GetComponent<Button>().onClick.AddListener(delegate{UnsetfeedbackPanel(3);});
-			buttonYeap.SetActive(true);
-		}
-		else {
-			feedbackTxt.text = "Tu ne peux pas supprimer ce jeu !";
-		}
-		buttonNop.SetActive(true);
-		feedbackPanel.SetActive(true);
-	}
-
-	public void OnEscape(){
-		yeapTxt.text = "oui";
-		buttonYeap.SetActive(true);
-		feedbackTxt.text = "Veux-tu quitter le jeu ?";
-		buttonNop.SetActive(true);
-		feedbackPanel.SetActive(true);
-		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate{UnsetfeedbackPanel(4);}); 
-	}
-
-	public void UnsetErrorPanel() {
-		errorPanel.SetActive(false);
-	}
-	public void UnsetfeedbackPanel(int state) {
-		// state is 
-		// 0 = button Nop : if import or create game failed or cancel deletion of game
-		// 1 if import game succed
-		// 2 if create game succed
-		// 3 if delete game
-		// 4 if quit the game
-		feedbackPanel.SetActive(false);
-		buttonYeap.SetActive(false);
-		buttonNop.SetActive(false);
-		switch (state)
+	public void SG_onDelete(bool isDeletable)
+	{
+		if (isDeletable)
 		{
-			case 1:
-				sv.Reset(); // reload the menu
-				break;
-			case 2: 
-				SceneManager.LoadScene(6); // load Rody Maker menu
-				break;
-			case 3:
-				try
-				{
-					string gamePath = PlayerPrefs.GetString("gameToDelete");
-					Debug.Log($"[RA_NewGame] Deleting: {gamePath}");
-
-					if (!string.IsNullOrEmpty(gamePath) && File.Exists(gamePath))
-					{
-						File.Delete(gamePath);
-						Debug.Log($"[RA_NewGame] Deleted: {gamePath}");
-					}
-					PlayerPrefs.SetString("gameToDelete", "");
-					PlayerPrefs.SetString("gameToDeleteType", "");
-					sv.Reset(); // reload the menu
-				}
-				catch (System.Exception e)
-				{
-					Debug.Log(e);
-					feedbackTxt.text = "Impossible de supprimer ! \n" + e.ToString() ;
-					buttonNop.SetActive(true);
-					feedbackPanel.SetActive(true);
-				}
-				break;
-			case 4:
-				Application.Quit();
-				break;
-			default: break;
+			string gamePath = PlayerPrefs.GetString("gameToDelete");
+			feedbackPanel.ShowConfirm(
+				"Es-tu sûr de vouloir définitivement supprimer ce jeu ?",
+				"oui",
+				() => DeleteStory(gamePath));
 		}
-		// reset button yeap to default behaviour
-		buttonYeap.GetComponent<Button>().onClick.AddListener(delegate{UnsetfeedbackPanel(1);}); 
+		else
+		{
+			feedbackPanel.ShowMessage("Tu ne peux pas supprimer ce jeu !");
+		}
+	}
+
+	void DeleteStory(string path)
+	{
+		try
+		{
+			if (!string.IsNullOrEmpty(path) && File.Exists(path))
+			{
+				File.Delete(path);
+				Debug.Log($"[RA_NewGame] Deleted: {path}");
+			}
+			PlayerPrefs.SetString("gameToDelete", "");
+			PlayerPrefs.SetString("gameToDeleteType", "");
+			sv.Reset();
+		}
+		catch (System.Exception e)
+		{
+			Debug.Log(e);
+			feedbackPanel.ShowMessage("Impossible de supprimer !\n" + e.Message);
+		}
 	}
 }
