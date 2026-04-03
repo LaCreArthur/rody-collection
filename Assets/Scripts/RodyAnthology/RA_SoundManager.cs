@@ -40,7 +40,7 @@ public class RA_SoundManager : MonoBehaviour {
 		if (joyLeftClicks == 0) audioSource.pitch = 0.7f;
 		if (joyLeftClicks == 4) {
 			audioSource.clip = joyLeftUnlock;
-			SceneManager.LoadScene("RollToInfinity", LoadSceneMode.Additive);
+			SceneManager.LoadScene("RollToInfinity");
 			isRollPlaying = true;
 		}
 		else 

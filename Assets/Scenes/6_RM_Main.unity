@@ -2148,8 +2148,6 @@ MonoBehaviour:
   introButton: {fileID: 992783361}
   saveStatusPanel: {fileID: 88653465}
   saveStatusText: {fileID: 652985883}
-  tooltipPanel: {fileID: 1289757514}
-  tooltipPanelText: {fileID: 112924071}
 --- !u!1001 &156242321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16596,7 +16594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1289757515
 RectTransform:
   m_ObjectHideFlags: 0
