@@ -43,12 +43,15 @@ public class StoryStore
 
     // ---- User (persistentDataPath, read/write) ----
 
-    /// <summary>Ids of all persisted user stories.</summary>
+    /// <summary>Ids of all persisted user stories, ordered by last-write time (newest last).</summary>
     public List<string> ListUserIds()
     {
         var ids = new List<string>();
         if (!Directory.Exists(UserDir)) return ids;
-        foreach (var path in Directory.GetFiles(UserDir, "*" + Extension))
+
+        var files = new List<string>(Directory.GetFiles(UserDir, "*" + Extension));
+        files.Sort((a, b) => File.GetLastWriteTimeUtc(a).CompareTo(File.GetLastWriteTimeUtc(b)));
+        foreach (var path in files)
             ids.Add(Path.GetFileName(path).Replace(Extension, ""));
         return ids;
     }

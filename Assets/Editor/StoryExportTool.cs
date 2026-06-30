@@ -59,7 +59,60 @@ public class StoryExportTool : EditorWindow
             }
         }
 
+        EmitCatalog(outputPath);
         Debug.Log($"[StoryExportTool] Export complete! {successCount} stories exported to {outputPath}");
+    }
+
+    static readonly string[] BuiltinOrder = {
+        "Rody Et Mastico",
+        "Rody Et Mastico II",
+        "Rody Et Mastico III",
+        "Rody Noël",
+        "Rody Et Mastico V",
+        "Rody Et Mastico VI",
+        "Rody Et Mastico A Ibiza",
+    };
+
+    /// <summary>
+    /// Writes catalog.json (membership + display order + cover bytes) next to the
+    /// exported stories. Built-ins use the fixed order above; any extra exported
+    /// files are appended. This is the single source the runtime catalog reads,
+    /// replacing index.json's ordering.
+    /// </summary>
+    static void EmitCatalog(string outputPath)
+    {
+        var manifest = new StoryCatalogManifest { stories = new System.Collections.Generic.List<StoryCard>() };
+        var seen = new System.Collections.Generic.HashSet<string>();
+
+        void Add(string id)
+        {
+            string file = Path.Combine(outputPath, id + ".rody.json");
+            if (seen.Contains(id) || !File.Exists(file)) return;
+
+            var story = StoryJson.Deserialize(File.ReadAllText(file));
+            if (story?.story == null) return;
+
+            string cover = null;
+            story.sprites?.TryGetValue("cover.png", out cover);
+
+            manifest.stories.Add(new StoryCard
+            {
+                id = story.story.id,
+                title = story.story.title,
+                sceneCount = story.story.sceneCount,
+                cover = cover,
+                source = StorySource.Builtin,
+            });
+            seen.Add(id);
+        }
+
+        foreach (var id in BuiltinOrder) Add(id);
+        foreach (var file in Directory.GetFiles(outputPath, "*.rody.json"))
+            Add(Path.GetFileName(file).Replace(".rody.json", ""));
+
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(manifest, Newtonsoft.Json.Formatting.Indented);
+        File.WriteAllText(Path.Combine(outputPath, "catalog.json"), json);
+        Debug.Log($"[StoryExportTool] Wrote catalog.json with {manifest.stories.Count} entries");
     }
 
     void OnEnable()
@@ -242,6 +295,8 @@ public class StoryExportTool : EditorWindow
                 failCount++;
             }
         }
+
+        EmitCatalog(outputPath);
 
         string message = $"Export complete!\n\nSuccess: {successCount}\nSkipped: {skipCount}\nFailed: {failCount}\n\nOutput: {outputPath}";
         EditorUtility.DisplayDialog("Batch Export Complete", message, "OK");

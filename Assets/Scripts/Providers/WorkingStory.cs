@@ -9,6 +9,8 @@ using UnityEngine;
 public static class WorkingStory
 {
     static readonly StorySession _session = new StorySession();
+    static readonly StoryStore _store = new StoryStore();
+    static readonly StoryCatalog _catalog = new StoryCatalog(_store);
 
     /// <summary>The one live session. Subscribe to its DirtyChanged here.</summary>
     public static StorySession Session => _session;
@@ -29,17 +31,10 @@ public static class WorkingStory
         set => _session.CurrentSceneIndex = value;
     }
 
-    /// <summary>Loads an official story from Resources into the session (read-only until forked).</summary>
+    /// <summary>Loads an official story into the session via the catalog (copy-on-load).</summary>
     public static void LoadOfficial(string storyId)
     {
-        var provider = StoryProviderManager.Provider as ResourcesStoryProvider;
-        if (provider == null)
-        {
-            Debug.LogError("WorkingStory: ResourcesStoryProvider not available");
-            return;
-        }
-
-        var story = provider.GetExportedStory(storyId);
+        var story = _catalog.Resolve(storyId);
         if (story == null)
         {
             Debug.LogError($"WorkingStory: Story not found: {storyId}");
