@@ -56,7 +56,6 @@ public class ClickHandler : MonoBehaviour {
 	}
 
 	public void DrawClick() {
-		//PlayerPrefs.SetInt("scene", SceneManager.GetActiveScene().buildIndex);
 		SceneManager.LoadScene(AppScenes.Editor);
 	}
 
