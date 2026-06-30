@@ -44,13 +44,8 @@ public class Bootstrap : MonoBehaviour
 
     void Awake()
     {
-        // Ensure StoryProviderManager exists
-        if (StoryProviderManager.Instance == null)
-        {
-            var go = new GameObject("StoryProviderManager");
-            go.AddComponent<StoryProviderManager>();
-            DontDestroyOnLoad(go);
-        }
+        // Ensure the composition root exists (spawns it in the entry scene).
+        _ = StoryRoot.Instance;
     }
 
     void Start()
@@ -64,25 +59,16 @@ public class Bootstrap : MonoBehaviour
         if (loadingUI != null)
             loadingUI.SetActive(true);
 
-        Debug.Log("[Bootstrap] Initializing story provider...");
+        Debug.Log("[Bootstrap] Hydrating story store...");
 
-        StoryProviderManager.Initialize(
-            () =>
-            {
-                Debug.Log("[Bootstrap] Provider ready!");
-                IsInitialized = true;
-                OnInitialized?.Invoke();
-                OnReady();
-            },
-            error =>
-            {
-                Debug.LogError($"[Bootstrap] Initialization failed: {error}");
-                if (loadingUI != null)
-                    loadingUI.SetActive(false);
-                if (errorUI != null)
-                    errorUI.SetActive(true);
-            }
-        );
+        // Hydrate persisted stories from IndexedDB before the first catalog read.
+        StoryRoot.Instance.InitStore(() =>
+        {
+            Debug.Log("[Bootstrap] Store ready!");
+            IsInitialized = true;
+            OnInitialized?.Invoke();
+            OnReady();
+        });
     }
 
     void OnReady()
