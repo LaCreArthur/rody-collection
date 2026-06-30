@@ -252,8 +252,9 @@ public class RA_ScrollView : MonoBehaviour {
 		Debug.Log("slots count : " + slots.Count);
 		scrollRect = GetComponent<ScrollRect>();
 		scrollRect.onValueChanged.AddListener(OnValueChanged);
-		selectedButton = middleSlot = slots.Count / 2;
-		scrollRect.horizontalNormalizedPosition = selectedButton * step;
+		middleSlot = slots.Count / 2;
+		selectedButton = 0; // select the first game of the list on launch
+		scrollRect.horizontalNormalizedPosition = (selectedButton * step) + (middleSlot - selectedButton) * 2f / 100f;
 		slotImages[selectedButton].GetComponent<Image>().sprite = selected;
 		slotTitles[selectedButton].SetActive(true);
 		UpdateActionPanel();
