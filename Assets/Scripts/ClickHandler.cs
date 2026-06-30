@@ -6,17 +6,17 @@ public class ClickHandler : MonoBehaviour {
 	public GameManager gm;
 	public void NextClick() {
 
-		int nextScene = WorkingStory.CurrentSceneIndex + 1;
+		int nextScene = StoryRoot.Session.CurrentSceneIndex + 1;
 
 		if (gm.clickIntro) {
 			Debug.Log ("next clicked in intro");
 
 			// Final scenes can still have an object phase. Only skip straight to credits
 			// when there is no primary object target to enter after the intro.
-			if (nextScene > WorkingStory.SceneCount && !HasPrimaryObjectPhase()) {
+			if (nextScene > StoryRoot.Session.SceneCount && !HasPrimaryObjectPhase()) {
 				gm.intro.sceneMusic.Stop();
 				gm.clickIntro = false;
-				SceneManager.LoadScene(5);
+				SceneManager.LoadScene(AppScenes.Win);
 				return;
 			}
 
@@ -27,8 +27,8 @@ public class ClickHandler : MonoBehaviour {
 		else if (gm.clickObj) {
 			Debug.Log ("next clicked in obj/ngp/fsw, next = " + nextScene);
 
-            WorkingStory.CurrentSceneIndex = nextScene;
-			SceneManager.LoadScene(3);
+            StoryRoot.Session.CurrentSceneIndex = nextScene;
+			SceneManager.LoadScene(AppScenes.Game);
         }
 	}
 
@@ -38,7 +38,7 @@ public class ClickHandler : MonoBehaviour {
 	}
 
 	public void LaunchCredit() {
-		SceneManager.LoadScene(5);
+		SceneManager.LoadScene(AppScenes.Win);
 	}
 
 	public void RepeatClick() {
@@ -57,7 +57,7 @@ public class ClickHandler : MonoBehaviour {
 
 	public void DrawClick() {
 		//PlayerPrefs.SetInt("scene", SceneManager.GetActiveScene().buildIndex);
-		SceneManager.LoadScene(6);
+		SceneManager.LoadScene(AppScenes.Editor);
 	}
 
 	public void ngpClick() {

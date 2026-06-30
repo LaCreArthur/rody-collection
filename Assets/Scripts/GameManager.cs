@@ -37,19 +37,19 @@ public class GameManager : MonoBehaviour {
 
 	void Start()
 	{
-		currentScene = WorkingStory.CurrentSceneIndex;
+		currentScene = StoryRoot.Session.CurrentSceneIndex;
 
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
 			Debug.LogError("[GameManager] WorkingStory not loaded - returning to menu");
-			SceneManager.LoadScene(0);
+			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
 
-		if (currentScene > WorkingStory.SceneCount)
+		if (currentScene > StoryRoot.Session.SceneCount)
 		{
 			Debug.Log("[GameManager] Scene index exceeds story length - going to win scene");
-			SceneManager.LoadScene(5);
+			SceneManager.LoadScene(AppScenes.Win);
 			return;
 		}
 
@@ -64,13 +64,13 @@ public class GameManager : MonoBehaviour {
 		yield return null; // Let UI update
 
 		// Load scene data from WorkingStory
-		SceneData sceneData = WorkingStory.LoadScene(sceneIndex);
-		List<Sprite> loadedSprites = WorkingStory.LoadSceneSprites(sceneIndex);
+		SceneData sceneData = StoryRoot.Session.LoadScene(sceneIndex);
+		List<Sprite> loadedSprites = StoryRoot.Session.LoadSceneSprites(sceneIndex);
 
 		if (sceneData == null || loadedSprites == null || loadedSprites.Count == 0)
 		{
 			Debug.LogError($"[GameManager] Failed to load scene {sceneIndex} from WorkingStory");
-			SceneManager.LoadScene(2);
+			SceneManager.LoadScene(AppScenes.Menu);
 			yield break;
 		}
 
@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKeyUp(KeyCode.Escape)){
-			SceneManager.LoadScene(2);
+			SceneManager.LoadScene(AppScenes.Menu);
 		}
 	}
 

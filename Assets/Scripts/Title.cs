@@ -15,12 +15,12 @@ public class Title : MonoBehaviour {
 
 	void Start()
 	{
-		isTitle = (SceneManager.GetActiveScene().buildIndex == 1);
+		isTitle = (SceneManager.GetActiveScene().buildIndex == AppScenes.Title);
 
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
 			Debug.LogError("[Title] WorkingStory not loaded - returning to story selection");
-			SceneManager.LoadScene(0);
+			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
 
@@ -36,13 +36,11 @@ public class Title : MonoBehaviour {
 	{
 		if (isTitle)
 		{
-			Debug.Log($"[Title] Loading story: {WorkingStory.Title}");
-
-			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-			Debug.Log($"[Title] Story has {WorkingStory.SceneCount} scenes");
+			Debug.Log($"[Title] Loading story: {StoryRoot.Session.Title}");
+			Debug.Log($"[Title] Story has {StoryRoot.Session.SceneCount} scenes");
 
 			// Load title sprite from WorkingStory
-			var titleSprite = WorkingStory.LoadSprite("0.png", 320, 200);
+			var titleSprite = StoryRoot.Session.LoadSprite("0.png", 320, 200);
 			if (titleSprite != null && titleImage != null)
 			{
 				titleImage.sprite = titleSprite;
@@ -60,7 +58,7 @@ public class Title : MonoBehaviour {
 			Debug.Log("[Title] CREDITS ROLL");
 
 			// Load credits from WorkingStory
-			string creditsText = WorkingStory.GetCredits();
+			string creditsText = StoryRoot.Session.GetCredits();
 
 			var titleTextComponent = GameObject.Find("Title")?.GetComponent<Text>();
 			var creditsTextComponent = GameObject.Find("Credits")?.GetComponent<Text>();
@@ -127,6 +125,6 @@ public class Title : MonoBehaviour {
 	}
 
 	public void skipCredit(){
-		SceneManager.LoadScene(2);
+		SceneManager.LoadScene(AppScenes.Menu);
 	}
 }

@@ -44,10 +44,8 @@ public class SceneLoading : MonoBehaviour {
 		gm.b_repeat.SetActive (true);
 		yield return new WaitForSeconds(0.05f);
 
-		// Show Zambla for the Ibiza story
-		string currentGame = PlayerPrefs.GetString("gamePath");
-		bool isIbiza = currentGame.Contains("Ibiza") || currentGame == "Rody Et Mastico A Ibiza";
-		if (zambla != null && isIbiza) {
+		// Show Zambla for scenes flagged isZambla in the story data (was a hardcoded Ibiza check)
+		if (zambla != null && gm.sm.isZambla) {
 			zambla.SetActive(true);
 			yield return new WaitForSeconds(0.05f);
 		}

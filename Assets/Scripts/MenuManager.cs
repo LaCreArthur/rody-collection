@@ -26,28 +26,28 @@ public class MenuManager : MonoBehaviour {
 	void Start()
 	{
 		Cursor.visible = false;
-		WorkingStory.CurrentSceneIndex = 1;
+		StoryRoot.Session.CurrentSceneIndex = 1;
 
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
 			Debug.LogError("[MenuManager] WorkingStory not loaded - returning to story selection");
-			SceneManager.LoadScene(0);
+			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
 
-		Debug.Log($"[MenuManager] Story loaded: {WorkingStory.Title}");
+		Debug.Log($"[MenuManager] Story loaded: {StoryRoot.Session.Title}");
 		StartCoroutine(InitFromWorkingStory());
 	}
 
 	/// <summary>
-	/// Initialize scene thumbnails from WorkingStory.
+	/// Initialize scene thumbnails from StoryRoot.Session.
 	/// </summary>
 	IEnumerator InitFromWorkingStory()
 	{
 		CacheDefaultScenePreviewSprites();
 
 		// Load scene thumbnails from WorkingStory
-		int visibleSceneCount = Mathf.Min(WorkingStory.SceneCount, scenes.Length);
+		int visibleSceneCount = Mathf.Min(StoryRoot.Session.SceneCount, scenes.Length);
 		Toggle firstAvailableToggle = null;
 		for (int i = 0; i < scenes.Length; i++)
 		{
@@ -60,7 +60,7 @@ public class MenuManager : MonoBehaviour {
 
 			if (previewImage != null)
 			{
-				Sprite sprite = hasScene ? WorkingStory.LoadSprite($"{sceneIndex}.1.png", 320, 130) : null;
+				Sprite sprite = hasScene ? StoryRoot.Session.LoadSprite($"{sceneIndex}.1.png", 320, 130) : null;
 				previewImage.sprite = sprite != null ? sprite : defaultScenePreviewSprites[i];
 				previewImage.color = hasScene ? EnabledPreviewColor : DisabledPreviewColor;
 			}
@@ -135,15 +135,15 @@ public class MenuManager : MonoBehaviour {
 	public void OnNext() {
 		switch(actionToLoad) {
 			case 0: // Bouton scene
-				WorkingStory.CurrentSceneIndex = sceneToLoad;
-				SceneManager.LoadScene(3);
+				StoryRoot.Session.CurrentSceneIndex = sceneToLoad;
+				SceneManager.LoadScene(AppScenes.Game);
 				break;
 			case 1: // Bouton Draw (Edit)
-				WorkingStory.CurrentSceneIndex = 0;
+				StoryRoot.Session.CurrentSceneIndex = 0;
 				ForkAndEdit();
 				break;
 			case 2: // Bouton intro (return to story selection)
-				WorkingStory.CurrentSceneIndex = 0;
+				StoryRoot.Session.CurrentSceneIndex = 0;
 				ExportReminder.NavigateToMenuWithCheck();
 				break;
 			default: break;
@@ -151,29 +151,18 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Forks official stories before editing.
-	/// WorkingStory is already loaded at this point.
+	/// Enters the editor on the loaded story. Editing a built-in transparently
+	/// produces an editable user copy; ForkForEditing no-ops for a user story.
 	/// </summary>
 	private void ForkAndEdit()
 	{
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
-			Debug.LogError("[MenuManager] WorkingStory not loaded");
+			Debug.LogError("[MenuManager] No story loaded");
 			return;
 		}
 
-		// If official story, fork for editing (creates in-memory copy)
-		if (WorkingStory.IsOfficial)
-		{
-			Debug.Log("[MenuManager] Forking official story for editing...");
-			WorkingStory.ForkForEditing();
-		}
-		else
-		{
-			Debug.Log("[MenuManager] Already a user story, editing in place");
-		}
-
-		// Go to editor
-		SceneManager.LoadScene(6);
+		StoryRoot.Session.ForkForEditing();
+		SceneManager.LoadScene(AppScenes.Editor);
 	}
 }
