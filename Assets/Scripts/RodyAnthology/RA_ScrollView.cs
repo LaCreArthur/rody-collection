@@ -284,7 +284,7 @@ public class RA_ScrollView : MonoBehaviour {
 			{
 				// Read JSON and parse metadata
 				string json = File.ReadAllText(jsonPath);
-				var story = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+				var story = StoryJson.Deserialize(json);
 
 				if (story?.story != null)
 				{

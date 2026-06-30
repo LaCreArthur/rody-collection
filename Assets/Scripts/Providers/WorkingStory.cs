@@ -12,7 +12,7 @@ public static class WorkingStory
     /// <summary>
     /// The currently loaded story data.
     /// </summary>
-    public static StoryExporter.ExportedStory Current { get; private set; }
+    public static Story Current { get; private set; }
 
     /// <summary>
     /// Is this an official story from Resources? (read-only until forked)
@@ -161,7 +161,7 @@ public static class WorkingStory
 
         try
         {
-            var parsed = JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+            var parsed = JsonConvert.DeserializeObject<Story>(json);
 
             // Validate required fields
             if (parsed == null ||
@@ -194,18 +194,18 @@ public static class WorkingStory
     {
         Clear();
 
-        Current = new StoryExporter.ExportedStory
+        Current = new Story
         {
             formatVersion = 1,
             exportedAt = DateTime.UtcNow.ToString("o"),
-            story = new StoryExporter.ExportedStoryMetadata
+            story = new StoryMeta
             {
                 id = SanitizeId(title),
                 title = title,
                 sceneCount = 1
             },
             credits = "",
-            scenes = new List<StoryExporter.ExportedScene>(),
+            scenes = new List<StoryScene>(),
             sprites = new Dictionary<string, string>()
         };
 
@@ -216,7 +216,7 @@ public static class WorkingStory
         defaultScene.texts.intro2 = "";
         defaultScene.texts.intro3 = "";
 
-        Current.scenes.Add(new StoryExporter.ExportedScene
+        Current.scenes.Add(new StoryScene
         {
             index = 1,
             data = defaultScene
@@ -257,7 +257,7 @@ public static class WorkingStory
 
         // Deep copy via JSON serialization
         string json = JsonConvert.SerializeObject(Current, Formatting.None);
-        Current = JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(json);
+        Current = JsonConvert.DeserializeObject<Story>(json);
 
         // Update metadata
         Current.story.title = Current.story.title + " (copie)";
@@ -286,7 +286,7 @@ public static class WorkingStory
         }
 
         if (Current.scenes == null)
-            Current.scenes = new List<StoryExporter.ExportedScene>();
+            Current.scenes = new List<StoryScene>();
 
         var existing = Current.scenes.Find(s => s.index == sceneIndex);
         if (existing != null)
@@ -295,7 +295,7 @@ public static class WorkingStory
         }
         else
         {
-            Current.scenes.Add(new StoryExporter.ExportedScene
+            Current.scenes.Add(new StoryScene
             {
                 index = sceneIndex,
                 data = data
@@ -364,7 +364,7 @@ public static class WorkingStory
         }
 
         if (Current.scenes == null)
-            Current.scenes = new List<StoryExporter.ExportedScene>();
+            Current.scenes = new List<StoryScene>();
 
         // Check if scene exists
         if (Current.scenes.Exists(s => s.index == sceneIndex))
@@ -389,7 +389,7 @@ public static class WorkingStory
         newScene.dialogues.ngp = ".";
         newScene.dialogues.fsw = ".";
 
-        Current.scenes.Add(new StoryExporter.ExportedScene
+        Current.scenes.Add(new StoryScene
         {
             index = sceneIndex,
             data = newScene

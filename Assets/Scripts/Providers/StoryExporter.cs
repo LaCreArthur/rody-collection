@@ -2,43 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 
 /// <summary>
-/// Exports stories to portable .rody.json format.
-/// Includes all scene data and sprites as base64.
+/// Exports stories from the source levels.rody folder format to the portable
+/// .rody.json (Story) format. Editor/build tooling only.
 /// </summary>
 public static class StoryExporter
 {
-    /// <summary>
-    /// Data structure for exported story JSON.
-    /// </summary>
-    [Serializable]
-    public class ExportedStory
-    {
-        public int formatVersion = 1;
-        public string exportedAt;
-        public ExportedStoryMetadata story;
-        public string credits;
-        public List<ExportedScene> scenes;
-        public Dictionary<string, string> sprites; // filename -> base64 data
-    }
-
-    [Serializable]
-    public class ExportedStoryMetadata
-    {
-        public string id;
-        public string title;
-        public int sceneCount;
-    }
-
-    [Serializable]
-    public class ExportedScene
-    {
-        public int index;
-        public SceneData data;
-    }
-
     /// <summary>
     /// Exports a story to JSON string.
     /// </summary>
@@ -63,13 +33,13 @@ public static class StoryExporter
             return null;
         }
 
-        var exported = new ExportedStory
+        var exported = new Story
         {
             formatVersion = 1,
             exportedAt = DateTime.UtcNow.ToString("o"),
-            story = new ExportedStoryMetadata { id = storyId },
+            story = new StoryMeta { id = storyId },
             credits = "",
-            scenes = new List<ExportedScene>(),
+            scenes = new List<StoryScene>(),
             sprites = new Dictionary<string, string>()
         };
 
@@ -103,7 +73,7 @@ public static class StoryExporter
         for (int i = 1; i <= sceneCount; i++)
         {
             var sceneData = LoadSceneFromFile(levelsFile, i);
-            exported.scenes.Add(new ExportedScene
+            exported.scenes.Add(new StoryScene
             {
                 index = i,
                 data = sceneData
@@ -129,8 +99,8 @@ public static class StoryExporter
             }
         }
 
-        // Serialize to JSON using Newtonsoft.Json for better formatting
-        string json = JsonConvert.SerializeObject(exported, Formatting.Indented);
+        // Serialize via the one serializer (indented)
+        string json = StoryJson.Serialize(exported);
 
         Debug.Log($"StoryExporter: Exported {storyId} with {sceneCount} scenes and {exported.sprites.Count} sprites");
         return json;

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 public class ResourcesStoryProvider : IStoryProvider
 {
     private string resourcesPath;
-    private Dictionary<string, StoryExporter.ExportedStory> storiesCache = new Dictionary<string, StoryExporter.ExportedStory>();
+    private Dictionary<string, Story> storiesCache = new Dictionary<string, Story>();
     private Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
     public ResourcesStoryProvider(string path = "Stories")
@@ -47,7 +47,7 @@ public class ResourcesStoryProvider : IStoryProvider
                     continue;
                 }
 
-                var story = JsonConvert.DeserializeObject<StoryExporter.ExportedStory>(storyAsset.text);
+                var story = StoryJson.Deserialize(storyAsset.text);
                 if (story?.story != null)
                 {
                     storiesCache[story.story.id] = story;
@@ -210,7 +210,7 @@ public class ResourcesStoryProvider : IStoryProvider
     /// <summary>
     /// Gets the full exported story data for loading into WorkingStory.
     /// </summary>
-    public StoryExporter.ExportedStory GetExportedStory(string storyId)
+    public Story GetExportedStory(string storyId)
     {
         if (storiesCache.TryGetValue(storyId, out var story))
         {
