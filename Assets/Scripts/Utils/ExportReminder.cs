@@ -29,6 +29,10 @@ public static class ExportReminder
         if (_initialized) return;
         _initialized = true;
 
+        // Inverted dependency: react to the session's dirty changes rather than
+        // being called from inside the dirty setter.
+        WorkingStory.Session.DirtyChanged += _ => UpdateUnsavedFlag();
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         InitBeforeUnloadHandler();
         Debug.Log("[ExportReminder] Initialized beforeunload handler");
