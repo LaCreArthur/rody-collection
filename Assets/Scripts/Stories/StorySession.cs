@@ -243,7 +243,7 @@ public class StorySession
 
         try
         {
-            Texture2D readableTex = MakeTextureReadable(texture);
+            Texture2D readableTex = TextureUtils.MakeReadable(texture);
             AtariPalette.ApplyPalette(readableTex);
             byte[] pngData = readableTex.EncodeToPNG();
 
@@ -508,26 +508,6 @@ public class StorySession
         foreach (char c in System.IO.Path.GetInvalidFileNameChars())
             title = title.Replace(c, '_');
         return title.Replace(' ', '_').ToLowerInvariant();
-    }
-
-    static Texture2D MakeTextureReadable(Texture2D source)
-    {
-        if (source.isReadable) return source;
-
-        RenderTexture rt = RenderTexture.GetTemporary(source.width, source.height);
-        Graphics.Blit(source, rt);
-
-        RenderTexture prev = RenderTexture.active;
-        RenderTexture.active = rt;
-
-        Texture2D readable = new Texture2D(source.width, source.height, TextureFormat.RGBA32, false);
-        readable.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-        readable.Apply();
-
-        RenderTexture.active = prev;
-        RenderTexture.ReleaseTemporary(rt);
-
-        return readable;
     }
 
     #endregion
