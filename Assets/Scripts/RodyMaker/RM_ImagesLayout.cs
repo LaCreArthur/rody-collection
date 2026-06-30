@@ -1,4 +1,3 @@
-using SFB;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,23 +33,10 @@ public class RM_ImagesLayout : RM_Layout {
 	}
     public void ImportClick()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLImageImported);
-#else
-        Debug.Log("Import button clicked");
-        var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
-        string[] files = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false);
-        if (files.Length == 0) return;
-
-        byte[] bytes = System.IO.File.ReadAllBytes(files[0]);
-        var tex = new Texture2D(2, 2);
-        tex.LoadImage(bytes);
-        ProcessImportedTexture(tex);
-#endif
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnImageImported);
     }
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-    void OnWebGLImageImported(string dataUrl)
+    void OnImageImported(string dataUrl)
     {
         if (string.IsNullOrEmpty(dataUrl)) return;
 
@@ -59,7 +45,6 @@ public class RM_ImagesLayout : RM_Layout {
 
         ProcessImportedTexture(tex);
     }
-#endif
 
     void ProcessImportedTexture(Texture2D tex)
     {
@@ -79,10 +64,10 @@ public class RM_ImagesLayout : RM_Layout {
         var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 1f);
         gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = thumbSprite;
 
-        // Persist to WorkingStory
+        // Persist to the session
         if (gm.currentScene == 0)
-            WorkingStory.SaveSprite("0.png", tex);
+            StoryRoot.Session.SaveSprite("0.png", tex);
         else
-            WorkingStory.SaveSprite($"{gm.currentScene}.1.png", tex);
+            StoryRoot.Session.SaveSprite($"{gm.currentScene}.1.png", tex);
     }
 }

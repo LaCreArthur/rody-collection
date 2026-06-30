@@ -1,4 +1,3 @@
-﻿using SFB;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -9,9 +8,7 @@ public class RM_ImgAnimLayout : RM_Layout {
     public int offset = 0;
     public Button[] frameBtn;
 
-#if UNITY_WEBGL && !UNITY_EDITOR
     int _pendingFrameIndex;
-#endif
 
     public void SetActiveBtn() {
         Debug.Log("RM_ImgAnimLayout::SetButton : frameCount = " + frames.Count);
@@ -28,51 +25,27 @@ public class RM_ImgAnimLayout : RM_Layout {
 
 	public void ImportClick(int i)
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
         _pendingFrameIndex = i;
-        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLFrameImported);
-#else
-        Debug.Log("Import button clicked");
-        var extensions = new[] {new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),};
-        string path = null;
-        string[] files = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false);
-        if (files.Length != 0)
-            path = files[0];
-        else
-            return;
-
-        // Allow replacing an existing frame or appending the next sequential frame only.
-        int frameIndex = i + offset;
-        if (frameIndex > frames.Count)
-        {
-            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring frame import at missing index {frameIndex} (count={frames.Count})");
-            return;
-        }
-
-        if (frameIndex == frames.Count)
-            frames.Add(RM_SaveLoad.LoadSprite(path,0,320,130));
-		else frames[frameIndex] = RM_SaveLoad.LoadSprite(path,0,320,130);
-
-        SetActiveBtn();
-#endif
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnFrameImported);
     }
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-    void OnWebGLFrameImported(string dataUrl)
+    void OnFrameImported(string dataUrl)
     {
         if (string.IsNullOrEmpty(dataUrl)) return;
 
         var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
         if (tex == null) return;
 
-        // Resize to Atari ST resolution: 320x130
+        // Unify with the main image path: Atari palette + pixelsPerUnit 1.
         RM_TextureScale.Point(tex, 320, 130);
-        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+        AtariPalette.ApplyPalette(tex);
+        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
 
+        // Allow replacing an existing frame or appending the next sequential frame only.
         int frameIndex = _pendingFrameIndex + offset;
         if (frameIndex > frames.Count)
         {
-            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring WebGL frame import at missing index {frameIndex} (count={frames.Count})");
+            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring frame import at missing index {frameIndex} (count={frames.Count})");
             return;
         }
 
@@ -83,5 +56,4 @@ public class RM_ImgAnimLayout : RM_Layout {
 
         SetActiveBtn();
     }
-#endif
 }
