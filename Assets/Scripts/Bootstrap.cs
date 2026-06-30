@@ -45,7 +45,7 @@ public class Bootstrap : MonoBehaviour
     void Awake()
     {
         // Ensure the composition root exists (spawns it in the entry scene).
-        _ = StoryRoot.Instance;
+        StoryRoot.Ensure();
     }
 
     void Start()
@@ -62,7 +62,7 @@ public class Bootstrap : MonoBehaviour
         Debug.Log("[Bootstrap] Hydrating story store...");
 
         // Hydrate persisted stories from IndexedDB before the first catalog read.
-        StoryRoot.Instance.InitStore(() =>
+        StoryRoot.InitStore(() =>
         {
             Debug.Log("[Bootstrap] Store ready!");
             IsInitialized = true;

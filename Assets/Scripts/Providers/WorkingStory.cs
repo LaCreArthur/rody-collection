@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public static class WorkingStory
 {
-    static StorySession S => StoryRoot.Instance.Session;
+    static StorySession S => StoryRoot.Session;
 
     /// <summary>The one live session. Subscribe to its DirtyChanged here.</summary>
     public static StorySession Session => S;
@@ -32,7 +32,7 @@ public static class WorkingStory
     /// <summary>Loads an official story into the session via the catalog (copy-on-load).</summary>
     public static void LoadOfficial(string storyId)
     {
-        var story = StoryRoot.Instance.Catalog.Resolve(storyId);
+        var story = StoryRoot.Catalog.Resolve(storyId);
         if (story == null)
         {
             Debug.LogError($"WorkingStory: Story not found: {storyId}");
