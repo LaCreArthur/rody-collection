@@ -19,27 +19,27 @@ public class Title : MonoBehaviour {
 
 		if (!StoryRoot.Session.IsLoaded)
 		{
-			Debug.LogError("[Title] WorkingStory not loaded - returning to story selection");
+			Debug.LogError("[Title] the session not loaded - returning to story selection");
 			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
 
-		InitFromWorkingStory();
+		InitFromSession();
 		StartCoroutine(music());
 		StartCoroutine(appear());
 	}
 
 	/// <summary>
-	/// Initialize from WorkingStory (in-memory story data).
+	/// Initialize from the session (in-memory story data).
 	/// </summary>
-	void InitFromWorkingStory()
+	void InitFromSession()
 	{
 		if (isTitle)
 		{
 			Debug.Log($"[Title] Loading story: {StoryRoot.Session.Title}");
 			Debug.Log($"[Title] Story has {StoryRoot.Session.SceneCount} scenes");
 
-			// Load title sprite from WorkingStory
+			// Load title sprite from the session
 			var titleSprite = StoryRoot.Session.LoadSprite("0.png", 320, 200);
 			if (titleSprite != null && titleImage != null)
 			{
@@ -57,7 +57,7 @@ public class Title : MonoBehaviour {
 			Cursor.visible = true;
 			Debug.Log("[Title] CREDITS ROLL");
 
-			// Load credits from WorkingStory
+			// Load credits from the session
 			string creditsText = StoryRoot.Session.GetCredits();
 
 			var titleTextComponent = GameObject.Find("Title")?.GetComponent<Text>();
@@ -87,7 +87,7 @@ public class Title : MonoBehaviour {
 
 			if (Input.GetKeyDown(KeyCode.Escape)) {
 				Cursor.visible = true;
-				ExportReminder.NavigateToMenuWithCheck();
+				SceneManager.LoadScene(AppScenes.Selection);
 			}
 			else if (Input.GetKeyDown(KeyCode.Return)) {
 				skipCredit();

@@ -6,7 +6,7 @@ using UnityEngine;
 /// The single source of story membership AND order. Lists StoryCards (built-in
 /// from the export-time catalog.json manifest, user from persistentDataPath)
 /// and resolves a card id to a full owned Story on demand. Replaces the
-/// IStoryProvider read side, index.json ordering, and the OrderStories whitelist.
+/// old provider read side, index.json ordering, and the OrderStories whitelist.
 /// </summary>
 public class StoryCatalog
 {

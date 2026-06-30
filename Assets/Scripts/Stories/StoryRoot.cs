@@ -10,7 +10,7 @@ using UnityEngine;
 ///
 /// Consumers reach the model through the static accessors (StoryRoot.Session /
 /// .Catalog / .Store): the one well-known access path that replaces the old
-/// double-singleton provider and the WorkingStory static.
+/// double-singleton provider and the old static facade.
 /// </summary>
 public class StoryRoot : MonoBehaviour
 {

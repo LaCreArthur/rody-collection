@@ -30,23 +30,23 @@ public class MenuManager : MonoBehaviour {
 
 		if (!StoryRoot.Session.IsLoaded)
 		{
-			Debug.LogError("[MenuManager] WorkingStory not loaded - returning to story selection");
+			Debug.LogError("[MenuManager] the session not loaded - returning to story selection");
 			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
 
 		Debug.Log($"[MenuManager] Story loaded: {StoryRoot.Session.Title}");
-		StartCoroutine(InitFromWorkingStory());
+		StartCoroutine(InitFromSession());
 	}
 
 	/// <summary>
 	/// Initialize scene thumbnails from StoryRoot.Session.
 	/// </summary>
-	IEnumerator InitFromWorkingStory()
+	IEnumerator InitFromSession()
 	{
 		CacheDefaultScenePreviewSprites();
 
-		// Load scene thumbnails from WorkingStory
+		// Load scene thumbnails from the session
 		int visibleSceneCount = Mathf.Min(StoryRoot.Session.SceneCount, scenes.Length);
 		Toggle firstAvailableToggle = null;
 		for (int i = 0; i < scenes.Length; i++)
@@ -144,7 +144,7 @@ public class MenuManager : MonoBehaviour {
 				break;
 			case 2: // Bouton intro (return to story selection)
 				StoryRoot.Session.CurrentSceneIndex = 0;
-				ExportReminder.NavigateToMenuWithCheck();
+				SceneManager.LoadScene(AppScenes.Selection);
 				break;
 			default: break;
 		}

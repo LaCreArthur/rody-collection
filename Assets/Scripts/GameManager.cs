@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
 
 		if (!StoryRoot.Session.IsLoaded)
 		{
-			Debug.LogError("[GameManager] WorkingStory not loaded - returning to menu");
+			Debug.LogError("[GameManager] the session not loaded - returning to menu");
 			SceneManager.LoadScene(AppScenes.Selection);
 			return;
 		}
@@ -53,23 +53,23 @@ public class GameManager : MonoBehaviour {
 			return;
 		}
 
-		StartCoroutine(InitFromWorkingStory(currentScene));
+		StartCoroutine(InitFromSession(currentScene));
 	}
 
 	/// <summary>
-	/// Initializes scene from WorkingStory (in-memory story data).
+	/// Initializes scene from the session (in-memory story data).
 	/// </summary>
-	IEnumerator InitFromWorkingStory(int sceneIndex)
+	IEnumerator InitFromSession(int sceneIndex)
 	{
 		yield return null; // Let UI update
 
-		// Load scene data from WorkingStory
+		// Load scene data from the session
 		SceneData sceneData = StoryRoot.Session.LoadScene(sceneIndex);
 		List<Sprite> loadedSprites = StoryRoot.Session.LoadSceneSprites(sceneIndex);
 
 		if (sceneData == null || loadedSprites == null || loadedSprites.Count == 0)
 		{
-			Debug.LogError($"[GameManager] Failed to load scene {sceneIndex} from WorkingStory");
+			Debug.LogError($"[GameManager] Failed to load scene {sceneIndex} from the session");
 			SceneManager.LoadScene(AppScenes.Menu);
 			yield break;
 		}
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour {
 		ApplySceneDataFromModel(sceneData);
 		sceneSprites = loadedSprites;
 
-		Debug.Log($"[GameManager] Loaded scene {sceneIndex} from WorkingStory ({sceneSprites.Count} sprites)");
+		Debug.Log($"[GameManager] Loaded scene {sceneIndex} from the session ({sceneSprites.Count} sprites)");
 
 		sceneAnimator.baseFrame = sceneSprites[0];
 		sceneAnimator.frames = new List<Sprite>(sceneSprites);

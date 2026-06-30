@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-///     Bootstraps the game by initializing the story provider.
-///     On WebGL, loads stories from Resources folder.
-///     Attach this to a GameObject in the first scene (Scene 0).
+///     Bootstraps the game: spawns the composition root and hydrates persisted
+///     stories from IndexedDB. Attach to a GameObject in the first scene (Scene 0).
 /// </summary>
 public class Bootstrap : MonoBehaviour
 {
@@ -21,26 +20,6 @@ public class Bootstrap : MonoBehaviour
     public static event Action OnInitialized;
 
     public static bool IsInitialized { get; private set; }
-
-    /// <summary>
-    ///     Check if we're running on WebGL.
-    /// </summary>
-    public static bool IsWebGL
-    {
-        get {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            return true;
-#else
-            return false;
-#endif
-        }
-    }
-
-    /// <summary>
-    ///     Check if file system operations are available.
-    ///     Returns false on WebGL.
-    /// </summary>
-    public static bool HasFileSystem => !IsWebGL;
 
     void Awake()
     {
@@ -75,9 +54,6 @@ public class Bootstrap : MonoBehaviour
     {
         if (loadingUI != null)
             loadingUI.SetActive(false);
-
-        // Initialize export reminder (beforeunload handler for WebGL)
-        ExportReminder.Initialize();
 
         if (nextSceneIndex >= 0)
         {
