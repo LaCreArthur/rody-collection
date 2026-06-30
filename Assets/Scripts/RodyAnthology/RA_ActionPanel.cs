@@ -4,8 +4,6 @@ using UnityEngine.UI;
 using TMPro;
 
 public class RA_ActionPanel : MonoBehaviour {
-	public enum SlotKind { Official, UserStory, Unknown }
-
 	const string EditLabel = "Éditer";
 	const string ExportLabel = "Exporter";
 	const string ForkLabel = "Dupliquer";
@@ -44,19 +42,20 @@ public class RA_ActionPanel : MonoBehaviour {
 		newButton.onClick.RemoveAllListeners();
 	}
 
-	public void Show(SlotKind kind)
+	/// <summary>
+	/// Reflects the selected slot. The one place provenance is consulted: Export is
+	/// offered only for user stories, and Edit reads "Dupliquer" on a built-in.
+	/// </summary>
+	public void Show(bool isUser)
 	{
 		gameObject.SetActive(true);
 
-		bool canEdit = kind == SlotKind.Official || kind == SlotKind.UserStory;
-		bool canExport = kind == SlotKind.UserStory;
-
-		SetButton(editButton, editLabel, canEdit);
-		SetButton(exportButton, exportLabel, canExport);
+		SetButton(editButton, editLabel, true);       // always: fork (built-in) or edit (user)
+		SetButton(exportButton, exportLabel, isUser); // share only a user story
 		SetButton(importButton, importLabel, true);
 		SetButton(newButton, newLabel, true);
 
-		editLabel.text = kind == SlotKind.Official ? ForkLabel : EditLabel;
+		editLabel.text = isUser ? EditLabel : ForkLabel;
 		exportLabel.text = ExportLabel;
 	}
 

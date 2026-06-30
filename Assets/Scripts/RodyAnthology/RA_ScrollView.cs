@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -15,17 +14,11 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject newGamePanel;
 	public GameObject content;
 	public Transform slotPrefab;
-	public Transform slotNewGamePrefab;
-	public Transform slotLoadGamePrefab; // Used for import .rody.json files (shows "Importer")
-	public Transform slotExportPrefab;   // Used for export .rody.json files (shows "Exporter")
 	public RA_ActionPanel actionPanel;
 	[SerializeField] RA_FeedbackPanel feedbackPanel;
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
-
-	// Tracks which slots are user stories (for deletion/export)
-	private HashSet<int> userStorySlotIndices = new HashSet<int>();
 
 	static ScrollRect scrollRect;
 	static float t = 0.0f;
@@ -34,6 +27,8 @@ public class RA_ScrollView : MonoBehaviour {
 	List<GameObject> slotTitles;
 	List<Image> slotImages;
 	List<Button> slotButtons;
+	List<StoryCard> cards;            // parallel to slots
+	readonly SpriteCache _covers = new SpriteCache();
 
 	float step;
 	float newPos;
@@ -44,8 +39,12 @@ public class RA_ScrollView : MonoBehaviour {
 	bool isScrollViewDisabled = true;
 
 	void Start () {
-		// Always use provider-based initialization for official stories
-		StartCoroutine(InitWithProvider());
+		// First-launch editor hint: set once, never re-set on later menu visits.
+		if (!PlayerPrefs.HasKey("rodyMakerFirstTime"))
+			PlayerPrefs.SetInt("rodyMakerFirstTime", 1);
+
+		if (loadingUI != null) loadingUI.SetActive(false);
+		BuildSlots();
 	}
 
 	void OnEnable()
@@ -65,160 +64,32 @@ public class RA_ScrollView : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Unified initialization - waits for provider, then loads stories.
-	/// Official stories come from Resources via provider.
-	/// On desktop: also loads user stories and shows import/newGame slots.
+	/// Builds one carousel slot per catalog card (built-in then user, in catalog order).
 	/// </summary>
-	IEnumerator InitWithProvider()
+	void BuildSlots()
 	{
-		Debug.Log("[RA_ScrollView] InitWithProvider() started");
-		loadingUI.SetActive(true);
-
-		// Wait for provider to be ready
-		if (!StoryProviderManager.IsReady)
-		{
-			Debug.Log("[RA_ScrollView] StoryProviderManager not ready, calling Initialize()...");
-			StoryProviderManager.Initialize();
-
-			int waitFrames = 0;
-			while (!StoryProviderManager.IsReady)
-			{
-				waitFrames++;
-				if (waitFrames % 60 == 0) // Log every 60 frames (~1 second)
-				{
-					Debug.Log($"[RA_ScrollView] Still waiting for provider... (frame {waitFrames})");
-				}
-				yield return null;
-			}
-			Debug.Log($"[RA_ScrollView] Provider ready after {waitFrames} frames");
-		}
-		else
-		{
-			Debug.Log("[RA_ScrollView] StoryProviderManager already ready");
-		}
-
-		loadingUI.SetActive(false);
-		Debug.Log("[RA_ScrollView] Loading stories from provider...");
-		InitFromProvider();
-		Debug.Log("[RA_ScrollView] InitWithProvider() complete");
-	}
-
-	/// <summary>
-	/// Initialize from StoryProvider.
-	/// Official stories come from Resources via provider.
-	/// On desktop: also loads user stories and shows import/newGame slots.
-	/// </summary>
-	void InitFromProvider()
-	{
-		PlayerPrefs.SetInt("rodyMakerFirstTime", 1);
 		slots = new List<GameObject>();
 		slotTitles = new List<GameObject>();
-		userStorySlotIndices.Clear();
-		int slotIndex = 0;
+		cards = StoryRoot.Catalog.Cards();
 
-		// Load official stories from provider
-		var stories = StoryProviderManager.Provider.GetStories();
-		Debug.Log($"[RA_ScrollView] Loaded {stories.Count} stories from provider");
-
-		// Order stories (same logic as OrderGameFolder but for metadata)
-		var orderedStories = OrderStories(stories);
-
-		foreach (var story in orderedStories)
+		foreach (var card in cards)
 		{
-			if (story.id == "Rody0") continue; // Skip base template
-
-			// Instantiate a slot
 			GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
-			slot.name = story.id;
-			slot.GetComponentInChildren<Text>().text = story.title;
-
-			// Load cover from provider
-			LoadCover(slot, story.id);
-
+			slot.name = card.id;
+			slot.GetComponentInChildren<Text>().text = card.title;
+			PaintCover(slot, card);
 			slots.Add(slot);
-			slotIndex++;
 		}
 
-		// On desktop: also load user stories from file system
-		bool hasFileSystem = Bootstrap.HasFileSystem;
-		if (hasFileSystem)
-		{
-			LoadUserStories(ref slotIndex);
-		}
-
-		// Show current WorkingStory if it's a user story (fork/new/import)
-		if (WorkingStory.IsLoaded && WorkingStory.IsUserStory)
-		{
-			GameObject storySlot = Instantiate(slotPrefab, content.transform).gameObject;
-			storySlot.name = "workingStory";
-
-			// Show unexported indicator if story has unsaved changes
-			string titleSuffix = WorkingStory.IsDirty ? " *" : "";
-			storySlot.GetComponentInChildren<Text>().text = WorkingStory.Title + titleSuffix;
-
-			// Tint cover orange if unexported
-			var coverImg = storySlot.transform.GetChild(0).GetComponent<Image>();
-			if (WorkingStory.IsDirty && coverImg != null)
-			{
-				coverImg.color = new Color(1f, 0.85f, 0.7f); // Light orange tint
-			}
-
-			// Load cover from WorkingStory (menu thumbnail)
-			var cover = WorkingStory.LoadSprite("cover.png", 320, 200);
-			if (cover != null && coverImg != null)
-			{
-				coverImg.sprite = cover;
-			}
-
-			slots.Add(storySlot);
-			userStorySlotIndices.Add(slotIndex);
-			slotIndex++;
-		}
-
-		FinalizeSlots(slotIndex);
+		FinalizeSlots(slots.Count);
 	}
 
-	List<StoryMetadata> OrderStories(List<StoryMetadata> stories)
+	void PaintCover(GameObject slot, StoryCard card)
 	{
-		var ordered = new List<StoryMetadata>();
-		var remaining = new List<StoryMetadata>(stories);
-
-		string[] preferredOrder = {
-			"Rody Et Mastico",
-			"Rody Et Mastico II",
-			"Rody Et Mastico III",
-			"Rody Noël",
-			"Rody Et Mastico V",
-			"Rody Et Mastico VI",
-			"Rody Et Mastico A Ibiza"
-		};
-
-		foreach (var name in preferredOrder)
-		{
-			var found = remaining.Find(s => s.id == name);
-			if (found != null)
-			{
-				ordered.Add(found);
-				remaining.Remove(found);
-			}
-		}
-
-		ordered.AddRange(remaining);
-		return ordered;
-	}
-
-	void LoadCover(GameObject slot, string storyId)
-	{
-		var provider = StoryProviderManager.Provider;
-		if (provider != null)
-		{
-			var sprite = provider.LoadSprite(storyId, "cover.png", 320, 240);
-			if (slot != null && sprite != null)
-			{
-				var img = slot.transform.GetChild(0).GetComponent<Image>();
-				if (img != null) img.sprite = sprite;
-			}
-		}
+		var img = slot.transform.GetChild(0).GetComponent<Image>();
+		if (img == null) return;
+		var sprite = _covers.Get(card.id, card.cover, 320, 200);
+		if (sprite != null) img.sprite = sprite;
 	}
 
 	void FinalizeSlots(int slotCount)
@@ -249,7 +120,6 @@ public class RA_ScrollView : MonoBehaviour {
 		}
 
 		step = 1.0f / Mathf.Max(1, slots.Count - 1);
-		Debug.Log("slots count : " + slots.Count);
 		scrollRect = GetComponent<ScrollRect>();
 		scrollRect.onValueChanged.AddListener(OnValueChanged);
 		middleSlot = slots.Count / 2;
@@ -260,86 +130,12 @@ public class RA_ScrollView : MonoBehaviour {
 		UpdateActionPanel();
 	}
 
-	/// <summary>
-	/// Loads user stories from UserStoriesPath (.rody.json files only).
-	/// </summary>
-	void LoadUserStories(ref int slotIndex)
+	StoryCard SelectedCard()
 	{
-		PathManager.EnsureUserStoriesDirectory();
-		string userStoriesPath = PathManager.UserStoriesPath;
-
-		if (!Directory.Exists(userStoriesPath))
-		{
-			Debug.Log("[RA_ScrollView] No user stories directory");
-			return;
-		}
-
-		// Load .rody.json files only
-		string[] jsonFiles = Directory.GetFiles(userStoriesPath, "*.rody.json");
-		Debug.Log($"[RA_ScrollView] Found {jsonFiles.Length} .rody.json files");
-
-		foreach (string jsonPath in jsonFiles)
-		{
-			try
-			{
-				// Read JSON and parse metadata
-				string json = File.ReadAllText(jsonPath);
-				var story = StoryJson.Deserialize(json);
-
-				if (story?.story != null)
-				{
-					// Instantiate a slot
-					GameObject slot = Instantiate(slotPrefab, content.transform).gameObject;
-
-					// Try to load cover from the JSON sprites (menu thumbnail)
-					if (story.sprites != null && story.sprites.ContainsKey("cover.png"))
-					{
-						try
-						{
-							string base64 = story.sprites["cover.png"];
-							if (base64.StartsWith("data:"))
-							{
-								int comma = base64.IndexOf(',');
-								if (comma > 0) base64 = base64.Substring(comma + 1);
-							}
-							byte[] bytes = System.Convert.FromBase64String(base64);
-							var tex = new Texture2D(100, 137, TextureFormat.RGBA32, false);
-							tex.filterMode = FilterMode.Point;
-							tex.LoadImage(bytes);
-							var coverSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-							slot.transform.GetChild(0).GetComponent<Image>().sprite = coverSprite;
-						}
-						catch (System.Exception e)
-						{
-							Debug.LogWarning($"[RA_ScrollView] Failed to load cover for {jsonPath}: {e.Message}");
-						}
-					}
-
-					slot.name = "json:" + jsonPath; // Full path for JSON files
-					slot.GetComponentInChildren<Text>().text = story.story.title;
-
-					slots.Add(slot);
-					userStorySlotIndices.Add(slots.Count - 1);
-
-					slotIndex++;
-					Debug.Log($"[RA_ScrollView] Added JSON story: {story.story.title}");
-				}
-			}
-			catch (System.Exception e)
-			{
-				Debug.LogWarning($"[RA_ScrollView] Failed to load JSON story {jsonPath}: {e.Message}");
-			}
-		}
+		if (cards == null || selectedButton < 0 || selectedButton >= cards.Count)
+			return null;
+		return cards[selectedButton];
 	}
-
-	/// <summary>
-	/// Checks if a slot index is a user story.
-	/// </summary>
-	public bool IsUserStorySlot(int index)
-	{
-		return userStorySlotIndices.Contains(index);
-	}
-
 
 	public void Reset() {
 		foreach (GameObject slot in slots) {
@@ -349,14 +145,14 @@ public class RA_ScrollView : MonoBehaviour {
 		slotTitles.Clear();
 		slotImages.Clear();
 		slotButtons.Clear();
-		userStorySlotIndices.Clear();
-		InitFromProvider();
+		BuildSlots();
 	}
 
-	public void ResetAndSelectWorkingStory()
+	/// <summary>Rebuilds the carousel and scrolls to the given story id.</summary>
+	public void ResetAndSelectStory(string id)
 	{
 		Reset();
-		StartCoroutine(ScrollToSlotByName("workingStory"));
+		StartCoroutine(ScrollToSlotByName(id));
 	}
 
 	IEnumerator ScrollToSlotByName(string slotName)
@@ -396,7 +192,7 @@ public class RA_ScrollView : MonoBehaviour {
 			scrollRect.horizontal = false; // disable scroll by mouse
 		}
 		else {
-			scrollRect.horizontal = true; // enable scroll 
+			scrollRect.horizontal = true; // enable scroll
 		}
 
 		// move to the selected slot when clicked
@@ -407,27 +203,21 @@ public class RA_ScrollView : MonoBehaviour {
 				isLerping = false;
 				t = 0.0f;
 				selectedButton = selectedButton < 0 ? 0 : selectedButton > slots.Count-1 ? slots.Count-1 : selectedButton;
-				Debug.Log("lerp stops");
 				updateSlotSprites(selectedButton);
 			}
 		}
-		// move to next or previous slot when axis moved,  if not in movement
+		// move to next or previous slot when axis moved, if not in movement
 		if (!isLerping && scrollRect.horizontal == true) {
-			float value = Input.GetAxisRaw ("Horizontal"); 
+			float value = Input.GetAxisRaw ("Horizontal");
 			if (value < 0 && selectedButton > 0) { // move left
-			SetMoveToValues(selectedButton - 1);
+				SetMoveToValues(selectedButton - 1);
 			}
 			else if  (value > 0 && selectedButton < slots.Count-1) { // move right
-			SetMoveToValues(selectedButton + 1);
+				SetMoveToValues(selectedButton + 1);
 			}
 
-			if (Input.GetKeyUp(KeyCode.Return)) {
-				StartCoroutine(LoadFolder(selectedButton));
-			}
-			if (Input.GetKey(KeyCode.Escape)) {
-				HandleEscape();
-			}
-			if (Input.GetKey(KeyCode.Delete)) {
+			// Delete the selected story (user stories only).
+			if (Input.GetKeyUp(KeyCode.Delete)) {
 				OnSuppr(selectedButton);
 			}
 		}
@@ -437,21 +227,18 @@ public class RA_ScrollView : MonoBehaviour {
 
 		float currentPos = slots[selectedButton].GetComponent<RectTransform>().position.x;
 		int index = selectedButton;
-		if (currentPos > 2f) 
+		if (currentPos > 2f)
 			index--;
 		if (currentPos < -2f)
 			index++;
-		
-		//Debug.Log("current pos : " + currentPos +", index : " + index);
 
-		index =  index <= 0 ? 0 : 
-						index >= slotImages.Count ? slotImages.Count - 1 : 
+		index =  index <= 0 ? 0 :
+						index >= slotImages.Count ? slotImages.Count - 1 :
 						index; // index starts at 0
 
 		if (index != selectedButton) {
 			updateSlotSprites(index);
 			if (!isLerping) {
-				Debug.Log("new selected is : " + selectedButton);
 				sm.OnSlotSelection();
 			}
 		}
@@ -465,7 +252,6 @@ public class RA_ScrollView : MonoBehaviour {
 				slotButtons[i].image.rectTransform.sizeDelta = new Vector2(58,80);
 				slotTitles[i].SetActive(true);
 				selectedButton = index;
-				//Debug.Log("new selected is : " + index); 
 			}
 			else {
 				slotImages[i].GetComponent<Image>().sprite = notSelected;
@@ -478,118 +264,39 @@ public class RA_ScrollView : MonoBehaviour {
 
 	void UpdateActionPanel()
 	{
-		bool hasSelection = slots != null && slots.Count > 0 && selectedButton >= 0 && selectedButton < slots.Count;
-		if (hasSelection)
-			actionPanel.Show(GetSelectedSlotKind());
+		var card = SelectedCard();
+		if (card != null)
+			actionPanel.Show(card.source == StorySource.User);
 		else
 			actionPanel.Hide();
-	}
-
-	RA_ActionPanel.SlotKind GetSelectedSlotKind()
-	{
-		if (slots == null || selectedButton < 0 || selectedButton >= slots.Count)
-			return RA_ActionPanel.SlotKind.Unknown;
-
-		return GetSlotKind(content.transform.GetChild(selectedButton).name);
-	}
-
-	RA_ActionPanel.SlotKind GetSlotKind(string slotName)
-	{
-		if (string.IsNullOrEmpty(slotName))
-			return RA_ActionPanel.SlotKind.Unknown;
-
-		if (slotName == "workingStory" || slotName.StartsWith("json:"))
-			return RA_ActionPanel.SlotKind.UserStory;
-
-		return RA_ActionPanel.SlotKind.Official;
-	}
-
-	bool LoadSelectedStoryForAction(int index)
-	{
-		if (index < 0 || index >= slots.Count)
-			return false;
-
-		string slotName = content.transform.GetChild(index).name;
-
-		if (slotName == "workingStory")
-			return WorkingStory.IsLoaded;
-
-		if (slotName.StartsWith("json:"))
-		{
-			string jsonPath = slotName.Substring(5);
-			try
-			{
-				string json = File.ReadAllText(jsonPath);
-				WorkingStory.LoadFromJson(json, jsonPath);
-			}
-			catch (System.Exception e)
-			{
-				Debug.LogError($"[RA] Failed to load JSON story: {e.Message}");
-				return false;
-			}
-		}
-		else
-		{
-			WorkingStory.LoadOfficial(slotName);
-		}
-
-		if (!WorkingStory.IsLoaded)
-			return false;
-
-		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-		return true;
 	}
 
 	void HandleEditClicked()
 	{
 		if (isScrollViewDisabled) return;
-		if (!LoadSelectedStoryForAction(selectedButton))
-		{
-			feedbackPanel.ShowMessage("Impossible de charger l'histoire!");
-			return;
-		}
+		var card = SelectedCard();
+		if (card == null) return;
 
-		if (WorkingStory.IsOfficial)
-		{
-			feedbackPanel.ShowConfirm(
-				$"Dupliquer «{WorkingStory.Title}» pour l'éditer ?",
-				"ok",
-				() => {
-					WorkingStory.ForkForEditing();
-					PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-					PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-					WorkingStory.CurrentSceneIndex = 0;
-					StartCoroutine(TransitionToEditor());
-				});
-		}
-		else
-		{
-			feedbackPanel.ShowMessage(
-				$"Édition de «{WorkingStory.Title}»...",
-				() => {
-					WorkingStory.CurrentSceneIndex = 0;
-					StartCoroutine(TransitionToEditor());
-				});
-		}
+		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
+		// Editing a built-in transparently produces an editable user copy.
+		StoryRoot.Session.ForkForEditing();
+		StoryRoot.Session.CurrentSceneIndex = 0;
+		StartCoroutine(TransitionToEditor());
 	}
 
 	IEnumerator TransitionToEditor()
 	{
 		yield return StartCoroutine(menu.AnimateExitTransition());
-		SceneManager.LoadScene(6);
-	}
-
-	void HandleEscape()
-	{
-		feedbackPanel.ShowConfirm("Veux-tu quitter le jeu ?", "oui", () => Application.Quit());
+		SceneManager.LoadScene(AppScenes.Editor);
 	}
 
 	void HandleExportClicked()
 	{
 		if (isScrollViewDisabled) return;
-		if (GetSelectedSlotKind() != RA_ActionPanel.SlotKind.UserStory) return;
-		if (!LoadSelectedStoryForAction(selectedButton)) return;
+		var card = SelectedCard();
+		if (card == null || card.source != StorySource.User) return;
+
+		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
 		ngScript.OnExportClick();
 	}
 
@@ -610,110 +317,43 @@ public class RA_ScrollView : MonoBehaviour {
 			return; // don't do anything if scroll view is disabled
 		Button me = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
 		int index = slotButtons.FindIndex(x => x == me);
-		//Debug.Log("move to " + index + ", by step : " + index * step);
-		
-		if (selectedButton == index) { // the button is focus and clicked
-			// set the right game folder
-			StartCoroutine(LoadFolder(index));
+
+		if (selectedButton == index) { // the button is focused and clicked
+			StartCoroutine(PlaySelected(index));
 		}
-		else // the button is not focus
+		else // the button is not focused
 			SetMoveToValues(index);
 	}
 
 	void SetMoveToValues(int destIndex) {
 		newPos = (destIndex * step) + (middleSlot - destIndex) * 2f / 100f;
-		//Debug.Log("offset : " + (middleSlot - destIndex) * 2f / 100f);
-		//Debug.Log("new pos : " + newPos);
 		oldPos = scrollRect.horizontalNormalizedPosition;
 		selectedButton = destIndex;
-		Debug.Log("new selected is : " + destIndex);
 		sm.OnSlotSelection();
 		isLerping = true;
 	}
 
-	IEnumerator LoadFolder(int index) {
-		PlayerPrefs.SetInt("customGame",1);
+	/// <summary>Loads the selected card into the session and starts play (title scene).</summary>
+	IEnumerator PlaySelected(int index) {
+		if (index < 0 || index >= cards.Count) yield break;
 
-		string slotName = content.transform.GetChild(index).name;
+		var card = cards[index];
+		yield return StartCoroutine(menu.AnimateExitTransition());
 
-		// play the current working story
-		if (slotName == "workingStory") {
-			// WorkingStory is already loaded, just start playing
-			yield return StartCoroutine(menu.AnimateExitTransition());
-			PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-			PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-			SceneManager.LoadScene(1);
-		}
-		// Load the selected game (official or user)
-		else {
-			// Animate pixelation transition before loading
-			yield return StartCoroutine(menu.AnimateExitTransition());
+		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
+		if (!StoryRoot.Session.IsLoaded) yield break;
 
-			// Load story into WorkingStory BEFORE scene transition
-			if (slotName.StartsWith("json:"))
-			{
-				if (!LoadSelectedStoryForAction(index))
-					yield break;
-				Debug.Log($"[RA] Loaded JSON story: {WorkingStory.Title}");
-			}
-			else
-			{
-				if (!LoadSelectedStoryForAction(index))
-					yield break;
-				Debug.Log($"[RA] Loaded official story: {WorkingStory.Title}");
-			}
-
-			string gamePath = slotName; // Just use slot name directly
-			Debug.Log("[RA] Set game path : " + gamePath);
-			PlayerPrefs.SetString("gamePath", gamePath);
-			SceneManager.LoadScene(1); // load the intro scene
-		}
-
-		yield return null;
+		SceneManager.LoadScene(AppScenes.Title);
 	}
 
-
+	/// <summary>Delete the selected story (user stories only).</summary>
 	public void OnSuppr(int index) {
-		string gameName = content.transform.GetChild(index).name;
-		bool isDeletable = false;
-
-		// JSON user stories are deletable
-		if (gameName.StartsWith("json:"))
-		{
-			string jsonPath = gameName.Substring(5); // Remove "json:" prefix
-			PlayerPrefs.SetString("gameToDelete", jsonPath);
-			PlayerPrefs.SetString("gameToDeleteType", "json");
-			isDeletable = true;
-		}
-		// Official stories and special slots are not deletable
-
-		ngScript.SG_onDelete(isDeletable);
+		if (index < 0 || index >= cards.Count) return;
+		var card = cards[index];
+		bool isDeletable = card.source == StorySource.User;
+		if (isDeletable)
+			ngScript.SG_onDelete(card.id);
+		else
+			ngScript.SG_onDelete(null);
 	}
-
-	/// <summary>
-	/// Gets the currently selected slot's JSON path for export.
-	/// Returns null if not a JSON user story.
-	/// </summary>
-	public string GetSelectedUserStoryPath()
-	{
-		if (selectedButton < 0 || selectedButton >= slots.Count)
-			return null;
-
-		string slotName = content.transform.GetChild(selectedButton).name;
-
-		// Only JSON user stories have exportable paths
-		if (slotName.StartsWith("json:"))
-			return slotName.Substring(5); // Return path without prefix
-
-		return null;
-	}
-
-	/// <summary>
-	/// Gets the currently selected slot index.
-	/// </summary>
-	public int GetSelectedIndex()
-	{
-		return selectedButton;
-	}
-	
 }

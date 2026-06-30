@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.IO;
-using SFB;
 
 public class RA_NewGame : MonoBehaviour {
 
@@ -33,55 +31,42 @@ public class RA_NewGame : MonoBehaviour {
 		}
 
 		Debug.Log($"[RA_NewGame] Creating new story: {title}");
-		WorkingStory.CreateNew(title);
+		StoryRoot.Session.CreateNew(title);
 
 		if (imgInput.text.Length > 0 && coverImgSprite != null)
-			WorkingStory.SaveSprite("cover.png", coverImgSprite.texture);
-
-		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
+			StoryRoot.Session.SaveSprite("cover.png", coverImgSprite.texture);
 
 		newGamePanel.SetActive(false);
-		feedbackPanel.ShowMessage(
-			$"L'histoire \"{title}\" a été créée!\nRendez-vous dans Rody Maker pour l'éditer.",
-			() => SceneManager.LoadScene(6));
+
+		// Persist the new story (best-effort), then open the editor.
+		StoryRoot.Store.SaveUser(StoryRoot.Session.Current, _ =>
+			feedbackPanel.ShowMessage(
+				$"L'histoire \"{title}\" a été créée!\nRendez-vous dans Rody Maker pour l'éditer.",
+				() => SceneManager.LoadScene(AppScenes.Editor)));
 	}
 
 	public void NG_OnCancelClick() => newGamePanel.SetActive(false);
 
 	public void NG_ImgClick()
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnWebGLCoverImported);
-#else
-		var extensions = new[] { new ExtensionFilter("Images", "png", "jpg", "jpeg") };
-		string[] files = StandaloneFileBrowser.OpenFilePanel("Choix de l'image de couverture", "", extensions, false);
-		if (files.Length == 0) return;
-
-		imgInput.text = files[0];
-		coverImgSprite = RM_SaveLoad.LoadSprite(files[0], 0, 340, 480);
-#endif
+		WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnCoverImported);
 	}
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-	void OnWebGLCoverImported(string dataUrl)
+	void OnCoverImported(string dataUrl)
 	{
 		if (string.IsNullOrEmpty(dataUrl)) return;
 		var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
 		if (tex == null) return;
+
 		RM_TextureScale.Point(tex, 320, 200);
 		coverImgSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
 		imgInput.text = "cover.png";
 	}
-#endif
 
-	/// <summary>
-	/// Imports a .rody.json story file into memory for play/edit.
-	/// Shows confirmation if a story is already loaded.
-	/// </summary>
+	/// <summary>Imports a .rody.json story, persists it, and selects it in the menu.</summary>
 	public void OnImportClick()
 	{
-		if (WorkingStory.IsLoaded)
+		if (StoryRoot.Session.IsLoaded)
 		{
 			feedbackPanel.ShowConfirm(
 				"Une histoire est déjà chargée.\nVoulez-vous la remplacer?",
@@ -94,158 +79,66 @@ public class RA_NewGame : MonoBehaviour {
 
 	void DoImport()
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		WebGLFileBrowser.Instance.OpenFileAsText(".json,application/json", OnWebGLImportComplete);
-#else
-		var extensions = new[] { new ExtensionFilter("Rody Story", "rody.json", "json") };
-		string[] files = StandaloneFileBrowser.OpenFilePanel("Importer une histoire", "", extensions, false);
-
-		if (files.Length == 0) return;
-
-		string filePath = files[0];
-		Debug.Log($"[RA_NewGame] Importing story from: {filePath}");
-
-		string json;
-		try
-		{
-			json = File.ReadAllText(filePath);
-		}
-		catch (System.Exception e)
-		{
-			Debug.LogError($"[RA_NewGame] Failed to read file: {e.Message}");
-			feedbackPanel.ShowMessage($"Impossible de lire le fichier!\n{e.Message}");
-			return;
-		}
-
-		WorkingStory.LoadFromJson(json, filePath);
-		if (!WorkingStory.IsLoaded)
-		{
-			feedbackPanel.ShowMessage("Le fichier n'est pas une histoire valide!");
-			return;
-		}
-
-		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-
-		sv.ResetAndSelectWorkingStory();
-		feedbackPanel.ShowMessage($"Histoire «{WorkingStory.Title}» importée avec succès!");
-		Debug.Log($"[RA_NewGame] Story imported: {WorkingStory.Title}");
-#endif
+		WebGLFileBrowser.Instance.OpenFileAsText(".json,application/json", OnImportComplete);
 	}
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-	void OnWebGLImportComplete(string json)
+	void OnImportComplete(string json)
 	{
 		if (string.IsNullOrEmpty(json))
 		{
-			Debug.Log("[RA_NewGame] WebGL import cancelled or failed");
+			Debug.Log("[RA_NewGame] Import cancelled or failed");
 			return;
 		}
 
-		Debug.Log($"[RA_NewGame] WebGL import received {json.Length} chars");
-		WorkingStory.LoadFromJson(json, null);
-
-		if (!WorkingStory.IsLoaded)
+		StoryRoot.Session.LoadFromJson(json, null);
+		if (!StoryRoot.Session.IsLoaded)
 		{
 			feedbackPanel.ShowMessage("Le fichier n'est pas une histoire valide!");
 			return;
 		}
 
-		PlayerPrefs.SetString("gamePath", $"memory:{WorkingStory.Id}");
-		PlayerPrefs.SetInt("scenesCount", WorkingStory.SceneCount);
-
-		sv.ResetAndSelectWorkingStory();
-		feedbackPanel.ShowMessage($"Histoire «{WorkingStory.Title}» importée avec succès!");
-		Debug.Log($"[RA_NewGame] WebGL story imported: {WorkingStory.Title}");
+		// Auto-persist so the import survives a reload, then show it in the menu.
+		var story = StoryRoot.Session.Current;
+		StoryRoot.Store.SaveUser(story, _ =>
+		{
+			sv.ResetAndSelectStory(story.story.id);
+			feedbackPanel.ShowMessage($"Histoire «{StoryRoot.Session.Title}» importée avec succès!");
+		});
 	}
-#endif
 
-	/// <summary>
-	/// Exports the currently loaded WorkingStory to a .rody.json file.
-	/// </summary>
+	/// <summary>Exports the current session story as a downloadable .rody.json (sharing only).</summary>
 	public void OnExportClick()
 	{
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
 			feedbackPanel.ShowMessage("Aucune histoire n'est chargée pour l'export!");
 			return;
 		}
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-		string json = WorkingStory.ExportToJson();
+		string json = StoryRoot.Session.ExportToJson();
 		if (string.IsNullOrEmpty(json))
 		{
 			feedbackPanel.ShowMessage("L'export a échoué!");
 			return;
 		}
 
-		string filename = WorkingStory.Id + ".rody.json";
-		WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () => {
-			WorkingStory.MarkSaved("download:" + filename);
-			if (sv != null) sv.Reset();
-			feedbackPanel.ShowMessage($"L'histoire a été téléchargée!\n{filename}");
-		});
-#else
-		string suggestedName = WorkingStory.Id + ".rody.json";
-		string savePath = StandaloneFileBrowser.SaveFilePanel("Exporter l'histoire", "", suggestedName, "rody.json");
-
-		if (string.IsNullOrEmpty(savePath)) return;
-
-		string json = WorkingStory.ExportToJson();
-		if (string.IsNullOrEmpty(json))
-		{
-			feedbackPanel.ShowMessage("L'export a échoué!");
-			return;
-		}
-
-		try
-		{
-			File.WriteAllText(savePath, json);
-			WorkingStory.MarkSaved(savePath);
-			if (sv != null) sv.Reset();
-			feedbackPanel.ShowMessage($"L'histoire a été exportée!\n{Path.GetFileName(savePath)}");
-		}
-		catch (System.Exception e)
-		{
-			Debug.LogError($"[RA_NewGame] Export failed: {e.Message}");
-			feedbackPanel.ShowMessage($"L'export a échoué!\n{e.Message}");
-		}
-#endif
+		string filename = StoryRoot.Session.Id + ".rody.json";
+		WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () =>
+			feedbackPanel.ShowMessage($"L'histoire a été téléchargée!\n{filename}"));
 	}
 
-	public void SG_onDelete(bool isDeletable)
+	/// <summary>Confirms and deletes a persisted user story by id (null = not deletable).</summary>
+	public void SG_onDelete(string id)
 	{
-		if (isDeletable)
-		{
-			string gamePath = PlayerPrefs.GetString("gameToDelete");
-			feedbackPanel.ShowConfirm(
-				"Es-tu sûr de vouloir définitivement supprimer ce jeu ?",
-				"oui",
-				() => DeleteStory(gamePath));
-		}
-		else
+		if (string.IsNullOrEmpty(id))
 		{
 			feedbackPanel.ShowMessage("Tu ne peux pas supprimer ce jeu !");
+			return;
 		}
-	}
 
-	void DeleteStory(string path)
-	{
-		try
-		{
-			if (!string.IsNullOrEmpty(path) && File.Exists(path))
-			{
-				File.Delete(path);
-				Debug.Log($"[RA_NewGame] Deleted: {path}");
-			}
-			PlayerPrefs.SetString("gameToDelete", "");
-			PlayerPrefs.SetString("gameToDeleteType", "");
-			sv.Reset();
-		}
-		catch (System.Exception e)
-		{
-			Debug.Log(e);
-			feedbackPanel.ShowMessage("Impossible de supprimer !\n" + e.Message);
-		}
+		feedbackPanel.ShowConfirm(
+			"Es-tu sûr de vouloir définitivement supprimer ce jeu ?",
+			"oui",
+			() => StoryRoot.Store.DeleteUser(id, _ => sv.Reset()));
 	}
 }
