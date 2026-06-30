@@ -12,7 +12,7 @@ public class ResourcesStoryProvider : IStoryProvider
 {
     private string resourcesPath;
     private Dictionary<string, Story> storiesCache = new Dictionary<string, Story>();
-    private Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+    private readonly SpriteCache spriteCache = new SpriteCache();
 
     public ResourcesStoryProvider(string path = "Stories")
     {
@@ -114,48 +114,10 @@ public class ResourcesStoryProvider : IStoryProvider
 
     public Sprite LoadSprite(string storyId, string spriteName, int width, int height)
     {
-        string cacheKey = $"{storyId}/{spriteName}";
-        if (spriteCache.TryGetValue(cacheKey, out Sprite cached))
-        {
-            return cached;
-        }
-
-        if (!storiesCache.TryGetValue(storyId, out var story) || story.sprites == null)
-        {
-            return null;
-        }
-
-        if (!story.sprites.TryGetValue(spriteName, out string base64))
-        {
-            return null;
-        }
-
-        try
-        {
-            // Handle data URL prefix if present
-            if (base64.StartsWith("data:"))
-            {
-                int commaIndex = base64.IndexOf(',');
-                if (commaIndex > 0)
-                {
-                    base64 = base64.Substring(commaIndex + 1);
-                }
-            }
-
-            byte[] imageBytes = Convert.FromBase64String(base64);
-            Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
-            tex.filterMode = FilterMode.Point;
-            tex.LoadImage(imageBytes);
-
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-            spriteCache[cacheKey] = sprite;
-            return sprite;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"ResourcesStoryProvider: Failed to decode sprite {spriteName}: {e.Message}");
-            return null;
-        }
+        string base64 = null;
+        if (storiesCache.TryGetValue(storyId, out var story))
+            story.sprites?.TryGetValue(spriteName, out base64);
+        return spriteCache.Get($"{storyId}/{spriteName}", base64, width, height);
     }
 
     public List<Sprite> LoadSceneSprites(string storyId, int sceneIndex)
@@ -165,7 +127,7 @@ public class ResourcesStoryProvider : IStoryProvider
 
         while (true)
         {
-            string spriteName = $"{sceneIndex}.{frame}.png";
+            string spriteName = SpriteCache.SceneFrameName(sceneIndex, frame);
 
             if (!storiesCache.TryGetValue(storyId, out var story) ||
                 story.sprites == null ||
@@ -219,16 +181,5 @@ public class ResourcesStoryProvider : IStoryProvider
         return null;
     }
 
-    public void ClearSpriteCache()
-    {
-        foreach (var sprite in spriteCache.Values)
-        {
-            if (sprite != null && sprite.texture != null)
-            {
-                UnityEngine.Object.Destroy(sprite.texture);
-                UnityEngine.Object.Destroy(sprite);
-            }
-        }
-        spriteCache.Clear();
-    }
+    public void ClearSpriteCache() => spriteCache.Clear();
 }

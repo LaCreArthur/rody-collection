@@ -47,8 +47,8 @@ public class StorySession
     /// <summary>Current scene index being played/edited (1-based).</summary>
     public int CurrentSceneIndex { get; set; } = 1;
 
-    // Sprite cache for decoded sprites (extracted to SpriteCache in a later step).
-    readonly Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
+    // The one sprite decoder/cache for this session's loaded story.
+    readonly SpriteCache _sprites = new SpriteCache();
 
     // Pre-computed blank sprite base64 (320x130 for scenes).
     static string _blankSpriteBase64;
@@ -252,7 +252,7 @@ public class StorySession
 
             Current.sprites[spriteName] = Convert.ToBase64String(pngData);
 
-            EvictSprite(spriteName);
+            _sprites.Evict(spriteName);
 
             IsDirty = true;
             Debug.Log($"StorySession: Updated sprite {spriteName}");
@@ -334,7 +334,7 @@ public class StorySession
             }
             foreach (var key in spritesToRemove)
             {
-                EvictSprite(key);
+                _sprites.Evict(key);
                 Current.sprites.Remove(key);
             }
         }
@@ -360,11 +360,7 @@ public class StorySession
                         Current.sprites[newKey] = Current.sprites[oldKey];
                         Current.sprites.Remove(oldKey);
 
-                        if (_spriteCache.ContainsKey(oldKey))
-                        {
-                            _spriteCache[newKey] = _spriteCache[oldKey];
-                            _spriteCache.Remove(oldKey);
-                        }
+                        _sprites.Rename(oldKey, newKey);
                     }
                 }
 
@@ -427,36 +423,9 @@ public class StorySession
     /// <summary>Loads a sprite from the working story (decoded + cached).</summary>
     public Sprite LoadSprite(string spriteName, int width = 320, int height = 130)
     {
-        if (_spriteCache.TryGetValue(spriteName, out Sprite cached))
-            return cached;
-
-        if (Current?.sprites == null || !Current.sprites.ContainsKey(spriteName))
-            return null;
-
-        try
-        {
-            string base64 = Current.sprites[spriteName];
-
-            if (base64.StartsWith("data:"))
-            {
-                int comma = base64.IndexOf(',');
-                if (comma > 0) base64 = base64.Substring(comma + 1);
-            }
-
-            byte[] bytes = Convert.FromBase64String(base64);
-            var tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
-            tex.filterMode = FilterMode.Point;
-            tex.LoadImage(bytes);
-
-            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-            _spriteCache[spriteName] = sprite;
-            return sprite;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"StorySession: Failed to load sprite {spriteName}: {e.Message}");
-            return null;
-        }
+        string base64 = null;
+        Current?.sprites?.TryGetValue(spriteName, out base64);
+        return _sprites.Get(spriteName, base64, width, height);
     }
 
     /// <summary>Loads all animation frames for a scene.</summary>
@@ -466,7 +435,7 @@ public class StorySession
         int frame = 1;
         while (true)
         {
-            string name = $"{sceneIndex}.{frame}.png";
+            string name = SpriteCache.SceneFrameName(sceneIndex, frame);
             if (Current?.sprites == null || !Current.sprites.ContainsKey(name))
                 break;
 
@@ -527,34 +496,11 @@ public class StorySession
     }
 
     /// <summary>Clears the sprite cache to free memory.</summary>
-    public void ClearSpriteCache()
-    {
-        foreach (var sprite in _spriteCache.Values)
-            DestroySprite(sprite);
-        _spriteCache.Clear();
-    }
+    public void ClearSpriteCache() => _sprites.Clear();
 
     #endregion
 
     #region Helpers
-
-    void EvictSprite(string spriteName)
-    {
-        if (_spriteCache.TryGetValue(spriteName, out var sprite))
-        {
-            DestroySprite(sprite);
-            _spriteCache.Remove(spriteName);
-        }
-    }
-
-    static void DestroySprite(Sprite sprite)
-    {
-        if (sprite != null && sprite.texture != null)
-        {
-            UnityEngine.Object.Destroy(sprite.texture);
-            UnityEngine.Object.Destroy(sprite);
-        }
-    }
 
     static string SanitizeId(string title)
     {
