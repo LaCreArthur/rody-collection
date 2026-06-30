@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using SFB;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -50,11 +47,11 @@ public class RM_MainLayout : RM_Layout
     public void UpdateButtonStates() => objectsButton.interactable = introButton.interactable = gm.currentScene != 0;
 
     /// <summary>
-    ///     Loads sprites from WorkingStory for editor display.
+    ///     Loads sprites from the session for editor display.
     /// </summary>
     public void LoadSprites()
     {
-        int sceneCount = WorkingStory.SceneCount;
+        int sceneCount = StoryRoot.Session.SceneCount;
         int i;
 
         // Load scene thumbnails
@@ -79,7 +76,7 @@ public class RM_MainLayout : RM_Layout
         }
         else
         {
-            // Load scene sprites from WorkingStory
+            // Load scene sprites from the session
             var sceneSprites = RM_SaveLoad.LoadSceneSprites(gm.currentScene);
             if (sceneSprites.Count > 0)
             {
@@ -139,15 +136,13 @@ public class RM_MainLayout : RM_Layout
     public void OnSaveClick()
     {
         Debug.Log("Save button clicked");
-        // Save to memory first
+        // Commit the current scene edits into the session, then persist locally.
         RM_SaveLoad.SaveGame(gm);
         gm.Reset();
-
-        // Then trigger export to file
-        StartCoroutine(SaveAndExport());
+        StartCoroutine(PersistStory());
     }
 
-    IEnumerator SaveAndExport()
+    IEnumerator PersistStory()
     {
         // Flash thumbnail to indicate save started
         if (gm.currentScene < sceneThumbnails.Length)
@@ -159,48 +154,29 @@ public class RM_MainLayout : RM_Layout
             thumbnailImage.color = originalColor;
         }
 
-        // Export to file
-        string json = WorkingStory.ExportToJson();
-        if (string.IsNullOrEmpty(json))
+        var story = StoryRoot.Session.Current;
+        if (story == null)
         {
-            ShowSaveStatus("Export échoué!", 2f);
+            ShowSaveStatus("Sauvegarde échouée!", 2f);
             yield break;
         }
 
-        string filename = WorkingStory.Id + ".rody.json";
+        ShowSaveStatus("Sauvegarde...", 3f);
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-        // WebGL: Download via browser
-        WebGLFileBrowser.Instance.DownloadTextFile(filename, json, () => {
-            ShowSaveStatus($"Téléchargé: {filename}", 2f);
+        // Persist to browser-backed local storage. The dirty flag clears only in
+        // the IndexedDB-flush success callback (async on WebGL).
+        StoryRoot.Store.SaveUser(story, error =>
+        {
+            if (error != null)
+            {
+                ShowSaveStatus($"Erreur: {error}", 3f);
+            }
+            else
+            {
+                StoryRoot.Session.MarkSaved(story.story.id + ".rody.json");
+                ShowSaveStatus("Sauvegardé !", 2f);
+            }
         });
-#else
-        // Desktop: Save file dialog
-        string suggestedPath = "";
-        if (!string.IsNullOrEmpty(WorkingStory.LastSavePath))
-            suggestedPath = Path.GetDirectoryName(WorkingStory.LastSavePath);
-
-        string savePath = StandaloneFileBrowser.SaveFilePanel("Exporter l'histoire", suggestedPath, filename, "rody.json");
-
-        if (string.IsNullOrEmpty(savePath))
-        {
-            ShowSaveStatus("Export annulé", 1.5f);
-            yield break;
-        }
-
-        try
-        {
-            File.WriteAllText(savePath, json);
-            WorkingStory.MarkSaved(savePath);
-            ShowSaveStatus($"Exporté: {Path.GetFileName(savePath)}", 2f);
-            Debug.Log($"[RM_MainLayout] Exported to {savePath}");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[RM_MainLayout] Export failed: {e.Message}");
-            ShowSaveStatus($"Erreur: {e.Message}", 3f);
-        }
-#endif
     }
 
     void ShowSaveStatus(string message, float duration)
@@ -239,7 +215,7 @@ public class RM_MainLayout : RM_Layout
 
     public void OnSceneThumbnailClick(int scene)
     {
-        int scenesCount = WorkingStory.SceneCount;
+        int scenesCount = StoryRoot.Session.SceneCount;
         Debug.Log($"[RM_MainLayout] OnSceneThumbnailClick({scene}) - currentScene: {gm.currentScene}, scenesCount: {scenesCount}");
         var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
 
@@ -322,11 +298,11 @@ public class RM_MainLayout : RM_Layout
         {
             for (int j = 6 * i; j < 6 * i + 6; ++j) // 6 thumbnails per row
             {
-                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > WorkingStory.SceneCount + 1)
+                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > StoryRoot.Session.SceneCount + 1)
                     sceneThumbnails[j].SetActive(false);
                 else
                 {
-                    if (j <= WorkingStory.SceneCount + 1)
+                    if (j <= StoryRoot.Session.SceneCount + 1)
                         sceneThumbnails[j].SetActive(true);
                     Vector3 pos = sceneThumbnails[j].GetComponent<Transform>().localPosition;
                     sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - (i - sliderValue) * 22.0f, pos.z);
