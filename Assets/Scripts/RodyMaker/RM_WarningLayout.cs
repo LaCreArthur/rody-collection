@@ -31,22 +31,22 @@ public class RM_WarningLayout : RM_Layout {
 	}
 
 	public void OnConfirmClick(){
-		Debug.Log($"[RM_WarningLayout] OnConfirmClick - targetScene: {targetScene}, currentScene: {gm.currentScene}, scenesCount: {WorkingStory.SceneCount}");
+		Debug.Log($"[RM_WarningLayout] OnConfirmClick - targetScene: {targetScene}, currentScene: {gm.currentScene}, scenesCount: {StoryRoot.Session.SceneCount}");
 		Debug.Log($"[RM_WarningLayout] Modes - Test: {isTestMode}, Delete: {isDeleteMode}, Revert: {isRevertMode}, Exit: {isExitMode}");
 
 		if (isExitMode){
 			// Exit mode - leave editor without saving
 			ResetFlags();
-			SceneManager.LoadScene(2); // Return to in-game menu
+			SceneManager.LoadScene(AppScenes.Menu); // Return to in-game menu
 			return;
 		}
 		else if (isTestMode){
 			// Test mode - load play scene
 			ResetFlags();
 			if (targetScene == 0)
-				SceneManager.LoadScene(1);  // Title screen test
+				SceneManager.LoadScene(AppScenes.Title);  // Title screen test
 			else
-				SceneManager.LoadScene(3);  // Game scene test
+				SceneManager.LoadScene(AppScenes.Game);  // Game scene test
 			return;
 		}
 		else if (isRevertMode) {
@@ -65,7 +65,7 @@ public class RM_WarningLayout : RM_Layout {
 			}
 			Debug.Log($"[RM_WarningLayout] Deleting scene {gm.currentScene}");
 			ResetFlags();
-			if (gm.currentScene <= WorkingStory.SceneCount)
+			if (gm.currentScene <= StoryRoot.Session.SceneCount)
 				RM_SaveLoad.DeleteScene(gm.currentScene);
 			else
 				Debug.Log("[RM_WarningLayout] Cancelled new scene creation (scene > scenesCount)");
@@ -85,13 +85,13 @@ public class RM_WarningLayout : RM_Layout {
 		Debug.Log($"[RM_WarningLayout] Navigating from scene {gm.currentScene} to scene {targetScene}");
 
 		// If navigating to a new scene, create it first (SceneCount updates automatically)
-		if (targetScene > WorkingStory.SceneCount) {
+		if (targetScene > StoryRoot.Session.SceneCount) {
 			// For JSON stories, create the scene entry with template data
 			RM_SaveLoad.CreateNewScene(targetScene);
-			Debug.Log($"[RM_WarningLayout] New scene created, SceneCount is now {WorkingStory.SceneCount}");
+			Debug.Log($"[RM_WarningLayout] New scene created, SceneCount is now {StoryRoot.Session.SceneCount}");
 		}
 
-		WorkingStory.CurrentSceneIndex = targetScene;
+		StoryRoot.Session.CurrentSceneIndex = targetScene;
 		gm.currentScene = targetScene;
 		gm.Reset();
 		CloseDialog();

@@ -38,21 +38,21 @@ public class RM_GameManager : MonoBehaviour {
 	void Start() {
 
 #if UNITY_EDITOR
-		if (!WorkingStory.IsLoaded)
+		if (!StoryRoot.Session.IsLoaded)
 		{
-			var stories = StoryProviderManager.Provider.GetStories();
-			if (stories.Count > 0)
-				WorkingStory.LoadOfficial(stories[0].id);
+			var cards = StoryRoot.Catalog.Cards();
+			if (cards.Count > 0)
+				StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(cards[0].id), cards[0].source);
 			else
-				WorkingStory.CreateNew("Test");
+				StoryRoot.Session.CreateNew("Test");
 			Debug.Log("[RM_GameManager] Editor: auto-loaded story for quick test");
 		}
 #endif
 
-		// Load current scene from WorkingStory
-		currentScene = WorkingStory.CurrentSceneIndex;
+		// Load current scene from the session
+		currentScene = StoryRoot.Session.CurrentSceneIndex;
 
-		Debug.Log($"[RM_GameManager] scenes count: {WorkingStory.SceneCount}");
+		Debug.Log($"[RM_GameManager] scenes count: {StoryRoot.Session.SceneCount}");
 		
 		if (PlayerPrefs.GetInt("rodyMakerFirstTime") == 1) {
 			welcomePanel.SetActive(true);
@@ -117,21 +117,21 @@ public class RM_GameManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Loads scene data from WorkingStory and populates editor fields.
+	/// Loads scene data from the session and populates editor fields.
 	/// </summary>
 	public void ReadSceneStr()
 	{
 		int sceneToLoad = currentScene;
 
 		// If creating a new scene, load from the previous scene as template
-		if (WorkingStory.SceneCount + 1 == currentScene)
+		if (StoryRoot.Session.SceneCount + 1 == currentScene)
 		{
 			Debug.Log("[RM_GameManager] Load previous scene as template...");
 			sceneToLoad = currentScene - 1;
 		}
 
-		// Load scene data from WorkingStory
-		SceneData data = WorkingStory.LoadScene(sceneToLoad);
+		// Load scene data from the session
+		SceneData data = StoryRoot.Session.LoadScene(sceneToLoad);
 		if (data == null)
 		{
 			Debug.LogError($"[RM_GameManager] Failed to load scene {sceneToLoad}");
@@ -235,13 +235,13 @@ public class RM_GameManager : MonoBehaviour {
 	void Update() {
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			// Check if there are unsaved changes
-			if (WorkingStory.IsDirty && !WorkingStory.IsOfficial)
+			if (StoryRoot.Session.IsDirty && !StoryRoot.Session.IsOfficial)
 			{
 				ShowExitWarning();
 			}
 			else
 			{
-				SceneManager.LoadScene(2);
+				SceneManager.LoadScene(AppScenes.Menu);
 			}
 		}
 	}
@@ -258,7 +258,7 @@ public class RM_GameManager : MonoBehaviour {
 	void OnApplicationQuit()
     {
         // delete non-saved new level images
-		if(currentScene > WorkingStory.SceneCount) {
+		if(currentScene > StoryRoot.Session.SceneCount) {
 			RM_SaveLoad.DeleteScene(currentScene);
 		}
     }
