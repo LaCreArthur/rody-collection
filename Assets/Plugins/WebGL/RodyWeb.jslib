@@ -239,6 +239,28 @@ var StandaloneFileBrowserWebGLPlugin = {
                 document.removeEventListener('mouseup', handler);
             }, { once: true });
         }
+    },
+
+    // Persist persistentDataPath (IDBFS virtual FS) to IndexedDB.
+    // Unity does NOT auto-flush file writes; call this after writing a story.
+    // Async: reports completion via SendMessage ('' on success, error message on failure).
+    RodySyncFs: function(gameObjectNamePtr, methodNamePtr) {
+        var gameObjectName = UTF8ToString(gameObjectNamePtr);
+        var methodName = UTF8ToString(methodNamePtr);
+        FS.syncfs(false, function(err) {
+            SendMessage(gameObjectName, methodName, err ? (err.message || String(err)) : '');
+        });
+    },
+
+    // Hydrate persistentDataPath (IDBFS) FROM IndexedDB.
+    // Call once at startup before the first user-story read; IDBFS is empty until synced in.
+    // Async: reports completion via SendMessage ('' on success, error message on failure).
+    RodySyncFsHydrate: function(gameObjectNamePtr, methodNamePtr) {
+        var gameObjectName = UTF8ToString(gameObjectNamePtr);
+        var methodName = UTF8ToString(methodNamePtr);
+        FS.syncfs(true, function(err) {
+            SendMessage(gameObjectName, methodName, err ? (err.message || String(err)) : '');
+        });
     }
 };
 
