@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-01-21 (Save Awareness plan added)
+> **Updated:** 2026-06-29 (Phase 5 marked done, superseded by shared `RA_ActionPanel`)
 
 ---
 
@@ -202,19 +202,20 @@ Improve UX to prevent users losing their custom stories.
 
 ---
 
-### Menu Story Slot Buttons (Phase 5) - PLANNED
+### Menu Story Slot Buttons (Phase 5) - ✅ DONE (superseded by shared action panel)
 
-Add floating action buttons to story slots in the menu.
+The original plan ([plan.md](../plan.md)) was per-slot *floating* buttons. Replaced by a
+single shared bottom action bar (`RA_ActionPanel`, "Selected Panel" in scene 0) that adapts
+to the currently selected slot. Cleaner than floating buttons per slot.
 
-**Plan:** [plan.md](../plan.md)
+**Implemented in `RA_ActionPanel.cs` + `RA_ScrollView.cs`:**
+- [x] Edit button → "Dupliquer" (fork) on official stories, "Éditer" on user stories
+- [x] Export button → enabled only for user stories (`SlotKind.UserStory`)
+- [x] Import + New buttons → always available
+- [x] Panel reflects the selected slot via `UpdateActionPanel()` → `Show(GetSelectedSlotKind())`
+- [x] Actions fire as static events consumed by `RA_ScrollView` handlers
 
-**Summary:**
-- Fork button on official stories (top-right)
-- Edit + Export buttons on user stories
-- Buttons show only on selected slot
-- Reuse create popup for edit mode
-
-**Estimated effort:** 7-11 hours
+`plan.md` is now stale (describes the abandoned floating-button approach).
 
 ---
 
