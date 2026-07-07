@@ -118,3 +118,5 @@ UserSettings/
 # Firebase logs
 
 firebase-debug.log
+__pycache__/
+*.pyc
