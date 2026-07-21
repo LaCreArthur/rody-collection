@@ -1,0 +1,439 @@
+0b3f80 addi.b #$79, d0
+0b3f84 ori.b #$5e, d0
+0b3f88 movea.l $4e62.l, a2
+0b3f8e movea.l $4e6e.l, a3
+0b3f94 clr.l d4
+0b3f96 move.l (a2), (a3)
+0b3f98 move.w (a6)+, d4
+0b3f9a bge.b $b3fb0
+0b3f9c movea.l $4e5e.l, a6
+0b3fa2 movea.l $4e62.l, a2
+0b3fa8 movea.l $4e6e.l, a3
+0b3fae rts 
+0b3fb0 adda.l d4, a2
+0b3fb2 adda.l d4, a3
+0b3fb4 bra.b $b3f96
+0b3fb6 movea.l #$4ab4, a0
+0b3fbc cmpi.b #$1, (a0, d5.w)
+0b3fc2 blt.b $b3fda
+0b3fc4 bgt.b $b4002
+0b3fc6 bra.b $b3fee
+0b3fc8 movea.l #$4aca, a0
+0b3fce cmpi.b #$1, (a0, d5.w)
+0b3fd4 blt.b $b3fda
+0b3fd6 bgt.b $b4002
+0b3fd8 bra.b $b3fee
+0b3fda movea.l $4e5e.l, a6
+0b3fe0 movea.l $4e62.l, a2
+0b3fe6 movea.l $4e6e.l, a3
+0b3fec rts 
+0b3fee movea.l $4e5e.l, a6
+0b3ff4 movea.l $4e66.l, a2
+0b3ffa movea.l $4e6e.l, a3
+0b4000 rts 
+0b4002 movea.l $4e5e.l, a6
+0b4008 movea.l $4e6a.l, a2
+0b400e movea.l $4e6e.l, a3
+0b4014 rts 
+0b4016 move.l $6(a5), (a5)
+0b401a move.w $a(a5), $4(a5)
+0b4020 move.l $c(a5), $6(a5)
+0b4026 move.w $10(a5), $a(a5)
+0b402c clr.l $c(a5)
+0b4030 clr.w $10(a5)
+0b4034 move.b #$20, $c(a5)
+0b403a move.b #$9, $d(a5)
+0b4040 rts 
+0b4042 move.w (a0), d2
+0b4044 andi.w #$3f, d2
+0b4048 cmpi.b #$3c, d2
+0b404c bne.b $b4062
+0b404e move.b #$20, $c(a5)
+0b4054 move.b #$9, $d(a5)
+0b405a bsr.w $b40f0
+0b405e bra.w $b40d8
+0b4062 cmpi.b #$3d, d2
+0b4066 bne.b $b407c
+0b4068 move.b #$2e, $c(a5)
+0b406e move.b #$9, $d(a5)
+0b4074 bsr.w $b40f0
+0b4078 bra.w $b40d8
+0b407c cmpi.b #$3e, d2
+0b4080 bne.b $b4096
+0b4082 move.b #$23, $c(a5)
+0b4088 move.b #$9, $d(a5)
+0b408e bsr.w $b40f0
+0b4092 bra.w $b40d8
+0b4096 cmpi.b #$16, d2
+0b409a blt.w $b40be
+0b409e cmpi.b #$2f, d2
+0b40a2 bgt.b $b40dc
+0b40a4 subi.b #$16, d2
+0b40a8 move.b d2, $c(a5)
+0b40ac movea.l #$4b10, a3
+0b40b2 move.b (a3, d2.w), $d(a5)
+0b40b8 bsr.w $b40f0
+0b40bc bra.b $b40d8
+0b40be move.b #$5, $d(a5)
+0b40c4 cmpi.b #$e, d2
+0b40c8 blt.b $b40d0
+0b40ca move.b #$6, $d(a5)
+0b40d0 move.b d2, $c(a5)
+0b40d4 bsr.w $b40f0
+0b40d8 addq.l #$2, a0
+0b40da rts 
+0b40dc subi.b #$16, d2
+0b40e0 move.b d2, $c(a5)
+0b40e4 move.b #$4, $d(a5)
+0b40ea bsr.w $b40f0
+0b40ee bra.b $b40d8
+0b40f0 move.b (a0), d3
+0b40f2 lsr.b #$4, d3
+0b40f4 move.b d3, $10(a5)
+0b40f8 cmpi.w #$1, $4d20.l
+0b4100 beq.w $b4166
+0b4104 cmpi.w #$5, $4cc2.l
+0b410c blt.b $b4166
+0b410e cmpi.b #$9, $d(a5)
+0b4114 beq.b $b4166
+0b4116 cmpi.b #$5, $d(a5)
+0b411c blt.b $b4140
+0b411e cmpi.b #$14, $c(a5)
+0b4124 beq.b $b4166
+0b4126 cmpi.b #$3, $10(a5)
+0b412c beq.b $b4166
+0b412e cmpi.b #$6, $10(a5)
+0b4134 beq.b $b4166
+0b4136 cmpi.b #$9, $10(a5)
+0b413c beq.b $b4166
+0b413e bra.b $b4160
+0b4140 cmpi.b #$13, $c(a5)
+0b4146 beq.b $b4166
+0b4148 cmpi.b #$16, $c(a5)
+0b414e beq.b $b4166
+0b4150 cmpi.b #$4, $10(a5)
+0b4156 beq.b $b4166
+0b4158 cmpi.b #$9, $10(a5)
+0b415e beq.b $b4166
+0b4160 addi.b #$1, $10(a5)
+0b4166 move.w (a0), d3
+0b4168 lsr.w #$6, d3
+0b416a andi.w #$7, d3
+0b416e move.b d3, $f(a5)
+0b4172 move.b (a0), d3
+0b4174 lsr.b #$1, d3
+0b4176 andi.b #$7, d3
+0b417a move.b d3, $e(a5)
+0b417e rts 
+0b4180 tst.b d2
+0b4182 beq.b $b418e
+0b4184 subi.b #$4, d2
+0b4188 move.b #$66, (a4)+
+0b418c move.b d2, (a4)+
+0b418e lsr.w #$8, d2
+0b4190 tst.b d2
+0b4192 beq.b $b419e
+0b4194 subi.b #$1, d2
+0b4198 move.b #$61, (a4)+
+0b419c move.b d2, (a4)+
+0b419e rts 
+0b41a0 cmpi.b #$9, $7(a5)
+0b41a6 bne.b $b41c0
+0b41a8 cmpi.b #$23, $6(a5)
+0b41ae beq.b $b419e
+0b41b0 clr.w d3
+0b41b2 move.b $a(a5), d3
+0b41b6 move.b $6(a5), (a4)+
+0b41ba dbra d3, $b41b6
+0b41be rts 
+0b41c0 cmpi.b #$5, $7(a5)
+0b41c6 blt.w $b433c
+0b41ca clr.w d3
+0b41cc cmpi.b #$6, $7(a5)
+0b41d2 bne.b $b41ea
+0b41d4 movea.l #$4b00, a3
+0b41da clr.w d2
+0b41dc move.b $6(a5), d2
+0b41e0 subi.b #$e, d2
+0b41e4 lsl.w #$1, d2
+0b41e6 move.b (a3, d2.w), d3
+0b41ea cmpi.b #$5, $1(a5)
+0b41f0 blt.b $b4214
+0b41f2 move.w $8(a5), d2
+0b41f6 bsr.b $b4180
+0b41f8 cmpi.b #$9, $1(a5)
+0b41fe bne.b $b4214
+0b4200 move.b #$4, (a4)+
+0b4204 move.b $6(a5), (a4)+
+0b4208 tst.w d3
+0b420a beq.b $b4210
+0b420c move.b d3, -$1(a4)
+0b4210 move.b #$16, (a4)+
+0b4214 cmpi.b #$1, $a(a5)
+0b421a beq.w $b431e
+0b421e bgt.b $b425c
+0b4220 tst.w d3
+0b4222 beq.b $b4240
+0b4224 move.b #$0, (a4)+
+0b4228 move.b $6(a5), (a4)+
+0b422c move.b #$0, (a4)+
+0b4230 cmpi.b #$9, $d(a5)
+0b4236 beq.b $b425a
+0b4238 move.b #$1, -$1(a4)
+0b423e bra.b $b425a
+0b4240 move.b #$0, (a4)+
+0b4244 move.b $6(a5), (a4)+
+0b4248 move.b #$2, (a4)+
+0b424c cmpi.b #$9, $d(a5)
+0b4252 beq.b $b425a
+0b4254 move.b #$4, -$1(a4)
+0b425a rts 
+0b425c cmpi.b #$4, $a(a5)
+0b4262 blt.w $b42fc
+0b4266 beq.b $b4298
+0b4268 cmpi.b #$7, $a(a5)
+0b426e blt.b $b4276
+0b4270 beq.w $b42da
+0b4274 bra.b $b42b8
+0b4276 clr.w d2
+0b4278 move.b $a(a5), d2
+0b427c subi.b #$5, d2
+0b4280 move.b #$0, (a4)+
+0b4284 move.b $6(a5), (a4)+
+0b4288 tst.w d3
+0b428a beq.b $b4290
+0b428c move.b d3, -$1(a4)
+0b4290 move.b #$3, (a4)+
+0b4294 dbra d2, $b4280
+0b4298 tst.w d3
+0b429a beq.b $b42aa
+0b429c move.b #$0, (a4)+
+0b42a0 move.b $6(a5), (a4)+
+0b42a4 move.b #$3, (a4)+
+0b42a8 bra.b $b425a
+0b42aa move.b #$0, (a4)+
+0b42ae move.b $6(a5), (a4)+
+0b42b2 move.b #$3, (a4)+
+0b42b6 rts 
+0b42b8 clr.w d2
+0b42ba move.b $a(a5), d2
+0b42be subi.b #$8, d2
+0b42c2 move.b #$0, (a4)+
+0b42c6 move.b $6(a5), (a4)+
+0b42ca tst.w d3
+0b42cc beq.b $b42d2
+0b42ce move.b d3, -$1(a4)
+0b42d2 move.b #$3, (a4)+
+0b42d6 dbra d2, $b42c2
+0b42da tst.w d3
+0b42dc beq.b $b42ee
+0b42de move.b #$0, (a4)+
+0b42e2 move.b $6(a5), (a4)+
+0b42e6 move.b #$0, (a4)+
+0b42ea bra.w $b425a
+0b42ee move.b #$0, (a4)+
+0b42f2 move.b $6(a5), (a4)+
+0b42f6 move.b #$2, (a4)+
+0b42fa rts 
+0b42fc clr.w d2
+0b42fe move.b $a(a5), d2
+0b4302 subi.b #$2, d2
+0b4306 move.b #$0, (a4)+
+0b430a move.b $6(a5), (a4)+
+0b430e tst.w d3
+0b4310 beq.b $b4316
+0b4312 move.b d3, -$1(a4)
+0b4316 move.b #$3, (a4)+
+0b431a dbra d2, $b4306
+0b431e move.b #$0, (a4)+
+0b4322 move.b $6(a5), (a4)+
+0b4326 move.b #$0, (a4)+
+0b432a cmpi.b #$9, $d(a5)
+0b4330 beq.w $b425a
+0b4334 move.b #$1, -$1(a4)
+0b433a rts 
+0b433c cmpi.b #$2, $7(a5)
+0b4342 blt.w $b43e4
+0b4346 bgt.b $b434e
+0b4348 move.b #$7, d3
+0b434c bra.b $b435c
+0b434e cmpi.b #$4, $7(a5)
+0b4354 beq.w $b45b2
+0b4358 move.b #$8, d3
+0b435c cmpi.b #$5, $1(a5)
+0b4362 blt.b $b437e
+0b4364 move.w $8(a5), d2
+0b4368 bsr.w $b4180
+0b436c cmpi.b #$9, $1(a5)
+0b4372 bne.b $b437e
+0b4374 move.b #$4, (a4)+
+0b4378 move.b d3, (a4)+
+0b437a move.b #$16, (a4)+
+0b437e clr.w d2
+0b4380 move.b $a(a5), d2
+0b4384 ble.b $b4398
+0b4386 subi.w #$1, d2
+0b438a move.b #$0, (a4)+
+0b438e move.b d3, (a4)+
+0b4390 move.b #$3, (a4)+
+0b4394 dbra d2, $b438a
+0b4398 move.w $e(a5), d2
+0b439c bsr.w $b4180
+0b43a0 cmpi.b #$6, $d(a5)
+0b43a6 bne.b $b43c8
+0b43a8 clr.w d2
+0b43aa move.b $c(a5), d2
+0b43ae subi.b #$e, d2
+0b43b2 lsl.w #$1, d2
+0b43b4 movea.l #$4b00, a3
+0b43ba move.b #$4, (a4)+
+0b43be move.b (a3, d2.w), (a4)+
+0b43c2 move.b $6(a5), (a4)+
+0b43c6 rts 
+0b43c8 move.b #$4, (a4)+
+0b43cc move.b $c(a5), (a4)+
+0b43d0 cmpi.b #$4, $c(a5)
+0b43d6 bne.b $b43de
+0b43d8 move.b #$3, -$1(a4)
+0b43de move.b $6(a5), (a4)+
+0b43e2 rts 
+0b43e4 move.w $8(a5), d2
+0b43e8 bsr.w $b4180
+0b43ec clr.w d2
+0b43ee move.b #$a, d2
+0b43f2 cmpi.b #$2, $d(a5)
+0b43f8 blt.b $b443c
+0b43fa bne.b $b4402
+0b43fc move.b #$7, d2
+0b4400 bra.b $b443c
+0b4402 cmpi.b #$3, $d(a5)
+0b4408 bne.b $b4410
+0b440a move.b #$8, d2
+0b440e bra.b $b443c
+0b4410 cmpi.b #$6, $d(a5)
+0b4416 bgt.b $b443c
+0b4418 blt.b $b4430
+0b441a movea.l #$4b00, a3
+0b4420 move.b $c(a5), d2
+0b4424 subi.b #$e, d2
+0b4428 lsl.w #$1, d2
+0b442a move.b (a3, d2.w), d2
+0b442e bra.b $b443c
+0b4430 cmpi.b #$4, $d(a5)
+0b4436 beq.b $b443c
+0b4438 move.b $c(a5), d2
+0b443c mulu.w #$1a, d2
+0b4440 clr.w d3
+0b4442 move.b $6(a5), d3
+0b4446 add.w d3, d2
+0b4448 move.w #$2, d3
+0b444c movea.l #$4b44, a3
+0b4452 tst.b (a3, d2.w)
+0b4456 beq.b $b445c
+0b4458 move.w #$6, d3
+0b445c cmpi.b #$5, $a(a5)
+0b4462 blt.b $b447a
+0b4464 subi.b #$5, $a(a5)
+0b446a cmpi.b #$2, d3
+0b446e beq.b $b4476
+0b4470 move.b #$2, d3
+0b4474 bra.b $b447a
+0b4476 move.b #$6, d3
+0b447a tst.b $7(a5)
+0b447e bne.w $b44dc
+0b4482 cmpi.b #$16, $6(a5)
+0b4488 bne.b $b44b6
+0b448a cmpi.b #$a, (a5)
+0b448e bne.b $b44a4
+0b4490 move.b #$0, (a4)+
+0b4494 move.b #$10, (a4)+
+0b4498 move.b #$2, (a4)+
+0b449c move.b #$9, $7(a5)
+0b44a2 rts 
+0b44a4 cmpi.b #$e, (a5)
+0b44a8 beq.b $b449c
+0b44aa cmpi.b #$10, (a5)
+0b44ae beq.b $b449c
+0b44b0 cmpi.b #$15, (a5)
+0b44b4 beq.b $b449c
+0b44b6 clr.w d2
+0b44b8 move.b $a(a5), d2
+0b44bc beq.b $b44d0
+0b44be subi.w #$1, d2
+0b44c2 move.b d3, (a4)+
+0b44c4 move.b $6(a5), (a4)+
+0b44c8 move.b #$3, (a4)+
+0b44cc dbra d2, $b44c2
+0b44d0 move.b d3, (a4)+
+0b44d2 move.b $6(a5), (a4)+
+0b44d6 move.b #$4, (a4)+
+0b44da bra.b $b4500
+0b44dc move.b d3, (a4)+
+0b44de move.b $6(a5), (a4)+
+0b44e2 move.b #$3, (a4)+
+0b44e6 clr.w d2
+0b44e8 move.b $a(a5), d2
+0b44ec beq.b $b4500
+0b44ee subi.w #$1, d2
+0b44f2 move.b d3, (a4)+
+0b44f4 move.b $6(a5), (a4)+
+0b44f8 move.b #$4, (a4)+
+0b44fc dbra d2, $b44f2
+0b4500 cmpi.b #$9, $d(a5)
+0b4506 bne.b $b4514
+0b4508 move.b d3, (a4)+
+0b450a move.b $6(a5), (a4)+
+0b450e move.b #$5, (a4)+
+0b4512 rts 
+0b4514 cmpi.b #$16, $6(a5)
+0b451a beq.b $b449c
+0b451c cmpi.b #$2, $d(a5)
+0b4522 blt.b $b4512
+0b4524 cmpi.b #$4, $d(a5)
+0b452a beq.b $b4512
+0b452c move.w $e(a5), d2
+0b4530 bsr.w $b4180
+0b4534 cmpi.b #$5, $d(a5)
+0b453a blt.b $b455c
+0b453c bgt.b $b4544
+0b453e move.b $c(a5), d2
+0b4542 bra.b $b456e
+0b4544 clr.w d2
+0b4546 move.b $c(a5), d2
+0b454a subi.b #$e, d2
+0b454e lsl.w #$1, d2
+0b4550 movea.l #$4b00, a3
+0b4556 move.b (a3, d2.w), d2
+0b455a bra.b $b456e
+0b455c cmpi.b #$3, $d(a5)
+0b4562 bne.b $b456a
+0b4564 move.b #$8, d2
+0b4568 bra.b $b456e
+0b456a move.b #$7, d2
+0b456e cmpi.b #$4, d2
+0b4572 bne.b $b4578
+0b4574 move.b #$3, d2
+0b4578 movea.l #$4b2a, a3
+0b457e clr.w d4
+0b4580 move.b $6(a5), d4
+0b4584 tst.b (a3, d4.w)
+0b4588 beq.b $b4590
+0b458a addi.b #$1, $6(a5)
+0b4590 cmpi.b #$11, $6(a5)
+0b4596 blt.b $b45a6
+0b4598 cmpi.b #$12, $6(a5)
+0b459e bgt.b $b45a6
+0b45a0 move.b #$10, $6(a5)
+0b45a6 move.b #$4, (a4)+
+0b45aa move.b d2, (a4)+
+0b45ac move.b $6(a5), (a4)+
+0b45b0 rts 
+0b45b2 clr.w d2
+0b45b4 move.w $8(a5), d2
+0b45b8 bsr.w $b4180
+0b45bc move.b $a(a5), d2
+0b45c0 beq.b $b45d6
+0b45c2 subi.w #$1, d2
+0b45c6 move.b #$2, (a4)+
+0b45ca move.b $6(a5), (a4)+
+0b45ce move.b #$aa, (a4)+

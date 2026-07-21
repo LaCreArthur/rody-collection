@@ -1,0 +1,5 @@
+# regenerable audio (run audition.py / render_all.py to recreate)
+catalog/*.wav
+dialogues/rendered/*.wav
+__pycache__/
+*.pyc

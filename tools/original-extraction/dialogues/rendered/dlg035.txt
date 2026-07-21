@@ -1,0 +1,1 @@
+ Roby a mis la main sur le bouton qui déclenche l'ouverture de la trappe. Cherche ce bouton.

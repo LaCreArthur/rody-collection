@@ -1,0 +1,59 @@
+bank	P	clip_start	clip_end	attack_ms	mid_ms	rel_ms	guess	wav
+0	0	0	3	42	34	26	i	desc_b0_P00.wav
+0	1	3	6	42	35	25	é	desc_b0_P01.wav
+0	2	6	9	42	35	25	a	desc_b0_P02.wav
+0	3	9	12	41	33	27	o	desc_b0_P03.wav
+0	5	15	18	43	33	26	u	desc_b0_P05.wav
+0	6	18	21	42	34	26	eu	desc_b0_P06.wav
+0	7	21	24	42	34	26	in	desc_b0_P07.wav
+0	8	24	27	41	35	25	an	desc_b0_P08.wav
+0	9	27	30	41	33	25	on	desc_b0_P09.wav
+0	10	30	33	42	33	25		desc_b0_P10.wav
+0	11	33	36	42	33	25		desc_b0_P11.wav
+0	12	36	39	41	32	24		desc_b0_P12.wav
+0	13	39	42	41	33	25		desc_b0_P13.wav
+0	22	66	69	0	23	26		desc_b0_P22.wav
+0	23	69	72	24	26	21		desc_b0_P23.wav
+0	24	72	75	0	34	26		desc_b0_P24.wav
+0	25	75	78	43	62	27		desc_b0_P25.wav
+0	26	78	81	0	26	52		desc_b0_P26.wav
+0	27	81	84	33	23	41		desc_b0_P27.wav
+0	28	84	87	0	31	42		desc_b0_P28.wav
+0	29	87	90	33	33	33		desc_b0_P29.wav
+0	30	90	93	23	26	48		desc_b0_P30.wav
+0	31	93	96	12	28	37		desc_b0_P31.wav
+0	32	96	99	8	25	25		desc_b0_P32.wav
+0	33	99	102	51	30	35		desc_b0_P33.wav
+0	34	102	105	22	50	36		desc_b0_P34.wav
+0	35	105	108	15	19	39		desc_b0_P35.wav
+0	36	108	111	0	26	34		desc_b0_P36.wav
+0	37	111	114	43	35	36		desc_b0_P37.wav
+2	0	67	70	23	26	24		desc_b2_P00.wav
+2	1	70	73	26	21	0		desc_b2_P01.wav
+2	2	73	76	34	26	43		desc_b2_P02.wav
+2	3	76	79	62	27	0		desc_b2_P03.wav
+2	4	79	82	26	52	33		desc_b2_P04.wav
+2	5	82	85	23	41	0		desc_b2_P05.wav
+2	6	85	88	31	42	33		desc_b2_P06.wav
+2	7	88	91	33	33	23		desc_b2_P07.wav
+2	8	91	94	26	48	12		desc_b2_P08.wav
+2	9	94	97	28	37	8		desc_b2_P09.wav
+2	10	97	100	25	25	51		desc_b2_P10.wav
+2	11	100	103	30	35	22		desc_b2_P11.wav
+2	12	103	106	50	36	15		desc_b2_P12.wav
+2	13	106	109	19	39	0		desc_b2_P13.wav
+2	14	109	112	26	34	43		desc_b2_P14.wav
+2	15	112	115	35	36	0		desc_b2_P15.wav
+2	23	136	139	34	26	10		desc_b2_P23.wav
+2	26	145	148	33	66	0		desc_b2_P26.wav
+2	40	187	190	0	23	19		desc_b2_P40.wav
+6	5	188	191	23	19	0		desc_b6_P05.wav
+6	13	212	215	19	40	0		desc_b6_P13.wav
+6	14	215	218	24	28	0		desc_b6_P14.wav
+6	15	218	221	48	37	0		desc_b6_P15.wav
+6	16	221	224	33	46	0		desc_b6_P16.wav
+6	40	293	296	23	26	34		desc_b6_P40.wav
+6	41	296	299	24	0	24		desc_b6_P41.wav
+6	42	299	302	26	18	16		desc_b6_P42.wav
+6	43	302	305	24	0	0		desc_b6_P43.wav
+6	44	305	308	23	32	24		desc_b6_P44.wav
