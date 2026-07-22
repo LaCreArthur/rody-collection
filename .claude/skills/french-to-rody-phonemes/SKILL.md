@@ -83,7 +83,10 @@ for "Malheur", which plays "alheur"). Always validate before delivering.
 3. **Join words that flow in one breath into one `_` group.** A short sentence
    is typically one single group. Use spaces (or `_,_` / `_._`) where a speaker
    would breathe. Rhythm is the main charm lever: too few pauses = drone, too
-   many = choppy.
+   many = choppy. Intelligibility tip (STT-verified): joining many content words
+   into one dense group hurts word segmentation for the listener. Prefer spaces
+   between content words in long sentences; only join words a liaison or clitic
+   glues together (nous_avons, l'école, vas-tu).
 4. **Write liaisons explicitly where a French speaker makes them:**
    nous avons -> `n_ou_z_a_v_on`, les oiseaux -> `l_et_z_oi_z_o`,
    un œuf -> `in_n_eu_f`, est-il -> `ai_t_i_l`, très étonné -> `t_r_ai_z_et_t_o_n_et`.
@@ -142,3 +145,20 @@ Exits non-zero and lists every invalid token (each one would play as a silent
 pause in game). Run it on every string you produce. The most common failures:
 uppercase letters, accented characters (é, à), and spelled-out French instead
 of sounds ("est" instead of `ai`).
+
+To hear the result without launching Unity, render it to a wav with the exact
+game playback (same clips, same timing):
+
+```bash
+python3 .claude/skills/french-to-rody-phonemes/scripts/render.py /tmp/out.wav "b_r_a_v_o l_e_v_o"
+```
+
+Full closed loop: transcribe the wav with local STT and compare to the intended
+French (`whisper-cli -m ~/voice-agent/models/ggml-large-v3.bin -f /tmp/out.wav
+--language fr --no-timestamps`). Calibration from the original stories: the
+shipped corpus itself scores ~0.7 mean / 0.77 median word agreement, so treat
+that as the ceiling. The score is a strict lower bound on human intelligibility:
+lines scoring as low as 0.27-0.53 have been human-verified as perfectly clear
+(whisper trips on short lines, proper nouns, and a few clip confusions like
+t-before-u heard as "p"). A high score proves the line works; a low score only
+means "check by ear" - never rewrite a natural-sounding line to chase the score.
