@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-07-22: Original 1988 Speech Engine — Phase 2 (Authenticity) Complete
+
+**Changes**:
+- Preprocessor (`tools/original-extraction/preprocess.py`) made BIT-EXACT vs emulator
+  ground truth: 472/472 commands (records 0,1,3). Fixes: consonant onset tail
+  (b4514-b45b0) with voicing table 0x4b2a and 0x11/0x12->0x10 clamp; vowel dispatch
+  fall-throughs (a 5,6 -> b4298; a>7 -> b42da).
+- Bank-4 diphone matrix solved and rendered: clip index 0x45c/4 + P + 14*X, 151 real
+  transition grains (the missing coarticulation).
+- 0x61 decoded = 5-level AMPLITUDE envelope (x0.5..x1.5), not frequency. 0x66 = speed
+  via inter-sample delay (period ~372+10*delay cycles), rendered as relative resampling.
+- Silences cycle-counted: word gap 11.6ms, sentence pause 323ms (was 3x too short —
+  explained the entire 13% duration gap vs original).
+- Rody1 AAA.PRG extracted from rody1.st (FAT12); engine disassembled offline with capstone.
+- Original speech located in existing capture (r1_full.wav @121s) + fresh Hatari capture
+  of scene 2 (3 reps). All irreplaceable /tmp assets rescued into `captures/`.
+
+**Validation**:
+- Arthur blind QA (5 sentences): ~96% word accuracy by ear vs whisper 0.57 mean.
+- Instant-switch A/B player vs real captures: intro "sounds perfect", scene 2 "perfection".
+- Whisper transcribes our render == original, word for word, on scene 2.
+
+**What worked**:
+- Command-stream diffing (gtdiff.py) vs live-captured GT made every preprocessor bug
+  visible as a clean insert/replace pattern; disasm confirmed each fix.
+- Whisper as cut-verifier and duration matching as speed-calibration (no waveform xcorr needed).
+
+**Mistakes (do not repeat)**:
+- Shipped 3 music cuts to Arthur's ears without whisper-verifying them first (tool was
+  already in session). Rule now in project memory: verify artifacts with the direct tool.
+- Nearly fetched a YouTube longplay while the clean capture sat on disk, because a proxy
+  statistic wrongly said "no speech exists". Verify absence with the mechanism, not a heuristic.
+- STT mean is a LOWER BOUND on intelligibility: adding real diphones dropped whisper 0.57->0.47
+  while humans heard clear improvement. Never optimize the render against whisper.
+
+**Next**:
+- Corpus alignment: 94 known texts <-> bit-exact command streams => label every grain +
+  diphone cell => French-phoneme->grain table => speak NEW sentences in the authentic voice.
+
 ## 2026-03-12: Phoneme Conversion Investigation
 
 **Changes**:
