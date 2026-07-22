@@ -32,8 +32,8 @@ def interpret(cmds):
             out.append(x)
     while i<len(cmds):
         op=cmds[i]
-        if op==0x20: out+=b'\x80'*350; i+=1
-        elif op==0x2e: out+=b'\x80'*1400; i+=1
+        if op==0x20: out+=b'\x80'*151; i+=1    # dbra 0x245e ~= 11.6ms @8MHz
+        elif op==0x2e: out+=b'\x80'*4196; i+=1 # subi/bgt 0x183ee ~= 323ms
         elif op==0x23: i+=1
         elif op==0x61: amp=1.0 if NOAMP else AMP.get(cmds[i+1],1.5); i+=2
         elif op==0x66: delay=DELAY0 if NOSPEED else delay_of(cmds[i+1]); i+=2

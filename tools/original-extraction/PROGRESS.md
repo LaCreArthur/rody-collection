@@ -806,3 +806,20 @@ effortful dense phrases — both consistent with missing bank-4 onsets (Phase 2 
   duration vs default delay 18 at 13000 Hz container.
 - Arthur ear-check: dlg000 + dlg007 "sounds great", leading 'A' now audible
   (was the #1 QA defect). Corpus re-render + STT rescore running.
+
+## 2026-07-22 (evening) — AUTHENTICITY VALIDATED BY A/B vs REAL CAPTURES
+- Found the real speech in r1_full.wav (121.0s->end; earlier segments = intro +
+  scene musics). Lesson encoded: whisper-verify every cut before human handoff.
+- Silence opcodes cycle-counted from disasm: WG 0x20 = dbra 0x245e ~11.6ms (151
+  samples), SENT 0x2e = subi/bgt 0x183ee ~323ms (4196 samples). This closed the
+  13% duration gap: intro render 11.77s -> 13.86s vs original ~13.5s (tail-cut).
+- Arthur A/B (instant-switch player /tmp/rody_ab/ab.html):
+  intro (records 0,1,3): "pauses way better, sounds perfect"
+  scene 2 (record 4, fresh Hatari capture, 3 reps): "perfection!"
+- New capture: captures/rody1_scene2_speech.wav (25066 Hz, 2+ clean reps).
+  Whisper on ours == whisper on original, word for word.
+- Speed constant validated indirectly (durations match); STT mean 0.469 stands
+  as smoke test only — whisper transcribes the ORIGINAL intro perfectly, so
+  remaining corpus gap is measurable per-sentence when needed.
+- NEXT: corpus alignment known texts <-> command streams => grain labels =>
+  French-phoneme->grain table => NEW sentences in the authentic voice.
