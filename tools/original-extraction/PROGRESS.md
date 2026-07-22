@@ -772,3 +772,37 @@ Extracted probe: /tmp/rod_banks/rody2_capture.wav (music, no speech).
   grains + index TSVs). User will A/B test grains to label vowel variants.
   `python3 audition.py one <bank> <P>` plays a sustained phoneme.
 - Recurring /loop cron (59639096) CANCELLED (phase 1 succeeded).
+
+## 2026-07-22 — Human blind QA round (Arthur, 5 sentences)
+Protocol: play render blind, Arthur types what he heard, diff vs known text.
+- dlg007: 9.5/10 words (missed leading "A"; "gums"->"gun")
+- dlg023: 10/10 (whisper: "rabais ténèbre")
+- dlg042: 10/10 ("pays des mille couleurs" effortful; whisper: "neutre là")
+- dlg060: ~17/19 ("Et voilà"->"ahlala"; "a retrouvé"->"va retrouver"; "grâce à toi le professeur Gobino" effortful)
+- dlg088: 12/12 (unsure on "le fruit" but correct; whisper: "la fille")
+Verdict: ~96% human word accuracy vs 0.572 whisper mean — STT confirmed as heavy
+underestimate. Recurring defect: WEAK SENTENCE OPENINGS (first word swallowed) +
+effortful dense phrases — both consistent with missing bank-4 onsets (Phase 2 #1).
+
+## 2026-07-22 — PHASE 2: preprocessor BIT-EXACT + bank-4 + pitch/speed implemented
+- Preprocessor now reproduces the emulator ground truth EXACTLY: 472/472 commands
+  (records 0,1,3 = the three utterances in allreads.txt; record 2 is filler).
+  Three fixes, all read from AAA.PRG disasm (rody1_AAA.PRG extracted from rody1.st
+  FAT12, engine at file text+0x178e.., reloc +0xb2202 = RAM):
+  1. onset_tail (b4514-b45b0): after cons_low clusters, emit b4180(word(0xe)) +
+     [04][next-unit][s6] when next type in {2,3,5,6}; next-unit: type3->8, type2->7,
+     type5->s[c], type6->tb(0x4b00..); d2==4->3; VOICING table 0x4b2a: s[6]+=1
+     if marked (t->d, p->b...; mutates stage B); s[6] in {0x11,0x12}->0x10.
+  2. emit() vowel dispatch fall-throughs: a in {5,6} falls into b4298 (one extra
+     [00 P 03]); a>7 falls into b42da terminator ([00 P 00/02] by d3).
+- Bank-4 diphone matrix SOLVED (b3b6e): clip index = 0x45c/4 + P + 14*X into the
+  SAME 644-entry clip table (14 vowel columns x prev-phoneme rows), end = next
+  entry, same audio base 0x2f70. render_all.py plays them now.
+- 0x61 "pitch" = AMPLITUDE envelope (b3998/b3bd0): param {0,1,2,3,4+} -> scale
+  {1.0, 0.5, 0.75, 1.25, 1.5}, persistent until next 0x61. NOT frequency.
+- 0x66 speed = inter-sample delay: delay = 0x10-([4cc2]*2+signed param), [4cc2]=-1
+  => delay = 18-param (ff->19 .. 04->14). Sample period ~= 372+10*delay cycles
+  (approx count; nop-padded equal-time amp branches). Rendered as relative
+  duration vs default delay 18 at 13000 Hz container.
+- Arthur ear-check: dlg000 + dlg007 "sounds great", leading 'A' now audible
+  (was the #1 QA defect). Corpus re-render + STT rescore running.

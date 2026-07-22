@@ -1,1 +1,2 @@
+
  Je suis Mastico, le robot. Me vois-tu sur l'écran ? Et Roby, le vois-tu ? Trouve-le et déplace-moi jusqu'à sa main.

@@ -1,1 +1,2 @@
- indiquant les neutres en l'un après l'autre, l'ordre dans lequel le neutre va manger les frites.
+
+ indique, en les montrant l'un après l'autre, l'ordre dans lequel le monstre va manger les fruits.

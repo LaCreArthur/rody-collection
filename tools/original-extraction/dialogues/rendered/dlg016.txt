@@ -1,1 +1,2 @@
- Cherche le bateau qui a le plus de hublot et perche-la sur ce pavillon.
+
+ Cherche le bateau qui a le plus de hublots et perche-moi sur son pavillon.

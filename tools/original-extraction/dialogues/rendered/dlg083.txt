@@ -1,1 +1,2 @@
- Les marches de l'escalier sont dangereuses. Indique à Roby les endroits où il va poser ses pieds.
+
+ Les marches de l'escalier sont dangereuses. Indique à Roby les endroits où il doit poser ses pieds.

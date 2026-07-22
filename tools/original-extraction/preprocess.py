@@ -71,12 +71,13 @@ def preprocess(tokens):
                     out.append(0x00); out.append(s[6]); out.append(0x03)
                 return
             # s[a] >= 5 : b4268
-            if s[0xa] < 7:                              # b4276 (a==5,6)
+            if s[0xa] < 7:                              # b4276 (a==5,6) falls into b4298
                 d2 = (s[0xa]-5) & 0xff
                 for _ in range(d2+1):
                     out.append(0x00); out.append(s[6])
                     if d3 != 0: out[-1] = d3
                     out.append(0x03)
+                out.append(0x00); out.append(s[6]); out.append(0x03)
                 return
             if s[0xa] == 7:                             # b42da
                 if d3 != 0:
@@ -84,12 +85,16 @@ def preprocess(tokens):
                 else:
                     out.append(0x00); out.append(s[6]); out.append(0x02)
                 return
-            # a > 7 : b42b8
+            # a > 7 : b42b8 falls into b42da
             d2 = (s[0xa]-8) & 0xff
             for _ in range(d2+1):
                 out.append(0x00); out.append(s[6])
                 if d3 != 0: out[-1] = d3
                 out.append(0x03)
+            if d3 != 0:
+                out.append(0x00); out.append(s[6]); out.append(0x00)
+            else:
+                out.append(0x00); out.append(s[6]); out.append(0x02)
             return
         # s[a] == 0 : b4220
         if d3 != 0:
@@ -128,6 +133,21 @@ def preprocess(tokens):
         out.append(s[6])
         return
 
+    def onset_tail():  # b4514..b45b0 : diphone onset announcing next unit
+        if s[0xd] < 2 or s[0xd] == 4 or s[0xd] == 9: return
+        b4180(word(0xe))
+        if s[0xd] < 5:                                  # next is consonant class 2/3
+            d2 = 8 if s[0xd] == 3 else 7
+        elif s[0xd] == 5:
+            d2 = s[0xc]
+        else:                                           # s[0xd]==6
+            d2 = tb(0x4b00 + ((s[0xc]-0xe) & 0xff)*2)
+        if d2 == 4: d2 = 3
+        if tb(0x4b2a + s[6]) != 0:                      # voicing fix mutates stage B
+            s[6] = (s[6]+1) & 0xff
+        if 0x11 <= s[6] <= 0x12: s[6] = 0x10
+        out.append(0x04); out.append(d2); out.append(s[6])
+
     def emit_cons_low():  # b43e4 : s[7] < 2
         b4180(word(8))
         d = s[0xd]
@@ -155,7 +175,7 @@ def preprocess(tokens):
                     out.append(d3); out.append(s[6]); out.append(0x04)
             if s[0xd] == 9:
                 out.append(d3); out.append(s[6]); out.append(0x05)
-            return
+            return onset_tail()
         # b4482 s[7]==0
         if s[6] == 0x16:                               # b4488
             if s[0] in (0xa, 0xe, 0x10, 0x15):
@@ -170,7 +190,7 @@ def preprocess(tokens):
         # falls to b4500
         if s[0xd] == 9:
             out.append(d3); out.append(s[6]); out.append(0x05)
-        return
+        return onset_tail()
 
     def emit_special():  # b45b2 : s[7]==4
         b4180(word(8))
