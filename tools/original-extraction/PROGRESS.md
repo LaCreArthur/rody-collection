@@ -823,3 +823,77 @@ effortful dense phrases — both consistent with missing bank-4 onsets (Phase 2 
   remaining corpus gap is measurable per-sentence when needed.
 - NEXT: corpus alignment known texts <-> command streams => grain labels =>
   French-phoneme->grain table => NEW sentences in the authentic voice.
+
+## 2026-07-24 — CORPUS ALIGNMENT: full (bank,P) phoneme table SOLVED
+Goal from prior NEXT: label every descriptor to get a French-phoneme->grain
+table. DONE. New tool: `align.py`. Output: `catalog/phoneme_table.tsv`;
+`labels.tsv` anchor_phoneme column corrected (32 values).
+
+Method (no cross-dialogue matching needed):
+- Each dialogue's bit-exact command stream (preprocess.py) gives a run-length
+  collapsed (bank,P) phoneme sequence. Bank0 = vowels/continuants, bank2/6 =
+  consonant context grains. Identity is the PAIR (bank,P): same P in different
+  banks is a different phoneme (confirms the old warning; naive same-P is wrong).
+- Text anchor = each dialogue's OWN whisper transcript (dialogues/rendered/
+  dlg*.txt) -> French phonemes via phoneme-dict/derive_dict. Transcript and
+  stream are two views of the same utterance -> self-paired, 99 usable dialogues.
+- Needleman-Wunsch align, hard manner constraint (vowel<->bank0, consonant<->
+  bank2/6) + EM: round 0 manner-only, later rounds score vs the learned
+  (bank,P)->phoneme model. Converges in 2 rounds, ~3474 votes, most slots conf
+  1.00. Vote per (bank,P) cell; majority = label.
+
+RESULT — bank-0 vowels (13 live slots, P4 = dead/zero-length):
+  P0 i, P1 é, P2 ai(è), P3 a, P5 oh(ɔ), P6 o, P7 ou, P8 u, P9/P10 e~eu(schwa/eu
+  merged), P11 in, P12 an, P13 on.
+RESULT — bank-2 consonants, in ARTICULATORY ORDER (independent corroboration):
+  P0 p, P1 b, P2 m, P3 f, P4 v, P5 t, P6 d, P7 n, P8 s, P9 z, P10 l, P11 ch,
+  P12 j, P13 c(k), P14 g, P15 r, P23 y. Bank-6 = coarticulation subset at same
+  indices (t P5, c P13, g P14, r P15).
+
+SUPERSEDES the P2-P9 ear anchors in labels.tsv, which were WRONG (they had
+P2=a,P3=o,P5=u,P6=eu,P7=in,P8=an,P9=on). Ruled out "systematic index shift":
+the displacement is non-uniform and i/é are unmoved; it's genuine ear misID of
+mid/back grains in isolation vs playback usage.
+
+VERIFIED (not just aggregate votes):
+- Direct decode of unambiguous raw game data: dlg002 "Roby Roby" = r-[P6]-d-i x2
+  => P6 is the 'o' of Rody (labels.tsv had said P6=eu, P3=o — both wrong).
+  dlg005 "Bonjour" = b-[P13]-j-[P7]-r => on, ou. dlg007 "quel endroit" = k-[P2]-l
+  / [P12]-d-r => è, an.
+- Full-dialogue readability: table decodes dlg006/042/088 to clean French
+  matching transcripts word-for-word.
+- Descriptor indices follow articulatory place/manner order — a table this
+  ordered emerging from per-slot voting is not coincidence.
+
+Bank-4 diphone cells are mechanically derived (col = one of the 14 vowel slots
+above, row = prev phoneme), formula already in render_all.py; no separate file
+(would duplicate the P table).
+
+NEXT: speak.py — inverse preprocessor: French text -> phonemes -> record u16
+tokens (choose bank2 vs 6 by position, insert bank-4 onsets + WG/SENT pauses) ->
+bit-exact render. First NEW sentence in the authentic 1988 voice; blind QA.
+
+## 2026-07-24 — speak.py: NEW sentences in the authentic voice (inverse path DONE)
+Built `speak.py`: French text -> Rody phonemes (derive_dict) -> record u16 tokens
+-> the UNCHANGED bit-exact render (preprocess + interpret). No new DSP: preprocess
+already adds bank-2/6 selection, bank-4 onsets and pauses. Inverse rule:
+vowel P -> d2=P, consonant P -> d2=P+0x16, WG 0x3c, SENT 0x3d. Prosody comes from
+reusing each descriptor's most-common REAL token across the 102 records
+(data/rep_tokens.json) so durations/amplitude stay authentic. Rare tokens
+expanded: oi->ou+a, eu->e (shared P9/P10 grain), un->in, gn->n+y, w->ou.
+
+VERIFIED:
+- Round-trip: dlg000's decoded phonemes -> speak.py -> render -> whisper =
+  "Roby, maman a ouvert doucement la porte de ta chambre" == original dlg000
+  transcript. Inverse is faithful.
+- NOVEL sentence never in the game: "le jeune roi mangeait une orange en
+  montagne" -> whisper transcribes it back WORD-FOR-WORD (exercises j, gn,
+  oi/wa, an, on, eu). Arthur ear-check via afplay.
+
+Weak/known-approx phonemes to watch in future ear passes: eu (no distinct grain,
+uses schwa), oi (glide approximated as ou+a), gn (n+y). 'un' folded to 'in'.
+Dict OOV (e.g. proper nouns like "Espagne") silently absent — reported to stderr.
+
+NEXT: prosody tuning by ear (per-phoneme duration/pitch); then wire the authentic
+engine into the game / french-to-rody-phonemes skill so authored dialogue can
+target it instead of the remake's clip concatenation.

@@ -1,52 +1,52 @@
 descriptor_P	bank	clip_start	clip_end	clip_off_start	clip_off_end	anchor_phoneme	note
-0	0	0	3	0	1316	i	ear-verified anchor
-0	2	67	70	16972	17920		
+0	0	0	3	0	1316	i	ear-verified anchor; corpus-confirmed n=148
+0	2	67	70	16972	17920	p	corpus-aligned n=95 conf=1.00
 0	6	173	176	36914	36914		
-1	0	3	6	1316	2634	é	ear-verified anchor
-1	2	70	73	17920	18542		
+1	0	3	6	1316	2634	é	ear-verified anchor; corpus-confirmed n=146
+1	2	70	73	17920	18542	b	corpus-aligned n=60 conf=0.98
 1	6	176	179	36914	36914		
-2	0	6	9	2634	3953	a	ear-verified anchor
-2	2	73	76	18542	19876		
+2	0	6	9	2634	3953	ai	corpus n=227 conf=0.81 (was ear:a)
+2	2	73	76	18542	19876	m	corpus-aligned n=116 conf=1.00
 2	6	179	182	36914	36914		
-3	0	9	12	3953	5277	o	ear-verified anchor
-3	2	76	79	19876	21036		
+3	0	9	12	3953	5277	a	corpus n=314 conf=0.78 (was ear:o)
+3	2	76	79	19876	21036	f	corpus-aligned n=36 conf=1.00
 3	6	182	185	36914	36914		
-4	0	12	15	5277	5277	ou	ear-verified anchor
-4	2	79	82	21036	22473		
+4	0	12	15	5277	5277	-	dead slot (zero-length clip; never played in corpus)
+4	2	79	82	21036	22473	v	corpus-aligned n=101 conf=1.00
 4	6	185	188	36914	36914		
-5	0	15	18	5277	6597	u	ear-verified anchor
-5	2	82	85	22473	23304		
-5	6	188	191	36914	37459		
-6	0	18	21	6597	7928	eu	ear-verified anchor
-6	2	85	88	23304	24682		
+5	0	15	18	5277	6597	oh	corpus n=57 conf=0.74 (was ear:u)
+5	2	82	85	22473	23304	t	corpus-aligned n=56 conf=1.00
+5	6	188	191	36914	37459	t	corpus-aligned n=141 conf=1.00
+6	0	18	21	6597	7928	o	corpus n=65 conf=1.00 (was ear:eu)
+6	2	85	88	23304	24682	d	corpus-aligned n=158 conf=1.00
 6	6	191	194	37459	37459		
-7	0	21	24	7928	9244	in	ear-verified anchor
-7	2	88	91	24682	25831		
+7	0	21	24	7928	9244	ou	corpus n=111 conf=1.00 (was ear:in)
+7	2	88	91	24682	25831	n	corpus-aligned n=75 conf=1.00
 7	6	194	197	37459	37459		
-8	0	24	27	9244	10542	an	ear-verified anchor
-8	2	91	94	25831	26952		
+8	0	24	27	9244	10542	u	corpus n=67 conf=1.00 (was ear:an)
+8	2	91	94	25831	26952	s	corpus-aligned n=142 conf=1.00
 8	6	197	200	37459	37459		
-9	0	27	30	10542	11837	on	ear-verified anchor
-9	2	94	97	26952	27913		
+9	0	27	30	10542	11837	e	corpus n=54 conf=0.72 (was ear:on)
+9	2	94	97	26952	27913	z	corpus-aligned n=25 conf=0.96
 9	6	200	203	37459	37459		
-10	0	30	33	11837	13129		
-10	2	97	100	27913	29227		
+10	0	30	33	11837	13129	e	corpus-aligned n=152 conf=0.79
+10	2	97	100	27913	29227	l	corpus-aligned n=308 conf=1.00
 10	6	203	206	37459	37459		
-11	0	33	36	13129	14422		
-11	2	100	103	29227	30358		
+11	0	33	36	13129	14422	in	corpus-aligned n=47 conf=0.77
+11	2	100	103	29227	30358	ch	corpus-aligned n=40 conf=1.00
 11	6	206	209	37459	37459		
-12	0	36	39	14422	15687		
-12	2	103	106	30358	31678		
+12	0	36	39	14422	15687	an	corpus-aligned n=96 conf=1.00
+12	2	103	106	30358	31678	j	corpus-aligned n=44 conf=1.00
 12	6	209	212	37459	37459		
-13	0	39	42	15687	16972		
-13	2	106	109	31678	32438		
-13	6	212	215	37459	38228		
+13	0	39	42	15687	16972	on	corpus-aligned n=76 conf=1.00
+13	2	106	109	31678	32438	c	corpus-aligned n=80 conf=1.00
+13	6	212	215	37459	38228	c	corpus-aligned n=46 conf=1.00
 14	0	42	45	16972	16972		
-14	2	109	112	32438	33777		
-14	6	215	218	38228	38894		
+14	2	109	112	32438	33777	g	corpus-aligned n=5 conf=1.00
+14	6	215	218	38228	38894	g	corpus-aligned n=5 conf=1.00
 15	0	45	48	16972	16972		
-15	2	112	115	33777	34697		
-15	6	218	221	38894	40000		
+15	2	112	115	33777	34697	r	corpus-aligned n=55 conf=1.00
+15	6	218	221	38894	40000	r	corpus-aligned n=262 conf=1.00
 16	0	48	51	16972	16972		
 16	2	115	118	34697	34697		
 16	6	221	224	40000	41025		
@@ -69,7 +69,7 @@ descriptor_P	bank	clip_start	clip_end	clip_off_start	clip_off_end	anchor_phoneme
 22	2	133	136	34697	34697		
 22	6	239	242	41025	41025		
 23	0	69	72	17612	18542		
-23	2	136	139	34697	35615		
+23	2	136	139	34697	35615	y	corpus-aligned n=64 conf=1.00
 23	6	242	245	41025	41025		
 24	0	72	75	18542	19314		
 24	2	139	142	35615	35615		

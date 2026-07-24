@@ -1,0 +1,38 @@
+# (bank,P) -> French phoneme, from corpus alignment (align.py).
+# bank0 = vowels/continuants, bank2/6 = consonant context grains.
+# Supersedes the P2-P9 ear anchors in labels.tsv (see PROGRESS 2026-07-24).
+bank	P	phoneme	conf	votes	clip_start	clip_end	source	dist
+0	0	i	0.99	148	0	3	aligned	{'i': 147, 'oi': 1}
+0	1	é	0.98	146	3	6	aligned	{'é': 143, 'ai': 3}
+0	2	ai	0.81	227	6	9	aligned	{'ai': 184, 'é': 43}
+0	3	a	0.78	314	9	12	aligned	{'a': 246, 'oi': 68}
+0	5	oh	0.74	57	15	18	aligned	{'oh': 42, 'o': 12, 'é': 3}
+0	6	o	1.00	65	18	21	aligned	{'o': 65}
+0	7	ou	1.00	111	21	24	aligned	{'ou': 111}
+0	8	u	1.00	67	24	27	aligned	{'u': 67}
+0	9	e	0.72	54	27	30	aligned	{'e': 39, 'eu': 15}
+0	10	e	0.79	152	30	33	aligned	{'e': 120, 'eu': 31, 'a': 1}
+0	11	in	0.77	47	33	36	aligned	{'in': 36, 'un': 11}
+0	12	an	1.00	96	36	39	aligned	{'an': 96}
+0	13	on	1.00	76	39	42	aligned	{'on': 76}
+2	0	p	1.00	95	67	70	aligned	{'p': 95}
+2	1	b	0.98	60	70	73	aligned	{'b': 59, 'p': 1}
+2	2	m	1.00	116	73	76	aligned	{'m': 116}
+2	3	f	1.00	36	76	79	aligned	{'f': 36}
+2	4	v	1.00	101	79	82	aligned	{'v': 101}
+2	5	t	1.00	56	82	85	aligned	{'t': 56}
+2	6	d	1.00	158	85	88	aligned	{'d': 158}
+2	7	n	1.00	75	88	91	aligned	{'n': 75}
+2	8	s	1.00	142	91	94	aligned	{'s': 142}
+2	9	z	0.96	25	94	97	aligned	{'z': 24, 'l': 1}
+2	10	l	1.00	308	97	100	aligned	{'l': 308}
+2	11	ch	1.00	40	100	103	aligned	{'ch': 40}
+2	12	j	1.00	44	103	106	aligned	{'j': 44}
+2	13	c	1.00	80	106	109	aligned	{'c': 80}
+2	14	g	1.00	5	109	112	aligned	{'g': 5}
+2	15	r	1.00	55	112	115	aligned	{'r': 55}
+2	23	y	1.00	64	136	139	aligned	{'y': 64}
+6	5	t	1.00	141	188	191	aligned	{'t': 141}
+6	13	c	1.00	46	212	215	aligned	{'c': 46}
+6	14	g	1.00	5	215	218	aligned	{'g': 5}
+6	15	r	1.00	262	218	221	aligned	{'r': 262}
