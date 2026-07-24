@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-06-29 (Phase 5 marked done, superseded by shared `RA_ActionPanel`)
+> **Updated:** 2026-07-24 (End Goal: Authentic 1988 Speech defined; supersedes old Phoneme Dictionary plan)
 
 ---
 
@@ -236,22 +236,71 @@ Support multiple user stories in-memory with per-slot action buttons.
 
 ---
 
-### Phoneme Dictionary
+### End Goal: Authentic 1988 Speech (defined 2026-07-24)
 
-Natural French text → phoneme conversion for easier dialogue editing.
+**One-liner:** every voice in the game is the authentic 1988 engine, and writing
+French dialogue for it is easy: in-game, a phoneme workbench with instant playback;
+outside, your AI agent converts French → phonemes via the shipped skill.
 
-- Dictionary of ~500 common French words
-- "Learn" feature for unknown words
-- Local JSON storage
-- First ship this as assisted conversion, not full automation: suggest phonemes from corpus + rules, highlight low-confidence segments, and let the author correct them.
-- Add a normalization pass before dictionary lookup. Current shipped phoneme strings contain dirty tokens (`!`, `.p`, `M`, `ca`, `il`, `w`) that should not be treated as valid canonical phonemes.
-- Source of truth for the alphabet is the runtime parser in `SoundManager` / `P.cs`, not the story corpus. The corpus is useful training data, but it is not perfectly clean.
+**Decisions (Arthur, 2026-07-24):**
+- The 1988 engine **replaces** the clip-concatenation voice entirely. One
+  speech system, no per-story voice flag.
+- The standalone phoneme scene is a **creator tool** (authoring workbench), not a
+  kids toy.
+- French→phoneme conversion is the **AI-agent skill**, not an in-game
+  dict/rules converter (LLM wins on typos/invented names; gap widens with time).
+
+**Foundation (done, in `tools/original-extraction/`):** bit-exact Python replica of
+the 1988 engine (`preprocess.py` + `render_all.py`), full descriptor↔phoneme table
+(`catalog/phoneme_table.tsv`), and `speak.py` proving French → tokens → authentic
+audio end-to-end (whisper-verified word-for-word, ear-verified "perfect").
+
+**Pillar A — Engine port (prerequisite).** C# port of the two routines
+(preprocessor + interpreter, ~250 lines total, pure logic, WebGL-safe), shipping
+the PA.ROD banks. The existing phoneme notation keeps working: remake tokens map
+onto engine descriptors via the phoneme table (exactly what `speak.py` does), so
+stories re-voice without data migration. Replaces `SoundManager` concatenation.
+- Validation: byte-compare C# PCM vs Python renders across all 102 dialogues, then
+  ear A/B in-game.
+- Open point: map the Rody/Mastico voice distinction (current per-scene pitch +
+  isMastico flags) onto the engine's amplitude/speed opcodes.
+
+**Pillar B — Creator workbench scene.** Upgrade/replace the synth scene, slimmed
+to what must live in-game: type/edit phonemes, instant authentic playback, copy
+into story dialogue. The ear-loop is the validator (the 1988 Mastico spirit).
+The saved artifact is always the phoneme string the author heard and approved —
+French text never becomes a trusted intermediate anywhere.
+
+*No in-game French→phoneme converter* (decision Arthur 2026-07-24): an LLM agent
+with the conversion skill outperforms any dict+rules system on exactly the hard
+cases (typos, invented names like Gobino/Badedon, prosody/liaison choices), and
+that gap only widens. Building a baked dictionary + grapheme rules in Unity would
+be rebuilding a worse LLM. Deferred-not-deleted: a dict-assist could return later
+IF evidence shows agent-less creators need more than the ear-loop.
+
+**Pillar C — Exportable conversion skill.** The French→phoneme path for creators
+is the AI-agent skill (`.claude/skills/french-to-rody-phonemes/`), already in the
+public repo. Work needed:
+- Make it PORTABLE: conversion knowledge (token table, rules, corpus examples)
+  self-contained; machine-local tooling (render script, whisper model paths)
+  moved to a clearly separated optional section.
+- Make it DISCOVERABLE: linked from README/site — "write your story dialogue with
+  your AI agent, import the .rody.json".
+- One source of truth: the skill itself is the shipped artifact; no duplicate
+  exported copy to drift.
+- Normalization guidance stays in the skill: shipped story strings contain dirty
+  tokens (`!`, `.p`, `M`, `ca`, `il`) that are not canonical phonemes; alphabet
+  contract is the engine descriptor set / `phoneme_table.tsv`, not the corpus.
+
+**Sequencing:** A → B → C; each independently shippable. A is the foundation:
+without it the workbench would author for the old voice. C is cheap (doc work on
+an existing skill) and can land anytime.
 
 ### Other
 
 - **Export UI integration** - `OnExportClick()` in `RA_NewGame.cs` exists but no button is wired. Need to decide location: Scene 0 (alongside Import) or Scene 6 (Rody Maker save menu)
 - **PlayerPrefs cleanup** - ✅ DONE: `currentScene`/`scenesCount` replaced with `WorkingStory` properties. Remaining: `gamePath`, `gameToDelete`, other legacy keys
-- **SoundManager refactor** - Break up 360-line monolith
+- **SoundManager refactor** - superseded by the 1988 engine port (Pillar A above): the phoneme-concatenation half of the monolith gets replaced, not refactored
 
 ---
 
