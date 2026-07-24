@@ -12,8 +12,8 @@
       "index": 1,
       "data": {
         "dialogues": {
-          "intro1": "c_ai_l_a_p_r_ai_m_i_d_i_a_j_i_t_et .p_r_e_n_et_un_b_on_g_ou_t_et_._t_a_c_ou_z_i_n_et_t_oi_r_o_d_i v_ou_l_a_v_et_b_i_in_m_et_r_i_t_et",
-          "intro2": "s_et_d_o_m_a_j i_l_n_i_a_p_l_u_d_e_m_a_r_m_e_l_a_d j_e_l_ai_m_an_j_et .p_r_e_n_et_v_i_t_v_o_v_et_l_o_z_et_a_l_et_v_oi_r_s_i_m_a_m_i_an_n_a_an_c_oh_r",
+          "intro1": "c_ai_l_a_p_r_ai_m_i_d_i_a_j_i_t_et ._p_r_e_n_et_un_b_on_g_ou_t_et_._t_a_c_ou_z_i_n_et_t_oi_r_o_d_i v_ou_l_a_v_et_b_i_in_m_et_r_i_t_et",
+          "intro2": "s_et_d_o_m_a_j i_l_n_i_a_p_l_u_d_e_m_a_r_m_e_l_a_d j_e_l_ai_m_an_j_et ._p_r_e_n_et_v_i_t_v_o_v_et_l_o_z_et_a_l_et_v_oi_r_s_i_m_a_m_i_an_n_a_an_c_oh_r",
           "intro3": "",
           "obj": "l_e_p_o_d_e_m_a_r_m_e_l_a_d d_e_t_a_m_a_m_an_et_v_i_d r_o_d_i l_a_ti_u_r_e_m_a_r_c_et",
           "ngp": "un_n_a_v_i_on_v_a a_t_et_r_i_r_s_u_r_l_a_p_i_s_t_d_ai_r_i_ai_r_l_a_m_et_z_on . l_e_v_oi_t_u",
@@ -84,7 +84,7 @@
           "intro3": "j_et_n_i_a_l a_l_on_v_oi_r_s_e_c_y_s_p_a_s_r_o_d_i",
           "obj": "a_ti_u_r_e_m_a_r_c_et_l_e_d_r_o_l_d_e_c_ouu_c_ouu",
           "ngp": "ou_r_o_d_i a_ti_i_l_s_t_a_s_i_o_n_et_s_on_v_et_l_o",
-          "fsw": "on_n_a_p_ai_r_s_oi un_s_o_m_on . p_ai_r_ch_e_m_oi_d_e_s_u !"
+          "fsw": "on_n_a_p_ai_r_s_oi un_s_o_m_on . p_ai_r_ch_e_m_oi_d_e_s_u ."
         },
         "texts": {
           "title": "QUEL DROLE DE COUCOU ...",
