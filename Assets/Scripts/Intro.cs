@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Intro : MonoBehaviour
@@ -39,7 +39,7 @@ public class Intro : MonoBehaviour
         {
             gm.sm.currentDialIndex = 1;
             gm.sceneAnimator.isSpeaking = true;
-            gm.sm.InitPhoneme(gm.getDial(1), gm.sm.pitch1); // Other speak
+            gm.sm.Speak(gm.getDial(1), gm.sm.pitch1); // Other speak
         }
 
         while (gm.sm.isPlaying)
@@ -51,7 +51,7 @@ public class Intro : MonoBehaviour
         gm.sceneAnimator.isSpeaking = false;
         yield return new WaitForSeconds(0.5f);
 
-        if (gm.getDial(2).Count > 0)
+        if (!string.IsNullOrEmpty(gm.getDial(2)))
         {
             if (gm.sm.isMastico2)
                 StartCoroutine(gm.sm.MasticoSpeak(gm.getDial(2), false));
@@ -59,7 +59,7 @@ public class Intro : MonoBehaviour
             {
                 gm.sm.currentDialIndex = 2;
                 gm.sceneAnimator.isSpeaking = true;
-                gm.sm.InitPhoneme(gm.getDial(2), gm.sm.pitch2);
+                gm.sm.Speak(gm.getDial(2), gm.sm.pitch2);
             }
             while (gm.sm.isPlaying)
             {
@@ -69,14 +69,15 @@ public class Intro : MonoBehaviour
 
         gm.sceneAnimator.isSpeaking = false;
 
-        if (gm.getDial(6).Count > 0)
+        if (!string.IsNullOrEmpty(gm.getDial(6)))
         {
             if (gm.sm.isMastico3) 
                 StartCoroutine(gm.sm.MasticoSpeak(gm.getDial(6), false));
             else
             {
                 gm.sm.currentDialIndex = 3;
-                gm.sm.InitPhoneme(gm.getDial(6), gm.sm.pitch3);
+                gm.sceneAnimator.isSpeaking = true;
+                gm.sm.Speak(gm.getDial(6), gm.sm.pitch3);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -14,7 +14,7 @@ public class BtnPlay : MonoBehaviour {
 
 	public void OnClick() {
 		// play the input with a specified pitch
-		synth.sm.InitPhoneme(synth.sm.StringToPhonemes(synth.input.text), synth.pitchSlider.value);
+		synth.sm.Speak(synth.input.text, synth.pitchSlider.value);
 		Debug.Log("say : \"" + synth.input.text + "\" with a picth of " + synth.pitchSlider.value );
 	}
 

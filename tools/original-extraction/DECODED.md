@@ -60,7 +60,7 @@ where base = {0:0, 2:0x10c/4, 6:0x2b4/4}. Variant V picks start/end pair:
 Play audio[audioBase+clipoff[base+3P+start] .. clipoff[base+3P+end]].
 Sample loop reads bytes, subtracts 0x80, applies pitch-bend, writes 3 YM volume
 registers (movep $FF8800) = 3-channel ST digi. Bank 4 = `[04][cur_P][prev_P]`
-diphone transitions (attack transients); reference impl skips them (minor).
+diphone transitions (attack transients); the current reference interpreter renders them.
 
 ## Files
 - `preprocess.py` — record u16 -> command stream (reimpl of AAA.PRG preprocessor)
@@ -70,8 +70,12 @@ diphone transitions (attack transients); reference impl skips them (minor).
 - `preprocessor_disasm.txt` — annotated 68000 disassembly of the preprocessor
 
 ## Known residuals (quality is above threshold without these)
-- Bank-4 diphone onsets not emitted/rendered (coarticulation smoothing). Onset =
-  `[04][current_P][previous_P]`; interpreter path is bank4 two-level (b3b6e).
 - Pitch-bend/speed applied structurally but sample-rate warping simplified.
 - Record vs phonem-line segmentation differ (101 records vs 94 lines), so a few
   renders are sub-phrase fragments.
+
+## Runtime port
+
+The current C# port and verification instructions live in
+[docs/SPEECH_ENGINE.md](../../docs/SPEECH_ENGINE.md). Earlier scores above are
+historical extraction measurements, not release acceptance criteria.

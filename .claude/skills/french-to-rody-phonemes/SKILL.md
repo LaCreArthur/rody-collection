@@ -1,13 +1,12 @@
 ---
 name: french-to-rody-phonemes
-description: Convert French text into the Rody Collection phoneme notation used by the game's Atari-ST-style sampled TTS (e.g. "bravo" -> b_r_a_v_o). Use whenever writing or editing spoken dialogue for Rody stories - .rody.json files, levels.rody files, the RodyMaker story editor synth field - or whenever the user asks to make the game "say" something in French. Also works in reverse, decoding an existing phoneme string back to French. Not for natural/neural TTS voices; this notation drives a deliberately robotic 1988-style voice.
+description: Convert French text into the Rody Collection phoneme notation used by the game's port of the Atari ST speech engine (e.g. "bravo" -> b_r_a_v_o). Use whenever writing or editing spoken dialogue for Rody stories - .rody.json files, levels.rody files, the RodyMaker story editor synth field - or whenever the user asks to make the game "say" something in French. Also works in reverse, decoding an existing phoneme string back to French. Not for natural/neural TTS voices; this notation drives a deliberately robotic 1988-style voice.
 ---
 
 # French to Rody Phonemes
 
-The game speaks by concatenating ~40 pre-recorded phoneme clips, exactly like the
-original Atari ST games (Rody et Mastico, Lankhor, 1988). A dialogue is a plain
-string: `_` separates phonemes inside a breath group, a space separates groups
+The game synthesizes speech with a C# port of the original Atari ST engine
+and its recorded sound bank. A dialogue is a plain string: `_` separates phonemes inside a breath group, a space separates groups
 (and inserts a short pause). Example:
 
 ```
@@ -15,10 +14,9 @@ r_o_d_i m_a_m_an_a_ou_v_ai_r_d_ou_s_e_m_an_l_a_p_oh_r_t_d_e_t_a_ch_an_b_r
 ```
 reads: "Rody, maman a ouvert doucement la porte de ta chambre."
 
-**Critical property of the engine: any token that is not in the inventory below
-plays as a SILENT PAUSE, with no error and no warning.** A capital letter, an
-accent, or a typo silently eats a sound (the original data contains `M_a_l_eu_r`
-for "Malheur", which plays "alheur"). Always validate before delivering.
+**Unknown tokens still play as short pauses, and the game logs a warning.**
+A capital letter, accent, or typo can therefore eat a sound. Validate before
+handing over dialogue; the offline renderer rejects unknown tokens.
 
 ## Phoneme inventory (the ONLY valid tokens)
 
@@ -43,7 +41,7 @@ for "Malheur", which plays "alheur"). Always validate before delivering.
 | `oi` | /wa/ | oi | moi -> `m_oi` |
 | `y`  | /j/ | -il(l), y between vowels | soleil -> `s_o_l_ai_y`, rayon -> `r_ai_y_on` |
 | `ui` | /ɥi/ | ui (corpus usually writes `u_i`) | fruit -> `f_r_u_i` |
-| `ee` | (none) | onomatopoeia only (cow "meuh") | `m_ee_ee` |
+| `ee` | sustained /ə/–/ø/ variant | emphatic vowel, also cow "meuh" | `m_ee_ee` |
 
 ### Consonants
 
@@ -67,7 +65,7 @@ for "Malheur", which plays "alheur"). Always validate before delivering.
 | `.` | longer silence between sentences: `..._r_o_b_o_._m_e_v_oi_t_u...` |
 | `__` (double underscore) | extra pause inside a group; `___`/`____` for longer |
 | `-` | white-noise burst (static/glitch effect) |
-| `ti` | /t/ clip with an i-color; stylistic before u/i: vois-tu -> `v_oi_ti_u` |
+| `ti` | original bank-2 /t/ variant; stylistic before u/i: vois-tu -> `v_oi_ti_u` |
 | `ouu` | emphatic long "ou": oui! -> `ouu_i` |
 | `cuicui` | bird chirp sound effect |
 | `pop` | pop sound effect |
@@ -126,7 +124,7 @@ for "Malheur", which plays "alheur"). Always validate before delivering.
 | Cette porte n'est pas fermée. Entrons ! | `s_ai_t_p_oh_r_t__n_ai_p_a_f_ai_r_m_et_._an_t_r_on` |
 
 More curated pairs grouped by phenomenon: `references/corpus-examples.md`.
-The full corpus (633 lines) lives in `original-stories/*/levels.rody`;
+Source dialogue lives in `original-stories/*/levels.rody`;
 compare the `## phonems` section against the `## texts [string]` section.
 
 ## Reverse direction (phonemes to French)
@@ -146,19 +144,27 @@ pause in game). Run it on every string you produce. The most common failures:
 uppercase letters, accented characters (é, à), and spelled-out French instead
 of sounds ("est" instead of `ai`).
 
-To hear the result without launching Unity, render it to a wav with the exact
-game playback (same clips, same timing):
+## Optional local audio preview
+
+With this repository and the .NET 9 SDK, render through the exact C# synthesizer
+used by Unity (including effects and character pitch):
 
 ```bash
-python3 .claude/skills/french-to-rody-phonemes/scripts/render.py /tmp/out.wav "b_r_a_v_o l_e_v_o"
+python3 .claude/skills/french-to-rody-phonemes/scripts/render.py /tmp/out.wav "b_r_a_v_o l_e_v_o" 1.0
 ```
 
-Full closed loop: transcribe the wav with local STT and compare to the intended
-French (`whisper-cli -m ~/voice-agent/models/ggml-large-v3.bin -f /tmp/out.wav
---language fr --no-timestamps`). Calibration from the original stories: the
-shipped corpus itself scores ~0.7 mean / 0.77 median word agreement, so treat
-that as the ceiling. The score is a strict lower bound on human intelligibility:
-lines scoring as low as 0.27-0.53 have been human-verified as perfectly clear
-(whisper trips on short lines, proper nouns, and a few clip confusions like
-t-before-u heard as "p"). A high score proves the line works; a low score only
-means "check by ear" - never rewrite a natural-sounding line to chase the score.
+The preview writes a 44.1 kHz WAV. Unity's final audio resampling can differ;
+the native synthesized PCM and notation handling come from the same source.
+Implementation and comparison command: `docs/SPEECH_ENGINE.md`.
+
+If local transcription is available, compare the WAV transcript with the
+intended French, then listen. Proper nouns and short robotic phrases can fool
+STT; neither a high score nor a low score replaces an ear check. Do not rewrite
+natural dialogue merely to improve a transcription score.
+
+## Provenance
+
+Last checked: 2026-09-06. Volatile facts: runtime speech path, token support,
+local preview dependencies. Re-check with `python3 tools/speech/verify.py` and
+render a dialogue through the command above; consult `docs/SPEECH_ENGINE.md`
+for the limits of reference parity and pending listening checks.

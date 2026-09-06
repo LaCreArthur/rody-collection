@@ -1,3 +1,20 @@
+## 2026-09-06: Original speech engine port
+
+Replaced recorded-phoneme concatenation with the extracted engine's C# port.
+Existing notation, pauses, character pitch and three actual sound effects remain;
+recorded speech is archived outside Assets for comparison. Fixed the missing
+third-dialogue speaking flag. Offline authoring previews now execute the same
+C# source. Detailed data ownership, mapping evidence, removals and reproduction
+commands are in docs/SPEECH_ENGINE.md.
+
+Validation: all 102 reference records match command/PCM bytes (6,611,070 samples);
+840 authored cases render without unknown tokens, with specified PCM/effect checks.
+Unity imported the data and executed the new engine. Independent source/reference
+review found no blocking regression. No player build, WebGL check or new human
+listening sign-off; those remain explicit limits.
+
+---
+
 # Development Log
 
 > Agentic hindsight - reverse chronological

@@ -1,0 +1,136 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+
+// Both commands execute the very same engine source that Unity compiles.
+var root = new DirectoryInfo(AppContext.BaseDirectory);
+while (root != null && !Directory.Exists(Path.Combine(root.FullName, "Assets", "Resources", "Speech"))) root = root.Parent;
+if (root == null) throw new Exception("Run this tool from its RodyMaker checkout.");
+string RootPath(params string[] path) => Path.Combine(new[] { root.FullName }.Concat(path).ToArray());
+var engine = new RodySpeechEngine(File.ReadAllBytes(RootPath("Assets", "Resources", "Speech", "Rody1.bytes")),
+    File.ReadAllBytes(RootPath("Assets", "Resources", "Speech", "Tables.bytes")));
+void Unknown(string token) => throw new Exception($"Unknown speech token: '{token}'");
+if (args.Length >= 2 && args[0] == "verify")
+{
+    string folder = Path.GetFullPath(args[1]);
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(folder, "manifest.json")));
+    long samples = 0;
+    int count = 0;
+    foreach (var item in manifest.RootElement.GetProperty("records").EnumerateArray())
+    {
+        string id = item.GetProperty("id").GetString();
+        ushort[] tokens = item.GetProperty("tokens").EnumerateArray().Select(x => x.GetUInt16()).ToArray();
+        var commands = engine.Preprocess(tokens);
+        var pcm = engine.Render(tokens);
+        if (!commands.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, id + ".commands"))))
+            throw new Exception($"{id}: command bytes differ");
+        if (!pcm.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, id + ".pcm"))))
+            throw new Exception($"{id}: PCM bytes differ");
+        samples += pcm.Length;
+        count++;
+    }
+    Console.WriteLine($"{count} reference records: byte-identical commands and PCM ({samples} samples).");
+    int dialogues = 0;
+    foreach (var item in manifest.RootElement.GetProperty("notation").EnumerateArray())
+    {
+        string text = item.GetProperty("text").GetString();
+        var parts = engine.RenderDialogue(text, Unknown);
+        string id = item.GetProperty("id").GetString();
+        if (item.TryGetProperty("expected", out var expected))
+        {
+            byte[] pcm = parts.SelectMany(p => p.Samples ?? Array.Empty<byte>()).ToArray();
+            if (!pcm.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, expected.GetString()))))
+                throw new Exception($"{id}: authored notation PCM differs");
+        }
+        if (item.TryGetProperty("effects", out var effects))
+        {
+            var actual = parts.Where(p => p.Effect != RodySpeechEffect.None).Select(p => p.Effect.ToString());
+            if (!actual.SequenceEqual(effects.EnumerateArray().Select(e => e.GetString())))
+                throw new Exception($"{id}: effect order differs");
+        }
+        dialogues++;
+    }
+    Console.WriteLine($"{dialogues} authored dialogue/notation cases rendered with no unknown tokens; specified PCM/effect checks passed.");
+}
+else if (args.Length >= 3 && args[0] == "render")
+{
+    double pitch = args.Length > 3 ? double.Parse(args[3], CultureInfo.InvariantCulture) : 1;
+    if (pitch <= 0 || pitch > 3) throw new ArgumentOutOfRangeException("pitch", "Use a positive pitch up to 3.");
+    var output = new List<short>();
+    foreach (var part in engine.RenderDialogue(args[2], Unknown))
+    {
+        float[] input;
+        int rate;
+        if (part.Effect == RodySpeechEffect.None)
+        {
+            input = part.Samples.Select(x => (x - 128) / 128f).ToArray();
+            rate = RodySpeechEngine.SampleRate;
+        }
+        else
+        {
+            // The prefab's named effect fields own the references; don't duplicate the asset map here.
+            string prefab = File.ReadAllText(RootPath("Assets", "Prefabs", "SoundManager.prefab"));
+            string field = part.Effect.ToString().ToLowerInvariant();
+            string guid = Regex.Match(prefab, @"(?m)^  " + field + @": .*guid: ([a-f0-9]+)").Groups[1].Value;
+            string meta = Directory.EnumerateFiles(RootPath("Assets", "Sounds"), "*.wav.meta", SearchOption.AllDirectories)
+                .Single(path => File.ReadAllText(path).Contains("guid: " + guid));
+            (input, rate) = ReadWave(meta.Substring(0, meta.Length - 5));
+        }
+        int count = (int)Math.Round(input.Length * 44100.0 / rate / pitch);
+        for (int i = 0; i < count; i++)
+        {
+            double position = i * rate * pitch / 44100.0;
+            int lo = Math.Min(input.Length - 1, (int)position), hi = Math.Min(input.Length - 1, lo + 1);
+            double sample = input[lo] + (input[hi] - input[lo]) * (position - lo);
+            output.Add((short)Math.Clamp((int)Math.Round(sample * 32768), short.MinValue, short.MaxValue));
+        }
+    }
+    string path = Path.GetFullPath(args[1]);
+    Directory.CreateDirectory(Path.GetDirectoryName(path));
+    using var writer = new BinaryWriter(File.Create(path));
+    writer.Write(Encoding.ASCII.GetBytes("RIFF")); writer.Write(36 + output.Count * 2);
+    writer.Write(Encoding.ASCII.GetBytes("WAVEfmt ")); writer.Write(16);
+    writer.Write((ushort)1); writer.Write((ushort)1); writer.Write(44100); writer.Write(88200);
+    writer.Write((ushort)2); writer.Write((ushort)16);
+    writer.Write(Encoding.ASCII.GetBytes("data")); writer.Write(output.Count * 2);
+    foreach (short sample in output) writer.Write(sample);
+    Console.WriteLine($"{path}: {output.Count / 44100.0:F2}s at pitch {pitch}");
+}
+else throw new ArgumentException("Usage: render out.wav \"phonemes\" [pitch] | verify fixture-directory");
+
+static (float[] samples, int rate) ReadWave(string path)
+{
+    using var reader = new BinaryReader(File.OpenRead(path));
+    if (new string(reader.ReadChars(4)) != "RIFF") throw new Exception("Expected RIFF: " + path);
+    reader.ReadInt32();
+    if (new string(reader.ReadChars(4)) != "WAVE") throw new Exception("Expected WAVE: " + path);
+    int channels = 0, rate = 0;
+    while (reader.BaseStream.Position + 8 <= reader.BaseStream.Length)
+    {
+        string chunk = new string(reader.ReadChars(4));
+        int length = reader.ReadInt32();
+        long next = reader.BaseStream.Position + length + (length & 1);
+        if (chunk == "fmt ")
+        {
+            if (reader.ReadUInt16() != 1) throw new Exception("Expected PCM: " + path);
+            channels = reader.ReadUInt16(); rate = reader.ReadInt32();
+            reader.ReadInt32(); reader.ReadUInt16();
+            if (reader.ReadUInt16() != 16) throw new Exception("Expected 16-bit PCM: " + path);
+        }
+        else if (chunk == "data")
+        {
+            if (channels < 1) throw new Exception("Missing format: " + path);
+            var samples = new float[length / 2 / channels];
+            for (int i = 0; i < samples.Length; i++)
+                for (int c = 0; c < channels; c++) samples[i] += reader.ReadInt16() / (32768f * channels);
+            return (samples, rate);
+        }
+        reader.BaseStream.Position = next;
+    }
+    throw new Exception("Missing PCM: " + path);
+}

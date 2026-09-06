@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
@@ -86,8 +86,8 @@ public class GameManager : MonoBehaviour {
 
 		// Calculate dial counts
 		if (!sm.isMastico1) sceneAnimator.sumDial++;
-		if (getDial(2).Count > 0 && !sm.isMastico2) sceneAnimator.sumDial++;
-		if (getDial(6).Count > 0 && !sm.isMastico3) sceneAnimator.sumDial++;
+		if (!string.IsNullOrEmpty(getDial(2)) && !sm.isMastico2) sceneAnimator.sumDial++;
+		if (!string.IsNullOrEmpty(getDial(6)) && !sm.isMastico3) sceneAnimator.sumDial++;
 		sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1;
 
 		// init variables
@@ -224,15 +224,15 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public List<int> getDial(int dial) {
+	public string getDial(int dial) {
 		switch(dial) {
-			case 1: return sm.StringToPhonemes(introDial1);
-			case 2: return sm.StringToPhonemes(introDial2);
-			case 3: return sm.StringToPhonemes(objDial);
-			case 4: return sm.StringToPhonemes(ngpDial);
-			case 5: return sm.StringToPhonemes(fswDial);
-			case 6: return sm.StringToPhonemes(introDial3);
-			default: return sm.StringToPhonemes("g_et_t_d_i_a_l g_l_i_t_ch");
+			case 1: return introDial1;
+			case 2: return introDial2;
+			case 3: return objDial;
+			case 4: return ngpDial;
+			case 5: return fswDial;
+			case 6: return introDial3;
+			default: return "g_et_t_d_i_a_l g_l_i_t_ch";
 		}
 	}
 

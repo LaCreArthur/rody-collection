@@ -7,6 +7,16 @@
 
 ## Current State
 
+**Speech port (2026-09-06): implemented locally.** Game dialogue and previews
+now use the original-engine C# port. The 102 reference records match at command
+and PCM boundaries; all embedded dialogue and fixed feedback render with
+supported notation. In-game listening and final WebGL verification are still
+pending. Current design, reproducible comparison and limitations:
+[SPEECH_ENGINE.md](SPEECH_ENGINE.md).
+
+The older architecture/cleanup sections below record previous work and can lag
+behind the current codebase; they are not implementation instructions.
+
 ### Architecture (Working) ✅
 
 ```
@@ -277,9 +287,9 @@ the 1988 engine (`preprocess.py` + `render_all.py`), full descriptor↔phoneme t
 (`catalog/phoneme_table.tsv`), and `speak.py` proving French → tokens → authentic
 audio end-to-end (whisper-verified word-for-word, ear-verified "perfect" on 2 scenes; Arthur 2026-09-06: "perfect" may be overstated, more A/B tests needed before shipping the port).
 
-**Pillar A — Engine port (prerequisite).** C# port of the two routines
-(preprocessor + interpreter, ~250 lines total, pure logic, WebGL-safe), shipping
-the PA.ROD banks. The existing phoneme notation keeps working: remake tokens map
+**Pillar A — Engine port (implemented; listening pending).** C# port of the two routines
+(preprocessor + interpreter, pure logic), shipping the Rody 1 PA.ROD bank and
+captured lookup tables. The existing phoneme notation keeps working: remake tokens map
 onto engine descriptors via the phoneme table (exactly what `speak.py` does), so
 stories re-voice without data migration. Replaces `SoundManager` concatenation.
 - Validation: byte-compare C# PCM vs Python renders across all 102 dialogues, then
@@ -311,9 +321,10 @@ public repo. Work needed:
   your AI agent, import the .rody.json".
 - One source of truth: the skill itself is the shipped artifact; no duplicate
   exported copy to drift.
-- Normalization guidance stays in the skill: shipped story strings contain dirty
-  tokens (`!`, `.p`, `M`, `ca`, `il`) that are not canonical phonemes; alphabet
-  contract is the engine descriptor set / `phoneme_table.tsv`, not the corpus.
+- Normalization guidance stays in the skill. The current embedded corpus passes
+  the notation scan; older dirty-token reports are historical. The runtime
+  notation includes documented expansions and effects beyond the raw descriptor
+  set; see SPEECH_ENGINE.md.
 
 **Sequencing:** A → B → C; each independently shippable. A is the foundation:
 without it the workbench would author for the old voice. C is cheap (doc work on

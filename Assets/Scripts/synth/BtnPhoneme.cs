@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -10,7 +10,7 @@ public class BtnPhoneme : MonoBehaviour {
 	public string p;
 	public void OnClick() {
 		// play the clicked phoneme
-		sm.PlaySingle(sm.phonemes[sm.getPhoneme(p)]);
+		sm.Speak(p);
 		// add to the list
 		if (input.text.Length == 0) input.text = p;
 		else input.text += "_" + p;

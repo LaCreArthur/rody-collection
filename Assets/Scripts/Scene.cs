@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ public class Scene : MonoBehaviour {
     public bool isInit = false;
 
 	private string txt;
-	private List<int> dial;
+	private string dial;
 	private AudioClip[] fx;
 	private int objectsToFind = 1;
 	private int step;
@@ -45,7 +45,7 @@ public class Scene : MonoBehaviour {
 				break;
 			default: 
 				txt  = "scene switcher glitch";
-				dial = new List<int> { P.g, P.l, P.i, P.t, P.ch};
+				dial = "g_l_i_t_ch";
 				fx   = gm.sm.sounds_non;
 				break;
 		}

@@ -1707,11 +1707,6 @@ PrefabInstance:
       objectReference: {fileID: 1128279178}
     - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
         type: 3}
-      propertyPath: phoneme
-      value: 
-      objectReference: {fileID: 8300000, guid: 8daf9329bd9bd6541916c10fc4ae2421, type: 3}
-    - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
-        type: 3}
       propertyPath: input
       value: 
       objectReference: {fileID: 1261316860}
@@ -4512,11 +4507,6 @@ PrefabInstance:
       objectReference: {fileID: 1128279178}
     - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
         type: 3}
-      propertyPath: phoneme
-      value: 
-      objectReference: {fileID: 8300000, guid: 7a5c26be2a50f004d8b998d6e4d308ee, type: 3}
-    - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
-        type: 3}
       propertyPath: input
       value: 
       objectReference: {fileID: 1261316860}
@@ -4708,11 +4698,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
-      propertyPath: phonemes.Array.size
-      value: 42
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
       propertyPath: gm
       value: 
       objectReference: {fileID: 0}
@@ -4748,21 +4733,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
-      propertyPath: phonemes.Array.data[37]
-      value: 
-      objectReference: {fileID: 8300000, guid: ba21a3ccf2cc7654f8d37b334f7379cc, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[38]
-      value: 
-      objectReference: {fileID: 8300000, guid: 1179af8b83cbad643a74aa997d1b86e4, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[39]
-      value: 
-      objectReference: {fileID: 8300000, guid: c4957dcba7a442c46b2a5cfd75a825aa, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
       propertyPath: musics.Array.data[18]
       value: 
       objectReference: {fileID: 8300000, guid: 79558c67fbc44a84a96cacde149849eb, type: 3}
@@ -4776,21 +4746,6 @@ PrefabInstance:
       propertyPath: musics.Array.data[20]
       value: 
       objectReference: {fileID: 8300000, guid: 5a92aab733975d147bbb68b43fe95c23, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[42]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0ce31c9c600d6e544b848beb54bb257c, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[40]
-      value: 
-      objectReference: {fileID: 8300000, guid: d1f3f62f4dd5d79449f028c737838186, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[41]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0ce31c9c600d6e544b848beb54bb257c, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b590015ee3c940f4e9e1da3345266566, type: 3}
 --- !u!224 &1210727309 stripped
@@ -6939,11 +6894,6 @@ PrefabInstance:
       propertyPath: sm
       value: 
       objectReference: {fileID: 1128279178}
-    - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
-        type: 3}
-      propertyPath: phoneme
-      value: 
-      objectReference: {fileID: 8300000, guid: 1179af8b83cbad643a74aa997d1b86e4, type: 3}
     - target: {fileID: 114000010612898500, guid: 54a4a06fa200e374c8a759d0e4cbd206,
         type: 3}
       propertyPath: input

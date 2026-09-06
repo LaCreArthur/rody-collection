@@ -1,3 +1,7 @@
+> Historical bank-extraction notes. Current dialogue replay uses the calibrated
+> 13,000 Hz reference renderer; early raw-clip pitch guesses below are not runtime
+> configuration. See DECODED.md, PROGRESS.md and docs/SPEECH_ENGINE.md.
+
 # Original Rody & Mastico speech banks (PA.ROD)
 
 Extracted from the original Atari ST disk images (Lankhor, 1988-1991).
@@ -15,7 +19,7 @@ python3 slice_exact.py banks/rody1_PA.ROD /tmp/out   # wavs + manifest.txt
                  into the record region (D = dialogue count; 102 for Rody 1).
 [0x0128, TBL)    record region: per-dialogue phoneme scripts. Dialogue i =
                  [0x128+hdr[i], 0x128+hdr[i+1]). Size == last header value.
-                 ENTRY ENCODING NOT YET DECODED (not plain (clip,param) pairs).
+                 Entry encoding is decoded in DECODED.md and preprocess.py.
 [TBL, AUDIO)     clip offset table: 644 entries, offsets RELATIVE to audio
                  start, non-decreasing, first == 0, last distinct == audio
                  length. u16 if audio < 64 KiB (all banks except Rody 1),
@@ -46,14 +50,12 @@ phoneme strings in original-stories/ to vote in labels automatically).
   byte-identical clip-length sequences). Each ships a subset.
 - Rody 1 uses a DIFFERENT recording session, with exactly 2.0x the samples per
   clip (541,439,336 vs 271,220,168 ...): same phoneme set at double resolution.
-- The remake's Unity clips (Assets/Sounds/Phoneme_v2) were hand-captured from
+- The remake's Unity clips (tools/original-extraction/remake-clips) were hand-captured from
   Rody 1's bank (cross-correlation 0.90 at 13 kHz).
 - SONROD.ROD is byte-identical on all six disks (driver/config, undecoded).
 
 ## Open items
 
-1. Record-region entry encoding (per-phoneme id + loop/pitch params).
-3. Unit->phoneme label table (after item 1, via corpus alignment).
 4. One long unindexed tail clip in Rody 1 (~0.93 s at offset 97453).
 
 Contact sheet review artifact: contact_sheet.txt maps listen-order timestamps

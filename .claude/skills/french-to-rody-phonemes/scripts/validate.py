@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate a Rody phoneme string.
 
-Every token must map to a sampled clip in the game's SoundManager;
-anything else plays as a silent pause with no warning in game.
+Every token must belong to the game's speech notation inventory.
+Unknown tokens play as short pauses with a warning in game.
 
 Usage: validate.py "b_r_a_v_o l_e_v_o"   (or pipe the string on stdin)
 Exit 0 = all tokens valid, exit 1 = invalid tokens found (listed on stdout).

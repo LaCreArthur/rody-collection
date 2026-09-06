@@ -1,3 +1,8 @@
+> Historical audit/proposal for the former recorded-clip playback. Superseded
+> by [SPEECH_ENGINE.md](SPEECH_ENGINE.md) and the roadmap's agent-assisted
+> conversion decision. The old dirty-token counts, playback behavior, STT scores,
+> and in-game dictionary proposal below are not current implementation guidance.
+
 # Phoneme TTS: Audit and French-to-Phoneme Converter Design
 
 Date: 2026-07-03. Status: audit complete, converter designed but NOT implemented.

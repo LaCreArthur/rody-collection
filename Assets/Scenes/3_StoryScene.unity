@@ -2179,11 +2179,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
-      propertyPath: phonemes.Array.size
-      value: 42
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
       propertyPath: gm
       value: 
       objectReference: {fileID: 586729715}
@@ -2217,21 +2212,6 @@ PrefabInstance:
       propertyPath: isMastico2
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[37]
-      value: 
-      objectReference: {fileID: 8300000, guid: ba21a3ccf2cc7654f8d37b334f7379cc, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[38]
-      value: 
-      objectReference: {fileID: 8300000, guid: 1179af8b83cbad643a74aa997d1b86e4, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[39]
-      value: 
-      objectReference: {fileID: 8300000, guid: c4957dcba7a442c46b2a5cfd75a825aa, type: 3}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
       propertyPath: musics.Array.data[0]
@@ -2324,16 +2304,6 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 05086c4ad64dc40429029cf094752222, type: 3}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
-      propertyPath: phonemes.Array.data[40]
-      value: 
-      objectReference: {fileID: 8300000, guid: d1f3f62f4dd5d79449f028c737838186, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[42]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0ce31c9c600d6e544b848beb54bb257c, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
       propertyPath: musics.Array.data[18]
       value: 
       objectReference: {fileID: 8300000, guid: 79558c67fbc44a84a96cacde149849eb, type: 3}
@@ -2342,11 +2312,6 @@ PrefabInstance:
       propertyPath: musics.Array.data[19]
       value: 
       objectReference: {fileID: 8300000, guid: c2ab8420bedc4ae48bf7946b3413bbf4, type: 3}
-    - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
-        type: 3}
-      propertyPath: phonemes.Array.data[41]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0ce31c9c600d6e544b848beb54bb257c, type: 3}
     - target: {fileID: 114000014222918390, guid: b590015ee3c940f4e9e1da3345266566,
         type: 3}
       propertyPath: musics.Array.data[20]
