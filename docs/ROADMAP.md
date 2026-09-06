@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-07-24 (End Goal: Authentic 1988 Speech defined; supersedes old Phoneme Dictionary plan)
+> **Updated:** 2026-09-06 (Arthur: audience, release sequencing, A/B status corrected)
 
 ---
 
@@ -236,6 +236,27 @@ Support multiple user stories in-memory with per-slot action buttons.
 
 ---
 
+### Project intent & audience (Arthur, 2026-09-06)
+
+- Origin: French streamer Benzaie played the original Rody & Mastico games live,
+  adding an adult/psychedelic comedic frame over the kid stories. Arthur made a new
+  episode (Rody à Ibiza) in that spirit, sent it, Benzaie streamed it and loved it.
+  First big personal project, still on Arthur's resume. This leg = polish it and
+  publish it properly.
+- Audience: a handful of retro fans, not kids/teachers. Creators are assumed to
+  have an AI agent for French→phoneme conversion (see Pillar C).
+
+### Release sequencing (Arthur, 2026-09-06)
+
+1. 1988 speech engine port (Pillar A below).
+2. Rody Maker UX improvements.
+3. Audio creator workbench (Pillar B), integrated in Rody Maker AND standalone
+   (retro-voice toy for fun).
+4. WebGL verification of everything, then publish. That is the finish line.
+
+Unity upgrade: in progress, uncommitted project settings/package changes are
+deliberate WIP (2026-09-06).
+
 ### End Goal: Authentic 1988 Speech (defined 2026-07-24)
 
 **One-liner:** every voice in the game is the authentic 1988 engine, and writing
@@ -253,7 +274,7 @@ outside, your AI agent converts French → phonemes via the shipped skill.
 **Foundation (done, in `tools/original-extraction/`):** bit-exact Python replica of
 the 1988 engine (`preprocess.py` + `render_all.py`), full descriptor↔phoneme table
 (`catalog/phoneme_table.tsv`), and `speak.py` proving French → tokens → authentic
-audio end-to-end (whisper-verified word-for-word, ear-verified "perfect").
+audio end-to-end (whisper-verified word-for-word, ear-verified "perfect" on 2 scenes; Arthur 2026-09-06: "perfect" may be overstated, more A/B tests needed before shipping the port).
 
 **Pillar A — Engine port (prerequisite).** C# port of the two routines
 (preprocessor + interpreter, ~250 lines total, pure logic, WebGL-safe), shipping
@@ -262,8 +283,9 @@ onto engine descriptors via the phoneme table (exactly what `speak.py` does), so
 stories re-voice without data migration. Replaces `SoundManager` concatenation.
 - Validation: byte-compare C# PCM vs Python renders across all 102 dialogues, then
   ear A/B in-game.
-- Open point: map the Rody/Mastico voice distinction (current per-scene pitch +
-  isMastico flags) onto the engine's amplitude/speed opcodes.
+- Voice distinction (Rody/Mastico, and the extra characters in Rody à Ibiza made
+  by pitch-shifting): a pitch control on the engine is acceptable (Arthur
+  2026-09-06). Must be A/B tested on the Ibiza episode too.
 
 **Pillar B — Creator workbench scene.** Upgrade/replace the synth scene, slimmed
 to what must live in-game: type/edit phonemes, instant authentic playback, copy
