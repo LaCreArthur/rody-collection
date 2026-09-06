@@ -13,7 +13,7 @@ namespace UnityReusables.ScriptableObjects.Variables
 
     public class GameStateListener : SerializedMonoBehaviour
     {
-        [SerializeField][DictionaryDrawerSettings(KeyLabel = "Game State", ValueLabel = "Callbacks")]
+        [NonSerialized, Sirenix.Serialization.OdinSerialize][DictionaryDrawerSettings(KeyLabel = "Game State", ValueLabel = "Callbacks")]
 
         private Dictionary<GameStateSO, GameStateCallbacks> callbacks = new Dictionary<GameStateSO, GameStateCallbacks>();
 

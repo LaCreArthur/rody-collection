@@ -189,11 +189,11 @@ public class MiniProfiler : EditorWindow
     {
         ClearAnalysis();
         EditorStyles.textArea.wordWrap = true;
-        MeshCombiner mainMeshCombiner = GameObject.FindObjectOfType<MeshCombiner>();
+        MeshCombiner mainMeshCombiner = GameObject.FindAnyObjectByType<MeshCombiner>();
 
         // Analyze
-        MeshFilter[] meshFilters = GameObject.FindObjectsOfType<MeshFilter>();
-        SkinnedMeshRenderer[] skinnedMeshes = GameObject.FindObjectsOfType<SkinnedMeshRenderer>();
+        MeshFilter[] meshFilters = GameObject.FindObjectsByType<MeshFilter>();
+        SkinnedMeshRenderer[] skinnedMeshes = GameObject.FindObjectsByType<SkinnedMeshRenderer>();
         int skinnedMeshesCount = skinnedMeshes.Length;
         int meshCount = meshFilters.Length;
         int nonCombinedMeshCount = 0;
@@ -236,15 +236,15 @@ public class MiniProfiler : EditorWindow
         }
 
         int rigidbodiesCount = 0;
-        foreach (var r in GameObject.FindObjectsOfType<Rigidbody>())
+        foreach (var r in GameObject.FindObjectsByType<Rigidbody>())
         {
             if (!r.isKinematic)
             {
                 rigidbodiesCount++;
             }
         }
-        int lightsCount = GameObject.FindObjectsOfType<Light>().Length;
-        int enemyCount = GameObject.FindObjectsOfType<EnemyController>().Length;
+        int lightsCount = GameObject.FindObjectsByType<Light>().Length;
+        int enemyCount = GameObject.FindObjectsByType<EnemyController>().Length;
 
         // Level analysis 
         m_LevelAnalysisString += "- Meshes count: " + meshCount;
@@ -273,7 +273,7 @@ public class MiniProfiler : EditorWindow
         m_CellDatas.Clear();
         List<BoundsAndCount> meshBoundsAndCount = new List<BoundsAndCount>();
         Bounds levelBounds = new Bounds();
-        Renderer[] allRenderers = GameObject.FindObjectsOfType<Renderer>();
+        Renderer[] allRenderers = GameObject.FindObjectsByType<Renderer>();
 
         // Get level bounds and list of bounds & polycount
         for (int i = 0; i < allRenderers.Length; i++)

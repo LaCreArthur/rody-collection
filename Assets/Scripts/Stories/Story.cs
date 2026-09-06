@@ -8,7 +8,6 @@ using System.Collections.Generic;
 /// existing .rody.json deserializes without migration.
 /// Pure data: no load/save/export/UI logic lives here.
 /// </summary>
-[Serializable]
 public class Story
 {
     public int formatVersion = 1;

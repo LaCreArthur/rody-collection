@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeaponUIManager : SerializedMonoBehaviour
 {
+    [System.NonSerialized, Sirenix.Serialization.OdinSerialize]
     public Dictionary<string, GameObject> weapons;
     private GameObject _activeWeapon;
     //public PlayerWeaponsManager playerWeaponsManager;

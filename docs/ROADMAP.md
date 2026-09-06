@@ -254,8 +254,9 @@ Support multiple user stories in-memory with per-slot action buttons.
    (retro-voice toy for fun).
 4. WebGL verification of everything, then publish. That is the finish line.
 
-Unity upgrade: in progress, uncommitted project settings/package changes are
-deliberate WIP (2026-09-06).
+Unity upgrade: completed to 6000.5.10f1 with package/plugin updates (Arthur,
+2026-09-06). Establish implementation status from the codebase; roadmap labels
+can lag behind completed work.
 
 ### End Goal: Authentic 1988 Speech (defined 2026-07-24)
 

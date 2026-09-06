@@ -8,7 +8,7 @@ public class RM_ButtonTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExi
 	[SerializeField] string tooltipText;
 	RM_TooltipDisplay tooltip;
 
-	void Start() => tooltip = FindFirstObjectByType<RM_TooltipDisplay>();
+	void Start() => tooltip = FindAnyObjectByType<RM_TooltipDisplay>();
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{

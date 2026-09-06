@@ -19,7 +19,7 @@ public class PrefabReplacerEditor : Editor
     public void Replace(PrefabReplacer replacer)
     {
         List<GameObject> allPrefabObjectsInScene = new List<GameObject>();
-        foreach (Transform t in GameObject.FindObjectsOfType<Transform>())
+        foreach (Transform t in GameObject.FindObjectsByType<Transform>())
         {
             if(PrefabUtility.IsAnyPrefabInstanceRoot(t.gameObject))
             {
