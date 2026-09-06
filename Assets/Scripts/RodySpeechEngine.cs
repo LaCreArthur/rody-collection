@@ -43,6 +43,10 @@ public sealed class RodySpeechEngine
         { "ouu", 0x2207 }, { "ee", 0x3209 }
     };
 
+    public static bool IsKnownToken(string token) => Phonemes.ContainsKey(token) ||
+        token == "" || token == "," || token == "." || token == "oi" || token == "ui" ||
+        token == "gn" || token == "ti" || token == "-" || token == "cuicui" || token == "pop";
+
     public List<RodySpeechPart> RenderDialogue(string dialogue, Action<string> unknownToken)
     {
         var parts = new List<RodySpeechPart>();
@@ -68,7 +72,7 @@ public sealed class RodySpeechEngine
             tokens.Clear();
             tiIndices.Clear();
         }
-        foreach (string word in dialogue.Split(' '))
+        foreach (string word in dialogue.Split((char[])null))
         {
             foreach (string phoneme in word.Split('_'))
             {

@@ -79,7 +79,7 @@ sounds, and all embedded story / fixed-feedback dialogue for unknown tokens
 and effect ordering. It never rewrites story data or expected results.
 
 Current result (2026-09-06): 102 records, 6,611,070 PCM samples byte-identical;
-840 authored dialogue/notation cases rendered without unknown tokens, with the
+841 authored dialogue/notation cases rendered without unknown tokens, with the
 specified PCM and effect-order comparisons passing. This establishes fidelity
 to the Python reference, not independent proof of perfect 1988 hardware timing.
 The reference's sample-delay calibration remains approximate. New in-game A/B
@@ -113,3 +113,40 @@ French-to-phoneme authoring route; there is no in-game dictionary converter.
 - Replaced the agent's separate recorded-clip renderer with the shared C# tool.
   Historical STT scores for the old renderer are not acceptance thresholds for
   this engine.
+
+## Dialogue workbench (2026-09-07)
+
+The collection's **Voix** button opens scene 7 standalone. Intro and object
+editors open the same scene additively with explicit text, pitch and apply/close
+callbacks. No story manager is required for standalone use. Apply changes the
+calling editor's working dialogue; Cancel leaves it untouched. This does not
+replace the story editor's existing scene-save/export boundary.
+
+The old phoneme-key grid is replaced by a multiline sentence field, whole-line
+and passage playback, a pitch slider, 43 sound/pause/effect examples with audition
+and insertion, clipboard actions, and restore. Unknown tokens are shown before
+playback. Stop remains available while an invalid or empty edit is being played.
+Rody pitch is editable; Mastico/Zambla previews use their actual fixed pitch.
+French-to-phoneme conversion remains the agent authoring skill; the workbench
+edits phoneme notation, not ordinary French spelling.
+
+`SpeechInputField` applies requested carets after uGUI's deferred activation in
+LateUpdate. Browser paste captures its range and makes text read-only until the
+clipboard result arrives; copy failure cannot cancel a pending paste. Escape is
+handled on key release while Maker ignores input when the additive scene is
+active. Each instance has a unique clipboard receiver name.
+
+Removed the old grid, its help panel, five button forwarding scripts, and the
+unused ButtonPhoneme prefab. Their capabilities are represented by the sentence
+field, sound examples, direct controls and persistent guidance; no authored text
+or source recording was removed. Alata replaces the old Rody font in this editor
+because its accented glyphs and line metrics remain readable at interface sizes.
+
+Runtime checks use the live Editor and actual UI components: standalone menu
+entry, native editing after insertion/paste, stop after invalid input, and additive
+apply/cancel with controls restored, and fixed Zambla pitch (0.9, slider locked).
+Full-frame captures cover the menu, workbench and open picker.
+Independent source and serialized-reference review checked the new scene and
+collection entry. Browser clipboard permissions, physical held-Escape behavior,
+player build and human listening remain release checks; no Unity test suite or
+additional forced compile was run.

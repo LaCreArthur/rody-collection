@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-09-06 (Arthur: audience, release sequencing, A/B status corrected)
+> **Updated:** 2026-09-07 (speech port and dialogue workbench implemented locally)
 
 ---
 
@@ -13,6 +13,11 @@ and PCM boundaries; all embedded dialogue and fixed feedback render with
 supported notation. In-game listening and final WebGL verification are still
 pending. Current design, reproducible comparison and limitations:
 [SPEECH_ENGINE.md](SPEECH_ENGINE.md).
+
+**Dialogue workbench (2026-09-07): implemented locally.** The collection now has
+a Voix entry. Story dialogue editing uses the same sentence workbench with
+passage playback, sound examples, insertion, pitch, copy/paste and explicit
+apply/cancel. Browser clipboard and final listening remain release checks.
 
 The older architecture/cleanup sections below record previous work and can lag
 behind the current codebase; they are not implementation instructions.

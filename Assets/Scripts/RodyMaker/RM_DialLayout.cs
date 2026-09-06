@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,8 +51,11 @@ public class RM_DialLayout : RM_Layout {
 	}
 
 	public void RM_PhonemesClick(){
-		Debug.Log("phonemes button clicked");
-		SceneManager.LoadScene(AppScenes.Phonemes, LoadSceneMode.Additive);
+		phonemsBtn.interactable = false;
+		float voicePitch = isMastico ? (gm.isZambla ? 0.9f : 1f) : pitch;
+		SynthManager.Open(phonems, voicePitch, !isMastico, "INTRO · DIALOGUE " + activeDial,
+			(text, voice) => { phonems = text; if (!isMastico) pitch = voice; },
+			() => phonemsBtn.interactable = true);
 	}
 
 	public void RM_TextClick(){

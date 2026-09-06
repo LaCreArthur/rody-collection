@@ -1,4 +1,25 @@
 var StandaloneFileBrowserWebGLPlugin = {
+    // Clipboard access stays in the browser and reports the actual permission result.
+    RodyCopyText: function(receiverPtr, textPtr) {
+        var receiver = UTF8ToString(receiverPtr);
+        if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            SendMessage(receiver, 'ClipboardCopyFailed', '');
+            return;
+        }
+        navigator.clipboard.writeText(UTF8ToString(textPtr)).then(function() {
+            SendMessage(receiver, 'ClipboardCopied', '');
+        }, function() { SendMessage(receiver, 'ClipboardCopyFailed', ''); });
+    },
+    RodyPasteText: function(receiverPtr) {
+        var receiver = UTF8ToString(receiverPtr);
+        if (!navigator.clipboard || !navigator.clipboard.readText) {
+            SendMessage(receiver, 'ClipboardFailed', '');
+            return;
+        }
+        navigator.clipboard.readText().then(function(text) {
+            SendMessage(receiver, 'ClipboardPasted', text);
+        }, function() { SendMessage(receiver, 'ClipboardFailed', ''); });
+    },
     // Open file and return actual file content as text (for JSON import).
     // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
     // methodNamePtr: Callback method name on given GameObject.

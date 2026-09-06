@@ -23,7 +23,7 @@ VALID = {
 
 
 def invalid_tokens(s):
-    return [tok for word in s.split(" ") for tok in word.split("_")
+    return [tok for word in s.split() for tok in word.split("_")
             if tok not in VALID]
 
 

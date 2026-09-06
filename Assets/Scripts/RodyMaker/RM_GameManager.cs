@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -233,6 +233,7 @@ public class RM_GameManager : MonoBehaviour {
 	}
 
 	void Update() {
+		if (SceneManager.GetActiveScene() != gameObject.scene) return;
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			// Check if there are unsaved changes
 			if (StoryRoot.Session.IsDirty && !StoryRoot.Session.IsOfficial)

@@ -85,7 +85,7 @@ public class SoundManager : MonoBehaviour
         speechClip = null;
     }
 
-    void StopSpeech()
+    public void StopSpeech()
     {
         if (speechRoutine != null) StopCoroutine(speechRoutine);
         speechRoutine = null;
@@ -96,7 +96,15 @@ public class SoundManager : MonoBehaviour
         ReleaseSpeechClip();
     }
 
-    void OnDisable() => StopSpeech();
+    // Scene teardown owns the external AudioSource; it may already be destroyed.
+    // This component owns only its coroutine and generated clip.
+    void OnDisable()
+    {
+        StopAllCoroutines();
+        speechRoutine = null;
+        isPlaying = false;
+        ReleaseSpeechClip();
+    }
 
     public IEnumerator MasticoSpeak(string dialogue, bool process)
     {

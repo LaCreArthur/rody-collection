@@ -52,6 +52,7 @@ with tempfile.TemporaryDirectory(prefix='rody-speech-') as temp:
         notation_case('phoneme_' + phoneme, phoneme, tokens + [0x3c])
     notation_case('empty', '', [])
     notation_case('blank', ' ', [])
+    notation_case('multiline', 'a\ni\tu', [0x1203, 0x3c, 0x1200, 0x3c, 0x1208, 0x3c])
     notation_case('ui', 'ui', [0x1208, 0x1200, 0x3c])
     notation_case('ouu', 'ouu', [0x2207, 0x3c])
     notation_case('ee', 'ee', [0x3209, 0x3c])

@@ -1,3 +1,22 @@
+## 2026-09-07: Dialogue voice workbench
+
+Replaced the phoneme keyboard with a sentence workbench shared by the collection
+Voix entry and story dialogue editors. Includes full/passage playback, native
+sound examples, insertion, pitch, clipboard and explicit apply/cancel. Removed
+five obsolete button forwarding scripts and their unused prefab. Uses existing
+Alata font for readable French accents. Extended shared engine/authoring whitespace
+handling to multiline notation; 841 authored checks now pass.
+
+Live runtime review caught and fixed deferred input focus selecting all text,
+Stop becoming unavailable during invalid edits, clipboard request races and scene
+teardown touching a destroyed external AudioSource. Teardown now releases only
+the speech controller's owned coroutine/clip. Checked actual menu navigation,
+insert/paste then typing, apply/cancel, and full-frame UI captures. Independent
+source/serialized-reference review completed. No player build, browser clipboard
+or human listening sign-off; release checks remain in docs/SPEECH_ENGINE.md.
+
+---
+
 ## 2026-09-06: Original speech engine port
 
 Replaced recorded-phoneme concatenation with the extracted engine's C# port.

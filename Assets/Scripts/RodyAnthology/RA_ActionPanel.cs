@@ -17,6 +17,7 @@ public class RA_ActionPanel : MonoBehaviour {
 	[SerializeField] Button exportButton;
 	[SerializeField] Button importButton;
 	[SerializeField] Button newButton;
+	[SerializeField] Button voicesButton;
 
 	[SerializeField] TMP_Text editLabel;
 	[SerializeField] TMP_Text exportLabel;
@@ -32,6 +33,7 @@ public class RA_ActionPanel : MonoBehaviour {
 		exportButton.onClick.AddListener(() => OnExportClicked?.Invoke());
 		importButton.onClick.AddListener(() => OnImportClicked?.Invoke());
 		newButton.onClick.AddListener(() => OnNewClicked?.Invoke());
+		voicesButton.onClick.AddListener(() => UnityEngine.SceneManagement.SceneManager.LoadScene(AppScenes.Phonemes));
 	}
 
 	void OnDisable()
@@ -40,6 +42,7 @@ public class RA_ActionPanel : MonoBehaviour {
 		exportButton.onClick.RemoveAllListeners();
 		importButton.onClick.RemoveAllListeners();
 		newButton.onClick.RemoveAllListeners();
+		voicesButton.onClick.RemoveAllListeners();
 	}
 
 	/// <summary>

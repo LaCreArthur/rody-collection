@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -281,7 +281,8 @@ public class RM_ObjLayout : RM_Layout {
     }
 
 	public void RM_PhonemesClick(){
-		Debug.Log("phonemes button clicked");
-		SceneManager.LoadScene(AppScenes.Phonemes, LoadSceneMode.Additive);
+		phonemsBtn.interactable = false;
+		SynthManager.Open(phonems, gm.isZambla ? 0.9f : 1f, false, "MASTICO · CONSIGNE",
+			(text, _) => phonems = text, () => phonemsBtn.interactable = true);
 	}
 }
