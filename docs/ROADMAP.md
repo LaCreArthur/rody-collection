@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-09-07 (full expression accepted; workbench checked; French handoff ready)
+> **Updated:** 2026-09-08 (French entry implemented locally; browser/player checks remain)
 
 ---
 
@@ -21,8 +21,10 @@ timing/output remain approximate. Details and reproducible checks:
 a Voix entry. Story dialogue editing uses the same sentence workbench with
 passage playback, sound examples, insertion, pitch, copy/paste and explicit
 apply/cancel. Selected-passage playback retains full dialogue context. Browser clipboard,
-player release checks remain. The French-entry integration is paused until this
-foundation handoff; see [FRENCH_SPEECH_HANDOFF.md](FRENCH_SPEECH_HANDOFF.md).
+player release checks remain. French entry now converts whole sentences, offers word corrections, and preserves
+source and native expression through story save/reopen. Commas/periods supply
+pauses; spaces do not. macOS conversion was exercised, with WebGL assets supplied.
+See [SPEECH_ENGINE.md](SPEECH_ENGINE.md#french-entry-2026-09-08).
 
 The older architecture/cleanup sections below record previous work and can lag
 behind the current codebase; they are not implementation instructions.

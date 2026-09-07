@@ -46,12 +46,12 @@ public static class RM_SaveLoad {
         {
             dialogues = new PhonemeDialogues
             {
-                intro1 = gm.introDial1 ?? ".",
-                intro2 = gm.introDial2 ?? ".",
-                intro3 = gm.introDial3 ?? ".",
-                obj = gm.objDial ?? ".",
-                ngp = gm.ngpDial ?? ".",
-                fsw = gm.fswDial ?? "."
+                intro1 = gm.introDial1?.Clone() ?? SpeechDocument.FromNotation("."),
+                intro2 = gm.introDial2?.Clone() ?? SpeechDocument.FromNotation("."),
+                intro3 = gm.introDial3?.Clone() ?? SpeechDocument.FromNotation("."),
+                obj = gm.objDial?.Clone() ?? SpeechDocument.FromNotation("."),
+                ngp = gm.ngpDial?.Clone() ?? SpeechDocument.FromNotation("."),
+                fsw = gm.fswDial?.Clone() ?? SpeechDocument.FromNotation(".")
             },
             texts = new DisplayTexts
             {

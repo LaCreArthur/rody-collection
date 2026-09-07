@@ -15,8 +15,8 @@ public class RM_DialLayout : RM_Layout {
 	public int activeDial = 1;
 	[HideInInspector]
 	public float pitch;
-	[HideInInspector]
-	public string phonems = "";
+	[System.NonSerialized]
+	public SpeechDocument phonems = SpeechDocument.FromNotation("");
 	public bool isDial = false, isMastico = false;
 	public void RM_ReturnClick(){
 		Debug.Log("DialReturn button clicked");

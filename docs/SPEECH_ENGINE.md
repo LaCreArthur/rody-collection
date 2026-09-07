@@ -1,8 +1,8 @@
 # Speech engine
 
 The game and phoneme previews use `RodySpeechEngine`, a C# port of the extracted
-Atari ST preprocessor and PCM interpreter. Story JSON still stores phoneme
-strings and voice settings; no story migration or per-story voice switch exists.
+Atari ST preprocessor and PCM interpreter. Story JSON stores French source, word-owned lossless scores and voice settings.
+Old phoneme strings are read at the import boundary; there is no per-story voice switch.
 Music and ordinary game feedback effects keep their existing playback.
 
 ## Original-machine audit and listening rejection (2026-09-07)
@@ -77,11 +77,11 @@ no question”. Full expression is the accepted direction; this is not acceptanc
 of exact hardware timing. He also explicitly permits replacing obsolete C#
 phoneme structures rather than retaining them for compatibility.
 
-The paused French-entry leg owns “write French → listen → correct a word”.
+The French-entry workflow provides “write French → listen → correct a word”.
 French spaces separate written words; commas and periods supply pauses. There
 is no requirement for extra visible pause-marker syntax. That French contract
 must not inherit the legacy notation parser's whitespace-to-pause rule.
-This leg owns the audited native expression and playback foundation. Bracketed
+The audited native expression and playback foundation remains unchanged. Bracketed
 notation is a lossless interchange/inspection surface, not a required primary
 editing experience. Integration details and the quoted user decisions are in
 [FRENCH_SPEECH_HANDOFF.md](FRENCH_SPEECH_HANDOFF.md).
@@ -304,8 +304,8 @@ dotnet run --project tools/speech -- render-original /tmp/original.wav 0
 dotnet run --project tools/speech -- validate "on[4,1,0]_on[1,0,3]"
 ```
 
-The command fails on unknown notation. The conversion skill remains the
-French-to-phoneme authoring route; there is no in-game dictionary converter.
+The command fails on unknown notation. The conversion skill remains available
+for agent authoring; the in-game French workflow is described below.
 
 ## Removed implementation / retained evidence
 
@@ -334,8 +334,8 @@ and passage playback, a pitch slider, 43 sound/pause/effect examples plus three 
 and insertion, clipboard actions, and restore. Unknown tokens are shown before
 playback. Stop remains available while an invalid or empty edit is being played.
 Rody pitch is editable; Mastico/Zambla previews use their actual fixed pitch.
-French-to-phoneme conversion remains the agent authoring skill; the workbench
-edits phoneme notation, not ordinary French spelling.
+This was the notation-only workbench baseline; French entry now extends it as
+described below.
 
 `SpeechInputField` applies requested carets after uGUI's deferred activation in
 LateUpdate. Browser paste captures its range and makes text read-only until the
@@ -357,3 +357,56 @@ Independent source and serialized-reference review checked the new scene and
 collection entry. Browser clipboard permissions, physical held-Escape behavior,
 player build and human listening remain release checks; no Unity test suite or
 additional forced compile was run.
+
+## French entry (2026-09-08)
+
+The same workbench accepts ordinary French above a selected-word pronunciation
+field. Whole-utterance conversion retains liaison context; selecting a word never
+reconverts it in isolation. Commas emit `,[9,0,0]` (~116ms), periods emit
+`.[0,0,0]` (~323ms); written spaces emit no pause. Semicolons/colons use the short
+pause and question/exclamation/ellipsis the long one. Decimal separators remain
+inside numbers. IPA uses the native bank's available sounds, including complete
+`on[1,1,0]`; this is an approximation, not perfect French phonetics.
+
+The ephone/eSpeak dependency supplies aligned IPA locally, without a service or
+neural voice. Pinned source, checksums, license notices, reproducible macOS build
+and browser ABI belong to `tools/french-converter/README.md`. Native binaries
+support macOS arm64/x64; WebGL uses the packaged ES module through its jslib.
+Windows/Linux native conversion is not supplied. Ordinary English pronunciation
+guesses remain enabled. The case-insensitive authored-name dictionary currently
+contains Rody → `r_o_d_i`; per-dialogue corrections take precedence.
+
+`SpeechDocument` owns source text and word fragments containing the one accepted
+score plus explicit-correction status. Aggregate notation is computed, never
+stored as a competing score. JSON format 2 saves these objects; `StoryJson` wraps
+legacy strings without altering their exact notation. No official story asset
+was rewritten. Scene save, export/import, clone and gameplay consume this same
+representation. Opening an existing document never reconverts it.
+
+Valid pronunciation edits commit at the edit boundary, so partially typed native
+controls cannot accidentally freeze pronunciation. Unchanged source words are
+sequence-aligned across unrelated edits. Corrected words retain their exact score;
+changed words receive a new pronunciation. Automatic reset clears the correction
+while retaining expression on surviving sounds. Identical pronunciation keeps the
+exact authored score, including context-sensitive aliases. When pronunciation
+changes, matching native sound envelopes and explicit/implicit pauses and effects
+are retained through the actual engine parser. Expression on removed sounds is
+removed with those sounds. Full-context PCM selection remains the playback path.
+
+Original templates explicitly replace the entire reply with their original score;
+they do not claim a fabricated French alignment. Source-less original scores
+remain directly editable. Paste targets and ranges are frozen while browser
+clipboard access is pending. The picker no longer offers written space as a
+pause; native score whitespace is still supported for existing authored data.
+
+Narrow checks: live Editor conversion, contextual liaison, correction retention,
+changed-word reset, story JSON save/reopen and exact original-score retention.
+A fresh-source standalone probe using the shipped native library and actual C#
+converter/engine checked Rody, full envelopes plus implicit pauses, multi-site
+source edits and contextual `ti` retention. Dependency native/browser output and
+jslib callbacks were exercised independently. Source and serialized-reference
+review prompted the edit-boundary and expression fixes. A 960×600 workbench
+capture was inspected. Latest code was probed outside Play Mode's loaded assembly
+so Arthur's active text/session was not interrupted. No forced Unity compile,
+player build, browser-in-Unity conversion or new human listening acceptance was
+performed in this leg; browser/player validation remains release work.

@@ -51,7 +51,7 @@ public class Intro : MonoBehaviour
         gm.sceneAnimator.isSpeaking = false;
         yield return new WaitForSeconds(0.5f);
 
-        if (!string.IsNullOrEmpty(gm.getDial(2)))
+        if (!string.IsNullOrEmpty(gm.getDial(2).Notation))
         {
             if (gm.sm.isMastico2)
                 StartCoroutine(gm.sm.MasticoSpeak(gm.getDial(2), false));
@@ -69,7 +69,7 @@ public class Intro : MonoBehaviour
 
         gm.sceneAnimator.isSpeaking = false;
 
-        if (!string.IsNullOrEmpty(gm.getDial(6)))
+        if (!string.IsNullOrEmpty(gm.getDial(6).Notation))
         {
             if (gm.sm.isMastico3) 
                 StartCoroutine(gm.sm.MasticoSpeak(gm.getDial(6), false));

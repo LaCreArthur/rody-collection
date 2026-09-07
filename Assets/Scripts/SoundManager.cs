@@ -26,7 +26,7 @@ public class SoundManager : MonoBehaviour
     Coroutine speechRoutine;
     AudioClip speechClip;
 
-    static RodySpeechEngine Engine => engine ??= new RodySpeechEngine(
+    public static RodySpeechEngine Engine => engine ??= new RodySpeechEngine(
         Resources.Load<TextAsset>("Speech/Rody1").bytes,
         Resources.Load<TextAsset>("Speech/Tables").bytes);
 
@@ -50,6 +50,9 @@ public class SoundManager : MonoBehaviour
         soundSource.pitch = pitch;
         speechRoutine = StartCoroutine(PlaySpeech(parts));
     }
+
+    public void Speak(SpeechDocument dialogue, float pitch = 1f, int selectionStart = 0, int selectionEnd = int.MaxValue) =>
+        Speak(dialogue.Notation, pitch, selectionStart, selectionEnd);
 
     IEnumerator PlaySpeech(System.Collections.Generic.List<RodySpeechPart> parts)
     {
@@ -125,6 +128,8 @@ public class SoundManager : MonoBehaviour
         }
         gm.MasticoAnimator.SetBool("isSpeaking", false);
     }
+
+    public IEnumerator MasticoSpeak(SpeechDocument dialogue, bool process) => MasticoSpeak(dialogue.Notation, process);
 
     public string RandomOui()
     {
@@ -308,4 +313,3 @@ public class SoundManager : MonoBehaviour
     }
 
 }
-

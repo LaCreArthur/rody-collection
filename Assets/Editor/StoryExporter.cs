@@ -35,7 +35,7 @@ public static class StoryExporter
 
         var exported = new Story
         {
-            formatVersion = 1,
+            formatVersion = Story.CurrentFormatVersion,
             exportedAt = DateTime.UtcNow.ToString("o"),
             story = new StoryMeta { id = storyId },
             credits = "",

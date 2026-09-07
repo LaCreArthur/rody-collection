@@ -148,7 +148,7 @@ public class StorySession
     {
         var story = new Story
         {
-            formatVersion = 1,
+            formatVersion = Story.CurrentFormatVersion,
             exportedAt = DateTime.UtcNow.ToString("o"),
             story = new StoryMeta
             {
@@ -288,12 +288,12 @@ public class StorySession
         newScene.texts.obj = ".";
         newScene.texts.ngp = ".";
         newScene.texts.fsw = ".";
-        newScene.dialogues.intro1 = ".";
-        newScene.dialogues.intro2 = ".";
-        newScene.dialogues.intro3 = ".";
-        newScene.dialogues.obj = ".";
-        newScene.dialogues.ngp = ".";
-        newScene.dialogues.fsw = ".";
+        newScene.dialogues.intro1 = SpeechDocument.FromNotation(".");
+        newScene.dialogues.intro2 = SpeechDocument.FromNotation(".");
+        newScene.dialogues.intro3 = SpeechDocument.FromNotation(".");
+        newScene.dialogues.obj = SpeechDocument.FromNotation(".");
+        newScene.dialogues.ngp = SpeechDocument.FromNotation(".");
+        newScene.dialogues.fsw = SpeechDocument.FromNotation(".");
 
         Current.scenes.Add(new StoryScene { index = sceneIndex, data = newScene });
 

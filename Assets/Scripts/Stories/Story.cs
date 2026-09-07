@@ -5,12 +5,13 @@ using System.Collections.Generic;
 /// The portable story payload: the single on-disk AND in-memory schema for
 /// official and user stories alike (.rody.json). Promoted from the former
 /// StoryExporter.ExportedStory; JSON field names are unchanged so every
-/// existing .rody.json deserializes without migration.
+/// existing .rody.json is upgraded at the StoryJson input boundary.
 /// Pure data: no load/save/export/UI logic lives here.
 /// </summary>
 public class Story
 {
-    public int formatVersion = 1;
+    public const int CurrentFormatVersion = 2;
+    public int formatVersion = CurrentFormatVersion;
     public string exportedAt;
     public StoryMeta story;                       // metadata (id, title, sceneCount)
     public string credits;

@@ -33,7 +33,9 @@ public class RM_GameManager : MonoBehaviour {
 	[HideInInspector] 
 	public bool isMastico1, isMastico2, isMastico3, isZambla, modified = false;
 	[HideInInspector]
-	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText1,introText2,introText3,objText,ngpText,fswText, musicIntro, musicLoop;
+	public string currentDial,currentText,titleText,introText1,introText2,introText3,objText,ngpText,fswText, musicIntro, musicLoop;
+	[System.NonSerialized]
+	public SpeechDocument introDial1, introDial2, introDial3, objDial, ngpDial, fswDial;
 
 	void Start() {
 
@@ -78,12 +80,12 @@ public class RM_GameManager : MonoBehaviour {
 	public void Reset() {
 
 		// Variables for the txt file
-		introDial1 = ".";
-		introDial2 = ".";
-		introDial3 = ".";
-		objDial    = ".";
-		ngpDial    = ".";
-		fswDial    = ".";
+		introDial1 = SpeechDocument.FromNotation(".");
+		introDial2 = SpeechDocument.FromNotation(".");
+		introDial3 = SpeechDocument.FromNotation(".");
+		objDial    = SpeechDocument.FromNotation(".");
+		ngpDial    = SpeechDocument.FromNotation(".");
+		fswDial    = SpeechDocument.FromNotation(".");
 		titleText  = "glitch title";
 		introText1 = "";
 		introText2 = "";
@@ -152,12 +154,12 @@ public class RM_GameManager : MonoBehaviour {
 		isZambla = data.voice?.isZambla ?? false;
 
 		// Dialogues (phonemes)
-		introDial1 = data.dialogues?.intro1 ?? ".";
-		introDial2 = data.dialogues?.intro2 ?? ".";
-		introDial3 = data.dialogues?.intro3 ?? ".";
-		objDial = data.dialogues?.obj ?? ".";
-		ngpDial = data.dialogues?.ngp ?? ".";
-		fswDial = data.dialogues?.fsw ?? ".";
+		introDial1 = data.dialogues?.intro1?.Clone() ?? SpeechDocument.FromNotation(".");
+		introDial2 = data.dialogues?.intro2?.Clone() ?? SpeechDocument.FromNotation(".");
+		introDial3 = data.dialogues?.intro3?.Clone() ?? SpeechDocument.FromNotation(".");
+		objDial = data.dialogues?.obj?.Clone() ?? SpeechDocument.FromNotation(".");
+		ngpDial = data.dialogues?.ngp?.Clone() ?? SpeechDocument.FromNotation(".");
+		fswDial = data.dialogues?.fsw?.Clone() ?? SpeechDocument.FromNotation(".");
 
 		// Display texts
 		titleText = data.texts?.title ?? "glitch title";

@@ -1,0 +1,14 @@
+Rody French pronunciation uses ephone / eSpeak NG.
+License: GNU General Public License version 3 or later; see COPYING.txt.
+Unicode data notice: COPYING.Unicode.txt.
+
+Native converter source (unmodified, plus a memory-release function):
+https://github.com/sjmik/ephone-js/tree/4f6d246c1d3acf67a4d814e20da02fa3967bc92d
+Source archive:
+https://codeload.github.com/sjmik/ephone-js/tar.gz/4f6d246c1d3acf67a4d814e20da02fa3967bc92d
+Browser distribution: https://registry.npmjs.org/ephone/-/ephone-1.0.2.tgz
+
+Rody integration source and reproducible build instructions are part of the
+Rody Collection source repository, under tools/french-converter and
+Assets/Plugins/RodyFrench:
+https://github.com/lacrearthur/rody-collection

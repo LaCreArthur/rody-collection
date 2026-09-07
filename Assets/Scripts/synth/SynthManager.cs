@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -10,11 +9,11 @@ using UnityEngine.UI;
 public class SynthManager : MonoBehaviour
 {
     public SoundManager sm;
-    public SpeechInputField input;
+    public SpeechInputField french, input;
     public Slider pitchSlider;
     public Dropdown sounds;
-    public Text context, status, pitchValue, playLabel, applyLabel, closeLabel;
-    public Button play, passage, copy, paste, insert, audition, reset, apply, close;
+    public Text context, status, guidance, pronunciationLabel, pickerHelp, pitchValue, playLabel, applyLabel, closeLabel;
+    public Button play, passage, copy, paste, pastePhonemes, automatic, insert, audition, reset, apply, close;
     public Camera workbenchCamera;
     public AudioListener workbenchListener;
     public EventSystem workbenchEvents;
@@ -32,7 +31,7 @@ public class SynthManager : MonoBehaviour
         ("n", "non"), ("gn", "montagne"), ("l", "lit"), ("r", "rue"),
         ("s", "sac"), ("z", "zéro"), ("f", "feu"), ("v", "vie"),
         ("ch", "chat"), ("j", "joue"), ("ouu", "oui ! — son tenu"),
-        (",", "pause courte"), (".", "pause longue"), (" ", "respiration"),
+        (",", "pause courte"), (".", "pause longue"),
         ("-", "bruit blanc"), ("cuicui", "oiseau"), ("pop", "pop")
     };
 
@@ -43,18 +42,26 @@ public class SynthManager : MonoBehaviour
     string SelectedText => sounds.value < SoundExamples.Length ? SoundExamples[sounds.value].token :
         SoundManager.OriginalDialogue(OriginalExamples[sounds.value - SoundExamples.Length]);
 
-    Action<string, float> onApply;
+    Action<SpeechDocument, float> onApply;
     Action onClose;
-    string originalText;
+    SpeechDocument document, original;
     float originalPitch;
-    int anchor, focus;
-    bool closing;
-    bool valid;
-    bool pasting;
+    int anchor, focus, frenchAnchor, frenchFocus, selectedWord;
+    int conversionId;
+    float convertAfter;
+    bool scheduled, waiting, playWhenReady, closing, valid;
+    string conversionError;
+    SpeechInputField pasteTarget;
     int pasteStart, pasteEnd;
 
-    public static void Open(string text, float pitch, bool editablePitch, string heading,
-        Action<string, float> applyChanges, Action closed)
+    bool HasFrench => !string.IsNullOrWhiteSpace(french.text);
+    bool Pasting => pasteTarget != null;
+    string Score => document.Notation;
+    string EditedScore => string.Join("_", document.words.Select((word, i) => i == selectedWord ? input.text : word.score)
+        .Where(score => !string.IsNullOrEmpty(score)));
+
+    public static void Open(SpeechDocument dialogue, float pitch, bool editablePitch, string heading,
+        Action<SpeechDocument, float> applyChanges, Action closed)
     {
         var operation = SceneManager.LoadSceneAsync(AppScenes.Phonemes, LoadSceneMode.Additive);
         operation.completed += _ =>
@@ -67,7 +74,7 @@ public class SynthManager : MonoBehaviour
             workbench.workbenchListener.enabled = false;
             workbench.workbenchEvents.gameObject.SetActive(false);
             SceneManager.SetActiveScene(scene);
-            workbench.Begin(text, pitch, editablePitch, heading);
+            workbench.Begin(dialogue, pitch, editablePitch, heading);
         };
     }
 
@@ -75,70 +82,197 @@ public class SynthManager : MonoBehaviour
     {
         gameObject.name = "SpeechWorkbench-" + GetEntityId();
         sounds.ClearOptions();
-        sounds.AddOptions(SoundExamples.Select(s => $"{(s.token == " " ? "espace" : s.token)}  ·  {s.example}").ToList());
+        sounds.AddOptions(SoundExamples.Select(s => $"{s.token}  ·  {s.example}").ToList());
         sounds.AddOptions(OriginalExamples.Select((_, i) => $"Rody 1 · ouverture {i + 1}/3 · expression originale").ToList());
+        sounds.onValueChanged.AddListener(_ => Refresh());
         play.onClick.AddListener(PlayAll);
         passage.onClick.AddListener(PlayPassage);
         copy.onClick.AddListener(Copy);
-        paste.onClick.AddListener(Paste);
+        paste.onClick.AddListener(() => Paste(french, frenchAnchor, frenchFocus));
+        pastePhonemes.onClick.AddListener(() => Paste(input, anchor, focus));
+        automatic.onClick.AddListener(ResetPronunciation);
         insert.onClick.AddListener(InsertSound);
         audition.onClick.AddListener(() => sm.Speak(SelectedText, pitchSlider.value));
         reset.onClick.AddListener(Restore);
         apply.onClick.AddListener(Apply);
         close.onClick.AddListener(Close);
+        french.characterLimit = FrenchPhonemizer.MaxCharacters;
+        french.onValueChanged.AddListener(_ => SourceChanged());
         input.onValueChanged.AddListener(_ => Refresh());
+        input.onEndEdit.AddListener(_ => CommitPronunciation());
         pitchSlider.onValueChanged.AddListener(value =>
         {
             pitchSlider.SetValueWithoutNotify(Mathf.Round(value * 100) / 100);
             Refresh();
         });
-        Begin("b_r_a_v_o r_o_d_i", 1f, true, "Une voix de 1988. Tes propres répliques.");
+        Begin(SpeechDocument.FromNotation(""), 1f, true, "Une voix de 1988. Tes propres répliques.");
     }
 
-    void Begin(string text, float pitch, bool editablePitch, string heading)
+    void Begin(SpeechDocument dialogue, float pitch, bool editablePitch, string heading)
     {
-        originalText = text ?? "";
+        original = dialogue.Clone();
         originalPitch = pitch;
         context.text = heading;
         pitchSlider.interactable = editablePitch;
-        input.SetTextWithoutNotify(originalText);
         pitchSlider.SetValueWithoutNotify(pitch);
-        anchor = focus = input.text.Length;
         copy.gameObject.SetActive(onApply != null);
         applyLabel.text = onApply != null ? "UTILISER CE DIALOGUE" : "COPIER LES PHONÈMES";
         closeLabel.text = onApply != null ? "ANNULER" : "RETOUR";
+        SetDocument(dialogue.Clone());
+    }
+
+    void SetDocument(SpeechDocument value)
+    {
+        conversionId++;
+        scheduled = waiting = playWhenReady = false;
+        conversionError = null;
+        document = value;
+        french.SetTextWithoutNotify(document.sourceText);
+        frenchAnchor = frenchFocus = 0;
+        selectedWord = -1;
+        input.SetTextWithoutNotify("");
+        SelectWord(document.words.Count == 0 ? -1 : 0);
+        Refresh();
+    }
+
+    void SourceChanged()
+    {
+        CommitPronunciation();
+        sm.StopSpeech();
+        conversionId++;
+        conversionError = null;
+        playWhenReady = false;
+        if (!HasFrench)
+        {
+            document = SpeechDocument.FromNotation("");
+            scheduled = waiting = false;
+            selectedWord = -1;
+            SelectWord(0);
+        }
+        else
+        {
+            scheduled = waiting = true;
+            convertAfter = Time.unscaledTime + 0.3f;
+        }
+        Refresh();
+    }
+
+    void ConvertNow()
+    {
+        scheduled = false;
+        waiting = true;
+        conversionError = null;
+        FrenchPhonemizer.Request(french.text, conversionId, gameObject.name, Converted);
+    }
+
+    public void RodyFrenchConverted(string json) => Converted(JsonUtility.FromJson<FrenchPhonemizer.Result>(json));
+
+    void Converted(FrenchPhonemizer.Result result)
+    {
+        if (closing || result.requestId != conversionId) return;
+        waiting = false;
+        try
+        {
+            document = FrenchSpeechDraft.Convert(french.text, result, document);
+            selectedWord = -1;
+            SelectWord(FrenchSpeechDraft.WordAt(document, frenchFocus));
+        }
+        catch (ArgumentException exception)
+        {
+            conversionError = exception.Message;
+        }
+        Refresh();
+        if (playWhenReady && valid) sm.Speak(document, pitchSlider.value);
+        playWhenReady = false;
+    }
+
+    void SelectWord(int index)
+    {
+        if (index == selectedWord) return;
+        if (selectedWord >= 0 && !CommitPronunciation()) return;
+        selectedWord = index;
+        input.SetTextWithoutNotify(index < 0 ? "" : document.words[index].score);
+        anchor = focus = input.text.Length;
+        Refresh();
+    }
+
+    bool CommitPronunciation()
+    {
+        if (selectedWord < 0) return true;
+        if (waiting || Pasting) return false;
+        string text = input.text;
+        if (text.Split((char[])null).SelectMany(word => word.Split('_')).Any(token => RodySpeechEngine.TokenError(token) != null))
+            return false;
+        if (document.words[selectedWord].score == text) return true;
+        sm.StopSpeech();
+        var word = document.words[selectedWord];
+        if (HasFrench && !FrenchSpeechDraft.SamePronunciation(word.score, text)) word.corrected = true;
+        word.score = text;
+        Refresh();
+        return true;
+    }
+
+    void ResetPronunciation()
+    {
+        if (selectedWord < 0 || !HasFrench || Pasting) return;
+        input.SetTextWithoutNotify(document.words[selectedWord].score);
+        document.words[selectedWord].corrected = false;
+        conversionId++;
+        ConvertNow();
         Refresh();
     }
 
     void Refresh()
     {
-        string error = input.text.Split((char[])null).SelectMany(word => word.Split('_'))
+        if (document == null) return;
+        string score = EditedScore;
+        string error = score.Split((char[])null).SelectMany(word => word.Split('_'))
             .Select(RodySpeechEngine.TokenError).FirstOrDefault(message => message != null);
-        valid = error == null;
-        bool hasText = !string.IsNullOrWhiteSpace(input.text);
-        play.interactable = sm.isPlaying || (valid && hasText);
-        passage.interactable = valid && hasText;
-        apply.interactable = valid && !pasting;
-        input.readOnly = pasting;
-        paste.interactable = insert.interactable = !pasting;
-        copy.interactable = hasText;
+        valid = !waiting && conversionError == null && error == null;
+        bool hasScore = !string.IsNullOrWhiteSpace(score);
+        play.interactable = sm.isPlaying || (!Pasting && (HasFrench || hasScore) && (waiting || conversionError != null || valid));
+        passage.interactable = valid && hasScore && !Pasting;
+        apply.interactable = valid && !Pasting;
+        input.readOnly = Pasting || waiting || selectedWord < 0;
+        french.readOnly = Pasting;
+        paste.interactable = !Pasting;
+        pastePhonemes.interactable = insert.interactable = !Pasting && !waiting && selectedWord >= 0;
+        copy.interactable = valid && hasScore;
+        automatic.interactable = valid && !Pasting && HasFrench && selectedWord >= 0 && document.words[selectedWord].corrected;
         pitchValue.text = pitchSlider.value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "×";
-        status.color = valid ? new Color32(81, 94, 88, 255) : new Color32(171, 49, 42, 255);
-        status.text = !valid ? error : input.text.Contains("[") ?
-            "[forme 0–15, volume 0–7, vitesse 0–7] · 0 garde volume/vitesse.\nLa forme choisit une partie du son : un nombre plus grand ne l’allonge pas forcément." :
-            "Un espace = une respiration. Deux _ = une petite pause.";
-        reset.interactable = !pasting && (input.text != originalText || !Mathf.Approximately(pitchSlider.value, originalPitch));
+        status.color = valid || waiting ? new Color32(81, 94, 88, 255) : new Color32(171, 49, 42, 255);
+        status.text = waiting ? "Préparation de la prononciation…" : conversionError ?? error ??
+            (input.text.Contains("[") ? "Les champs [forme, volume, vitesse] conservent l’expression du son." :
+                "Les sons sont séparés par _ · Corrige seulement ce qui sonne faux.");
+        guidance.text = HasFrench ? ", = pause courte · . = pause longue · Clique un mot pour corriger sa prononciation." :
+            hasScore ? "Cette partition garde son expression. Écrire du français ci-dessus crée une nouvelle réplique." :
+                ", = pause courte · . = pause longue · Les espaces séparent les mots, sans pause.";
+        pronunciationLabel.text = !HasFrench ? "PARTITION · SAISIE DIRECTE DES SONS" : selectedWord < 0 ? "PRONONCIATION" :
+            "PRONONCIATION · " + document.sourceText.Substring(document.words[selectedWord].start, document.words[selectedWord].length) +
+                (document.words[selectedWord].corrected ? " · corrigée" : "");
+        bool originalSelected = sounds.value >= SoundExamples.Length;
+        pickerHelp.text = originalSelected ? "UN ORIGINAL REMPLACE LA RÉPLIQUE ET GARDE SON EXPRESSION" : "UN SON À ESSAYER OU À INSÉRER";
+        insert.GetComponentInChildren<Text>().text = originalSelected ? "REMPLACER" : "INSÉRER";
+        reset.interactable = !Pasting && (waiting || french.text != original.sourceText || score != original.Notation ||
+            !Mathf.Approximately(pitchSlider.value, originalPitch));
     }
 
     void Update()
     {
+        if (french.isFocused)
+        {
+            frenchAnchor = french.selectionAnchorPosition;
+            frenchFocus = french.selectionFocusPosition;
+            if (!waiting && !Pasting && HasFrench && conversionError == null)
+                SelectWord(FrenchSpeechDraft.WordAt(document, Math.Min(frenchAnchor, frenchFocus)));
+        }
         if (input.isFocused)
         {
             anchor = input.selectionAnchorPosition;
             focus = input.selectionFocusPosition;
         }
+        if (scheduled && Time.unscaledTime >= convertAfter) ConvertNow();
         playLabel.text = sm.isPlaying ? "ARRÊTER" : "TOUT ÉCOUTER";
-        play.interactable = sm.isPlaying || (valid && !string.IsNullOrWhiteSpace(input.text));
         if (Input.GetKeyUp(KeyCode.Escape)) Close();
         if (Input.GetKeyDown(KeyCode.Return) &&
             (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
@@ -147,8 +281,14 @@ public class SynthManager : MonoBehaviour
 
     void PlayAll()
     {
-        if (sm.isPlaying) sm.StopSpeech();
-        else if (valid) sm.Speak(input.text, pitchSlider.value);
+        if (sm.isPlaying) { sm.StopSpeech(); return; }
+        if (Pasting) return;
+        if (HasFrench && (waiting || conversionError != null))
+        {
+            playWhenReady = true;
+            if (scheduled || !waiting) ConvertNow();
+        }
+        else if (valid && CommitPronunciation()) sm.Speak(document, pitchSlider.value);
     }
 
     (int start, int end) Selection(bool passageMode)
@@ -169,50 +309,65 @@ public class SynthManager : MonoBehaviour
 
     void PlayPassage()
     {
-        if (!valid) return;
-        var range = Selection(true);
-        sm.Speak(input.text, pitchSlider.value, range.start, range.end);
+        if (!valid || selectedWord < 0 || Pasting || !CommitPronunciation()) return;
+        if (HasFrench)
+        {
+            int first = selectedWord, end = first + 1;
+            int sourceEnd = Math.Max(frenchAnchor, frenchFocus);
+            if (frenchAnchor != frenchFocus)
+                while (end < document.words.Count && document.words[end].start < sourceEnd) end++;
+            var range = document.NotationRange(first, end);
+            sm.Speak(document, pitchSlider.value, range.start, range.end);
+        }
+        else
+        {
+            var range = Selection(true);
+            sm.Speak(document, pitchSlider.value, range.start, range.end);
+        }
     }
 
     void InsertSound()
     {
+        if (Pasting || waiting) return;
+        if (sounds.value >= SoundExamples.Length)
+        {
+            sm.StopSpeech();
+            SetDocument(SpeechDocument.FromNotation(SelectedText));
+            return;
+        }
         var range = Selection(false);
         string token = SelectedText;
         string text = input.text;
+        string replaced = text.Substring(range.start, range.end - range.start);
+        int bracket = replaced.IndexOf('[');
+        // Replacing one native sound changes its identity, not its authored controls.
+        if (bracket >= 0 && replaced.IndexOf('_') < 0 && replaced.EndsWith("]", StringComparison.Ordinal) &&
+            RodySpeechEngine.TokenError(token + replaced.Substring(bracket)) == null)
+            token += replaced.Substring(bracket);
         bool Separator(char c) => char.IsWhiteSpace(c) || c == '_';
         string inserted = token;
-        if (token != " ")
-        {
-            if (range.start > 0 && !Separator(text[range.start - 1])) inserted = "_" + inserted;
-            if (range.end < text.Length && !Separator(text[range.end])) inserted += "_";
-        }
+        if (range.start > 0 && !Separator(text[range.start - 1])) inserted = "_" + inserted;
+        if (range.end < text.Length && !Separator(text[range.end])) inserted += "_";
         input.text = text.Substring(0, range.start) + inserted + text.Substring(range.end);
         anchor = focus = range.start + inserted.Length;
-        FocusInput();
-    }
-
-    void FocusInput()
-    {
+        CommitPronunciation();
         input.FocusAt(focus);
     }
 
     void Restore()
     {
         sm.StopSpeech();
-        input.SetTextWithoutNotify(originalText);
         pitchSlider.SetValueWithoutNotify(originalPitch);
-        anchor = focus = input.text.Length;
-        Refresh();
-        FocusInput();
+        SetDocument(original.Clone());
     }
 
     void Apply()
     {
-        if (!valid) return;
+        if (!valid || Pasting || !CommitPronunciation()) return;
         if (onApply == null) Copy();
         else
         {
-            onApply(input.text, pitchSlider.value);
+            onApply(document.Clone(), pitchSlider.value);
             Close();
         }
     }
@@ -238,20 +393,21 @@ public class SynthManager : MonoBehaviour
 
     void Copy()
     {
+        if (!valid || !CommitPronunciation()) return;
 #if UNITY_WEBGL && !UNITY_EDITOR
-        RodyCopyText(gameObject.name, input.text);
+        RodyCopyText(gameObject.name, Score);
 #else
-        GUIUtility.systemCopyBuffer = input.text;
+        GUIUtility.systemCopyBuffer = Score;
         ClipboardCopied("");
 #endif
     }
 
-    void Paste()
+    void Paste(SpeechInputField target, int start, int end)
     {
-        if (pasting) return;
-        pasteStart = Mathf.Clamp(Math.Min(anchor, focus), 0, input.text.Length);
-        pasteEnd = Mathf.Clamp(Math.Max(anchor, focus), 0, input.text.Length);
-        pasting = true;
+        if (Pasting || target.readOnly) return;
+        pasteTarget = target;
+        pasteStart = Mathf.Clamp(Math.Min(start, end), 0, target.text.Length);
+        pasteEnd = Mathf.Clamp(Math.Max(start, end), 0, target.text.Length);
         Refresh();
 #if UNITY_WEBGL && !UNITY_EDITOR
         RodyPasteText(gameObject.name);
@@ -265,17 +421,22 @@ public class SynthManager : MonoBehaviour
 
     public void ClipboardFailed(string _)
     {
-        pasting = false;
+        pasteTarget = null;
         Refresh();
         status.text = "Le navigateur n’a pas autorisé le presse-papiers.";
     }
+
     public void ClipboardPasted(string text)
     {
-        if (!pasting) return;
-        pasting = false;
-        input.text = input.text.Substring(0, pasteStart) + text + input.text.Substring(pasteEnd);
-        anchor = focus = pasteStart + text.Length;
+        if (!Pasting) return;
+        var target = pasteTarget;
+        pasteTarget = null;
+        target.text = target.text.Substring(0, pasteStart) + text + target.text.Substring(pasteEnd);
+        if (target == input) CommitPronunciation();
+        int caret = Mathf.Min(pasteStart + text.Length, target.text.Length);
+        if (target == french) frenchAnchor = frenchFocus = caret;
+        else anchor = focus = caret;
         Refresh();
-        FocusInput();
+        target.FocusAt(caret);
     }
 }

@@ -78,14 +78,14 @@ handoff's wording.
 - Pronunciation and expressive delivery are different editable facts. Retain native
   controls during pronunciation work; the envelope field is not a linear duration.
 
-### Dependency work already present
+### Integration status (2026-09-08)
 
-Untracked `tools/french-converter/`, `Assets/Plugins/RodyFrench/`, and
-`Assets/StreamingAssets/RodyFrench/` belong to the paused agent. They were left
-untouched and uncommitted in this leg. Read that converter's README for its
-existing native/browser ABI, licensing, code-point source offsets and punctuation
-loss observations. Do not redownload or replace its work from this handoff alone.
-The end-to-end French editor/converter integration is not yet implemented here.
+The French workflow is implemented locally. Current behavior, storage model,
+platform support, checks and limitations are owned by
+[SPEECH_ENGINE.md](SPEECH_ENGINE.md#french-entry-2026-09-08). The dependency's
+pinned source/build/ABI details remain in `tools/french-converter/README.md`.
+This handoff retains the accepted direction and original-engine evidence; it is
+not an outstanding implementation plan. Browser/player validation remains.
 
 ### Evidence and remaining work
 

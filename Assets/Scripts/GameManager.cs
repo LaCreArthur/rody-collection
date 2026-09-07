@@ -31,7 +31,9 @@ public class GameManager : MonoBehaviour {
 	[HideInInspector]
 	public List<Sprite> sceneSprites;
 	[HideInInspector]
-	public string currentDial,currentText,introDial1,introDial2,introDial3,objDial,ngpDial,fswDial,titleText,introText,objText,ngpText,fswText;
+	public string currentDial,currentText,titleText,introText,objText,ngpText,fswText;
+	[System.NonSerialized]
+	public SpeechDocument introDial1, introDial2, introDial3, objDial, ngpDial, fswDial;
 	[HideInInspector]
 	public int currentScene;
 
@@ -86,8 +88,8 @@ public class GameManager : MonoBehaviour {
 
 		// Calculate dial counts
 		if (!sm.isMastico1) sceneAnimator.sumDial++;
-		if (!string.IsNullOrEmpty(getDial(2)) && !sm.isMastico2) sceneAnimator.sumDial++;
-		if (!string.IsNullOrEmpty(getDial(6)) && !sm.isMastico3) sceneAnimator.sumDial++;
+		if (!string.IsNullOrEmpty(getDial(2).Notation) && !sm.isMastico2) sceneAnimator.sumDial++;
+		if (!string.IsNullOrEmpty(getDial(6).Notation) && !sm.isMastico3) sceneAnimator.sumDial++;
 		sceneAnimator.firstDial = (!sm.isMastico1) ? 1 : (!sm.isMastico2) ? 2 : (!sm.isMastico3) ? 3 : -1;
 
 		// init variables
@@ -104,12 +106,12 @@ public class GameManager : MonoBehaviour {
 	void ApplySceneDataFromModel(SceneData data)
 	{
 		// Dialogues
-		introDial1 = data.dialogues?.intro1 ?? ".";
-		introDial2 = data.dialogues?.intro2 ?? ".";
-		introDial3 = data.dialogues?.intro3 ?? ".";
-		objDial = data.dialogues?.obj ?? ".";
-		ngpDial = data.dialogues?.ngp ?? ".";
-		fswDial = data.dialogues?.fsw ?? ".";
+		introDial1 = data.dialogues?.intro1 ?? SpeechDocument.FromNotation(".");
+		introDial2 = data.dialogues?.intro2 ?? SpeechDocument.FromNotation(".");
+		introDial3 = data.dialogues?.intro3 ?? SpeechDocument.FromNotation(".");
+		objDial = data.dialogues?.obj ?? SpeechDocument.FromNotation(".");
+		ngpDial = data.dialogues?.ngp ?? SpeechDocument.FromNotation(".");
+		fswDial = data.dialogues?.fsw ?? SpeechDocument.FromNotation(".");
 
 		// Texts
 		titleText = data.texts?.title ?? "";
@@ -224,7 +226,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public string getDial(int dial) {
+	public SpeechDocument getDial(int dial) {
 		switch(dial) {
 			case 1: return introDial1;
 			case 2: return introDial2;
@@ -232,7 +234,7 @@ public class GameManager : MonoBehaviour {
 			case 4: return ngpDial;
 			case 5: return fswDial;
 			case 6: return introDial3;
-			default: return "g_et_t_d_i_a_l g_l_i_t_ch";
+			default: return SpeechDocument.FromNotation("g_et_t_d_i_a_l g_l_i_t_ch");
 		}
 	}
 

@@ -89,8 +89,10 @@ with tempfile.TemporaryDirectory(prefix='rody-speech-') as temp:
         story = json.loads(path.read_text())
         for index, scene in enumerate(story['scenes']):
             for field, text in scene['data']['dialogues'].items():
+                if isinstance(text, dict):
+                    text = '_'.join(word['score'] for word in text['words'] if word['score'])
                 if not isinstance(text, str):
-                    continue
+                    raise ValueError(f'{path}:{index}:{field}: invalid speech document')
                 tokens = [p for word in text.split(' ') for p in word.split('_')]
                 effects = [{'cuicui': 'Bird', 'pop': 'Pop', '-': 'Noise'}[p]
                            for p in tokens if p in ('cuicui', 'pop', '-')]

@@ -48,12 +48,12 @@ public static class SceneDataParser
         var data = new SceneData();
         
         // Parse dialogues
-        data.dialogues.intro1 = raw[IDX_INTRO_DIAL_1] ?? "";
-        data.dialogues.intro2 = raw[IDX_INTRO_DIAL_2] ?? "";
-        data.dialogues.intro3 = raw[IDX_INTRO_DIAL_3] ?? "";
-        data.dialogues.obj = raw[IDX_OBJ_DIAL] ?? "";
-        data.dialogues.ngp = raw[IDX_NGP_DIAL] ?? "";
-        data.dialogues.fsw = raw[IDX_FSW_DIAL] ?? "";
+        data.dialogues.intro1 = SpeechDocument.FromNotation(raw[IDX_INTRO_DIAL_1]);
+        data.dialogues.intro2 = SpeechDocument.FromNotation(raw[IDX_INTRO_DIAL_2]);
+        data.dialogues.intro3 = SpeechDocument.FromNotation(raw[IDX_INTRO_DIAL_3]);
+        data.dialogues.obj = SpeechDocument.FromNotation(raw[IDX_OBJ_DIAL]);
+        data.dialogues.ngp = SpeechDocument.FromNotation(raw[IDX_NGP_DIAL]);
+        data.dialogues.fsw = SpeechDocument.FromNotation(raw[IDX_FSW_DIAL]);
         
         // Parse display texts
         data.texts.title = raw[IDX_TITLE_TEXT] ?? "";

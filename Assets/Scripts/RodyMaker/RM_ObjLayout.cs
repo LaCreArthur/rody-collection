@@ -13,8 +13,8 @@ public class RM_ObjLayout : RM_Layout {
 	public Button returnBtn, phonemsBtn, zoneBtn, textBtn;
 	[HideInInspector]
 	public int activeObj = 1,  drawState = 0, activeZone = 0;
-	[HideInInspector]
-	public string phonems;
+	[System.NonSerialized]
+	public SpeechDocument phonems = SpeechDocument.FromNotation("");
 	[HideInInspector]
 	public List<GameObject> zonesNear, zones;
 	private GameObject zoneNear, zone;

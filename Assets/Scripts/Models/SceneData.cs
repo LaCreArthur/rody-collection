@@ -9,7 +9,7 @@ using UnityEngine;
 public class SceneData
 {
     /// <summary>
-    /// Phoneme strings for text-to-speech dialogues.
+    /// Authored speech documents for scene dialogue.
     /// </summary>
     public PhonemeDialogues dialogues;
     
@@ -47,30 +47,29 @@ public class SceneData
 }
 
 /// <summary>
-/// Phoneme dialogue strings for each scene phase.
-/// These are converted to phoneme lists for TTS playback.
+/// Speech documents for each scene phase, including French source and exact expression.
 /// </summary>
 [Serializable]
 public class PhonemeDialogues
 {
-    public string intro1 = "";      // First intro speaker
-    public string intro2 = "";      // Second intro speaker (response)
-    public string intro3 = "";      // Third intro speaker (if any)
-    public string obj = "";         // Object hint dialogue
-    public string ngp = "";         // Near game piece dialogue
-    public string fsw = "";         // Final scene win dialogue
+    public SpeechDocument intro1 = SpeechDocument.FromNotation("");      // First intro speaker
+    public SpeechDocument intro2 = SpeechDocument.FromNotation("");      // Second intro speaker (response)
+    public SpeechDocument intro3 = SpeechDocument.FromNotation("");      // Third intro speaker (if any)
+    public SpeechDocument obj = SpeechDocument.FromNotation("");         // Object hint dialogue
+    public SpeechDocument ngp = SpeechDocument.FromNotation("");         // Near game piece dialogue
+    public SpeechDocument fsw = SpeechDocument.FromNotation("");         // Final scene win dialogue
     
     /// <summary>
     /// Default glitch dialogues used when loading fails.
     /// </summary>
     public static PhonemeDialogues Glitch => new PhonemeDialogues
     {
-        intro1 = "g_l_i_t_ch",
-        intro2 = "g_l_i_t_ch",
-        intro3 = "",
-        obj = "g_l_i_t_ch",
-        ngp = "g_l_i_t_ch",
-        fsw = "g_l_i_t_ch"
+        intro1 = SpeechDocument.FromNotation("g_l_i_t_ch"),
+        intro2 = SpeechDocument.FromNotation("g_l_i_t_ch"),
+        intro3 = SpeechDocument.FromNotation(""),
+        obj = SpeechDocument.FromNotation("g_l_i_t_ch"),
+        ngp = SpeechDocument.FromNotation("g_l_i_t_ch"),
+        fsw = SpeechDocument.FromNotation("g_l_i_t_ch")
     };
 }
 
