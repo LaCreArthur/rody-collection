@@ -897,3 +897,14 @@ Dict OOV (e.g. proper nouns like "Espagne") silently absent — reported to stde
 NEXT: prosody tuning by ear (per-phoneme duration/pitch); then wire the authentic
 engine into the game / french-to-rody-phonemes skill so authored dialogue can
 target it instead of the remake's clip concatenation.
+
+## 2026-09-07 — Original-machine audit supersedes fidelity claims above
+
+The earlier STT/round-trip and Python comparisons established intelligibility
+and internal agreement, not complete original behavior or faithful prosody.
+Direct original CPU execution exposed shared port errors and an incomplete,
+mistranscribed disassembly. Both ports and the listing are corrected. There are
+101 valid source records; the old 102nd was an invalid empty fixture.
+The current native oracle, exact scope and remaining timing/notation limits
+live in ../../docs/SPEECH_ENGINE.md. Historical results above are retained as
+evidence of the earlier process, not current acceptance criteria.

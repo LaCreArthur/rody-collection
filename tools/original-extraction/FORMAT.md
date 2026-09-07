@@ -16,17 +16,18 @@ python3 slice_exact.py banks/rody1_PA.ROD /tmp/out   # wavs + manifest.txt
 
 ```
 [0x0000,0x0128)  header: 148 u16. First D entries = per-dialogue byte offsets
-                 into the record region (D = dialogue count; 102 for Rody 1).
-[0x0128, TBL)    record region: per-dialogue phoneme scripts. Dialogue i =
-                 [0x128+hdr[i], 0x128+hdr[i+1]). Size == last header value.
+                 relative to 0x12c (D = dialogue count; 101 for Rody 1).
+                 Entry D is the endpoint, not another dialogue.
+[0x0128, TBL)    4 global padding bytes, then phoneme scripts. Dialogue i =
+                 [0x12c+hdr[i], 0x12c+hdr[i+1]).
                  Entry encoding is decoded in DECODED.md and preprocess.py.
 [TBL, AUDIO)     clip offset table: 644 entries, offsets RELATIVE to audio
                  start, non-decreasing, first == 0, last distinct == audio
                  length. u16 if audio < 64 KiB (all banks except Rody 1),
                  u32 otherwise (Rody 1). Adjacent duplicates = empty slots.
-[AUDIO, EOF)     unsigned 8-bit PCM. Replay: ~13000 Hz for the five family
-                 banks, ~26000 Hz for Rody 1 (2.0x sample density, pitch-
-                 verified). Clip i = [offset[i], offset[i+1]).
+[AUDIO, EOF)     unsigned 8-bit PCM. Current Rody 1 port uses calibrated
+                 13000 Hz; the earlier 26000 Hz raw-slicing assumption is
+                 superseded. Clip i = [offset[i], offset[i+1]).
 ```
 
 ## Clip structure (ear-verified by Arthur, 2026-07-20)

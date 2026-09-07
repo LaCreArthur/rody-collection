@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 """Reimplementation of Rody1 AAA.PRG speech PREPROCESSOR (record u16 -> byte command stream).
-Faithful translation of preprocessor_disasm.txt (RAM 0xb3f80-0xb45d0), reloc 0xb2202.
+Fixed base speed -1, mode 0. See tools/speech/audit_original.py for original CPU comparison.
 State s[0..0x11]: 3 stages of 6 bytes: A=[0..5] B=[6..b] C=[c..11]; fields {P,type,e,var,hinib,x}.
-Validated against dlg000 captured command stream.
+Tables are read from original executable TEXT, not an emulator RAM dump.
 """
-import struct, json, sys, os
+import struct, sys, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-MEM = {int(k): v for k, v in json.load(open(os.path.join(HERE, 'data/mem.json'))).items()}
-def tb(a): return MEM.get(a, 0)
+PROGRAM = open(os.path.join(HERE, 'banks/rody1_AAA.PRG'), 'rb').read()[28:]
+TABLE_START, TABLE_END = 0x4aee, 0x4cc0
+TABLES = PROGRAM[TABLE_START:TABLE_END]
+def tb(a): return PROGRAM[a]
 
 PA = open(os.path.join(HERE, 'banks/rody1_PA.ROD'), 'rb').read()
 def u16(o): return struct.unpack('>H', PA[o:o+2])[0]
+DIALOGUE_COUNT = next(i for i in range(147) if u16(2*i+2) <= u16(2*i))
 
 def dialogue_tokens(i):
-    # game reads from 0x12c + hdr[i] for (hdr[i+1]-hdr[i])/2 tokens (skips 2 leading words)
+    if not 0 <= i < DIALOGUE_COUNT:
+        raise IndexError(f'No dialogue {i}; bank has {DIALOGUE_COUNT} records')
+    # game reads from 0x12c + hdr[i] for (hdr[i+1]-hdr[i])/2 tokens (4 bytes of padding precede the entire record stream)
     hdr = [u16(2*k) for k in range(148)]
     start = 0x12c + hdr[i]
     n = (hdr[i+1] - hdr[i]) // 2
@@ -145,8 +150,12 @@ def preprocess(tokens):
         if d2 == 4: d2 = 3
         if tb(0x4b2a + s[6]) != 0:                      # voicing fix mutates stage B
             s[6] = (s[6]+1) & 0xff
-        if 0x11 <= s[6] <= 0x12: s[6] = 0x10
-        out.append(0x04); out.append(d2); out.append(s[6])
+        if s[7] == 4:
+            consonant = tb(0x4aee + (s[6]-0x1a)*2 + 1)
+        else:
+            if 0x11 <= s[6] <= 0x12: s[6] = 0x10
+            consonant = s[6]
+        out.append(0x04); out.append(d2); out.append(consonant)
 
     def emit_cons_low():  # b43e4 : s[7] < 2
         b4180(word(8))
@@ -175,11 +184,16 @@ def preprocess(tokens):
                     out.append(d3); out.append(s[6]); out.append(0x04)
             if s[0xd] == 9:
                 out.append(d3); out.append(s[6]); out.append(0x05)
+                return
+            if s[6] == 0x16:
+                s[7] = 9
+                return
             return onset_tail()
         # b4482 s[7]==0
         if s[6] == 0x16:                               # b4488
             if s[0] in (0xa, 0xe, 0x10, 0x15):
-                out.append(0x00); out.append(0x10); out.append(0x02)
+                if s[0] == 0xa:
+                    out.append(0x00); out.append(0x10); out.append(0x02)
                 s[7] = 9
                 return
         d2c = s[0xa]                                    # b44b6
@@ -190,6 +204,10 @@ def preprocess(tokens):
         # falls to b4500
         if s[0xd] == 9:
             out.append(d3); out.append(s[6]); out.append(0x05)
+            return
+        if s[6] == 0x16:
+            s[7] = 9
+            return
         return onset_tail()
 
     def emit_special():  # b45b2 : s[7]==4
@@ -197,8 +215,12 @@ def preprocess(tokens):
         d2 = s[0xa]
         if d2 != 0:
             for _ in range(d2):
-                out.append(0x02); out.append(s[6]); out.append(0xaa)
-        return
+                out.append(0x02); out.append(s[6]); out.append(0x03)
+        out.append(0x02); out.append(s[6]); out.append(0x04)
+        if s[0xd] == 9:
+            out.append(0x02); out.append(s[6]); out.append(0x05)
+            return
+        return onset_tail()
 
     def b40f0(a0):  # compute [e],[f],[10] for stage C from token at a0
         hi = PA[a0]

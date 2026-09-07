@@ -1,0 +1,79 @@
+{
+  "date": "2026-09-07",
+  "emulator": "Hatari 2.6.1",
+  "machine": "STE",
+  "ram_bytes": 1048576,
+  "sound": false,
+  "fast_forward": true,
+  "startup_program": "A:\\RODY_1.PRG",
+  "hashes": {
+    "disk": {
+      "path": "rody1.st",
+      "sha256": "25857fd4ba85310cc1e254a9b557a97fd04f08251824ba5f36cc27fecddac179"
+    },
+    "tos": {
+      "path": "tos162fr.img",
+      "sha256": "fbd2e3edba4b04e56e11c192aae2a26d0590bde7321617bf9902bda11aa25caf"
+    },
+    "executable": {
+      "path": "rody1_AAA.PRG",
+      "sha256": "71f3d429a18b977f7e5b6c95969a77f537dc8eedfab438995651a7fab27fa321"
+    },
+    "ram": {
+      "path": "ram.bin",
+      "sha256": "3d247c9c7b3d258a0e47091cc0d4daf0918f2a20a921e867f4cc6b4bb3615d9f"
+    },
+    "log": {
+      "path": "log",
+      "sha256": "39fe5d0f9b83457923cf7849b772707bdcde6f1c353e27c1c6f86de82fb36b02"
+    }
+  },
+  "engine_location": {
+    "sample_signature": "123b004814310000",
+    "AAA_PRG_signature_offset": "0x1a52",
+    "ram_signature_address": "0xb3c3a",
+    "historical_disassembly_delta": 2,
+    "relocation_base": "0xb2204"
+  },
+  "breakpoints": {
+    "before_playback": "0xb38de",
+    "termination_dispatch": "0xb3a5c"
+  },
+  "addresses": {
+    "dialogue": "0xb6ec4",
+    "base_speed": "0xb6ec6",
+    "mode": "0xb6f24",
+    "termination_marker": "0xb68ba"
+  },
+  "observed_calls": [
+    {
+      "caller_dialogue": 1,
+      "record_index": 0,
+      "base_speed_signed": -1,
+      "mode": 0,
+      "marker_before_playback": 0,
+      "exit_d0": 35,
+      "marker_at_exit": 0
+    },
+    {
+      "caller_dialogue": 2,
+      "record_index": 1,
+      "base_speed_signed": -1,
+      "mode": 0,
+      "marker_before_playback": 0,
+      "exit_d0": 35,
+      "marker_at_exit": 0
+    },
+    {
+      "caller_dialogue": 4,
+      "record_index": 3,
+      "base_speed_signed": -1,
+      "mode": 0,
+      "marker_before_playback": 0,
+      "exit_d0": 35,
+      "marker_at_exit": 0
+    }
+  ],
+  "global_cycle_timestamps": null,
+  "emulator_stopped": true
+}

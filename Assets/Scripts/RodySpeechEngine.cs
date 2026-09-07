@@ -8,8 +8,9 @@ public sealed class RodySpeechEngine
     public const int SampleRate = 13000;
     const int ClipTable = 0x2560;
     const int AudioStart = 0x2f70;
-    const int TableStart = 0x4b00;
-    const int DefaultDelay = 18;
+    const int TableStart = 0x4aee;
+    const int NativeSpeed = -1;
+    const int DefaultDelay = 16 - 2 * NativeSpeed;
     readonly byte[] bank;
     readonly byte[] tables;
     readonly int[] clips = new int[644];
@@ -134,8 +135,14 @@ public sealed class RodySpeechEngine
             int p = next < 5 ? (next == 3 ? 8 : 7) : next == 5 ? s[12] : Vowel(s[12]);
             if (p == 4) p = 3;
             if (Table(0x4b2a + s[6]) != 0) s[6] = (s[6] + 1) & 255;
-            if (s[6] >= 0x11 && s[6] <= 0x12) s[6] = 0x10;
-            Unit(4, p, s[6]);
+            int consonant;
+            if (s[7] == 4) consonant = Table(0x4aee + (s[6] - 0x1a) * 2 + 1);
+            else
+            {
+                if (s[6] >= 0x11 && s[6] <= 0x12) s[6] = 0x10;
+                consonant = s[6];
+            }
+            Unit(4, p, consonant);
         }
         void LowConsonant()
         {
@@ -157,14 +164,15 @@ public sealed class RodySpeechEngine
             {
                 if (s[6] == 0x16 && (s[0] == 10 || s[0] == 14 || s[0] == 16 || s[0] == 21))
                 {
-                    Unit(0, 16, 2);
+                    if (s[0] == 10) Unit(0, 16, 2);
                     s[7] = 9;
                     return;
                 }
                 for (int i = 0; i < s[10]; i++) Unit(op, s[6], 3);
                 Unit(op, s[6], 4);
             }
-            if (s[13] == 9) Unit(op, s[6], 5);
+            if (s[13] == 9) { Unit(op, s[6], 5); return; }
+            if (s[6] == 0x16) { s[7] = 9; return; }
             Onset();
         }
         void Consonant()
@@ -173,7 +181,10 @@ public sealed class RodySpeechEngine
             if (s[7] == 4)
             {
                 Controls(Word(8));
-                for (int i = 0; i < s[10]; i++) Unit(2, s[6], 0xaa);
+                for (int i = 0; i < s[10]; i++) Unit(2, s[6], 3);
+                Unit(2, s[6], 4);
+                if (s[13] == 9) { Unit(2, s[6], 5); return; }
+                Onset();
                 return;
             }
             int p = s[7] == 2 ? 7 : 8;
@@ -264,7 +275,7 @@ public sealed class RodySpeechEngine
     public byte[] Interpret(IReadOnlyList<byte> commands)
     {
         var output = new List<byte>();
-        double amplitude = 1;
+        int amplitude = 0;
         int delay = DefaultDelay;
         void Silence(int length)
         {
@@ -273,13 +284,19 @@ public sealed class RodySpeechEngine
         void Segment(int start, int end)
         {
             if (start < 0 || end >= clips.Length || clips[end] > bank.Length - AudioStart) return;
-            int n = clips[end] - clips[start];
-            if (n <= 0) return;
+            // The original loop reads a sample before checking its end pointer.
+            int n = Math.Max(1, clips[end] - clips[start]);
             int count = Math.Max(1, (int)Math.Round(n * (372.0 + 10 * delay) / (372 + 10 * DefaultDelay)));
             for (int k = 0; k < count; k++)
             {
                 int sample = bank[AudioStart + clips[start] + Math.Min(n - 1, (int)((long)k * n / count))];
-                sample = (int)((sample - 128) * amplitude) + 128;
+                sample -= 128;
+                // Preserve the 68000's arithmetic-shift rounding, including odd samples.
+                if (amplitude == 1) sample -= sample >> 1;
+                else if (amplitude == 2) sample -= sample >> 2;
+                else if (amplitude == 3) sample += sample >> 2;
+                else if (amplitude >= 4) sample += sample >> 1;
+                sample += 128;
                 output.Add((byte)Math.Max(0, Math.Min(255, sample)));
             }
         }
@@ -290,18 +307,18 @@ public sealed class RodySpeechEngine
             {
                 case 0x20: Silence(151); break;
                 case 0x2e: Silence(4196); break;
+                case 0x23: return output.ToArray();
                 case 0x61:
-                    int level = commands[i++];
-                    amplitude = level == 0 ? 1 : level == 1 ? 0.5 : level == 2 ? 0.75 : level == 3 ? 1.25 : 1.5;
+                    amplitude = commands[i++];
                     break;
                 case 0x66:
-                    delay = Math.Max(0, DefaultDelay - (sbyte)commands[i++]);
+                    delay = Math.Max(0, 16 - unchecked((sbyte)(2 * NativeSpeed + commands[i++])));
                     break;
                 case 0:
                 case 2:
                 case 6:
                     int p = commands[i++], variant = commands[i++];
-                    if (variant > 5) break;
+                    if (variant > 5) throw new ArgumentException($"Unsupported speech variant: {variant}");
                     int offset = (op == 0 ? 0 : op == 2 ? 0x10c / 4 : 0x2b4 / 4) + 3 * p;
                     int start = variant == 2 || variant == 4 ? 1 : variant == 5 ? 2 : 0;
                     int end = variant == 1 || variant == 4 ? 2 : variant == 3 ? 1 : 3;
@@ -312,6 +329,7 @@ public sealed class RodySpeechEngine
                     int index = 0x45c / 4 + vowel + 14 * consonant;
                     Segment(index, index + 1);
                     break;
+                default: throw new ArgumentException($"Unsupported speech command: {op}");
             }
         }
         return output.ToArray();

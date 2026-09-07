@@ -24,12 +24,12 @@ import speak
 
 runtime = ROOT / 'Assets/Resources/Speech'
 assert (runtime / 'Rody1.bytes').read_bytes() == pp.PA, 'Runtime bank differs from extracted bank'
-assert (runtime / 'Tables.bytes').read_bytes() == bytes(pp.MEM[i] for i in range(0x4b00, 0x4cc0)), 'Runtime tables differ from captured lookup memory'
+assert (runtime / 'Tables.bytes').read_bytes() == pp.TABLES, 'Runtime tables differ from original executable'
 
 with tempfile.TemporaryDirectory(prefix='rody-speech-') as temp:
     folder = Path(temp)
     records, notation = [], []
-    for i in range(102):
+    for i in range(pp.DIALOGUE_COUNT):
         name = f'dlg{i:03d}'
         tokens = pp.dialogue_tokens(i)
         commands = pp.preprocess(tokens)

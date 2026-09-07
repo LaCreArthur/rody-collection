@@ -1,3 +1,37 @@
+## 2026-09-07: Independent original-machine speech audit
+
+Arthur questioned the completeness of the reverse engineering after rejecting
+the preview as rushed/chopped. Re-extracted AAA.PRG and PA.ROD directly from the
+original disk and ran relocated original 68000 instructions in Hatari. Found and
+fixed shared Python/C# errors: truncated and mistranscribed type-4 handler,
+P22 context rules, missing table prefix, integer amplitude rounding, empty
+interval first-sample behavior, end-command handling and speed-byte wrapping.
+The original bank has 101 records, not 102 (the extra fixture was invalid/empty).
+
+C# now matches 1,429 original CPU command streams: 101 corpus, 304 control-field
+batches, 1,024 batches covering 262,144 descriptor triples. All 1,280 native
+amplitude samples match. Python/C# parity additionally passes 101 records /
+6,615,080 samples and 841 authored cases. The full original game separately
+showed the assumed speed/mode/end-marker for three opening calls.
+
+Replaced incomplete disassembly with a complete original-byte listing for the
+speech code ranges; switched static lookup ownership from a RAM snapshot to the
+original executable. Removed the fictitious 102nd record and silent skipping of
+invalid command/variant input. No story text, phoneme vocabulary, original bank,
+recording or character setting was removed. No new story format was introduced. Removed unsupported fidelity/prosody
+guarantees from active docs; historical STT results remain labeled as history.
+
+Added a repeatable native oracle using Hatari's existing debugger and the shared
+C# command-line tool. No Unity build or browser check. Source-only checks for
+empty-interval/end/wrap behavior are distinguished from native executed probes.
+The listening complaint is not declared fixed: authored prosody loss and the
+approximate sample clock / omitted PSG output curve remain documented limits.
+Cold independent review found no blocking defect and separately compared the
+304 field / 1,024 context captures and all amplitude samples.
+See docs/SPEECH_ENGINE.md for evidence, exact scope and reproduction.
+
+---
+
 ## 2026-09-07: Listening comparison preparation
 
 Prepared local listening files from the preserved Atari capture and current

@@ -5,6 +5,72 @@ Atari ST preprocessor and PCM interpreter. Story JSON still stores phoneme
 strings and voice settings; no story migration or per-story voice switch exists.
 Music and ordinary game feedback effects keep their existing playback.
 
+## Original-machine audit and listening rejection (2026-09-07)
+
+Arthur rejected the authored preview as "way more rushed and chopped" and asked
+for a fresh reverse-engineering audit. The earlier Python/C# agreement reproduced
+shared mistakes. It was not independent evidence of Atari fidelity.
+
+Re-extracting AAA.PRG and PA.ROD directly through the original disk's FAT12
+chains produced exactly the archived files. Running the original 68000 code in
+Hatari then exposed these defects, now corrected in both ports:
+
+- The archived disassembly stopped inside the type-4 consonant handler and
+  mistranscribed a variant byte as `0xaa` instead of `3`. Restore its complete
+  attack/body/release and following-vowel path, including its missing table prefix.
+- Low-consonant P22 used the wrong look-behind rule for three preceding vowels
+  and failed to terminate its onset path in other contexts.
+- Floating-point amplitude scaling rounded differently from the original signed
+  arithmetic shifts. All five levels now reproduce native integer arithmetic.
+- The interpreter skipped empty intervals, whereas the original loop reads one
+  sample before testing its end pointer. It also ignored the end command and
+  omitted byte wrapping in speed arithmetic. Invalid command/variant input now
+  fails explicitly instead of being silently discarded; this is a diagnostic
+  contract, not emulation of the original invalid-input/copy-protection branch.
+- The bank contains **101** records. Header entry 101 is the endpoint; the old
+  102nd fixture was an empty artifact of an invalid range.
+
+The corrected C# preprocessor matches **1,429 command streams executed by the
+original 68000 instructions**: all 101 source records, 304 batches varying all
+16 duration / 8 amplitude / 8 rate fields over the 37 corpus descriptors, and
+1,024 batches covering every one of the 262,144 descriptor triples with default
+control fields. The C# interpreter also matches 1,280 sample values captured
+from the original amplitude instructions (256 bytes × 5 levels). These are
+finite checks at base speed -1 and mode 0, not proof for every possible input.
+Source inspection additionally covers the empty-interval loop, speed-byte wrap,
+and end dispatch; these are not presented as full interpreter execution tests.
+A separate unmodified game boot observed base speed -1, mode 0 and a cleared
+termination marker for opening calls 1, 2 and 4, including their end dispatch.
+
+This rules out disagreement between the two ports as the only explanation:
+the old Python preprocessor itself disagreed with original CPU output on records
+25 and 51 and on synthetic contexts. Disk extraction independently checks the
+assumption that the archived source files were authentic. The full regenerated
+listing replaces the incomplete one; original binaries are preserved unchanged.
+
+**Remaining fidelity limits:** 13,000 Hz PCM and the speed-to-sample conversion
+are calibrated approximations. Original playback transforms each sample through
+three YM2149 volume tables, writes the channels sequentially, and incurs CPU
+and segment overhead. The port does not model that hardware output or exact
+clock. Base speeds >=5 also change preprocessing duration; they are outside the
+fixed-speed runtime contract and are not supported by this audit.
+
+The remake notation still loses original per-phoneme controls, repeated-descriptor
+envelopes and some pauses. Its `on` default (`0x420d`) selects an attack fragment
+from such an envelope; a complete standalone `on` commonly uses `0x120d`.
+Short authored pauses formerly used ~125ms recordings and now map to an ~11.6ms
+native pause. A provisional pause/token patch was withdrawn because it did not
+restore that expressive information. Native instructions remain intact in PA.ROD.
+The next design step is one lossless editable speech representation; no format
+migration or new notation is implemented or approved by this audit.
+
+Direct waveform matching of native record 0 against the archived Atari capture
+found correlation 0.883 for the first second and 0.881 for its 1.5–2s interval,
+at capture/native duration scale about 1.04. This is local timing evidence, not
+an exact global clock measurement or listening acceptance. Do not apply a global
+slowdown to compensate for missing authored expression. No Unity build, browser
+check or new human listening acceptance was obtained in this audit.
+
 ## Sources and ownership
 
 - `Assets/Scripts/RodySpeechEngine.cs`: pure C#, native token preprocessing,
@@ -12,8 +78,8 @@ Music and ordinary game feedback effects keep their existing playback.
 - `Assets/Resources/Speech/Rody1.bytes`: exact runtime copy of
   `tools/original-extraction/banks/rody1_PA.ROD` (109,598 bytes). One recording bank
   serves all stories, as the previous remake also used Rody 1 recordings.
-- `Assets/Resources/Speech/Tables.bytes`: captured lookup bytes at addresses
-  `0x4b00..0x4cbf` from `tools/original-extraction/data/mem.json`.
+- `Assets/Resources/Speech/Tables.bytes`: 466 lookup bytes at TEXT-relative
+  `0x4aee..0x4cbf` from the original `banks/rody1_AAA.PRG` (28-byte header).
 - The extraction directory owns the historical reference implementation and
   captured data. `tools/speech/verify.py` checks both runtime data copies against
   their sources before comparing output.
@@ -26,7 +92,7 @@ Music and ordinary game feedback effects keep their existing playback.
 - The sound prefab's named `noise`, `bird`, and `pop` fields own the three
   in-dialogue effect references. No indexed phoneme clip array remains.
 
-Native audio is unsigned 8-bit PCM at 13,000 Hz. Unity receives a generated mono
+The port renders unsigned 8-bit PCM at a calibrated 13,000 Hz. Unity receives a generated mono
 AudioClip with samples `(byte - 128) / 128f`. A speech segment plays continuously;
 only explicit effects split it. Completion follows AudioSource playback, not a
 per-phoneme duration guess. Replacing playback or disabling the manager stops
@@ -72,19 +138,35 @@ python3 tools/speech/verify.py
 ```
 
 The verifier links the actual Unity C# source into the small .NET command-line
-tool. Temporary fixtures come from the independent Python extraction renderer.
-It checks all 102 original records at both command and PCM boundaries, canonical
+tool. Temporary fixtures come from the Python extraction renderer, which shares
+translation ancestry with C#. It checks all 101 original records at both command and PCM boundaries, canonical
 notation against the catalog-derived mapping, authored pauses and extended
 sounds, and all embedded story / fixed-feedback dialogue for unknown tokens
 and effect ordering. It never rewrites story data or expected results.
 
-Current result (2026-09-06): 102 records, 6,611,070 PCM samples byte-identical;
+Current result (2026-09-07): 101 records, 6,615,080 PCM samples byte-identical;
 841 authored dialogue/notation cases rendered without unknown tokens, with the
 specified PCM and effect-order comparisons passing. This establishes fidelity
 to the Python reference, not independent proof of perfect 1988 hardware timing.
 The reference's sample-delay calibration remains approximate. New in-game A/B
 listening, especially Ibiza character voices and extended sounds, remains a
 release requirement. WebGL verification belongs to the final release leg.
+
+For the independent original-machine check, also install Hatari and supply a
+local TOS ROM (the ROM is not distributed here):
+
+```bash
+python3 tools/speech/audit_original.py --tos /path/to/tos162fr.img
+```
+
+This extracts the original executable and bank from the disk, applies only
+standard GEMDOS relocations, and runs its preprocessor and amplitude routines.
+It feeds original CPU results directly to the C# executable, without using the
+Python port as an oracle. The printed temporary folder retains raw captures,
+debugger scripts, logs and the manifest. The script intentionally pins the known
+Rody 1 executable hash; it is not a general bank or emulator framework.
+The audit was run with Hatari 2.6.1 / STE / TOS 1.62 French. Original full-game
+caller observations are recorded separately in `tools/speech/original-caller.json`.
 
 ## Offline preview
 

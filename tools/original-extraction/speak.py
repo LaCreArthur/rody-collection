@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Say NEW French sentences in the authentic 1988 Rody voice.
+"""Say new French sentences using the original Rody recording bank.
 
 Inverse of the speech engine: French text -> Rody phonemes -> record u16 tokens
--> the EXISTING bit-exact render (preprocess + interpret). speak.py adds no DSP
+-> the shared approximate PCM renderer (preprocess + interpret). speak.py adds no DSP
 and no coarticulation logic of its own: preprocess.py already inserts bank-2/6
 selection, bank-4 diphone onsets and pauses. We only choose the phoneme-identity
-token per sound, reusing a real per-descriptor token from the corpus so duration
-and amplitude stay authentic.
+token per sound, reusing a real per-descriptor token from the corpus. This loses
+original duration/amplitude envelopes; token frequency is not a prosody model.
 
   d2 = tok & 0x3f :  vowel P -> d2=P ; consonant P -> d2=P+0x16 ;
                      word-gap 0x3c ; sentence 0x3d.
@@ -49,12 +49,12 @@ def load_phoneme_to_d2():
 
 
 def build_rep_tokens():
-    """d2 -> representative real u16 token (most common in the 102 records)."""
+    """d2 -> representative real u16 token (most common in the bank's records)."""
     cache = os.path.join(HERE, 'data/rep_tokens.json')
     if os.path.exists(cache):
         return {int(k): v for k, v in json.load(open(cache)).items()}
     per = {}
-    for i in range(102):
+    for i in range(pp.DIALOGUE_COUNT):
         try:
             toks = pp.dialogue_tokens(i)
         except Exception:

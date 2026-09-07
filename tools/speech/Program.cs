@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-// Both commands execute the very same engine source that Unity compiles.
+// All commands execute the very same engine source that Unity compiles.
 var root = new DirectoryInfo(AppContext.BaseDirectory);
 while (root != null && !Directory.Exists(Path.Combine(root.FullName, "Assets", "Resources", "Speech"))) root = root.Parent;
 if (root == null) throw new Exception("Run this tool from its RodyMaker checkout.");
@@ -57,6 +57,33 @@ if (args.Length >= 2 && args[0] == "verify")
     }
     Console.WriteLine($"{dialogues} authored dialogue/notation cases rendered with no unknown tokens; specified PCM/effect checks passed.");
 }
+else if (args.Length >= 2 && args[0] == "audit-original")
+{
+    string folder = Path.GetFullPath(args[1]);
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(folder, "manifest.json")));
+    int count = 0;
+    foreach (var item in manifest.RootElement.GetProperty("records").EnumerateArray())
+    {
+        string id = item.GetProperty("id").GetString();
+        ushort[] tokens = item.GetProperty("tokens").EnumerateArray().Select(x => x.GetUInt16()).ToArray();
+        if (!engine.Preprocess(tokens).SequenceEqual(File.ReadAllBytes(Path.Combine(folder, id + ".commands"))))
+            throw new Exception($"{id}: original 68000 command bytes differ");
+        count++;
+    }
+    // A single synthetic 256-byte grain exercises the production interpreter,
+    // comparing to samples captured after original 68000 amplitude arithmetic.
+    byte[] bank = new byte[0x2f70 + 256];
+    bank[0x2560 + 3 * 4 + 2] = 1; // big-endian clip boundary 256
+    for (int i = 0; i < 256; i++) bank[0x2f70 + i] = (byte)i;
+    var samplesEngine = new RodySpeechEngine(bank, Array.Empty<byte>());
+    for (byte level = 0; level < 5; level++)
+    {
+        var actual = samplesEngine.Interpret(new byte[] { 0x61, level, 0, 0, 0, 0x23 });
+        if (!actual.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, $"amplitude-{level}.pcm"))))
+            throw new Exception($"Amplitude {level}: original 68000 sample bytes differ");
+    }
+    Console.WriteLine($"{count} original 68000 command streams match C#; all 1,280 amplitude samples match.");
+}
 else if (args.Length >= 3 && args[0] == "render")
 {
     double pitch = args.Length > 3 ? double.Parse(args[3], CultureInfo.InvariantCulture) : 1;
@@ -101,7 +128,7 @@ else if (args.Length >= 3 && args[0] == "render")
     foreach (short sample in output) writer.Write(sample);
     Console.WriteLine($"{path}: {output.Count / 44100.0:F2}s at pitch {pitch}");
 }
-else throw new ArgumentException("Usage: render out.wav \"phonemes\" [pitch] | verify fixture-directory");
+else throw new ArgumentException("Usage: render out.wav \"phonemes\" [pitch] | verify fixture-directory | audit-original fixture-directory");
 
 static (float[] samples, int rate) ReadWave(string path)
 {

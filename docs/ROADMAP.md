@@ -1,17 +1,19 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-09-07 (speech port and dialogue workbench implemented locally)
+> **Updated:** 2026-09-07 (original-machine speech audit corrected shared port errors)
 
 ---
 
 ## Current State
 
-**Speech port (2026-09-06): implemented locally.** Game dialogue and previews
-now use the original-engine C# port. The 102 reference records match at command
-and PCM boundaries; all embedded dialogue and fixed feedback render with
-supported notation. In-game listening and final WebGL verification are still
-pending. Current design, reproducible comparison and limitations:
+**Speech port (2026-09-07): corrected after original-machine audit.** The engine
+matches 1,429 command streams executed by original Atari code and all 1,280
+amplitude sample probes. The earlier Python-only parity missed shared errors.
+All 101 original records and 841 authored cases pass the port comparison.
+Authored notation still loses expressive data; hardware timing/output remain
+approximate. Listening rejection is unresolved, and no story-format migration
+has been approved. Details and reproducible checks:
 [SPEECH_ENGINE.md](SPEECH_ENGINE.md).
 
 **Dialogue workbench (2026-09-07): implemented locally.** The collection now has
