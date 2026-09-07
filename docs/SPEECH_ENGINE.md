@@ -55,14 +55,13 @@ and segment overhead. The port does not model that hardware output or exact
 clock. Base speeds >=5 also change preprocessing duration; they are outside the
 fixed-speed runtime contract and are not supported by this audit.
 
-The remake notation still loses original per-phoneme controls, repeated-descriptor
-envelopes and some pauses. Its `on` default (`0x420d`) selects an attack fragment
-from such an envelope; a complete standalone `on` commonly uses `0x120d`.
-Short authored pauses formerly used ~125ms recordings and now map to an ~11.6ms
-native pause. A provisional pause/token patch was withdrawn because it did not
-restore that expressive information. Native instructions remain intact in PA.ROD.
-The next design step is one lossless editable speech representation; no format
-migration or new notation is implemented or approved by this audit.
+The existing bare remake notation still lacks original per-phoneme controls,
+repeated-descriptor envelopes and some pauses. Its `on` default (`0x420d`)
+selects an attack fragment from such an envelope; a complete standalone `on`
+commonly uses `0x120d`. Short authored pauses formerly used ~125ms recordings
+and now map to an ~11.6ms native pause. These defaults were retained in the
+following lossless-notation leg so its comparison measures restored expression
+rather than unrelated global retuning. Native instructions remain intact in PA.ROD.
 
 Direct waveform matching of native record 0 against the archived Atari capture
 found correlation 0.883 for the first second and 0.881 for its 1.5–2s interval,
@@ -70,6 +69,87 @@ at capture/native duration scale about 1.04. This is local timing evidence, not
 an exact global clock measurement or listening acceptance. Do not apply a global
 slowdown to compensate for missing authored expression. No Unity build, browser
 check or new human listening acceptance was obtained in this audit.
+
+## Lossless editable expression (2026-09-07)
+
+Arthur approved preserving original duration, emphasis and pauses in editable
+dialogue, followed by a recording comparison. The existing dialogue string remains
+the sole stored score; there is no native/shorthand pair, prerecorded-original
+playback path, new JSON schema or story migration. Original templates and newly
+authored text pass through the same parser, preprocessor and PCM interpreter.
+
+A sound may carry `[envelope,amplitude,rate]`, for example
+`r[1,5,3]_o[4,1,0]_o[1,0,5]`. The fields exactly encode the remaining ten bits
+alongside the six-bit descriptor:
+
+| Field | Range | Meaning |
+|---|---|---|
+| Envelope / `forme` | 0–15 | Native shape/repetition code. It can select attack/body/release or consonant behavior; it is **not** a linear duration slider. |
+| Amplitude / `volume` | 0–7 | 0 inherits current state when emitted; 1 normal, 2 half, 3 three-quarters, 4 five-quarters, 5–7 one-and-a-half, using native integer rounding. Controls are only applied when the native preprocessor emits them. |
+| Rate / `vitesse` | 0–7 | 0 inherits current state when emitted; 1–7 emit native rate parameters -3 through +3. The sample-clock conversion remains approximate. |
+
+The formatter spells all fields explicitly and joins atoms with underscores.
+`e2` distinguishes the second native e descriptor. Unlabelled variants retain
+`sonNN` names rather than invented French phoneme labels. `,[0,0,0]` and
+`.[0,0,0]` are exact native pauses; `fin[0,0,0]` preserves descriptor62's original
+record marker (not a new phrase/effect boundary). All 64 descriptors can round-trip.
+Bare familiar phonemes retain their prior defaults. Composite aliases such as
+`oi`, `ui`, `gn`, and contextual `ti` must be expanded to individual native sounds
+before adding explicit controls. Invalid fields are rejected by the workbench
+and CLI with an actionable error; they are never silently masked to fit a bit range.
+
+**One deliberate behavior removal:** the parser no longer appends a word pause
+that was not written after the last group. This removes 151 samples (~11.6ms)
+from ordinary existing speech endings; native end-of-record context still closes
+the last sound. Write `_,` when that final pause is wanted. Other authored sound,
+whitespace and pause defaults are unchanged. This is what allows exact original
+notation without a special playback mode or a format-dependent trailing-pause rule.
+
+The workbench's existing picker adds three **Rody 1 · ouverture** templates,
+corresponding to original records 0, 1 and 3. Audition previews them; Insert copies
+the full expression into the same editable field. They are generated from PA.ROD
+when selected, not duplicated as stored text. Editing, Apply, story save/export
+and import retain the string. Existing official stories were not rewritten using
+guessed record-to-scene correspondence.
+
+Passage playback now receives full text and a character range. It preprocesses
+with all neighboring sounds and inherited state, traces token-to-command and
+command-to-sample boundaries, then returns the selected PCM slice. Effects keep
+their existing phrase boundaries. It does not render a context-free substring or
+try to infer live amplitude by scanning lexical fields. Selection boundaries are
+native token emission boundaries; diphone transitions belong to the native emit
+that produced them, not a separately inferred acoustic word boundary.
+
+Validation covers every one of the 65,536 native token values round-tripping,
+all 101 original records retaining their 6,615,080 PCM samples through editable
+notation, strict field errors, and selected passages partitioning the full audio.
+A separate expected command fixture checks inherited gain in a selected vowel.
+All 850 authored/notation cases pass their specified checks. Cold review caught
+and prompted the passage-context fix; follow-up review found no blocking defect.
+No Unity compile/build was requested or run. The open Editor was still using its
+previously loaded scripts when inspected, so new workbench runtime/visual QA is
+not claimed. Final browser and human listening checks remain release work.
+
+### Matching recording comparison
+
+The passage is “Rody, maman a ouvert doucement la porte de ta chambre.”
+The Atari excerpt is `captures/r1_full.wav` at 121.95s for 4.35s, including some
+surrounding silence; transcription checks the spoken content. The full score is
+original record 0, exported through the formatter/parser and `RenderDialogue`.
+The simplified baseline is the same sentence from the earlier listening pack.
+
+- Simplified notation: **3.036s**. Full expression: **3.990s** at unchanged pitch 1.
+- Native windows 0–1s and 1.5–2s align to the Atari capture with normalized waveform
+  correlations **0.885 / 0.913**, at capture/native duration scales **1.040 / 1.039**.
+- Whole-utterance correlation remains only **0.421** (simplified **0.171**) under
+  a single best time scale. Local drift / hardware output differences remain;
+  this does not establish exact timing or perceptual acceptance.
+
+The local `~/Downloads/Rody-full-expression/Listen.wav` plays Atari, simplified,
+then full expression, with one-second separators and equal RMS level. No pitch
+or tempo adjustment was applied to these listening versions. Its transcript
+contains the same sentence three times (with Whisper's “Roby” substitution).
+Raw render durations and comparison parameters are retained in that folder.
 
 ## Sources and ownership
 
@@ -102,8 +182,8 @@ destroyed by speech cleanup.
 ## Notation and character behavior
 
 Existing underscores, spaces, commas, periods, feedback lines and character
-settings remain supported. Empty underscore tokens and every space-delimited
-group add a native word pause (151 samples); a period adds one native sentence
+settings remain supported. Empty underscore tokens and whitespace separators
+add a native word pause (151 samples); a period adds one native sentence
 pause (4,196 samples). An entirely empty/whitespace-only dialogue produces no
 speech. Unknown tokens retain the former pause behavior and now log a warning;
 the offline renderer rejects them so an agent cannot silently export bad speech.
@@ -145,7 +225,7 @@ sounds, and all embedded story / fixed-feedback dialogue for unknown tokens
 and effect ordering. It never rewrites story data or expected results.
 
 Current result (2026-09-07): 101 records, 6,615,080 PCM samples byte-identical;
-841 authored dialogue/notation cases rendered without unknown tokens, with the
+850 authored dialogue/notation cases rendered without unknown tokens, with the
 specified PCM and effect-order comparisons passing. This establishes fidelity
 to the Python reference, not independent proof of perfect 1988 hardware timing.
 The reference's sample-delay calibration remains approximate. New in-game A/B
@@ -179,6 +259,14 @@ python3 .claude/skills/french-to-rody-phonemes/scripts/render.py /tmp/rody.wav "
 The tool executes the same native synthesizer and notation handling as Unity,
 resolves effects from the sound prefab, and writes a mono 44.1 kHz WAV. Its
 linear final resampling is a preview; Unity's mixer resampling can differ.
+Export an editable original with the same playback path (zero-based record index):
+
+```bash
+dotnet run --project tools/speech -- render-original /tmp/original.wav 0
+# Also writes /tmp/original.txt. Paste it into the workbench or a story dialogue.
+dotnet run --project tools/speech -- validate "on[4,1,0]_on[1,0,3]"
+```
+
 The command fails on unknown notation. The conversion skill remains the
 French-to-phoneme authoring route; there is no in-game dictionary converter.
 
@@ -204,8 +292,8 @@ callbacks. No story manager is required for standalone use. Apply changes the
 calling editor's working dialogue; Cancel leaves it untouched. This does not
 replace the story editor's existing scene-save/export boundary.
 
-The old phoneme-key grid is replaced by a multiline sentence field, whole-line
-and passage playback, a pitch slider, 43 sound/pause/effect examples with audition
+The old phoneme-key grid was replaced by a multiline sentence field, whole-line
+and passage playback, a pitch slider, 43 sound/pause/effect examples plus three original-expression templates with audition
 and insertion, clipboard actions, and restore. Unknown tokens are shown before
 playback. Stop remains available while an invalid or empty edit is being played.
 Rody pitch is editable; Mastico/Zambla previews use their actual fixed pitch.

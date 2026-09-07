@@ -27,6 +27,12 @@ if (args.Length >= 2 && args[0] == "verify")
         ushort[] tokens = item.GetProperty("tokens").EnumerateArray().Select(x => x.GetUInt16()).ToArray();
         var commands = engine.Preprocess(tokens);
         var pcm = engine.Render(tokens);
+        string notation = engine.OriginalDialogue(count);
+        var parsed = engine.ParseDialogue(notation, Unknown);
+        if (parsed.Count != 1 || !parsed[0].Tokens.SequenceEqual(tokens))
+            throw new Exception($"{id}: editable original lost native controls");
+        if (!engine.RenderDialogue(notation, Unknown).SelectMany(p => p.Samples).SequenceEqual(pcm))
+            throw new Exception($"{id}: editable original PCM differs");
         if (!commands.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, id + ".commands"))))
             throw new Exception($"{id}: command bytes differ");
         if (!pcm.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, id + ".pcm"))))
@@ -35,11 +41,41 @@ if (args.Length >= 2 && args[0] == "verify")
         count++;
     }
     Console.WriteLine($"{count} reference records: byte-identical commands and PCM ({samples} samples).");
+    var allTokens = Enumerable.Range(0, 65536).Select(value => (ushort)value).ToArray();
+    var allParsed = engine.ParseDialogue(RodySpeechEngine.FormatDialogue(allTokens), Unknown);
+    if (allParsed.Count != 1 || !allParsed[0].Tokens.SequenceEqual(allTokens))
+        throw new Exception("Full notation lost a native token bit");
+    Console.WriteLine("All 65,536 native token values survive editable notation; all original dialogues retain PCM.");
+    foreach (string invalid in new[] { "on[16,1,0]", "on[1,8,0]", "on[1,1,8]", "on[-1,1,0]",
+        "on[1,1]", "on[1,1,0]x", "on[1,1,0,0]", "on[x,1,0]", "oi[1,1,0]", "pop[1,1,0]", "son64[1,1,0]" })
+        if (RodySpeechEngine.IsKnownToken(invalid)) throw new Exception("Invalid expression accepted: " + invalid);
+    // Splitting a full score into its atom selections must partition its PCM,
+    // including repeated envelopes, silent markers, aliases and effect boundaries.
+    foreach (string score in new[] { engine.OriginalDialogue(0), engine.OriginalDialogue(25),
+        "r[1,5,3]_o[4,0,0]_o[1,0,5]", "b_oi_r", "a[1,1,0]_-_i[1,0,5]_pop" })
+    {
+        var whole = engine.RenderDialogue(score, Unknown);
+        var pieces = new List<RodySpeechPart>();
+        int position = 0;
+        foreach (string atom in score.Split('_'))
+        {
+            pieces.AddRange(engine.RenderDialogue(score, Unknown, position, position + atom.Length));
+            position += atom.Length + 1;
+        }
+        if (!pieces.SelectMany(p => p.Samples ?? Array.Empty<byte>()).SequenceEqual(
+            whole.SelectMany(p => p.Samples ?? Array.Empty<byte>())) ||
+            !pieces.Where(p => p.Effect != RodySpeechEffect.None).Select(p => p.Effect).SequenceEqual(
+                whole.Where(p => p.Effect != RodySpeechEffect.None).Select(p => p.Effect)))
+            throw new Exception("Passage selections changed full-context audio");
+    }
+    Console.WriteLine("Selected passages partition full-context PCM and preserve effect order.");
     int dialogues = 0;
     foreach (var item in manifest.RootElement.GetProperty("notation").EnumerateArray())
     {
         string text = item.GetProperty("text").GetString();
-        var parts = engine.RenderDialogue(text, Unknown);
+        int start = item.TryGetProperty("start", out var startValue) ? startValue.GetInt32() : 0;
+        int end = item.TryGetProperty("end", out var endValue) ? endValue.GetInt32() : int.MaxValue;
+        var parts = engine.RenderDialogue(text, Unknown, start, end);
         string id = item.GetProperty("id").GetString();
         if (item.TryGetProperty("expected", out var expected))
         {
@@ -56,6 +92,14 @@ if (args.Length >= 2 && args[0] == "verify")
         dialogues++;
     }
     Console.WriteLine($"{dialogues} authored dialogue/notation cases rendered with no unknown tokens; specified PCM/effect checks passed.");
+}
+else if (args.Length >= 2 && args[0] == "validate")
+{
+    var errors = args[1].Split((char[])null).SelectMany(word => word.Split('_'))
+        .Select(RodySpeechEngine.TokenError).Where(error => error != null).Distinct().ToArray();
+    foreach (string error in errors) Console.WriteLine(error);
+    if (errors.Length != 0) Environment.ExitCode = 1;
+    else Console.WriteLine("OK: all tokens valid");
 }
 else if (args.Length >= 2 && args[0] == "audit-original")
 {
@@ -84,12 +128,13 @@ else if (args.Length >= 2 && args[0] == "audit-original")
     }
     Console.WriteLine($"{count} original 68000 command streams match C#; all 1,280 amplitude samples match.");
 }
-else if (args.Length >= 3 && args[0] == "render")
+else if (args.Length >= 3 && (args[0] == "render" || args[0] == "render-original"))
 {
     double pitch = args.Length > 3 ? double.Parse(args[3], CultureInfo.InvariantCulture) : 1;
     if (pitch <= 0 || pitch > 3) throw new ArgumentOutOfRangeException("pitch", "Use a positive pitch up to 3.");
+    string dialogue = args[0] == "render-original" ? engine.OriginalDialogue(int.Parse(args[2], CultureInfo.InvariantCulture)) : args[2];
     var output = new List<short>();
-    foreach (var part in engine.RenderDialogue(args[2], Unknown))
+    foreach (var part in engine.RenderDialogue(dialogue, Unknown))
     {
         float[] input;
         int rate;
@@ -119,6 +164,7 @@ else if (args.Length >= 3 && args[0] == "render")
     }
     string path = Path.GetFullPath(args[1]);
     Directory.CreateDirectory(Path.GetDirectoryName(path));
+    if (args[0] == "render-original") File.WriteAllText(Path.ChangeExtension(path, ".txt"), dialogue);
     using var writer = new BinaryWriter(File.Create(path));
     writer.Write(Encoding.ASCII.GetBytes("RIFF")); writer.Write(36 + output.Count * 2);
     writer.Write(Encoding.ASCII.GetBytes("WAVEfmt ")); writer.Write(16);
@@ -128,7 +174,7 @@ else if (args.Length >= 3 && args[0] == "render")
     foreach (short sample in output) writer.Write(sample);
     Console.WriteLine($"{path}: {output.Count / 44100.0:F2}s at pitch {pitch}");
 }
-else throw new ArgumentException("Usage: render out.wav \"phonemes\" [pitch] | verify fixture-directory | audit-original fixture-directory");
+else throw new ArgumentException("Usage: render out.wav \"phonemes\" [pitch] | validate \"phonemes\" | render-original out.wav record-index [pitch] | verify fixture-directory | audit-original fixture-directory");
 
 static (float[] samples, int rate) ReadWave(string path)
 {

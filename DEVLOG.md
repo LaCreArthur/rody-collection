@@ -1,3 +1,37 @@
+## 2026-09-07: Lossless editable speech expression
+
+Accepted next step: preserve original duration/emphasis/pauses in editable
+speech, then compare recordings. Extended the existing single dialogue-string
+grammar with strict [envelope,amplitude,rate] fields and all 64 descriptor names.
+No JSON schema migration or parallel native playback. Three opening templates
+are formatted directly from PA.ROD into the workbench's existing picker.
+The CLI exports original audio plus editable text through the same parser.
+
+All 65,536 token values round-trip; all 101 originals retain exact native commands
+and 6,615,080 samples through the editable path. 850 authored/notation checks pass.
+Review exposed context loss when previewing a selected substring: passage playback
+now traces native token/command/sample boundaries and slices the full-context
+PCM. Partition and inherited-gain fixtures cover that behavior; cold follow-up
+review found no blocking defect. No Unity compile/build or new UI runtime claim;
+the inspected Editor still had the previous script version loaded.
+
+Removed the unwritten final word pause (151 samples, ~11.6ms) so original records
+can be represented exactly. Existing phoneme/space/pause defaults otherwise stay
+unchanged, including bare on. Removed the authoring validator's duplicate sound
+inventory; it now uses the game parser and requires .NET 9. Added the missing Codex
+project skill link; the repository remains the only instruction source.
+No original bank, story text, recorded effect or character setting was deleted.
+
+Matched opening sentence: simplified 3.036s versus full-expression 3.990s, at the
+same pitch. Native early waveform windows correlate 0.885/0.913 with the Atari
+recording at about 1.04 duration scale; whole-phrase correlation remains 0.421.
+Prepared equal-level Atari/simplified/full listening comparison and editable
+text under ~/Downloads/Rody-full-expression. Transcription found the same sentence
+three times; that is a content check, not listening acceptance. Details and
+limits are owned by docs/SPEECH_ENGINE.md.
+
+---
+
 ## 2026-09-07: Independent original-machine speech audit
 
 Arthur questioned the completeness of the reverse engineering after rejecting

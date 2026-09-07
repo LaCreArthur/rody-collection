@@ -36,6 +36,13 @@ public class SynthManager : MonoBehaviour
         ("-", "bruit blanc"), ("cuicui", "oiseau"), ("pop", "pop")
     };
 
+    // The opening is split across these three calls in the original game.
+    // Templates are formatted from the bank when selected, never stored twice.
+    static readonly int[] OriginalExamples = { 0, 1, 3 };
+
+    string SelectedText => sounds.value < SoundExamples.Length ? SoundExamples[sounds.value].token :
+        SoundManager.OriginalDialogue(OriginalExamples[sounds.value - SoundExamples.Length]);
+
     Action<string, float> onApply;
     Action onClose;
     string originalText;
@@ -69,12 +76,13 @@ public class SynthManager : MonoBehaviour
         gameObject.name = "SpeechWorkbench-" + GetEntityId();
         sounds.ClearOptions();
         sounds.AddOptions(SoundExamples.Select(s => $"{(s.token == " " ? "espace" : s.token)}  ·  {s.example}").ToList());
+        sounds.AddOptions(OriginalExamples.Select((_, i) => $"Rody 1 · ouverture {i + 1}/3 · expression originale").ToList());
         play.onClick.AddListener(PlayAll);
         passage.onClick.AddListener(PlayPassage);
         copy.onClick.AddListener(Copy);
         paste.onClick.AddListener(Paste);
         insert.onClick.AddListener(InsertSound);
-        audition.onClick.AddListener(() => sm.Speak(SoundExamples[sounds.value].token, pitchSlider.value));
+        audition.onClick.AddListener(() => sm.Speak(SelectedText, pitchSlider.value));
         reset.onClick.AddListener(Restore);
         apply.onClick.AddListener(Apply);
         close.onClick.AddListener(Close);
@@ -104,9 +112,9 @@ public class SynthManager : MonoBehaviour
 
     void Refresh()
     {
-        string[] unknown = input.text.Split((char[])null).SelectMany(word => word.Split('_'))
-            .Where(token => !RodySpeechEngine.IsKnownToken(token)).Distinct().ToArray();
-        valid = unknown.Length == 0;
+        string error = input.text.Split((char[])null).SelectMany(word => word.Split('_'))
+            .Select(RodySpeechEngine.TokenError).FirstOrDefault(message => message != null);
+        valid = error == null;
         bool hasText = !string.IsNullOrWhiteSpace(input.text);
         play.interactable = sm.isPlaying || (valid && hasText);
         passage.interactable = valid && hasText;
@@ -116,8 +124,9 @@ public class SynthManager : MonoBehaviour
         copy.interactable = hasText;
         pitchValue.text = pitchSlider.value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "×";
         status.color = valid ? new Color32(81, 94, 88, 255) : new Color32(171, 49, 42, 255);
-        status.text = valid ? "Un espace = une respiration. Deux _ = une petite pause." :
-            "Sons inconnus : " + string.Join(", ", unknown) + ". Corrige-les avant d’écouter.";
+        status.text = !valid ? error : input.text.Contains("[") ?
+            "[forme 0–15, volume 0–7, vitesse 0–7] · 0 garde volume/vitesse.\nLa forme choisit une partie du son : un nombre plus grand ne l’allonge pas forcément." :
+            "Un espace = une respiration. Deux _ = une petite pause.";
         reset.interactable = !pasting && (input.text != originalText || !Mathf.Approximately(pitchSlider.value, originalPitch));
     }
 
@@ -162,13 +171,13 @@ public class SynthManager : MonoBehaviour
     {
         if (!valid) return;
         var range = Selection(true);
-        sm.Speak(input.text.Substring(range.start, range.end - range.start), pitchSlider.value);
+        sm.Speak(input.text, pitchSlider.value, range.start, range.end);
     }
 
     void InsertSound()
     {
         var range = Selection(false);
-        string token = SoundExamples[sounds.value].token;
+        string token = SelectedText;
         string text = input.text;
         bool Separator(char c) => char.IsWhiteSpace(c) || c == '_';
         string inserted = token;

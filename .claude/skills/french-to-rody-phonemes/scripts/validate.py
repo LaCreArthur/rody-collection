@@ -1,38 +1,15 @@
 #!/usr/bin/env python3
-"""Validate a Rody phoneme string.
+"""Validate through the game's C# parser. Requires the .NET 9 SDK.
 
-Every token must belong to the game's speech notation inventory.
-Unknown tokens play as short pauses with a warning in game.
-
-Usage: validate.py "b_r_a_v_o l_e_v_o"   (or pipe the string on stdin)
-Exit 0 = all tokens valid, exit 1 = invalid tokens found (listed on stdout).
+Usage: validate.py "b_r_a_v_o" (or pipe text on stdin).
+Exit 0 = valid, exit 1 = invalid tokens or control fields.
 """
+from pathlib import Path
+import subprocess
 import sys
 
-VALID = {
-    # vowels
-    "a", "i", "u", "ou", "o", "oh", "et", "ai", "e", "eu", "ee",
-    "an", "on", "in", "un", "oi", "ui", "y",
-    # consonants
-    "l", "r", "p", "t", "c", "b", "d", "g", "m", "n", "gn",
-    "s", "f", "ch", "z", "v", "j",
-    # pauses and specials
-    ",", ".", "-", "ti", "ouu", "cuicui", "pop",
-    "",  # empty token from "__" = deliberate extra pause
-}
-
-
-def invalid_tokens(s):
-    return [tok for word in s.split() for tok in word.split("_")
-            if tok not in VALID]
-
-
-if __name__ == "__main__":
-    text = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else sys.stdin.read()
-    bad = invalid_tokens(text.strip())
-    if bad:
-        print("INVALID tokens (each plays as a silent pause in game):")
-        for tok in sorted(set(bad)):
-            print(f"  {tok!r}")
-        sys.exit(1)
-    print("OK: all tokens valid")
+ROOT = Path(__file__).resolve().parents[4]
+text = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else sys.stdin.read()
+raise SystemExit(subprocess.run([
+    'dotnet', 'run', '--project', str(ROOT / 'tools/speech'), '--', 'validate', text
+], cwd=ROOT).returncode)

@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-09-07 (original-machine speech audit corrected shared port errors)
+> **Updated:** 2026-09-07 (lossless editable speech expression implemented)
 
 ---
 
@@ -10,16 +10,18 @@
 **Speech port (2026-09-07): corrected after original-machine audit.** The engine
 matches 1,429 command streams executed by original Atari code and all 1,280
 amplitude sample probes. The earlier Python-only parity missed shared errors.
-All 101 original records and 841 authored cases pass the port comparison.
-Authored notation still loses expressive data; hardware timing/output remain
-approximate. Listening rejection is unresolved, and no story-format migration
-has been approved. Details and reproducible checks:
+All 101 original records and 850 authored cases pass the port comparison.
+Full editable notation now preserves every native control, with original
+opening passages available in the workbench. Existing bare notation retains its
+defaults; official stories have not been automatically rewritten. Hardware
+timing/output remain approximate and human listening acceptance is pending. Details and reproducible checks:
 [SPEECH_ENGINE.md](SPEECH_ENGINE.md).
 
 **Dialogue workbench (2026-09-07): implemented locally.** The collection now has
 a Voix entry. Story dialogue editing uses the same sentence workbench with
 passage playback, sound examples, insertion, pitch, copy/paste and explicit
-apply/cancel. Browser clipboard and final listening remain release checks.
+apply/cancel. Selected-passage playback retains full dialogue context. Browser clipboard,
+new-template runtime QA and final listening remain release checks.
 
 The older architecture/cleanup sections below record previous work and can lag
 behind the current codebase; they are not implementation instructions.

@@ -30,6 +30,8 @@ public class SoundManager : MonoBehaviour
         Resources.Load<TextAsset>("Speech/Rody1").bytes,
         Resources.Load<TextAsset>("Speech/Tables").bytes);
 
+    public static string OriginalDialogue(int index) => Engine.OriginalDialogue(index);
+
     public void RandomSound(params AudioClip[] clips)
     {
         StopSpeech();
@@ -37,11 +39,11 @@ public class SoundManager : MonoBehaviour
         soundSource.Play();
     }
 
-    public void Speak(string dialogue, float pitch = 1f)
+    public void Speak(string dialogue, float pitch = 1f, int selectionStart = 0, int selectionEnd = int.MaxValue)
     {
         StopSpeech();
         var parts = Engine.RenderDialogue(dialogue,
-            token => Debug.LogWarning($"Unknown speech token '{token}' plays as a pause."));
+            token => Debug.LogWarning($"Unknown speech token '{token}' plays as a pause."), selectionStart, selectionEnd);
         if (parts.Count == 0) return;
         isPlaying = true;
         soundSource.loop = false;

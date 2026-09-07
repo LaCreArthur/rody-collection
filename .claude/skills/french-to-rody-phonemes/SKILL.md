@@ -18,7 +18,24 @@ reads: "Rody, maman a ouvert doucement la porte de ta chambre."
 A capital letter, accent, or typo can therefore eat a sound. Validate before
 handing over dialogue; the offline renderer rejects unknown tokens.
 
-## Phoneme inventory (the ONLY valid tokens)
+## Preserve original expression
+
+When a dialogue already contains bracketed native controls, retain them. Removing
+those controls or collapsing repeated sound tokens discards expression even if
+the French transcript stays the same. Use the shared formatter for original
+records rather than rebuilding them from the French spelling:
+
+```bash
+dotnet run --project tools/speech -- render-original /tmp/original.wav 0
+```
+
+This writes both audio and editable notation. The record index is zero-based.
+Paste the text into the same workbench field used for new dialogue. The grammar,
+field meanings and original-record limits are owned by `docs/SPEECH_ENGINE.md`;
+read its **Lossless editable expression** section before modifying controls.
+Bare phonemes use defaults; they do not reconstruct an original delivery.
+
+## Basic phoneme inventory
 
 ### Vowels
 
@@ -91,9 +108,10 @@ handing over dialogue; the offline renderer rejects unknown tokens.
    Aspirated h blocks liaison: insert a `__` pause instead, la hache -> `l_a__a_ch`.
 5. **Numbers and abbreviations are spelled out as sounds:**
    56 -> `s_in_c_an_t_s_i_s`.
-6. **Everything lowercase, no accents, no punctuation other than `,` `.` `-`
-   used as tokens.** Question marks and exclamations have no token; intonation
-   comes from the per-dialogue pitch setting in the editor, not the string.
+6. **Use lowercase sound names.** Question marks and exclamations have no
+   direct token. New dialogue can use the basic sounds below or explicit native
+   expression; preserve existing bracketed controls. Character pitch remains
+   a separate per-dialogue playback setting.
 7. **Validate** (see below), then read the result back sound by sound to check
    it against the original sentence.
 
@@ -139,7 +157,8 @@ stories or explaining a string to a player.
 python3 .claude/skills/french-to-rody-phonemes/scripts/validate.py "b_r_a_v_o l_e_v_o"
 ```
 
-Exits non-zero and lists every invalid token (each one would play as a silent
+Requires the .NET 9 SDK and calls the game’s parser. Exits non-zero and lists
+every invalid token or control field (each one would play as a silent
 pause in game). Run it on every string you produce. The most common failures:
 uppercase letters, accented characters (é, à), and spelled-out French instead
 of sounds ("est" instead of `ai`).
@@ -164,7 +183,7 @@ natural dialogue merely to improve a transcription score.
 
 ## Provenance
 
-Last checked: 2026-09-06. Volatile facts: runtime speech path, token support,
+Last checked: 2026-09-07. Volatile facts: runtime speech path, token support,
 local preview dependencies. Re-check with `python3 tools/speech/verify.py` and
 render a dialogue through the command above; consult `docs/SPEECH_ENGINE.md`
 for the limits of reference parity and pending listening checks.
