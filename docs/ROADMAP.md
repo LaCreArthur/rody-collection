@@ -1,7 +1,7 @@
 # Roadmap
 
 > Single source of truth for project progress and remaining work.
-> **Updated:** 2026-09-07 (lossless editable speech expression implemented)
+> **Updated:** 2026-09-07 (full expression accepted; workbench checked; French handoff ready)
 
 ---
 
@@ -13,15 +13,16 @@ amplitude sample probes. The earlier Python-only parity missed shared errors.
 All 101 original records and 850 authored cases pass the port comparison.
 Full editable notation now preserves every native control, with original
 opening passages available in the workbench. Existing bare notation retains its
-defaults; official stories have not been automatically rewritten. Hardware
-timing/output remain approximate and human listening acceptance is pending. Details and reproducible checks:
+defaults; official stories have not been automatically rewritten. Arthur accepted full expression in the listening comparison. Hardware
+timing/output remain approximate. Details and reproducible checks:
 [SPEECH_ENGINE.md](SPEECH_ENGINE.md).
 
 **Dialogue workbench (2026-09-07): implemented locally.** The collection now has
 a Voix entry. Story dialogue editing uses the same sentence workbench with
 passage playback, sound examples, insertion, pitch, copy/paste and explicit
 apply/cancel. Selected-passage playback retains full dialogue context. Browser clipboard,
-new-template runtime QA and final listening remain release checks.
+player release checks remain. The French-entry integration is paused until this
+foundation handoff; see [FRENCH_SPEECH_HANDOFF.md](FRENCH_SPEECH_HANDOFF.md).
 
 The older architecture/cleanup sections below record previous work and can lag
 behind the current codebase; they are not implementation instructions.

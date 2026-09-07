@@ -70,12 +70,30 @@ an exact global clock measurement or listening acceptance. Do not apply a global
 slowdown to compensate for missing authored expression. No Unity build, browser
 check or new human listening acceptance was obtained in this audit.
 
+## Listening decision and next-leg boundary (2026-09-07)
+
+Arthur's listening verdict: “full expression is the best next to atari original,
+no question”. Full expression is the accepted direction; this is not acceptance
+of exact hardware timing. He also explicitly permits replacing obsolete C#
+phoneme structures rather than retaining them for compatibility.
+
+The paused French-entry leg owns “write French → listen → correct a word”.
+French spaces separate written words; commas and periods supply pauses. There
+is no requirement for extra visible pause-marker syntax. That French contract
+must not inherit the legacy notation parser's whitespace-to-pause rule.
+This leg owns the audited native expression and playback foundation. Bracketed
+notation is a lossless interchange/inspection surface, not a required primary
+editing experience. Integration details and the quoted user decisions are in
+[FRENCH_SPEECH_HANDOFF.md](FRENCH_SPEECH_HANDOFF.md).
+
 ## Lossless editable expression (2026-09-07)
 
 Arthur approved preserving original duration, emphasis and pauses in editable
-dialogue, followed by a recording comparison. The existing dialogue string remains
-the sole stored score; there is no native/shorthand pair, prerecorded-original
-playback path, new JSON schema or story migration. Original templates and newly
+dialogue, followed by a recording comparison. In this completed implementation
+leg, the existing dialogue string remains the sole stored score; there is no native/shorthand pair, prerecorded-original
+playback path, new JSON schema or story migration. This storage shape is
+replaceable in the French-entry leg; preserving native expression is the contract.
+Original templates and newly
 authored text pass through the same parser, preprocessor and PCM interpreter.
 
 A sound may carry `[envelope,amplitude,rate]`, for example
@@ -126,9 +144,28 @@ notation, strict field errors, and selected passages partitioning the full audio
 A separate expected command fixture checks inherited gain in a selected vowel.
 All 850 authored/notation cases pass their specified checks. Cold review caught
 and prompted the passage-context fix; follow-up review found no blocking defect.
-No Unity compile/build was requested or run. The open Editor was still using its
-previously loaded scripts when inspected, so new workbench runtime/visual QA is
-not claimed. Final browser and human listening checks remain release work.
+The original implementation leg used offline checks only. Its subsequent
+workbench completion check is recorded below. Browser/player checks remain
+release work; full expression has now been accepted in the listening comparison.
+
+### Workbench completion check
+
+After refreshing the Editor's pending asset imports (normal script reload, no
+forced compilation command or player build), the running workbench was exercised:
+
+- Its picker had 46 options; inserting the first original template exactly matched
+  the bank-derived notation. Playback created 51,870 samples at 13,000Hz.
+- Invalid `on[1,8,0]` disabled Play and Apply and named the out-of-range volume.
+- Full-context selected playback of the final vowel in
+  `r[1,5,3]_o[4,0,0]_o[1,0,5]` created 1,307 samples with normalized range
+  -0.8203125..0.75, consistent with the inherited-gain fixture.
+- The composited 960×600 game view showed the full-expression text, original
+  template option and two-line help without overlapping neighboring controls.
+  The help text uses the existing vertical overflow; no scene change was needed.
+- Play Mode was stopped and the original clean collection scene restored.
+
+This closes the new-template runtime check. Browser behavior, French conversion
+integration and player builds were not exercised here.
 
 ### Matching recording comparison
 

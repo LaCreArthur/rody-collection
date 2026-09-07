@@ -1,3 +1,21 @@
+## 2026-09-07: Accepted expression and French-entry handoff
+
+Arthur accepted full expression as the best version after the original Atari
+recording and explicitly released the old C# structures as a compatibility
+constraint. Captured the French-entry session's user decisions and integration
+boundary in docs/FRENCH_SPEECH_HANDOFF.md; full speech details remain owned by
+docs/SPEECH_ENGINE.md. The paused agent's converter files remain untouched. Cold handoff review
+clarified approval provenance and that the current string storage is replaceable.
+
+Refreshed pending Unity imports to exercise the actual new workbench. Original
+insertion retained exact notation and played 51,870 samples at 13kHz. Invalid
+volume blocked Play/Apply; selected playback retained inherited gain. Inspected
+the composited 960×600 workbench; expression help and template labels fit without
+control overlap. Stopped Play Mode and restored the clean collection scene.
+No forced compilation command, player build, browser integration or push.
+
+---
+
 ## 2026-09-07: Lossless editable speech expression
 
 Accepted next step: preserve original duration/emphasis/pauses in editable
