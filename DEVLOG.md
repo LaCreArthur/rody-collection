@@ -1,3 +1,22 @@
+## 2026-09-07: Listening comparison preparation
+
+Prepared local listening files from the preserved Atari capture and current
+authored story notation. Whisper checked the reference excerpt at 121 seconds
+in `r1_full.wav`: it ends after "elle ne te trouvera pas", so the current preview
+omits the following sentence for a matched-text comparison. Reference duration
+is 13.607 seconds including surrounding pauses; current preview is 7.490 seconds.
+This is a pacing concern for listening, not proof of its cause. Native-record
+PCM parity does not establish authored-notation timing equivalence.
+
+The offline renderer crashed on the original intro: `i * rate` overflowed as an
+integer before conversion to double. Promote before multiplication. The same
+render command and two Ibiza previews now complete; original preview transcript
+contains the intended passage (with STT substitutions). No Unity build or tests.
+Listening pack is local under `~/Downloads/Rody-listening`; no audio acceptance
+or browser validation claimed.
+
+---
+
 ## 2026-09-07: Dialogue voice workbench
 
 Replaced the phoneme keyboard with a sentence workbench shared by the collection

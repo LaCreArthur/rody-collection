@@ -84,7 +84,7 @@ else if (args.Length >= 3 && args[0] == "render")
         int count = (int)Math.Round(input.Length * 44100.0 / rate / pitch);
         for (int i = 0; i < count; i++)
         {
-            double position = i * rate * pitch / 44100.0;
+            double position = i * (double)rate * pitch / 44100.0;
             int lo = Math.Min(input.Length - 1, (int)position), hi = Math.Min(input.Length - 1, lo + 1);
             double sample = input[lo] + (input[hi] - input[lo]) * (position - lo);
             output.Add((short)Math.Clamp((int)Math.Round(sample * 32768), short.MinValue, short.MaxValue));
