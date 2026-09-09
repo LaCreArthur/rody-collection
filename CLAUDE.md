@@ -8,8 +8,9 @@ memory index. Use `studio-repo-discipline` before edits or Git writes.
 
 | Need | Owner | What it establishes |
 |---|---|---|
-| Understand the product | [Game design](docs/GAME_DESIGN.md) | Collection, stories, Maker, voice, creative limits and clearly labelled UX proposals; deliberately code-free |
+| Understand the product | [Game design](docs/GAME_DESIGN.md) | Collection, stories, Maker, voice, creative limits and accepted next UX; deliberately code-free |
 | Decide what to do next | [Roadmap](docs/ROADMAP.md) | Priorities, completed implementation, remaining release checks |
+| Implement the accepted editor UX | [Workspace plan](docs/EDITOR_WORKSPACE_PLAN.md) | One personal story, Save as download, complete restore and browser recovery; planned, not implemented |
 | Work on story storage / editor state | [Architecture](docs/unify/ARCHITECTURE.md) | Current owners, data flow, save/export and content format |
 | Fix a known editor/storage issue | [Audit](docs/unify/AUDIT.md) | Source evidence, uncertainty and the narrow check needed for each finding |
 | Check historical storage intent | [Decisions](docs/unify/DECISIONS.md) | Recorded direction versus old unapproved defaults |

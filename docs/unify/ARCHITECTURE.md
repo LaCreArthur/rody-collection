@@ -4,6 +4,8 @@ Source review: 2026-09-09, local commit `2d7555e`. This describes the implementa
 release status belongs to [ROADMAP.md](../ROADMAP.md), unresolved defects to
 [AUDIT.md](AUDIT.md), and product decisions to [DECISIONS.md](DECISIONS.md).
 The June migration is implemented, with integration gaps; it is not a future build plan.
+The accepted replacement is specified in the [workspace plan](../EDITOR_WORKSPACE_PLAN.md).
+Until it is implemented, the ownership and Save/Export paths below remain current facts.
 
 ## Runtime ownership
 

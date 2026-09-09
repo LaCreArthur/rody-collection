@@ -6,6 +6,11 @@ pass. Findings below distinguish direct code behavior from risks requiring runti
 reproduction. Current architecture is in [ARCHITECTURE.md](ARCHITECTURE.md);
 release sequencing is in [ROADMAP.md](../ROADMAP.md).
 
+These findings describe the current multi-story implementation. Arthur subsequently
+accepted the [single-workspace direction](../GAME_DESIGN.md#9-accepted-saving-and-editing-experience--not-yet-implemented);
+the [plan](../EDITOR_WORKSPACE_PLAN.md) owns its remedies and acceptance criteria.
+Do not repair a library/export distinction that the accepted design removes.
+
 ## Save and content integrity
 
 | Finding | Evidence and consequence | Narrow verification for a fix |
@@ -38,10 +43,11 @@ release sequencing is in [ROADMAP.md](../ROADMAP.md).
   `Assets/Plugins/WebGL` or `Assets/WebGLTemplates` (searched `visibilitychange`,
   `pagehide`, `beforeunload`, and sync callers). The old decision was not implemented
   in these surfaces. Do not infer that all browser/platform durability is absent.
-- **Export state is not represented:** session state records dirty/last-save values;
+- **Historical export-state gap:** session state records dirty/last-save values;
   export downloads without marking an export revision. The carousel paints title
   and cover without the former dirty badge. A "saved" label cannot demonstrate the
-  requested "backed up by export" state.
+  former "backed up by export" state. September 9 retires that separate indicator;
+  it is no longer work to implement.
 - Browser file pickers deliberately report unavailable outside WebGL. Desktop
   import/export parity promised by old guides is not the current implementation.
 
@@ -62,8 +68,8 @@ release sequencing is in [ROADMAP.md](../ROADMAP.md).
 - Editor draft fields still mirror `SceneData` through manual copy-in/copy-out.
   Music selection retains inverse switch mappings. These are maintenance costs,
   not independent reasons for a new architecture project.
-- User catalog cards still deserialize complete saved stories. Optimize only if a
-  representative user library shows a meaningful startup cost.
+- User catalog cards still deserialize complete saved stories. This path retires
+  with the personal library; do not optimize a path scheduled for deletion.
 - `isZambla` remains in voice data; its authoring affordance was deferred. Preserve
   Ibiza character playback when changing editor or scene-entry behavior.
 
@@ -78,6 +84,7 @@ not browser acceptance.
 
 Retired instructions: repeated provider/WorkingStory migration steps, per-file
 compile/build recipes, the unimplemented `WebShare` replacement type, and old
-line-count/effort inventories. The save-awareness plan's download-only choice was
-superseded; its remaining user outcomes (clear Save/Export, honest warnings,
-backup indication, button help) survive above and in the recorded decisions.
+line-count/effort inventories. June replaced the older download-only save-awareness
+proposal; September 9 now explicitly chooses one file Save again, within a single
+recoverable workspace. Honest feedback and button help survive; separate Export
+and backup indication retire. The dated [decisions](DECISIONS.md) preserve provenance.

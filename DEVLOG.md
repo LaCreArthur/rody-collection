@@ -3,6 +3,38 @@
 Dated historical evidence, not current instructions. Start with [the roadmap](docs/ROADMAP.md)
 and [game design](docs/GAME_DESIGN.md); old APIs, conclusions and screenshots can be superseded.
 
+## 2026-09-09: Single-workspace editing accepted and planned
+
+Arthur proposed one editable/imported story, an initial restore point and one
+Save that exports a file. He accepted the recommendation adding an advancing
+restore point, whole-story draft, prompt-free navigation/Test, preservation while
+playing originals, transactional import/replacement and browser recovery of both
+draft and checkpoint, then asked to plan implementation.
+
+- Created `docs/EDITOR_WORKSPACE_PLAN.md` with verbatim mandate, source findings,
+  minimal ownership, phased implementation, deletion accounting, browser API
+  boundaries and observable acceptance journeys. Existing serializer, clone,
+  IDBFS and file-download paths are reused; no package or parallel save mode.
+- Cold review identified a delayed Save-and-replace race. The plan now temporarily
+  locks editing/conflicting actions through capture, download handoff and replacement;
+  background recovery remains independent. No other material findings were returned.
+- Updated the game design's accepted direction, roadmap priorities, decision
+  provenance and entry routes. Current architecture/audit/tutorial still describe
+  current code; they change when implementation does, not when the plan is written.
+- Superseded meaning: multiple personal-story library, browser Save plus separate
+  Export, scene-only Reset, prompts on navigation/Test/ordinary exits, separate
+  local-save/backup indicators, personal-library sorting/deletion/collision UX.
+  The earlier June direction remains explicitly historical. Scene deletion,
+  portable files and their existing content, original order, creator tools and
+  speech expression/French corrections are retained. Expanded authoring capacity
+  and metadata management remain parked, not silently cut.
+- Existing browser-only user stories require preservation before public cutover;
+  do not erase old storage or add a speculative legacy recovery framework.
+
+Validation: inspected governing source/consumers, current browser API documentation,
+plan/design consistency, links and final diff. Documentation only; no C# or Unity
+asset edits, compile/build, runtime testing or publication.
+
 ## 2026-09-09: Documentation audit, product design and AX consolidation
 
 Arthur requested a full documentation audit, clearer UX recommendations, one

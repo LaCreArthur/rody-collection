@@ -13,7 +13,7 @@ les fonctions présentes dans le code des vérifications et de la publication re
 
 **[Game Design & Product Specification](docs/GAME_DESIGN.md)** explique en un seul
 document la Collection, les histoires, Rody Maker et l'atelier vocal, sans référence
-au code. Il sépare le produit existant des propositions d'amélioration de l'UX.
+au code. Il distingue le produit existant de la prochaine UX acceptée, encore à réaliser.
 
 | Besoin | Document |
 |---|---|

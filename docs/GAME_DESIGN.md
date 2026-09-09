@@ -5,10 +5,11 @@ Rody stories, and Rody Maker. It describes the experience, its rules, its creati
 possibilities and the intended relationship between its parts.
 
 **Reading the status:** Sections 1–8 describe the established product and current
-capabilities. Section 9 proposes a consistent editing experience; it is a
-recommendation awaiting agreement, not a claim that every interaction already
-works that way. Section 10 names the remaining product gaps. None of these sections
-certifies that a feature has been checked in the latest published browser version.
+capabilities, including the older library/save controls that will be replaced.
+Section 9 owns the accepted editing direction from September 9; it has not been
+implemented yet. Where they differ, section 9 is the intended behavior. Section 10
+names the remaining product gaps. None of these sections certifies that a feature
+has been checked in the latest published browser version.
 
 ## At a glance
 
@@ -16,10 +17,10 @@ certifies that a feature has been checked in the latest published browser versio
 - **Story:** a linear sequence of illustrated scenes, voices and object searches.
 - **Maker:** assemble those scenes and remix existing stories without programming.
 - **Voix:** write, listen to and correct deliberately robotic French speech.
-- **Next UX decision:** one whole-story draft, explicit Save, safe exit and portable Export.
+- **Accepted next UX:** originals plus one personal story; Save downloads; Discard restores; automatic browser recovery.
 
 For product orientation, read sections 1–3; for story/creator rules, 4–8; for the
-proposed UX and unresolved scope, 9–10. Bonuses and success criteria close the document.
+accepted next UX and unresolved scope, 9–10. Bonuses and success criteria close the document.
 
 ## 1. What Rody Collection is
 
@@ -106,9 +107,9 @@ story, not an eighth adventure added to six numbered originals.
 | 6 | Rody et Mastico VI | Sixth original adventure |
 | 7 | Rody à Ibiza | Arthur's fan-made episode, after the originals |
 
-Personal stories appear after the built-ins. Several saved personal stories can
-belong to the library; one story is selected for play or editing at a time.
-The present ordering places the most recently saved personal stories last.
+The current implementation lists several saved personal stories after the built-ins,
+newest saved last. This library is being replaced by the one personal workspace
+defined in section 9; it is not the target experience.
 
 ### Browsing and actions
 
@@ -116,7 +117,8 @@ Stories appear as covers in a horizontal carousel. Selecting a cover focuses the
 story; clicking the focused cover launches it. The user can drag the carousel or
 move through it with left/right controls.
 
-A shared action area changes with the selected story:
+The current shared action area changes with the selected story (section 9 replaces
+its personal-library and Export behavior):
 
 - **Dupliquer** on a built-in opens a personal editable copy.
 - **Éditer** on a personal story opens that story in Maker.
@@ -125,8 +127,8 @@ A shared action area changes with the selected story:
 - **New story** asks for a title and optional cover, then opens a new adventure.
 - **Voix** opens the standalone voice workbench.
 
-User-story deletion exists through a keyboard action and confirmation. Making
-this action discoverable without knowing a shortcut remains a UX gap.
+User-story deletion currently exists through a keyboard action and confirmation.
+It retires with the personal library; scene deletion remains a separate authoring tool.
 
 ### Built-in versus personal
 
@@ -135,10 +137,9 @@ when someone experiments. Editing one produces a personal copy, recognisable by
 its copy title. Imported and newly created stories are personal stories.
 
 A copy is independent: changing its picture or dialogue should not modify the
-built-in or another personal story. Two stories with the same visible title must
-still be able to exist without one silently replacing the other. The existing
-experience has gaps in these protections; this is a required distinction in the
-product, not a reason to burden creators with technical identifiers.
+built-in. Importing a story with the same title as an original must never replace
+that original. Replacing the one personal workspace follows the explicit choices
+in section 9; creators do not need to manage technical identifiers.
 
 ## 4. What a Rody story contains
 
@@ -293,7 +294,7 @@ large preview, with tools grouped by the part of the scene being edited:
 - **Test:** experience the scene as a player.
 - **Save:** keep the current work locally.
 - **Reset:** the earlier intended action was to abandon the current unsaved scene edit;
-  section 9 proposes a clearer, story-wide restore action instead.
+  section 9 replaces it with an accepted story-wide Discard action.
 
 The title image is a presentation screen; it does not have the ordinary scene's
 introductory dialogue and object-search tools. New scene creation and later-scene
@@ -352,8 +353,9 @@ Original passages provide examples of that expression.
 ### Keeping a line
 
 When opened from a story, **Use dialogue** applies the chosen speech and delivery
-to that line; **Cancel** leaves the line as it was. The containing scene still needs
-Save to keep the edit. A saved French-authored dialogue retains its French source,
+to that line; **Cancel** leaves the line as it was. Under the accepted direction
+in section 9, applying the line immediately keeps it in the story draft; Save downloads it with
+the whole story. A saved French-authored dialogue retains its French source,
 word corrections and chosen expression for later editing.
 
 Already-authored phonetic dialogue remains editable even when its original French
@@ -364,99 +366,87 @@ saved story, and a downloadable audio recording is not a current feature. Copyin
 a score is also not a substitute for saving the full French-authored dialogue in
 a story.
 
-## 9. Recommended saving and editing experience — proposed
+## 9. Accepted saving and editing experience — not yet implemented
 
-### One simple distinction
+Arthur accepted this direction on September 9: **a document-style editor, with the
+original collection always available and one personal “My story” workspace**.
+This replaces the multiple-personal-story library and separate Save/Export model.
+
+### One story, one Save, one restore point
 
 | Term | Meaning for the creator |
 |---|---|
-| **Draft** | All changes they are trying in one open story, across its scenes |
-| **Save** | Keep the whole edited story in this browser so it can be reopened |
-| **Export** | Download the saved story as a portable backup or a file to share |
-| **Restore saved story** | Discard all changes since this story’s last successful Save |
+| **My story / Mon histoire** | The one personal story open for editing and play |
+| **Draft** | All changes in that story, across every scene and kind of content |
+| **Save / Enregistrer** | Download the complete story file and keep editing |
+| **Restore point** | The initial version opened for editing, then the version captured by the latest Save |
+| **Discard changes / Annuler les modifications** | Return the whole story to its restore point |
 
-The existing project direction is explicit Save, with export as a separate action.
-The recommendation is **one draft for the whole story**. Pictures, animation, zones,
-text, voice and added/deleted scenes all belong to that draft. Moving between scenes
-keeps the draft without asking the creator to save at every click.
-
-This changes the older scene-only Reset proposal. Replace that ambiguous action
-with **Rétablir l’histoire enregistrée**, whose confirmation explicitly says it will
-discard changes across the story. There is one Save boundary and one complete
-restore boundary; an image import must not bypass them while a text edit obeys them.
-This is a proposed change, not a previously accepted decision.
+Text, voice, pictures, animation, targets, metadata and added/deleted scenes all
+belong to the same draft. Save advances the restore point, so Discard never returns
+to a version older than the latest Save. There is no scene-only save or reset.
+Save is also available before any edits, to download an unchanged story.
 
 ### Action contract
 
-| What the creator does | What should happen |
+| What the creator does | What happens |
 |---|---|
-| Saves | Show `Enregistrement…`, then `Enregistré dans ce navigateur` only after success. Keep the draft and offer retry if saving fails. |
-| Restores the saved story | Name the story and ask before discarding all changes. Restore its last successful save, including pictures and scenes added or deleted since then. Disable the action if nothing changed. |
-| Changes scene or opens another editor panel | Keep all draft edits and navigate without a save prompt. |
-| Changes story or leaves the editor | If there are changes, offer `Enregistrer / Ne pas enregistrer / Rester`. Discard restores the saved story; an unsaved copy is dropped. If unchanged, go directly. A failed save keeps the creator in place. |
-| Tests a scene | Play the draft and return to the same draft. Testing should neither save it nor lose it. This is a proposed change to the current Test behaviour. |
-| Edits a built-in | Work in a personal copy; keep the original intact. Create its library entry on the first successful Save. Keep the existing copy-title style without a compulsory name prompt. |
-| Imports a conflicting story | Offer a new copy, replacement of the named personal story, or cancellation. Default to a new copy; never silently replace an original. |
-| Exports | Download the selected saved story. Say `Téléchargement lancé`, since the application cannot guarantee that the person kept the file. |
-| Deletes a personal story | Name the story in the confirmation and remove it only after the deletion succeeds. |
+| Creates, duplicates or imports | Opens the one editable story. If the existing draft has changes, first offer **Enregistrer / Ne pas enregistrer / Annuler** before replacing it. |
+| Chooses Save in that prompt | Download the existing draft through the normal Save action, then open the replacement. An observed save error leaves the existing work and choice intact. |
+| Chooses Discard in that prompt | Replace the existing personal story with the prepared new one. |
+| Chooses Cancel in that prompt | Keep the existing story, changes and place in the editor. |
+| Changes scene or editor panel | Keep all accepted changes and navigate without a save prompt. |
+| Tests | Play the current draft; return to the same draft and editor scene, without saving it. |
+| Leaves the editor, browses or plays an original, or opens standalone Voix | Preserve the personal story and its changes. None of these actions replaces it. |
+| Edits an original | Duplicate it into the personal workspace, using the same replacement choice if needed. Keep the original intact, including through the gameplay paintbrush. |
+| Saves | Download the complete draft, keep editing and advance its restore point. Show **Téléchargement lancé**. |
+| Discards changes | Confirm that all changes in the story will be discarded; restore the initial/latest saved version, including pictures and scenes. Disable when unchanged. |
+| Cancels an import or chooses an invalid file | Leave the previous story and all its changes untouched. Validate the incoming story before offering replacement. |
+| Adds or deletes a scene | Change the same draft. Confirm a named scene's deletion; whole-story Discard can bring it back. |
 
-Closing a browser tab is a separate boundary: the application cannot promise a
-custom three-button dialog there. It should make the unsaved state visible before
-that moment; neither hiding nor closing a tab should secretly save a draft that
-the creator intended to discard.
+Only New, Duplicate and Import replace the personal workspace. The collection
+contains the original covers plus one personal slot with its current title and
+cover; there are no library ordering, personal-story deletion or collision choices.
+New still asks for a title and optional cover; Duplicate uses the existing copy
+name without a mandatory renaming step. Editing story presentation remains separate
+scope. Cover and title image retain their distinct meanings.
 
-### New stories and structural edits
+### Automatic recovery and honest feedback
 
-Creating a new story saves its initial title, optional cover and first scene before
-opening the editor. If that initial save fails, retain the entered information and
-offer retry; do not claim the story was created successfully. A built-in copy is
-kept as a draft until its first Save. Before that first save, there is no saved
-version to restore, so Restore is unavailable. Discarding the copy when leaving
-creates no library entry; the original remains available to duplicate again.
+The browser automatically remembers this one workspace, including its draft and
+restore point, so a refresh can recover both. Recovery never turns draft changes
+into a Save or advances the restore point. If recovery storage fails, retain the
+open work, explain the failure and leave file Save available. A write interrupted
+by closing/crashing the browser may not recover its latest changes.
 
-Adding or deleting a scene edits the same story draft. Save commits the resulting
-story; restoring brings back the saved scene list and scene content. Confirm deletion
-of a named scene, but do not secretly save that deletion on its own. Minimum/maximum
-scene counts still require the product decision identified below.
+Show **Modifications non enregistrées** beside the personal story when it contains
+edits since its restore point. Use readable words, not colour alone. There is no
+separate Export button, local-save status or external-backup badge.
 
-### Feedback and help
+A brief explanation introduces the single action:
 
-Show **Modifications non enregistrées** alongside the story identity when
-there is a draft. Once saved, the creator should not be repeatedly told that the
-story will disappear just because they have not exported it.
+> Enregistrer télécharge ton histoire. Ce navigateur garde automatiquement ton travail pour le retrouver ici.
 
-A brief first-save explanation is enough:
+Save starts a browser download; the application cannot certify that the person
+kept the file on disk. An observed download error preserves the draft and restore
+point. Cancellation later in browser/operating-system download controls may be
+unobservable, including when Save precedes replacing the personal story.
 
-> Conservé dans ce navigateur. Exporte un fichier pour le partager ou le garder ailleurs.
-
-Browser-local storage is tied to that browser and site; clearing it or changing
-device does not move the library. A single downloaded `.rody.json` story file contains
-the pictures and authored dialogue as well as the scenes; it is the way to carry a
-story elsewhere. There is no account-based cloud library or simultaneous collaborative
-editing in the current scope.
-
-A backup indicator can show that the saved version has been offered for download,
-but must not imply a guaranteed external backup. Use readable words alongside any
-colour cue. Keep Save's tooltip about saving, Export's about downloading, and Restore's
-about discarding the whole story draft; the same terms should appear throughout the
-collection and editor.
-
-### Priority
-
-First make saving, restoring, story identity and error messages trustworthy. Next
-make navigation and testing use those same rules. Then add concise labels and
-button help. A new visual theme or a more elaborate menu hierarchy would not solve
-the present uncertainty about what happens to an edit.
+Browser recovery belongs to that browser and site. Clearing site data or changing
+device does not carry the workspace elsewhere. The downloaded story contains its
+scenes, pictures and complete authored dialogue; it is the portable copy to keep
+or share. No cloud library, revision history or simultaneous collaborative editing
+is part of this direction.
 
 ## 10. Product gaps and decisions still open
 
 These are gaps to resolve, not new features silently added to the release:
 
-- **Trust in saved work:** complete image/text rollback, safe copies, collision handling,
-  truthful failure messages and dependable reopening in the browser.
-- **Draft scope, Test and safe exits:** agree the whole-story draft, story-wide restore,
-  draft preview and Save / Discard / Stay proposal before changing those interactions.
-  It replaces the earlier scene-only Reset intention.
+- **Implement the accepted workspace:** complete story rollback, protected originals,
+  transactional replacement/import, truthful failures, draft Test and browser recovery.
+  Section 9 settles the direction; the controls still need implementation.
+- **Existing personal work:** prepare preservation of stories that only exist in the
+  older browser library before publicly replacing it. Do not silently erase them.
 - **Scene management:** choose a clear capacity and consistent add/delete rules;
   decide whether the sixteen-slot story menu should remain the intentional retro limit.
 - **Animation authoring:** make creating, replacing and removing all displayed frame
@@ -496,6 +486,6 @@ A new creator can build a scene with an illustration, a spoken introduction and 
 findable object, test it, save it, reopen it and send it to a friend.
 
 An experienced creator can make the delivery and timing distinctly their own,
-while still understanding which edits are drafts, which are saved and which have
-been exported. All of this should feel like Rody: colourful, odd, funny and unmistakably
-robotic, with reliable controls underneath that personality.
+while still understanding the current draft, what Discard will restore, and how
+to keep or share the story with Save. All of this should feel like Rody: colourful,
+odd, funny and unmistakably robotic, with reliable controls underneath that personality.

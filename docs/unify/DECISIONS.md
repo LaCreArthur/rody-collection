@@ -5,11 +5,15 @@ is not fresh approval to implement every clause. Current behavior is owned by
 [ARCHITECTURE.md](ARCHITECTURE.md), gaps by [AUDIT.md](AUDIT.md), and priority by
 [ROADMAP.md](../ROADMAP.md).
 
-The September 9 [game design](../GAME_DESIGN.md) now proposes a whole-story draft
-and story-wide restore instead of the earlier scene-only Reset. That proposal is
-not accepted yet; retain the distinction when implementing the next leg.
+On September 9 Arthur accepted a simpler document editor: one personal workspace,
+Save downloads the file, whole-story Discard, and automatic browser recovery of
+draft plus restore point. [Game design §9](../GAME_DESIGN.md#9-accepted-saving-and-editing-experience--not-yet-implemented)
+owns that accepted behavior; the [implementation plan](../EDITOR_WORKSPACE_PLAN.md)
+owns execution. It supersedes the June local-Save/separate-Export model, scene-only
+Reset, personal library and backup indicators below. Those remain historical
+evidence, not implementation requirements. Planning is not completed implementation.
 
-## Recorded product direction
+## June 29 recorded product direction — superseded where noted above
 
 - **Save keeps a local story; Export shares a file.** Save should survive a browser
   reload. Browser storage is a convenience copy; the export is the portable backup.
