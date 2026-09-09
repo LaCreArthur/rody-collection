@@ -1,72 +1,46 @@
-# Rody Collection - Unification Decisions (resolved)
+# Story storage decisions
 
-Authoritative record of decisions for the architecture in `ARCHITECTURE.md` / `MIGRATION.md`.
-Confirmed with Arthur on 2026-06-29. No em dashes by intent.
+This preserves the product intent recorded on 2026-06-29. A historical attribution
+is not fresh approval to implement every clause. Current behavior is owned by
+[ARCHITECTURE.md](ARCHITECTURE.md), gaps by [AUDIT.md](AUDIT.md), and priority by
+[ROADMAP.md](../ROADMAP.md).
 
----
+The September 9 [game design](../GAME_DESIGN.md) now proposes a whole-story draft
+and story-wide restore instead of the earlier scene-only Reset. That proposal is
+not accepted yet; retain the distinction when implementing the next leg.
 
-## Confirmed by the user
+## Recorded product direction
 
-1. **Save semantics: Save = persist locally.**
-   The editor's Save writes the story to browser-backed local storage (persistentDataPath +
-   IndexedDB flush) and it survives a page reload. Export becomes a SEPARATE explicit "share as
-   file" action. The old Save=download behavior is dropped.
-   Consequence: the entire unsaved-work nag chain (ExportReminder, beforeunload, the
-   `_rodyHasUnsavedWork` JS flag) is deleted. Current export button is only in the main menu 0_MenuCollection, in the editor scene 6_RM_Main there is only a save button, but also a ResetButton, which is must revert to last save state and discard temporary edits of the current selected game scene (user can only edit one scene at the time) not yet saved.   
+- **Save keeps a local story; Export shares a file.** Save should survive a browser
+  reload. Browser storage is a convenience copy; the export is the portable backup.
+  No cloud/server sync or speculative remote-storage architecture was requested.
+  This supersedes the January 2026 export-only save-awareness proposal.
+- **Explicit Save, not autosave on every edit.** Reset should discard temporary edits
+  of the selected scene and return to its last saved state. The proposed page-hide
+  flush is a safety net for already-written files, not permission to save drafts.
+- **Built-ins remain intact.** Entering the editor from a built-in story should
+  transparently create a user copy and let the player continue that edited story.
+  No mandatory naming prompt was requested. The record specifically names gameplay
+  paintbrush and story-menu entry; it does not justify removing collection actions.
+- **Show backup state.** The collection should distinguish stories changed or not yet
+  exported. A locally saved story and an exported copy are different facts.
+- **Built-in order:** original, II, III, Noël (IV), V, VI, Ibiza last; user stories
+  follow, newest saved last. Ibiza remains built-in. The catalog generation code
+  owns this ordering; do not maintain another runtime whitelist.
 
-2. **Save trigger: explicit Save button + page-hide backstop flush.**
-   The user clicks Save to persist (in the RM editor). A flush also fires on tab hide/visibilitychange as a safety
-   net. NOT auto-save-on-every-edit (avoids many large IndexedDB writes; each story is 1.4-2.6 MB, allows for the reset feature).
-   Dirty flag clears only in the syncfs success callback.
+## Historical defaults, not additional approval
 
-3. **Editing a built-in: silent copy.**
-   Editing an official story transparently produces an editable user copy that appears as a new
-   entry in the list. No mandatory "Duplicate" click first, no "(copie)" rename friction at edit
-   time. Copy-on-load makes this free; "fork-on-edit" stops being a special data path. Editing an official story can only happens when playing the original story and clicking on the "edit this scene" in the 3_StoryScene scene, or on the story menu in 2_Menu with the dedicated edit button. this must automatically creates a user copy and set it as the current story, so they can go back to playing their edited version after editing.
+The old plan proposed fresh internal ids and a visible ` (copie)` suffix, with no
+name prompt. Its earlier prose also said "no suffix"; that conflict was never a
+sound reason to silently change naming. Current behavior keeps the suffix but
+uses title-derived ids. Collision handling remains an implementation issue.
 
-4. **Durability: local store + export-as-file backup.**
-   Browser-local storage is the convenience layer. Export-to-file is the only hard backup. No
-   cloud/server sync now. The storage layer must fail gracefully on storage-full / eviction.
-   (Storage layer should not be over-built for a remote seam that is not planned.) In 0_MenuCollection, the unexported and modified stories must have a visual cue differenciating them, telling the user they are not yet exported. 
+The first-run editor hint was to remain a preference and show once. Voice-workbench
+and Zambla UI work were outside the storage migration; voice work subsequently
+proceeded under the separate [speech direction](../SPEECH_ENGINE.md#accepted-direction).
+The editor's multiple-object-zone limitation was explicitly deferred, not accepted
+as data loss.
 
----
-
-## Proposed defaults for the remaining decisions (pending user objection)
-
-5. **Story display order. RESOLVED (Arthur, 2026-06-29).** The 6 official Atari ST stories come
-   first in this fixed order, then Arthur's handmade "Rody Et Mastico A Ibiza" LAST, those 7 are the baked in stories that cannot be directly modified:
-   1. Rody Et Mastico
-   2. Rody Et Mastico II
-   3. Rody Et Mastico III
-   4. Rody Noel  (the Christmas "IV")
-   5. Rody Et Mastico V
-   6. Rody Et Mastico VI
-   7. Rody Et Mastico A Ibiza  (handmade, last)
-   This equals the code's current `OrderStories` whitelist, NOT the on-disk `index.json` (which
-   wrongly lists Ibiza 6th and Noel last). The generated `catalog.json` MUST use the order above;
-   `index.json`'s order is discarded. User-created stories sort after all built-ins, newest-last
-   by save time. Note: Ibiza currently ships inside Resources/Stories, so it stays a built-in
-   (last) in the catalog; it is not reclassified as a user story by this migration.
-
-6. **Duplicate naming.** DEFAULT: assign a fresh internal id (so a copy never collides with a
-   built-in id; built-in stays visible alongside the copy), keep the visible " (copie)" title
-   suffix for user recognition. No name prompt. Revisit if a name prompt is wanted later.
-
-7. **rodyMakerFirstTime.** DEFAULT: keep it as the one surviving PlayerPref (editor-hint state,
-   not story state), AND fix the bug where it is re-set to 1 on every menu visit so the hint
-   fires on every editor entry. After the fix the hint shows once.
-
-8. **Scene 7 (additive phoneme editor) and the isZambla editor UI.** DEFAULT: OUT OF SCOPE for
-   the storage unification. The Ibiza/Zambla runtime hack is still replaced by reading the
-   existing data-model `isZambla` flag (that is part of deleting the gamePath key), but wiring a
-   new editor UI for it, and for scene 7, is deferred. (RM_ObjLayout persisting only zone[0] is
-   likewise a pre-existing gap this migration exposes but does not fix.)
-
----
-
-## Alignment note
-
-Decisions 1-4 match what `MIGRATION.md` already assumed (explicit Save + backstop flush, silent
-copy-on-load, local persistence with export backup). No changes to ARCHITECTURE.md or MIGRATION.md
-are required from these answers. Defaults 5-8 are reflected in the migration steps (5 in Step 5,
-7/8 noted in Step 7 and the open-decisions list).
+The broader plan proposed removing desktop file-picker code and using WebGL as the
+release target. That removal is reflected in the implementation, but the historical
+record is not authorization for further platform or feature cuts.

@@ -1,68 +1,44 @@
 # Rody Collection
 
-Recréation des jeux d'aventure Rody & Mastico de l'Atari ST avec un éditeur de niveaux intégré et de nombreux bonus.
+Recréation des aventures Rody & Mastico de l'Atari ST, avec Rody à Ibiza,
+l'éditeur intégré Rody Maker et des bonus dont DOOMastico.
 
-**Jouer maintenant :** https://lacrearthur.github.io/rody-collection/
+**[Jouer dans le navigateur](https://lacrearthur.github.io/rody-collection/)** ·
+[Page itch.io](https://lacrearthur.itch.io/rody-mastico-collection)
 
-## C'est quoi ?
+Ce dépôt prépare la prochaine version. Le [roadmap](docs/ROADMAP.md) distingue
+les fonctions présentes dans le code des vérifications et de la publication restantes.
 
-Rody Collection regroupe les 6 histoires originales de la série Rody & Mastico, et l'aventure exclusive : **Rody à Ibiza**. Le tout jouable directement dans le navigateur. L'éditeur Rody Maker permet de créer et partager ses propres histoires.
+## Comprendre le projet
 
-### Fonctionnalités
+**[Game Design & Product Specification](docs/GAME_DESIGN.md)** explique en un seul
+document la Collection, les histoires, Rody Maker et l'atelier vocal, sans référence
+au code. Il sépare le produit existant des propositions d'amélioration de l'UX.
 
-- **6 histoires originales** - Toutes les aventures classiques de Rody & Mastico (I à VI) avec de nouveaux objectifs bonus
-- **Rody à Ibiza** - Une nouvelle aventure exclusive créée pour l'occasion
-- **Éditeur intégré** - Créez vos propres jeux avec l'éditeur d'histoires Rody Maker 
-- **Import/Export** - Partagez vos histoires en fichiers `.rody.json`
-- **Synthèse vocale** - Le système TTS par phonèmes recréé la voix Atari ST originale
-- **DOOMastico** - Un Doom-like dans l'univers de Rody à Ibiza
+| Besoin | Document |
+|---|---|
+| Jouer | [Guide du joueur](docs/PLAYER_GUIDE.md) |
+| Créer et partager une histoire | [Tutoriel Rody Maker](docs/RODY_MAKER_TUTORIAL.md) |
+| Reprendre le travail avec un agent | [Point d'entrée](CLAUDE.md) |
+| Connaître les priorités | [Roadmap](docs/ROADMAP.md) |
+| Comprendre les voix et leur validation | [Référence vocale](docs/SPEECH_ENGINE.md) |
+| Retrouver une ancienne session | [Historique](DEVLOG.md) |
 
-## Documentation
+Pour écrire de la notation avec un agent, la
+[compétence français → phonèmes Rody](.claude/skills/french-to-rody-phonemes/SKILL.md)
+est dans le dépôt. L'atelier intégré accepte également le français directement.
 
-### Pour les joueurs (FR)
+## Démarrage développeur
 
-| Document | Description |
-|----------|-------------|
-| [Player Guide](docs/PLAYER_GUIDE.md) | Comment jouer |
-| [Rody Maker Tutorial](docs/RODY_MAKER_TUTORIAL.md) | Guide de l'éditeur |
+1. Utiliser la version Unity indiquée dans [ProjectVersion.txt](ProjectSettings/ProjectVersion.txt).
+2. Ouvrir `Assets/Scenes/0_MenuCollection.unity` et lancer Play pour le parcours général.
+3. Vérifier les fonctions navigateur dans une version WebGL ; les sélecteurs de
+   fichiers navigateur ne fonctionnent pas dans le lecteur de l'Editor.
 
-### Pour les développeurs
-
-| Document | Description |
-|----------|-------------|
-| [CLAUDE.md](CLAUDE.md) | Architecture et référence principale |
-| [Development Log](DEVLOG.md) | Historique des sessions |
-| [Roadmap](docs/ROADMAP.md) | Progression et travail restant |
-| [Save Awareness Plan](docs/SAVE_AWARENESS_PLAN.md) | UX pour éviter la perte de données |
-
-### Sous-projets
-
-| Document | Description |
-|----------|-------------|
-| [DOOM FPS Module](docs/DOOM_FPS.md) | Documentation du minigame FPS |
-| [Doomastico Gameplay Audit](docs/DOOMASTICO_GAMEPLAY_AUDIT.md) | Améliorations gameplay futures |
-
-### Référence (réutilisable)
-
-| Document | Description |
-|----------|-------------|
-| [Migration Guide](docs/MIGRATION_GUIDE.md) | Toolkit migration BetterEvent/Odin |
-| [Learnings](docs/LEARNINGS.md) | Meta-knowledge des migrations passées |
-
-## Démarrage rapide
-
-1. Ouvrir dans Unity 6 (6000.3.2f1)
-2. Charger la scène `0_MenuCollection`
-3. Appuyer sur Play
-
-### Build
-
-```bash
-# Build WebGL via Unity Editor
-File > Build Settings > WebGL > Build
-
-# Le CI déploie automatiquement sur GitHub Pages à chaque push sur master
-```
+Les scènes, formats et outils d'export sont décrits dans
+[l'architecture actuelle](docs/unify/ARCHITECTURE.md).
+Le [workflow de publication](.github/workflows/deploy-pages.yml) construit et déploie
+sur GitHub Pages à chaque push sur `master` : publier reste une action explicite.
 
 ## Crédits
 
@@ -79,9 +55,15 @@ File > Build Settings > WebGL > Build
 ### DOOMastico
 - **Code/Design :** Arthur Scheidel
 
+Rody & Mastico et les éléments originaux sont crédités à Lankhor ; les éléments
+réutilisés de DOOM à id Software. Ce projet est un hommage gratuit et non commercial.
+Dans sa présentation d'origine, Arthur s'excuse auprès des créateurs d'avoir utilisé
+leurs noms et leurs assets avant de leur avoir demandé leur avis.
+
 ## Liens
 
-- **Jouer :** https://lacrearthur.github.io/rody-collection/
-- **itch.io :** https://lacrearthur.itch.io/rody-maker
-- **Source :** https://github.com/LaCreArthur/rody-collection
-- **Site original :** https://lacrearthur.github.io/RodyAIbiza/
+- [Source](https://github.com/LaCreArthur/rody-collection)
+- [Rody à Ibiza, site d'origine](https://lacrearthur.github.io/RodyAIbiza/)
+- [DOOMastico : référence et idées de gameplay](docs/DOOM_FPS.md)
+- [Récupération de références et migrations Unity](docs/MIGRATION_GUIDE.md)
+- [Texte de page itch.io à relire avant publication](docs/itch-pages/ITCH_RODY_COLLECTION.md)

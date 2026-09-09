@@ -1,9 +1,88 @@
+# Development Log
+
+Dated historical evidence, not current instructions. Start with [the roadmap](docs/ROADMAP.md)
+and [game design](docs/GAME_DESIGN.md); old APIs, conclusions and screenshots can be superseded.
+
+## 2026-09-09: Documentation audit, product design and AX consolidation
+
+Arthur requested a full documentation audit, clearer UX recommendations, one
+comprehensive code-free design/specification, and docs that help future agents
+understand the project and resume efficiently.
+
+- Created `docs/GAME_DESIGN.md` as the product owner: Collection, story loop, Maker,
+  voice, content limits and explicitly unapproved next UX. A cold review found
+  scene-scoped drafts left structural changes ambiguous; the revised recommendation
+  is one whole-story draft, Save, story-wide restore, safe exit and draft Test.
+  This is not approval to change the older scene-only Reset behavior.
+- Replaced pre-June-migration architecture and roadmap assertions with source-backed
+  current ownership and a focused audit. Browser persistence exists in source;
+  startup/error paths, Reset, dirty state, paintbrush fork protection, identity
+  collisions, invalid imports, multiple targets and image/frame saving remain issues.
+  My initial session statement that Save still downloaded was itself based on stale
+  docs; direct save/store/interop reads corrected it. Doc labels are not a status oracle.
+- `CLAUDE.md` now routes a fresh agent by task instead of duplicating version,
+  schema and API inventories. README links the product design. Current Unity version,
+  scene order and package/deploy facts point to their actual config owners.
+- Rewrote French player/creator procedures; inspected all nine historical tutorial
+  PNGs and labelled them as historical. Removed misleading folder-save and old
+  keyboard screenshots from the active instruction flow, retaining the image files.
+- Consolidated speech documents while retaining native-machine validation evidence,
+  earlier false-parity findings, listening limits and exact accepted speech direction.
+- Consolidated DOOM's optional design backlog, corrected configured-value claims,
+  and replaced unsafe migration diagnoses with the existing toolkit's real limits.
+- Itch documents remain local publication drafts. Public itch page text was checked;
+  no external page was edited. The web reader could not open the GitHub Pages URL,
+  so no live-game or current deployment claim follows from this pass.
+
+### Retired meaning and where it went
+
+1. `docs/unify/MIGRATION.md`: completed provider/shim/platform migration steps,
+   per-file build recipes, speculative replacement types and implementation estimates.
+   Current architecture and source gaps replace them; June decision provenance remains.
+2. `docs/SAVE_AWARENESS_PLAN.md`: superseded download-only saving, alternate choice
+   dialog and proposed tooltip implementation scaffolding. Clear saving, backup
+   awareness and honest warnings survive in the design; current gaps in the audit.
+3. `docs/PHONEME-TTS.md`: obsolete clip-based audit, old dirty-token/corpus counts,
+   option/effort matrix and hybrid-dictionary proposal. Current speech reference
+   replaces them; historical originals remain in Git.
+4. `docs/FRENCH_SPEECH_HANDOFF.md`: completed handoff and paused-agent coordination.
+   Unique accepted direction and still-relevant constraints moved to speech reference.
+5. `docs/DOOMASTICO_GAMEPLAY_AUDIT.md`: separate duplicate inventory and untested
+   numeric prescriptions, snippets, phased priorities and effort promises. Every
+   retained player-outcome idea is in DOOM_FPS's explicitly unapproved backlog.
+6. Root `plan.md` and `plan-rodyCollection.prompt.md`: abandoned floating-slot layout,
+   obsolete WorkingStory snippets and duplicated schedule. Shared actions already
+   exist; title/cover management and discoverable deletion remain parked outcomes.
+7. Migration guide: categorical Library-corruption / serialization-loss / unknown-
+   component deletion rules; a broken lambda-unsubscribe example; blanket conversion
+   to static events; copied package-GUID and command inventories. Replaced by traced
+   dependency recovery and links to existing command help.
+8. Repeated root architecture/API/schema/version/submodule tables and DEVLOG's
+   undated current-state/preferences footer. Preserve dated history and project code
+   preferences; actual config owns current facts. UnityReusables and plugin files
+   are tracked, so submodule/local-only setup instructions were stale.
+9. Player/tutorial copy: unsupported universal platform/control/fullscreen promises,
+   wrong objective acronym expansions, duplicated sharing instructions, old folder-
+   save procedures, phoneme keyboard/catalog and scene/object-count advertising,
+   automatic community-inclusion wording, and an unrelated font-editing walkthrough.
+   Keep downloadable font/palette, community invitation, credits and Arthur's original
+   acknowledgement/apology. Free/non-commercial intent remains; unsupported categorical
+   legal conclusions about what may be sold were removed from marketing copy.
+
+Validation: current code and serialized consumers, catalog plus all seven embedded
+story envelopes, historical evidence, local Markdown links/anchors and diff formatting.
+No source code or Unity asset changes, compilation, tests, player build, runtime
+playthrough or publication. The design/roadmap received independent cold review;
+remaining crosslink and wording fixes received a fresh-pass self-review.
+
+---
+
 ## 2026-09-07: Accepted expression and French-entry handoff
 
 Arthur accepted full expression as the best version after the original Atari
 recording and explicitly released the old C# structures as a compatibility
 constraint. Captured the French-entry session's user decisions and integration
-boundary in docs/FRENCH_SPEECH_HANDOFF.md; full speech details remain owned by
+boundary in [the speech direction](docs/SPEECH_ENGINE.md#accepted-direction); full speech details remain owned by
 docs/SPEECH_ENGINE.md. The paused agent's converter files remain untouched. Cold handoff review
 clarified approval provenance and that the current string storage is replaceable.
 
@@ -139,12 +218,6 @@ listening sign-off; those remain explicit limits.
 
 ---
 
-# Development Log
-
-> Agentic hindsight - reverse chronological
-
----
-
 ## 2026-07-22: Original 1988 Speech Engine — Phase 2 (Authenticity) Complete
 
 **Changes**:
@@ -261,7 +334,7 @@ listening sign-off; those remain explicit limits.
 
 **Changes**: Created implementation plan for menu story slot floating action buttons
 
-**Plan Summary** (`plan.md`):
+**Historical plan summary** (`git show 2d7555e:plan.md`, retired):
 - Fork button on official stories (top-right)
 - Edit + Export buttons on user stories
 - Buttons show only on selected slot
@@ -421,25 +494,3 @@ WorkingStory.ExportToJson()            // Get JSON string
 **Git cleanup**: Removed paid plugins from history using `git-filter-repo`.
 
 ---
-
-## Key Discoveries
-
-**Architecture**:
-- Heavy Inspector wiring (BetterEvents, SO Events)
-- `UnityReusables` is a git submodule - commit separately
-
-**Preferences**:
-- Observable pattern over SO variables for new code
-- Explicit code over Inspector wiring
-- Conventional commits: `fix:`, `feat:`, `docs:`
-
----
-
-## Quick Reference
-
-| Key             | Value                                           |
-|-----------------|-------------------------------------------------|
-| Unity Version   | 6000.3.2f1 (Unity 6 LTS)                        |
-| Render Pipeline | Universal Render Pipeline (URP)                 |
-| Input System    | Both legacy and new                             |
-| Key Plugins     | Odin Inspector (local), DOTween, NiceVibrations |

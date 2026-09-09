@@ -6,6 +6,10 @@
 
 ## Contenu HTML pour itch.io
 
+Brouillon local, relu le 9 septembre 2026 ; aucune page publiée n'a été modifiée.
+Relire contre la version réellement distribuée avant publication. Les fonctionnalités
+récentes du dépôt ne doivent pas être promises pour les anciennes versions à télécharger.
+
 ```html
 <h1>🎮 RODY & MASTICO : COLLECTION</h1>
 
@@ -23,11 +27,11 @@
 
 <h2>Contenu inclus</h2>
 <ul>
-<li><strong>Rody & Mastico I à VI</strong> — Les 6 jeux originaux (remakes fidèles)</li>
+<li><strong>Rody & Mastico I à VI</strong> — Les 6 aventures originales, dont Rody Noël en quatrième position</li>
 <li><strong>Rody à Ibiza</strong> — Fan game complet avec scénario inédit</li>
 <li><strong>DOOMastico</strong> — FPS rétro style Doom en 320x200</li>
 <li><strong>Rody Maker</strong> — Éditeur de niveaux intégré</li>
-<li><strong>Bonus "Policeman"</strong> — Objectif caché dans chaque scène !</li>
+<li><strong>Bonus "New Game Plus"</strong> — Des recherches supplémentaires après l’objectif principal</li>
 </ul>
 
 <p><img src="https://img.itch.zone/aW1nLzMyNjExNjMuZ2lm/original/H%2FFcot.gif"></p>
@@ -43,13 +47,13 @@
 <li>Icône <strong>pinceau</strong> depuis n'importe quel jeu</li>
 </ul>
 
-<p><strong>Tutoriel :</strong></p>
+<p><strong>Ancien tutoriel vidéo :</strong> les principes visuels restent utiles, mais les commandes de sauvegarde et de voix ont évolué.</p>
 <div class="video-container"><iframe allowfullscreen="" frameborder="0" src="//www.youtube.com/embed/1vx8D2irVLI" style="width: 500px; height: 281px;"></iframe></div>
 
 <hr>
 
 <h2>💝 Soutenir le projet</h2>
-<p>Ce projet a demandé <strong>plusieurs années de développement</strong> et ne peut être vendu pour des raisons de copyright. Si vous appréciez le travail :</p>
+<p>Ce projet de fan, gratuit et non commercial, a demandé <strong>plusieurs années de développement</strong>. Si vous appréciez le travail :</p>
 <p>👉 <strong><a href="https://www.paypal.me/LaCreArthur">Faire un don via PayPal</a></strong></p>
 <p><em>Merci &lt;3</em></p>
 

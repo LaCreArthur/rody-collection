@@ -1,202 +1,112 @@
-# Unity Migration Guide
+# Unity Serialization Recovery
 
-Comprehensive guide for Unity project migrations, including:
-- BetterEvent/Odin serialization discovery and migration
-- Missing scripts detection and recovery
-- GUID management and investigation
+Repository-specific workflow for missing references and BetterEvent/Odin wiring.
+Reviewed against `tools/unity-migration-toolkit.sh` on 2026-09-09. This guide does
+not prescribe a new migration or removal of working components.
 
-## Toolkit
+## Preserve evidence before changing anything
 
-All tools are consolidated in `tools/unity-migration-toolkit.sh`:
+1. Record the failing object, expected behavior, Console errors, Editor version and
+   package resolution state. Preserve the affected scene/prefab and `.meta` files
+   before saving through a different Editor or serializer version.
+2. Trace the actual component and its references in the current scene, its source
+   prefab, variants and overrides. Compare with a known-working revision when
+   fields appear empty; neither a newer file nor an older commit automatically
+   defines the intended behavior.
+3. Resolve the failing boundary before replacing code: missing asset, unavailable
+   package/submodule, broken GUID, unresolved script type, or lost serialized wiring.
+   An unrecognized GUID is not permission to delete a component or rebuild Library.
+
+Moving an asset with its `.meta` preserves its identity; losing that metadata can
+break references. See Unity's [asset metadata documentation](https://docs.unity3d.com/6000.0/Documentation/Manual/AssetMetadata.html).
+Do not treat merely opening a scene as proof that serialization was permanently
+lost: inspect file changes and the affected fields first.
+
+## Use the existing toolkit as a search aid
+
+Run from the repository root; the script is already executable. `help` is the
+command reference, so new commands belong in the tool rather than a second list here.
 
 ```bash
-# Make executable once
-chmod +x tools/unity-migration-toolkit.sh
-
-# See all commands
 ./tools/unity-migration-toolkit.sh help
+./tools/unity-migration-toolkit.sh build-cache
+./tools/unity-migration-toolkit.sh missing-scripts Assets/DOOM/FPS/Scenes/MainScene.unity
+./tools/unity-migration-toolkit.sh be-audit Assets/DOOM/FPS/Scenes/MainScene.unity
+./tools/unity-migration-toolkit.sh so-find-listeners Assets/Scenes
 ```
 
-### BetterEvent Commands
-```bash
-# List all scripts using BetterEvent with GUIDs
-./tools/unity-migration-toolkit.sh be-list-scripts
+The names and success messages overstate the scanner's coverage:
 
-# Full audit of a scene (finds components + decodes serialization)
-./tools/unity-migration-toolkit.sh be-audit Assets/Scenes/Main.unity
+| Command family | What its implementation actually checks / misses |
+|---|---|
+| `missing-scripts` | Compares **every textual GUID** in the supplied file, not just `m_Script`, against a cache of `.meta` files under `Assets` and `Library/PackageCache`. Results may be textures/prefabs/other assets, not scripts. Null script references without a GUID and unresolved compiled types are outside this check. |
+| `build-cache` | Writes shared `/tmp/unity_guid_cache.txt`; rebuild for this project before scanning. The automatic one-hour expiry does not detect a cache from another project. Embedded/local package locations outside those scanned folders need separate inspection. |
+| Historical `missing-scripts COMMIT:path` | Reads old serialized data but compares it with the **current** cache. A report does not establish whether that historical project was broken. |
+| `guid-lookup` | Searches current asset/package-cache metadata, then git history. A history hit is not proof of deletion; inspect the matching change. |
+| `be-*` | Finds literal BetterEvent mentions and recognizable fragments of Odin bytes. This is a heuristic, not a complete serializer or inheritance/reference-graph audit. |
+| `so-find-listeners`, `so-usages` | Search selected textual forms. `so-usages` scans scenes, prefabs and C# but omits `.asset` consumers; follow those separately. |
+| `unused-files` | Writes a candidate log after a limited GUID/name search. It omits dependency forms such as `.asset` references, Resources/string loading, packages and build-time consumers. Its output is not a deletion list. |
 
-# Decode Odin hex manually
-./tools/unity-migration-toolkit.sh be-decode '53006500740042006f006f006c00'
-```
+## Resolve a candidate through the governing system
 
-### Missing Scripts Commands
-```bash
-# Find missing scripts in current scene
-./tools/unity-migration-toolkit.sh missing-scripts Assets/Scenes/Main.unity
-
-# Check historical version
-./tools/unity-migration-toolkit.sh missing-scripts 665f705:Assets/Scenes/Main.unity
-
-# Look up what a GUID belongs to
-./tools/unity-migration-toolkit.sh guid-lookup db2f33d946594fbcbe1cd91669ccfd39
-```
-
-### Unused Files Command
-```bash
-./tools/unity-migration-toolkit.sh unused-files
-```
-
----
-
-## Quick Diagnosis
+Start with the component's complete `m_Script` reference, including GUID and
+fileID. Do not replace it merely because a different script has a similar name.
 
 ```bash
-# Extract all script GUIDs from a scene
-grep -o "m_Script: {fileID: 11500000, guid: [a-f0-9]*" "Scene.unity" | \
-  sed 's/m_Script: {fileID: 11500000, guid: //' | sort -u
+# Candidate script references in the actual scene (also inspect prefab sources).
+rg -n 'm_Script:' Assets/DOOM/FPS/Scenes/MainScene.unity
 
-# Check if GUID exists in project
-grep -rl "guid: YOUR_GUID" Assets/ --include="*.meta"
+# Replace YOUR_GUID with the candidate; include ignored local assets/packages.
+rg --hidden --no-ignore -l '^guid: YOUR_GUID$' Assets Packages Library/PackageCache -g '*.meta'
 
-# Check Unity packages
-grep -rl "guid: YOUR_GUID" Library/PackageCache/ 2>/dev/null
+# History is recovery evidence; inspect before restoring named files.
+git log --all -p --full-history -S 'YOUR_GUID' -- '*.meta'
+git show 'COMMIT:Assets/path/Scene.unity'
 ```
 
-## Four Categories of Missing Scripts
+When the Editor is available, resolve the GUID with
+[`AssetDatabase.GUIDToAssetPath`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AssetDatabase.GUIDToAssetPath.html)
+and inspect the exact referenced script/subasset. For a `MonoScript`, inspect its
+[`GetClass()`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/MonoScript.GetClass.html)
+result as well as existing Console errors; finding metadata alone does not verify
+that the script type is usable. Discover the installed Pipeline commands with
+`unity list --project-path /absolute/path/to/project` and use the ready Editor's
+inspection tools rather than launching a second Editor or adding a scanner.
 
-| Category | Cause | Fix |
-|----------|-------|-----|
-| **Package** | Library corruption | Delete `Library/` folder, reimport |
-| **Deleted** | Script removed from project | Restore from git history |
-| **Renamed** | Script renamed, new GUID generated | Update scene YAML or restore old .meta |
-| **Unknown** | External package never committed | Remove component from scene |
+| Evidence | Next action |
+|---|---|
+| Asset/package/submodule absent from resolved project | Restore the intended dependency at the recorded revision; check manifest, lockfile, submodule state and local-only plugin setup. A known package GUID alone does not diagnose cache corruption. |
+| Matching script exists but GUID changed | Compare the old asset and metadata with the new file; restore the original `.meta` only when identity is established. Review all affected references. |
+| GUID resolves but script type cannot load | Inspect the existing compiler/import errors, assembly and platform configuration, and class identity before touching scene YAML. |
+| Component exists but behavior/wiring is missing | Inspect UnityEvents, Odin data, referenced objects and prefab overrides; recover the specific lost behavior from evidence. |
+| Component's purpose is still unknown | Preserve it and record the unresolved dependency. Remove it only after its behavior is understood and its removal is in scope. |
 
-## Git Recovery Commands
+## Recover event wiring without inventing behavior
 
-```bash
-# Find when GUID was deleted
-git log --all -p --full-history -S "YOUR_GUID" -- "*.meta"
+Keep the complete original Odin serialization block and `unityReferences` array.
+The toolkit strips zero bytes to expose some ASCII-like strings; it is not a
+UTF-16LE or Odin binary decoder and can misread Unicode, values and reference
+positions. Use `declaringType`, `methodName` and `ParameterValues` fragments as
+leads, then inspect the original serialization with the matching serializer when
+exact recovery matters. Trace each target by its actual local fileID or external
+GUID/fileID pair; the script's nearby-line extraction does not establish ownership.
 
-# Recover deleted file with its GUID
-git checkout COMMIT -- path/to/file.cs path/to/file.cs.meta
+Follow the full path: caller → ScriptableObject/event → listener → target →
+serialized arguments. Include inactive objects, source prefabs, variant overrides
+(`propertyPath` plus the following `value`) and `.asset` consumers. A source-code
+search cannot reconstruct Inspector-only wiring by itself.
 
-# View original scene data at specific commit
-git show COMMIT:"path/Scene.unity" | grep -A50 "guid: SCRIPT_GUID"
-```
+When a direct code dependency replaces a recovered behavior, preserve its target,
+arguments, enable/disable lifecycle and initial state. The existing
+`Assets/DOOM/FPS/Scripts/WalkAnimatorSync.cs` demonstrates subscribing and
+unsubscribing the **same named handler**. Separate inline lambdas in `+=` and `-=`
+do not remove the original subscription. A state-change event also needs an
+explicit initial-state policy for a subscriber enabled after the last change.
+New static events are appropriate for singleton/manager broadcasts, not a
+universal replacement for state or per-instance relationships.
 
-## Critical: Check Before Deleting
-
-**ALWAYS** verify no references exist before deleting any script:
-
-```bash
-grep -r "YOUR_GUID" Assets/ --include="*.unity" --include="*.prefab" --include="*.asset"
-```
-
-## Odin Binary Decoding
-
-BetterEvent serialization uses Odin Inspector's binary format with UTF-16LE strings:
-
-```bash
-# Decode Odin binary to readable text
-echo "HEX_BYTES" | sed 's/\(..\)00/\1/g' | xxd -r -p
-```
-
-**Key fields in decoded output**:
-- `declaringType` - Target class (e.g., `UnityEngine.Animator`)
-- `methodName` - Method to call (e.g., `SetTrigger`, `Play`, `SetActive`)
-- `ParameterValues` - Actual parameter values (e.g., `Fire`, `true`)
-
-**Mapping targets**: `unityReferences: [{fileID: XXXXX}]` → trace fileID to find target GameObject/Component
-
-## Key Learnings
-
-1. **Unity migration strips data**: Opening scenes with missing scripts in newer Unity versions permanently loses serialized field data. The current scene becomes authoritative.
-
-2. **Git history is authoritative**: Always check git history for original serialization data when current scene shows empty fields.
-
-3. **Package GUIDs are stable**: If Unity package scripts (ugui, TMP, etc.) show as missing, it's Library corruption, not the package.
-
-4. **Prefer explicit serialization**: Use serialized fields over `FindObjectOfType` for dependency injection. `GetComponent<T>()` in Awake is acceptable for same-object discovery.
-
-5. **Avoid complex serialization**: When reimplementing lost behaviors, use simple serialized fields and Unity's native serialization instead of Odin BetterEvent to survive future migrations.
-
-6. **ScriptableObject Variable pattern creates invisible wiring**: Patterns like `BoolVariable`, `IntVariable`, `FloatVariable` with corresponding Listeners (`BoolVariableListener`, etc.) create implicit dependencies that are invisible when reading code. The code only shows "set this SO value" but the actual effects (animator changes, object activation) are wired in the Inspector via Odin-serialized BetterEvents.
-
-## ScriptableObject Variable Anti-Pattern
-
-The BaseVariable/VariableListener pattern from UnityReusables creates hard-to-trace dependencies:
-
-```
-┌─────────────────────────┐      ┌─────────────────────────┐
-│  ScriptA.cs             │      │  SceneB.unity           │
-│  sets myBoolVar.v=true  │──────│  BoolVariableListener   │
-│  (no clue what happens) │      │  → Animator.SetBool()   │
-└─────────────────────────┘      └─────────────────────────┘
-         INVISIBLE COUPLING via Inspector + Odin serialization
-```
-
-**Detection**:
-```bash
-# Find all scripts using BaseVariable pattern
-grep -rl "Variable\." Assets/ --include="*.cs" | head -20
-
-# Find all VariableListener usages in scenes
-./tools/unity-migration-toolkit.sh so-find-listeners Assets/Scenes/
-```
-
-**Recommended migration**:
-```csharp
-// BEFORE: ScriptableObject Variable pattern
-public class PlayerController : MonoBehaviour {
-    public BoolVariable isWalking;  // Set in Inspector
-    void Update() => isWalking.v = moving;  // Who listens? Unknown from code
-}
-
-// AFTER: Static event pattern
-public class PlayerController : MonoBehaviour {
-    public static event Action<bool> OnWalkingChanged;
-    bool _isWalking;
-    bool IsWalking {
-        get => _isWalking;
-        set { if (_isWalking != value) { _isWalking = value; OnWalkingChanged?.Invoke(value); }}
-    }
-}
-
-// Explicit subscriber
-[RequireComponent(typeof(Animator))]
-public class WalkAnimatorSync : MonoBehaviour {
-    Animator _anim;
-    void Awake() => _anim = GetComponent<Animator>();
-    void OnEnable() => PlayerController.OnWalkingChanged += v => _anim.SetBool("isWalking", v);
-    void OnDisable() => PlayerController.OnWalkingChanged -= v => _anim.SetBool("isWalking", v);
-}
-```
-
-**Benefits**:
-- Dependencies visible in code (no need to check Inspector/scene files)
-- No Odin serialization dependency
-- Survives Unity migrations without data loss
-- Easier to debug and trace
-
-## Common Unity Package GUIDs
-
-| GUID | Script | Package |
-|------|--------|---------|
-| `dc42784cf147c0c48a680349fa168899` | GraphicRaycaster | com.unity.ugui |
-| `f4688fdb7df04437aeb418b961361dc5` | TextMeshProUGUI | com.unity.ugui |
-| `fe87c0e1cc204ed48ad3b37840f39efc` | Image | com.unity.ugui |
-| `8b9a305e18de0c04dbd257a21cd47087` | PostProcessVolume | com.unity.postprocessing |
-| `948f4100a11a5c24981795d21301da5c` | PostProcessLayer | com.unity.postprocessing |
-
-## Recovery Workflow
-
-```
-1. IDENTIFY: grep scene for missing script GUIDs
-2. CATEGORIZE: Package, Deleted, Renamed, or Unknown
-3. EXTRACT: git show COMMIT:"Scene.unity" | grep -A50 "guid: GUID"
-4. DECODE: echo "bytes_hex" | sed 's/\(..\)00/\1/g' | xxd -r -p
-5. READ: declaringType, methodName, ParameterValues, unityReferences
-6. REIMPLEMENT: Create clean C# scripts with explicit serialized fields
-7. WIRE: Attach scripts, configure in Inspector
-8. CLEANUP: Remove missing script components
-```
+Before deleting old assets, trace serialized references, C# consumers, runtime
+loading keys and build/package consumers for the affected asset. Inspect the final
+diff for lost behavior and references. Report separately what source/serialization
+inspection established and what still requires runtime verification; compile and
+build checks remain opt-in for this project.

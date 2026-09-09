@@ -6,23 +6,22 @@
 
 ## Contenu HTML pour itch.io
 
+Brouillon local, relu le 9 septembre 2026 ; aucune page publiée n'a été modifiée.
+Relire contre la version réellement distribuée avant publication. Les fonctionnalités
+récentes du dépôt ne doivent pas être promises pour les anciennes versions à télécharger.
+
 ```html
 <p>📢❗ <strong>Ce jeu n'est plus à jour car il est désormais intégré à Rody Collection :</strong> <a href="https://lacrearthur.itch.io/rody-mastico-collection">https://lacrearthur.itch.io/rody-mastico-collection</a></p>
 <p>👉 <a href="https://lacrearthur.github.io/rody-collection/">Jouer à Rody Collection</a></p>
 <hr>
 <h1>Rody Maker</h1>
 <p>L'ultime Rody & Mastico : Rody Maker vous permet de créer vos histoires grâce à un éditeur intégré au sein du jeu et accessible depuis toutes les scènes. Il est possible de charger des histoires complètes depuis le menu principal.</p>
-<p><strong>TUTORIEL :</strong></p>
+<p><strong>TUTORIEL DE L’ANCIENNE ÉDITION :</strong></p>
 <div class="video-container"><iframe allowfullscreen="" frameborder="0" src="//www.youtube.com/embed/1vx8D2irVLI" height="281" width="500"></iframe></div>
 <hr>
-<h2>Fonctionnalités</h2>
-<ul>
-<li>De 16 à 29 scènes par jeu</li>
-<li>Jusqu'à 6 objets à trouver par objectif</li>
-<li>0 à 6 frames d'animation par scène</li>
-<li>Synthèse vocale par phonèmes (~40 phonèmes)</li>
-<li>Crédits éditables via fichier credits.txt</li>
-</ul>
+<h2>Créer dans Rody Collection</h2>
+<p>Pour créer ou modifier une aventure, utilisez Rody Maker intégré à la Collection. Les histoires se partagent dans un fichier <code>.rody.json</code>.</p>
+<p>Cette ancienne édition et sa vidéo utilisent un autre système de dossiers et de voix. Leurs limites de scènes, d'objets et de phonèmes ne décrivent pas la version actuelle de la Collection.</p>
 <hr>
 <h2>Crédits Rody Maker</h2>
 <p>Code/UI Design : Arthur Scheidel</p>

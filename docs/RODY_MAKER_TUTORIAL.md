@@ -1,391 +1,154 @@
-# Rody Maker - Tutoriel Complet
-
-> Creez vos propres aventures Rody & Mastico avec l'editeur de niveaux integre.
-
----
-
-## Table des matieres
-
-1. [Pour commencer](#pour-commencer)
-2. [Le Hub de Scenes](#le-hub-de-scenes)
-3. [L'Editeur de Scene](#lediteur-de-scene)
-4. [Editer les Images](#editer-les-images)
-5. [Editer l'Introduction](#editer-lintroduction)
-6. [Le Synthetiseur Vocal](#le-synthetiseur-vocal)
-7. [Editer les Objets](#editer-les-objets)
-8. [Sauvegarder et Tester](#sauvegarder-et-tester)
-9. [Ressources Bonus](#ressources-bonus)
-
----
-
-## Pour commencer
-
-### Acceder a Rody Maker
-
-Rody Maker est integre directement dans Rody Collection. Pour y acceder :
-
-1. **Depuis le menu principal** : Cliquez sur "Creer un nouveau" pour commencer un nouveau jeu
-2. **Depuis n'importe quel jeu** : Cliquez sur l'icone **pinceau** pour entrer en mode edition
-
-> **Attention !** L'entree en mode edition est assez brutale - ca coupe la scene en cours ^^'
-
-### Creer un nouveau jeu
-
-1. Cliquez sur le bouton **"Creer un nouveau"** dans le menu principal
-2. Entrez un titre pour votre jeu (ex: "Le Manoir de Mortevielle" pour la reference a Lankhor !)
-3. Choisissez une image de couverture (celle qui apparaitra dans le menu)
-4. Vous etes emmene directement dans l'editeur avec une page blanche
-
-C'est l'ecran titre du jeu et forcement y'a rien, mais du coup on peut directement tout faire !
-
-### Importer un jeu
-
-Un bouton **"Importer"** permet de charger un fichier `.rody.json` (envoye par un ami) pour l'editer ou y jouer.
-
----
-
-## Le Hub de Scenes
-
-![Hub de scenes](tutorial-screenshots/01-hub-scenes.png)
-
-Quand vous entrez dans Rody Maker, vous arrivez sur le hub de scenes. Une grille affiche toutes les scenes du jeu (de 16 a 29 scenes supportees).
-
-### Les 4 boutons principaux
-
-| Bouton | Fonction |
-|--------|----------|
-| **Mode JEU** (Livre) | Jouer la scene selectionnee |
-| **Mode EDITION** (Interface coloree) | Modifier la scene selectionnee |
-| **Charger un JEU** (Dossier Rody) | Changer de jeu a editer |
-| **Valider le MODE** (Bloc-note) | Confirmer et entrer dans le mode choisi |
-
-> **Important** : Choisissez un des trois modes puis cliquez sur "Valider le MODE" pour confirmer.
-
-### Selectionner une scene
-
-Cliquez simplement sur une scene dans la grille pour la selectionner. Elle sera surlignee en rose.
-
----
-
-## L'Editeur de Scene
-
-![Editeur principal](tutorial-screenshots/02-editor-main.png)
-
-Une fois en mode edition, vous voyez l'editeur principal avec :
-
-### Zone superieure
-- **Choix des scenes** : Vignettes de toutes les scenes en haut
-
-### Zone centrale
-- **Apercu de la scene** : L'image principale de la scene en cours d'edition
-
-### Barre d'outils (a droite)
-
-| Bouton | Fonction |
-|--------|----------|
-| **Objets** (Cadre avec zones) | Indices et zones des objets a trouver |
-| **Test** (Fleche verte) | Tester la scene |
-| **Sauvegarde** (Disquette) | Enregistrer les modifications |
-| **INTRO** | Titre, musiques, dialogues d'introduction |
-| **IMG** | Changer les images de la scene |
-| **Reset** (Fleche rouge) | Annuler les modifications |
-
-> **ATTENTION** : Vous devez sauvegarder dans un dossier de jeu (`/RodyAIbiza` ou `/Rody1` ou une copie de ceux-la) sinon BUG !
-
----
-
-## Editer les Images
-
-Cliquez sur **IMG** pour acceder a l'edition des images.
-
-### Structure des fichiers
-
-Chaque scene necessite :
-- **1 image de base** : L'image principale de la scene
-- **0 a 6 images d'animation** : Ces images defilent en boucle lorsqu'un personnage (autre que Mastico) parle
-
-### Convention de nommage
-
-Les images suivent le format : `{scene}.{frame}.png`
-
-| Frame | Utilisation |
-|-------|-------------|
-| `.1` | Image principale de la scene |
-| `.2` | Image d'animation 1 |
-| `.3` | Image d'animation 2 |
-| `.4` | Image d'animation 3 |
-| `.5` | Image d'animation 4 |
-| `.6` | Image d'animation 5 |
-
-### Specifications techniques
-
-- **Dimensions** : 320x130 pixels (zone de scene)
-- **Couverture** : 320x200 pixels
-- **Palette** : 16 couleurs (voir [`paletteRody.png`](bonus/paletteRody.png) ou [`.ACT`](bonus/paletteRody.ACT))
-
----
-
-## Editer l'Introduction
-
-Cliquez sur **INTRO** pour editer l'introduction de la scene.
-
-![Menu Intro](tutorial-screenshots/03-intro-menu.png)
-
-### Interface du menu Intro
-
-| Bouton | Fonction |
-|--------|----------|
-| **Titre** (Crayon) | Editer le titre de la scene |
-| **Dialogues** (Bouche) | Modifier les dialogues |
-| **Musique** (Note) | Changer les musiques |
-| **Valider/Retour** (Coche verte) | Confirmer et revenir |
-
-### Editer le titre
-
-1. Cliquez sur le bouton **Titre** (avec le crayon)
-2. Le titre devient modifiable
-3. Tapez votre nouveau titre
-4. Cliquez sur **Valider** pour confirmer
-
-> **Attention !** La police d'ecriture a ete refaite a la main, tous les caracteres n'y sont pas presents. Evitez les caracteres speciaux non supportes.
-
-### Editer les dialogues
-
-![3 personnages](tutorial-screenshots/04-three-speakers.png)
-
-**3 personnages peuvent parler**, chacun de leur dialogue est delimite par des guillemets automatiques.
-
-Cliquez sur les boutons **1**, **2** ou **3** pour editer le dialogue de chaque personnage.
-
-![Edition dialogue](tutorial-screenshots/05-dialogue-edit.png)
-
-Pour chaque dialogue :
-
-| Element | Description |
-|---------|-------------|
-| **Zone de texte** | Le texte affiche a l'ecran |
-| **Bouton [L1]** | Changer les phonemes (synthese vocale) |
-| **Interrupteur Mastico** | Active/desactive l'animation de Mastico lors de ce dialogue |
-
-> **Interrupteur Mastico** :
-> - **ON** (bleu) : Mastico s'anime pendant ce dialogue
-> - **OFF** : Les images du decor s'animent a la place
-
-### Editer la musique
-
-![Selection musique](tutorial-screenshots/06-music-selection.png)
-
-Le choix des musiques s'effectue par deux boutons :
-
-| Bouton | Fonction |
-|--------|----------|
-| **L1** | Choisir la 1ere musique (apparition de la scene) |
-| **L2** | Choisir la musique qui se repete apres les dialogues |
-
-Cliquez sur l'icone **oreille** pour ecouter les musiques disponibles.
-
----
-
-## Le Synthetiseur Vocal
-
-Le synthetiseur de phonemes recree la synthese vocale de l'Atari ST. C'est le coeur de la creation de dialogues authentiques !
-
-### Comment ca marche
-
-A l'aide des touches du synthetiseur, vous recreez la synthese vocale phrase par phrase. Chaque touche correspond a un **phoneme**, c'est-a-dire un son prononcable dans la langue francaise.
-
-**Vous pouvez :**
-- Vous servir du clavier a phonemes
-- Ecrire directement dans la zone de texte
-- Tester avec le bouton vert
-- Changer le pitch pour rendre la voix plus grave ou aigue
-
-### Controles du synthetiseur
-
-| Controle | Fonction |
-|----------|----------|
-| **Clavier phonemes** | Cliquez sur chaque phoneme |
-| **Zone de texte** | Editez directement la chaine |
-| **Bouton vert** | Tester/ecouter le resultat |
-| **Slider pitch** | Voix aigue (haut) ou grave (bas) |
-
-### Syntaxe des phonemes
-
-- Les phonemes sont separes par des underscores (`_`)
-- Les mots sont separes par des espaces
-- Les pauses doubles s'ecrivent avec double underscore (`__`)
-
-### Exemples
-
-| Phrase | Phonemes |
-|--------|----------|
-| "Bravo" | `b_r_a_v_o` |
-| "Oui, c'est bien" | `ouu_i _ s_et_b_i_un` |
-| "Cherche encore" | `ch_ai_r_ch_an_c_oh_r` |
-
-### Phonemes disponibles (~40)
-
-**Voyelles** : `a`, `i`, `u`, `ou`, `o`, `oh`, `e`, `et`, `ai`, `eu`, `ee`
-
-**Voyelles nasales** : `an`, `on`, `in`, `un`
-
-**Consonnes** : `b`, `p`, `d`, `t`, `g`, `c`, `m`, `n`, `gn`, `l`, `r`, `f`, `v`, `s`, `z`, `ch`, `j`
-
-**Semi-voyelles** : `y`, `oi`, `ui`
-
-**Speciaux** : `rien` (silence), `rienp` (pause), `bruitBlanc` (bruit blanc)
-
-### Pitch recommande
-
-- **Haut** = Voix aigue (Rody, enfants)
-- **Milieu** = Voix normale (Mastico)
-- **Bas** = Voix grave (monstres, adultes)
-
----
-
-## Editer les Objets
-
-Cliquez sur le bouton **Objets** (cadre avec zones) pour definir les objets a trouver.
-
-### Les 3 slots d'objets
-
-![3 slots objets](tutorial-screenshots/07-object-slots.png)
-
-Chaque scene a **3 slots d'objets** :
-
-| Position | Type | Description |
-|----------|------|-------------|
-| **Haut-Droit** | Obligatoire | L'objet a trouver pour valider la scene |
-| **Bas-Gauche** | Difficile | L'objet "New Game+" (bonus) |
-| **Bas-Droit** | Impossible | L'objet "FromSoftware" (super cache !) |
-
-### Editer un objectif
-
-![Edition objectif](tutorial-screenshots/08-object-zones.png)
-
-Pour chaque objectif, vous pouvez modifier :
-
-| Element | Description |
-|---------|-------------|
-| **Texte de l'indice** | Ce que Mastico dit comme indice |
-| **Phonemes de l'indice** | La synthese vocale de l'indice |
-| **Zones** | La zone proche et la zone de validation |
-
-> **Note** : Le pitch n'est pas modifiable pour les indices - c'est forcement Mastico qui parle !
-
-### Definir les zones
-
-Chaque objet a **deux zones** :
-
-1. **Zone proche** (grand rectangle) : Quand le joueur clique dedans, Mastico indique qu'on n'est pas loin ("Tu chauffes !")
-2. **Zone de validation** (petit rectangle) : La zone exacte a cliquer pour trouver l'objet
-
-**Comment dessiner :**
-1. Cliquez sur le bouton **Zone** (cadre rouge)
-2. **Phase 1** : Dessinez la zone proche (clic pour commencer, clic pour finir)
-3. **Phase 2** : Dessinez la zone de validation (doit etre dans la zone proche)
-4. **Clic droit** pour effacer et recommencer
-5. Cliquez sur **Valider** quand vous etes satisfait
-
-```
-┌─────────────────────────────┐
-│      Zone proche            │
-│   (declenche "Tu chauffes") │
-│   ┌─────────────────┐       │
-│   │ Zone validation │       │
-│   │  (trouve !)     │       │
-│   └─────────────────┘       │
-└─────────────────────────────┘
-```
-
----
-
-## Sauvegarder et Tester
-
-### Sauvegarder
-
-1. Cliquez sur le bouton **Sauvegarde** (disquette)
-2. La premiere fois, selectionnez un dossier de jeu valide
-3. Les fois suivantes, ca sauvegarde directement sans redemander
-
-> **Important** : Quand on clique sur enregistrer, ca va directement enregistrer dans le jeu qu'on vient de creer. On n'a plus besoin de se compliquer la vie a manipuler les dossiers a la main !
-
-### Tester
-
-1. Cliquez sur le bouton **Test** (fleche verte)
-2. La scene se lance en mode jeu
-3. Cliquez sur le **pinceau** pour revenir a l'editeur
-
-### Workflow recommande
-
-1. Faire des modifications
-2. Sauvegarder (disquette)
-3. Tester (fleche verte)
-4. Cliquer sur le pinceau pour revenir
-5. Repeter !
-
----
-
-## Ressources Bonus
-
-L'archive du jeu contient des assets bonus dans le dossier `Assets/` :
-
-### Musique
-Toutes les pistes de musique Atari ST originales des Rody.
-
-### Palette de couleurs
-
-**Pour Photoshop :**
-1. Allez dans le menu des palettes de couleurs
-2. Cliquez sur "Remplacer palette"
-3. Selectionnez le type de fichier : ACT
-4. Choisissez le fichier de palette
-
-**Alternative :** Utilisez [`paletteRody.png`](bonus/paletteRody.png) - contient les 16 couleurs directement.
-
-### Police
-
-[`Rody.ttf`](bonus/Rody.ttf) - La police originale Rody & Mastico, recreee pixel par pixel.
-
-> **Attention** : La police ne contient pas tous les caracteres speciaux !
-
-**Ajouter des caracteres manquants :**
-1. Allez sur https://www.pentacom.jp/pentacom/bitfontmaker2/
-2. Cliquez sur "Import TTF"
-3. Selectionnez `rody.ttf`
-4. Cliquez sur "Open in BitFontMaker2"
-5. Les cases vides = caracteres manquants
-6. Dessinez les caracteres manquants
-7. Cliquez sur "Build Font" pour telecharger le nouveau TTF
-
----
-
-## Partager vos creations
-
-### Format de sauvegarde
-Vos jeux sont sauvegardes en fichiers `.rody.json`. Ce format portable contient tout : scenes, images, dialogues.
-
-### Partager un jeu
-1. Sauvegardez votre jeu (bouton disquette)
-2. Choisissez un emplacement sur votre ordinateur
-3. Envoyez le fichier `.rody.json` a un ami (email, cloud, cle USB)
-
-### Installer un jeu recu
-1. Cliquez sur le bouton **"Importer"** dans le menu principal
-2. Selectionnez le fichier `.rody.json` recu
-
-### Partage collaboratif
-
-On peut faire un Dropbox/Google Drive collaboratif ou on met tous nos fichiers `.rody.json` et comme ca on peut telecharger les jeux des autres facilement !
-
-Si vous faites de nouvelles histoires, dites-le moi sur Twitter, YouTube, Facebook, n'importe ! Et si les histoires sont vraiment bien, je les integrerai directement dans le jeu.
-
----
-
-## Obtenir de l'aide
-
-- **Video tutoriel** : https://www.youtube.com/watch?v=1vx8D2irVLI
-- **Page itch.io** : https://lacrearthur.itch.io/rody-mastico-collection
-- **Signaler des problemes** : Laissez un commentaire sur itch.io ou YouTube
-
-N'hesitez pas a me faire des suggestions ou a reporter des bugs dans les commentaires !
+# Rody Maker — Créer et partager une histoire
+
+Guide de la version en préparation, relu le **9 septembre 2026**. Les fonctions
+récentes restent à vérifier dans une version navigateur publiée. Les anciennes
+vidéos et captures ne décrivent plus la sauvegarde ni le nouvel atelier vocal.
+Le [document de conception](GAME_DESIGN.md) explique le produit et distingue
+les améliorations proposées du fonctionnement actuel.
+
+## Commencer
+
+- **Nouveau :** dans la collection, choisissez la création d'histoire, entrez un
+  titre et, si vous le souhaitez, importez une couverture. Une scène est créée.
+- **Modifier un original :** sélectionnez sa couverture, puis **Dupliquer**.
+  Vous travaillez sur une copie personnelle. Sauvegardez-la avant de changer d'histoire.
+- **Reprendre :** sélectionnez une histoire personnelle, puis **Éditer**.
+- **Importer :** utilisez **Importer** et choisissez un fichier `.rody.json`.
+  Les anciens dossiers de jeu ne sont pas le format d'import actuel.
+
+Pour l'instant, donnez des titres distincts à vos créations et gardez un export
+avant de réimporter une histoire déjà présente : les conflits peuvent remplacer
+un fichier existant. Le pinceau en pleine partie ne protège pas encore les
+originaux de la même manière que **Dupliquer**.
+
+## Se repérer dans l'éditeur
+
+Les vignettes permettent de choisir une scène. L'image sélectionnée occupe
+l'aperçu principal, avec les outils à droite.
+
+| Outil | Usage actuel |
+|---|---|
+| **INTRO** | Titre de scène, textes, dialogues et musique |
+| **IMG** | Image principale et images d'animation |
+| **Objets** | Indices et zones cliquables |
+| **Disquette** | Enregistrer l'histoire localement dans ce navigateur |
+| **Test** | Quitter l'éditeur pour jouer le contenu déjà appliqué à l'histoire |
+| **Reset** | Recharger la scène en mémoire ; voir ses limites ci-dessous |
+
+L'image de titre est distincte de la couverture du menu. Elle n'a pas de dialogue
+ni d'objectif à éditer. Les vignettes proposent aussi l'ajout de scènes ; les
+règles d'ajout/suppression actuelles sont encore irrégulières. La promesse de
+l'ancien tutoriel « de 16 à 29 scènes » ne décrit pas une limite fiable aujourd'hui.
+
+## Images
+
+Préparez les images dans votre outil de dessin, puis importez-les avec **IMG**.
+Utilisez **320 × 130** pour une scène, **320 × 200** pour le titre ou la couverture,
+et la [palette Rody](bonus/paletteRody.png) pour prévoir les couleurs du résultat.
+L'import ajuste les dimensions et les couleurs ; aucun nom de fichier spécial
+n'est nécessaire.
+
+L'image principale représente la scène au repos. Les images d'animation montrent
+les personnages lorsqu'ils parlent. L'éditeur présente deux groupes de trois
+images, mais la création de toutes les positions et la sauvegarde des séquences
+ont encore des limites. Vérifiez le résultat après avoir enregistré et rouvert.
+
+## Introduction, texte et musique
+
+Dans **INTRO**, choisissez le titre, les dialogues ou la musique.
+
+![Ancienne illustration du menu Intro](tutorial-screenshots/03-intro-menu.png)
+
+*Illustration historique : les pictogrammes aident à se repérer ; elle ne prouve
+pas le comportement de la version actuelle.*
+
+Les boutons **1**, **2**, **3** donnent accès aux trois répliques d'introduction.
+Pour chacune, éditez séparément le texte affiché et la voix. L'interrupteur Mastico
+choisit si Mastico s'anime ou si les images du décor accompagnent la réplique.
+La police rétro ne contient pas tous les caractères : regardez le texte dans son
+aperçu avant de finaliser la scène.
+
+Pour la musique, **L1** choisit l'ouverture et **L2** la musique répétée.
+Le bouton d'écoute permet de préécouter les pistes fournies.
+
+## Écrire une voix
+
+Ouvrez l'outil vocal depuis une réplique ou un indice. Le bouton **Voix** de la
+collection ouvre le même atelier pour une utilisation indépendante.
+
+1. Écrivez la phrase en français et écoutez sa proposition de prononciation.
+2. Sélectionnez un mot qui sonne mal et ajustez sa prononciation dans le champ prévu.
+3. Réécoutez le mot ou le passage dans son contexte. Les exemples de sons servent
+   à essayer et insérer les sons de la voix rétro.
+4. Réglez la hauteur de voix lorsqu'elle est disponible. Les indices restent dits
+   par Mastico ; leur hauteur est fixe.
+5. Choisissez **Utiliser ce dialogue** pour l'appliquer, ou **Annuler** pour revenir
+   sans modifier la réplique. Validez aussi le panneau de dialogue, puis enregistrez
+   la scène avec la disquette.
+
+Les virgules créent une pause courte ; les points et la ponctuation de fin de phrase
+une pause longue. Les espaces séparent les mots sans imposer une pause.
+Les mots inventés peuvent nécessiter une correction. La conversion peut afficher
+une erreur : écoutez et corrigez avant de valider.
+
+Les phrases françaises enregistrées conservent leurs corrections pour la reprise.
+Les anciennes répliques écrites directement en phonèmes restent éditables sans
+inventer leur texte français. En mode indépendant, **Copier les phonèmes** copie
+la partition sonore, pas un fichier audio ni l'ensemble du texte et des corrections.
+La [référence vocale](SPEECH_ENGINE.md) détaille la notation pour les usages avancés.
+
+## Dessiner un objectif
+
+Dans **Objets**, choisissez l'objectif principal, **New Game Plus** ou **FromSoftware**.
+Chacun possède un texte d'indice, une voix et deux rectangles.
+
+1. Éditez le texte et la voix de l'indice.
+2. Ouvrez le dessin des zones et faites glisser pour dessiner la zone proche.
+3. Utilisez le bouton de zone pour passer à la cible exacte.
+4. Dessinez cette cible à l'intérieur de la zone proche, puis terminez avec le bouton.
+5. Revenez aux outils de la scène et enregistrez.
+
+![Ancienne illustration des régions proche et exacte](tutorial-screenshots/08-object-zones.png)
+
+**Utilisez une seule paire de zones par objectif.** L'interface conserve des messages
+sur l'ajout de plusieurs zones, mais la sauvegarde actuelle ne conserve que la première.
+Le clic droit ne doit donc pas être présenté comme une commande d'effacement.
+
+## Enregistrer, tester et exporter
+
+1. Validez le panneau dans lequel vous travaillez pour revenir à l'éditeur principal.
+2. Cliquez sur la **disquette** et attendez le message de réussite. Ce bouton garde
+   l'histoire dans ce navigateur ; il ne télécharge pas de fichier, malgré son ancienne infobulle.
+3. Utilisez **Test** pour jouer. Enregistrez auparavant les modifications que vous
+   voulez tester : le retour au même brouillon n'est pas encore garanti.
+4. Revenez à la collection, sélectionnez votre histoire personnelle puis **Exporter**.
+5. Conservez le fichier `.rody.json` téléchargé : il contient les scènes, images,
+   textes et voix et peut être envoyé à un ami, qui l'ouvrira avec **Importer**.
+
+**Reset n'est pas encore un retour complet à la dernière sauvegarde.** Une image
+importée peut rester après Reset. Les avertissements de sortie ne couvrent pas
+uniformément les modifications. Pour un travail important, enregistrez puis
+exportez une version avant d'expérimenter davantage.
+
+L'enregistrement local vise la reprise dans le même navigateur et sur le même site.
+L'export permet de conserver une copie ailleurs ; un rechargement, un changement
+de navigateur ou l'effacement de ses données ne doit pas être votre méthode de backup.
+
+## Ressources et anciens supports
+
+- [Palette PNG](bonus/paletteRody.png) et [palette ACT](bonus/paletteRody.ACT) pour votre outil de dessin.
+- [Police Rody](bonus/Rody.ttf), recréée pixel par pixel, avec une couverture de caractères limitée.
+- [Ancienne vidéo](https://www.youtube.com/watch?v=1vx8D2irVLI) : repère visuel historique,
+  pas une procédure actuelle pour importer, enregistrer ou écrire une voix.
+- [Ancien menu de scènes](tutorial-screenshots/01-hub-scenes.png),
+  [ancien éditeur principal](tutorial-screenshots/02-editor-main.png),
+  [trois répliques](tutorial-screenshots/04-three-speakers.png),
+  [ancien panneau de dialogue](tutorial-screenshots/05-dialogue-edit.png),
+  [musique](tutorial-screenshots/06-music-selection.png),
+  [trois objectifs](tutorial-screenshots/07-object-slots.png),
+  [pinceau](tutorial-screenshots/09-paintbrush-edit.png).
+  Ces images sont conservées comme références historiques. Leurs annotations sur
+  les dossiers de sauvegarde et l'ancien clavier vocal sont obsolètes.
+
+Pour signaler un problème ou proposer une histoire, utilisez la
+[page itch.io de la collection](https://lacrearthur.itch.io/rody-mastico-collection).
