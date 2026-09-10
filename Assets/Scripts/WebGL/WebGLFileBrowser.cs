@@ -1,33 +1,26 @@
 using System;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-/// <summary>
-/// WebGL file browser helper using browser's native file picker.
-/// Uses SendMessage callbacks from jslib for async operations.
-/// </summary>
+/// <summary>Native browser file input and download handoff.</summary>
 public class WebGLFileBrowser : MonoBehaviour
 {
-    private static WebGLFileBrowser _instance;
-    private Action<string> _onFileContentLoaded;
-    private Action _onDownloadComplete;
+    static WebGLFileBrowser _instance;
+    Action<string, string> _onFileLoaded;
+    Action<string> _onDownloadComplete;
+
+    public static bool IsBusy => _instance != null &&
+        (_instance._onFileLoaded != null || _instance._onDownloadComplete != null);
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
-    private static extern void UploadFileContent(string gameObjectName, string methodName, string filter);
+    static extern void UploadFileContent(string gameObjectName, string methodName, string filter, int asDataUrl);
 
     [DllImport("__Internal")]
-    private static extern void UploadFileAsBase64(string gameObjectName, string methodName, string filter);
-
-    [DllImport("__Internal")]
-    private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
+    static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
 #endif
 
-    private Action<string> _onImageLoaded;
-
-    /// <summary>
-    /// Gets or creates the singleton instance.
-    /// </summary>
     public static WebGLFileBrowser Instance
     {
         get
@@ -42,7 +35,7 @@ public class WebGLFileBrowser : MonoBehaviour
         }
     }
 
-    private void Awake()
+    void Awake()
     {
         if (_instance != null && _instance != this)
         {
@@ -52,86 +45,90 @@ public class WebGLFileBrowser : MonoBehaviour
         _instance = this;
     }
 
-    /// <summary>
-    /// Opens a file picker and reads the selected file as text.
-    /// </summary>
-    /// <param name="filter">File filter (e.g., ".json" or "application/json")</param>
-    /// <param name="onComplete">Callback with file content (empty string if cancelled/error)</param>
-    public void OpenFileAsText(string filter, Action<string> onComplete)
+    /// <summary>Returns content, or null on cancellation; the second argument is an error or null.</summary>
+    public void OpenFileAsText(string filter, Action<string, string> onComplete) =>
+        OpenFile(filter, false, onComplete);
+
+    /// <summary>Returns a data URL, or null on cancellation; the second argument is an error or null.</summary>
+    public void OpenImageAsBase64(string filter, Action<string, string> onComplete) =>
+        OpenFile(filter, true, onComplete);
+
+    void OpenFile(string filter, bool asDataUrl, Action<string, string> onComplete)
     {
+        if (onComplete == null) throw new ArgumentNullException(nameof(onComplete));
 #if UNITY_WEBGL && !UNITY_EDITOR
-        _onFileContentLoaded = onComplete;
-        UploadFileContent(gameObject.name, "OnFileContentLoaded", filter);
+        if (IsBusy)
+        {
+            onComplete(null, "Une opération de fichier est déjà en cours.");
+            return;
+        }
+        _onFileLoaded = onComplete;
+        UploadFileContent(gameObject.name, nameof(OnFileLoaded), filter, asDataUrl ? 1 : 0);
 #else
-        Debug.LogWarning("[WebGLFileBrowser] OpenFileAsText only works in WebGL builds");
-        onComplete?.Invoke("");
+        onComplete(null, "L'import de fichiers est disponible uniquement dans le navigateur.");
 #endif
     }
 
-    /// <summary>
-    /// Downloads data as a file to the user's device.
-    /// </summary>
-    /// <param name="filename">Suggested filename with extension</param>
-    /// <param name="data">File content as bytes</param>
-    /// <param name="onComplete">Callback when download starts (optional)</param>
-    public void DownloadFileAsBytes(string filename, byte[] data, Action onComplete = null)
+    // Called once by the browser reader, including cancellation and errors.
+    public void OnFileLoaded(string result)
+    {
+        var callback = _onFileLoaded;
+        _onFileLoaded = null;
+        if (callback == null) return;
+
+        string content;
+        string error;
+        try
+        {
+            var parsed = JObject.Parse(result);
+            content = (string)parsed["content"];
+            error = (string)parsed["error"];
+        }
+        catch (Exception ex)
+        {
+            callback(null, "Impossible de lire le résultat du navigateur : " + ex.Message);
+            return;
+        }
+        callback(content, error);
+    }
+
+    /// <summary>Reports an error, or null after browser handoff. This does not confirm a disk write.</summary>
+    public void DownloadFileAsBytes(string filename, byte[] data, Action<string> onComplete = null)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        _onDownloadComplete = onComplete;
-        DownloadFile(gameObject.name, "OnDownloadComplete", filename, data, data.Length);
+        if (IsBusy)
+        {
+            onComplete?.Invoke("Une opération de fichier est déjà en cours.");
+            return;
+        }
+        if (data == null)
+        {
+            onComplete?.Invoke("Le contenu à télécharger est manquant.");
+            return;
+        }
+        _onDownloadComplete = onComplete ?? (_ => { });
+        DownloadFile(gameObject.name, nameof(OnDownloadComplete), filename, data, data.Length);
 #else
-        Debug.LogWarning("[WebGLFileBrowser] DownloadFileAsBytes only works in WebGL builds");
-        onComplete?.Invoke();
+        onComplete?.Invoke("Le téléchargement est disponible uniquement dans le navigateur.");
 #endif
     }
 
-    /// <summary>
-    /// Downloads a string as a text file.
-    /// </summary>
-    public void DownloadTextFile(string filename, string content, Action onComplete = null)
+    public void DownloadTextFile(string filename, string content, Action<string> onComplete = null)
     {
-        byte[] data = System.Text.Encoding.UTF8.GetBytes(content);
-        DownloadFileAsBytes(filename, data, onComplete);
+        if (content == null)
+        {
+            onComplete?.Invoke("Le contenu à télécharger est manquant.");
+            return;
+        }
+        DownloadFileAsBytes(filename, System.Text.Encoding.UTF8.GetBytes(content), onComplete);
     }
 
-    // Called from jslib via SendMessage
-    public void OnFileContentLoaded(string content)
+    // Called after the direct download request, never after an unrelated later click.
+    public void OnDownloadComplete(string error)
     {
-        Debug.Log($"[WebGLFileBrowser] File content received: {content.Length} chars");
-        _onFileContentLoaded?.Invoke(content);
-        _onFileContentLoaded = null;
-    }
-
-    // Called from jslib via SendMessage
-    public void OnDownloadComplete()
-    {
-        Debug.Log("[WebGLFileBrowser] Download complete");
-        _onDownloadComplete?.Invoke();
+        var callback = _onDownloadComplete;
         _onDownloadComplete = null;
-    }
-
-    /// <summary>
-    /// Opens image picker and returns base64 data URL.
-    /// </summary>
-    /// <param name="filter">Image filter (e.g., "image/png,image/jpeg")</param>
-    /// <param name="onComplete">Callback with data URL (empty string if cancelled)</param>
-    public void OpenImageAsBase64(string filter, Action<string> onComplete)
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        _onImageLoaded = onComplete;
-        UploadFileAsBase64(gameObject.name, "OnImageLoaded", filter);
-#else
-        Debug.LogWarning("[WebGLFileBrowser] OpenImageAsBase64 only works in WebGL builds");
-        onComplete?.Invoke("");
-#endif
-    }
-
-    // Called from jslib via SendMessage
-    public void OnImageLoaded(string dataUrl)
-    {
-        Debug.Log($"[WebGLFileBrowser] Image received: {(string.IsNullOrEmpty(dataUrl) ? "cancelled" : dataUrl.Length + " chars")}");
-        _onImageLoaded?.Invoke(dataUrl);
-        _onImageLoaded = null;
+        callback?.Invoke(string.IsNullOrEmpty(error) ? null : error);
     }
 
     /// <summary>
@@ -149,7 +146,11 @@ public class WebGLFileBrowser : MonoBehaviour
         byte[] bytes = Convert.FromBase64String(base64);
 
         var tex = new Texture2D(2, 2);
-        tex.LoadImage(bytes);
+        if (!tex.LoadImage(bytes))
+        {
+            Destroy(tex);
+            throw new FormatException("Cette image ne peut pas être décodée.");
+        }
         return tex;
     }
 }

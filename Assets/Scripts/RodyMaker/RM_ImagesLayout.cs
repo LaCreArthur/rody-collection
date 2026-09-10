@@ -1,73 +1,57 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RM_ImagesLayout : RM_Layout {
+public class RM_ImagesLayout : RM_Layout
+{
+    public Button imgAnimBtn1, imgAnimBtn2;
 
- 	public Button imgAnimBtn1;
-	public Button imgAnimBtn2;
-	void Start(){
-        SetActiveBtn();
-	}
+    public void SetActiveBtn()
+    {
+        int scene = StoryRoot.Session.EditorSceneIndex;
+        imgAnimBtn1.interactable = scene != 0;
+        imgAnimBtn2.interactable = scene != 0 && StoryRoot.Session.DraftFrameCount(scene) >= 4;
+    }
 
-	public void SetActiveBtn(){
-		imgAnimBtn1.interactable = imgAnimBtn2.interactable = (gm.currentScene == 0)?false:true; // launch screen doesn't have animations
+    public void ReturnClick()
+    {
+        if (!gm.CanEdit) return;
+        gm.mainLayout.GetComponent<RM_MainLayout>().ShowBaseImage();
+        SetLayouts(gm.mainLayout);
+        UnsetLayouts(gm.imagesLayout);
+    }
 
-		// if 3 or more frames, the 4 to 6 frames editor is accessible
-		if (RM_ImgAnimLayout.frames.Count < 3)
-			imgAnimBtn2.interactable = false;
-		else
-			imgAnimBtn2.interactable = true;
-	}
-	public void ReturnClick(){
-		Debug.Log("Images return button clicked");
-		SetLayouts(gm.mainLayout);
-		UnsetLayouts(gm.imagesLayout);
-	}
-	public void ImgAnimClick(bool isSecond){
+    public void ImgAnimClick(bool isSecond)
+    {
+        if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
+        SetLayouts(gm.imgAnimLayout);
+        UnsetLayouts(gm.imagesLayout);
+        var animation = gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>();
+        animation.offset = isSecond ? 3 : 0;
+        animation.SetActiveBtn();
+    }
 
-		gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>().offset = isSecond ? 3 : 0;
-		gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>().SetActiveBtn();
-		Debug.Log("Img Animes button clicked");
-		SetLayouts(gm.imgAnimLayout);
-		UnsetLayouts(gm.imagesLayout);
-	}
     public void ImportClick()
     {
-        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnImageImported);
-    }
-
-    void OnImageImported(string dataUrl)
-    {
-        if (string.IsNullOrEmpty(dataUrl)) return;
-
-        var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
-        if (tex == null) return;
-
-        ProcessImportedTexture(tex);
-    }
-
-    void ProcessImportedTexture(Texture2D tex)
-    {
-        int width = 320;
-        int height = gm.currentScene == 0 ? 200 : 130;
-        RM_TextureScale.Point(tex, width, height);
-        AtariPalette.ApplyPalette(tex);
-
-        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-        gm.scenePanel.GetComponent<Transform>().localPosition = new Vector3(0, -35, 0);
-        gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sprite;
-
-        // Thumbnail
-        var thumbTex = new Texture2D(tex.width, tex.height);
-        thumbTex.SetPixels(tex.GetPixels());
-        RM_TextureScale.Point(thumbTex, 36, 21);
-        var thumbSprite = Sprite.Create(thumbTex, new Rect(0, 0, 36, 21), new Vector2(0.5f, 0.5f), 1f);
-        gm.mainLayout.GetComponent<RM_MainLayout>().sceneThumbnails[gm.currentScene].GetComponent<Image>().sprite = thumbSprite;
-
-        // Persist to the session
-        if (gm.currentScene == 0)
-            StoryRoot.Session.SaveSprite("0.png", tex);
-        else
-            StoryRoot.Session.SaveSprite($"{gm.currentScene}.1.png", tex);
+        if (!gm.CanEdit) return;
+        int scene = StoryRoot.Session.EditorSceneIndex;
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", (data, error) =>
+        {
+            if (error != null) { StoryRoot.ShowMessage("L’image n’a pas pu être ouverte.\n" + error); return; }
+            if (data == null) return;
+            Texture2D texture = null;
+            try
+            {
+                texture = WebGLFileBrowser.DataUrlToTexture(data);
+                if (texture == null) throw new InvalidOperationException("Format d’image illisible.");
+                RM_TextureScale.Point(texture, 320, scene == 0 ? 200 : 130);
+                error = StoryRoot.Session.SaveSprite(scene == 0 ? SpriteCache.TitleName : SpriteCache.SceneFrameName(scene, 1), texture);
+                if (error != null) throw new InvalidOperationException(error);
+                StoryRoot.FlushWorkspace();
+                gm.mainLayout.GetComponent<RM_MainLayout>().LoadSprites();
+            }
+            catch (Exception e) { StoryRoot.ShowMessage("L’image n’a pas été modifiée.\n" + e.Message); }
+            finally { if (texture != null) Destroy(texture); }
+        });
     }
 }

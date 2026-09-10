@@ -1,115 +1,93 @@
-﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-///     Main editor layout controller. Handles scene thumbnails, button clicks,
-///     and navigation between editor panels.
-/// </summary>
 public class RM_MainLayout : RM_Layout
 {
-    [Header("Scene Thumbnails")]
-    [FormerlySerializedAs("notActiveColor")]
     public Color inactiveSceneColor;
-
-    [FormerlySerializedAs("activeColor")]
     public Color activeSceneColor;
-
-    [FormerlySerializedAs("miniScenes")]
     public GameObject[] sceneThumbnails;
-
-    [FormerlySerializedAs("sliderScenes")]
     public Slider thumbnailSlider;
-
-    [FormerlySerializedAs("miniAddSceneSprite")]
     public Sprite addSceneSprite;
-
-    [Header("Buttons")]
-    [FormerlySerializedAs("objBtn")]
     public Button objectsButton;
-
-    [FormerlySerializedAs("IntroBtn")]
     public Button introButton;
-
-    [Header("Feedback")]
+    public Button saveButton, discardButton;
+    public Button recoveryRetryButton;
     public GameObject saveStatusPanel;
     public Text saveStatusText;
 
-    Coroutine hideSaveStatusCoroutine;
-
-    void Start()
+    protected override void Awake()
     {
-        UpdateButtonStates();
-        saveStatusPanel.SetActive(false);
+        base.Awake();
+        recoveryRetryButton.onClick.AddListener(StoryRoot.RetryRecovery);
     }
 
-    public void UpdateButtonStates() => objectsButton.interactable = introButton.interactable = gm.currentScene != 0;
+    void OnEnable()
+    {
+        StoryRoot.StateChanged += UpdateButtonStates;
+        float statusHeight = saveStatusPanel.GetComponent<RectTransform>().rect.height;
+        gm.scenePreview.rectTransform.sizeDelta = new Vector2(320, 130 - statusHeight);
+        gm.scenePreview.rectTransform.anchoredPosition = new Vector2(0, -35 + statusHeight * .5f);
+        UpdateButtonStates();
+    }
 
-    /// <summary>
-    ///     Loads sprites from the session for editor display.
-    /// </summary>
+    void OnDisable()
+    {
+        StoryRoot.StateChanged -= UpdateButtonStates;
+        gm.scenePreview.rectTransform.sizeDelta = new Vector2(320, 130);
+        gm.scenePreview.rectTransform.anchoredPosition = new Vector2(0, -35);
+    }
+
+    public void UpdateButtonStates()
+    {
+        bool editable = gm.CanEdit;
+        objectsButton.interactable = introButton.interactable = editable && StoryRoot.Session.EditorSceneIndex != 0;
+        saveButton.interactable = editable;
+        discardButton.interactable = editable && StoryRoot.Session.IsDirty;
+        saveStatusPanel.SetActive(StoryRoot.Session.HasWorkspace);
+        recoveryRetryButton.gameObject.SetActive(StoryRoot.RecoveryError != null);
+        recoveryRetryButton.interactable = editable;
+        if (StoryRoot.Session.HasWorkspace)
+            saveStatusText.text = "Mon histoire : " + StoryRoot.Session.Draft.story.title +
+                (StoryRoot.Session.IsDirty ? " — Modifications non enregistrées" : " — Aucune modification") +
+                "\n" + (StoryRoot.RecoveryError == null ? "Enregistrer télécharge l’histoire complète."
+                    : "Récupération automatique indisponible.");
+    }
+
     public void LoadSprites()
     {
-        int sceneCount = StoryRoot.Session.SceneCount;
-        int i;
-
-        // Load scene thumbnails
-        sceneThumbnails[0].GetComponent<Image>().sprite = RM_SaveLoad.LoadTitleSprite();
-
-        for (i = 1; i <= sceneCount; i++)
+        var session = StoryRoot.Session;
+        int count = session.Draft.scenes.Count;
+        for (int i = 0; i < sceneThumbnails.Length; i++)
         {
-            sceneThumbnails[i].GetComponent<Image>().sprite = RM_SaveLoad.LoadSceneThumbnail(i);
+            var thumbnail = sceneThumbnails[i];
+            thumbnail.GetComponent<Button>().interactable = i <= count + 1;
+            thumbnail.GetComponent<Image>().sprite = i == 0 ? session.LoadSprite(SpriteCache.TitleName, 320, 200)
+                : i <= count ? session.LoadSprite(SpriteCache.SceneFrameName(i, 1))
+                : i == count + 1 ? addSceneSprite : null;
         }
+        ShowBaseImage();
+    }
 
-        // Activate new scene button
-        if (i < 29)
-        {
-            sceneThumbnails[i].GetComponent<Button>().interactable = true;
-            sceneThumbnails[i].GetComponent<Image>().sprite = addSceneSprite;
-        }
-
-        // Load current scene sprite
-        if (gm.currentScene == 0)
-        {
-            gm.scenePanel.GetComponent<SpriteRenderer>().sprite = RM_SaveLoad.LoadTitleSprite();
-        }
-        else
-        {
-            // Load scene sprites from the session
-            var sceneSprites = RM_SaveLoad.LoadSceneSprites(gm.currentScene);
-            if (sceneSprites.Count > 0)
-            {
-                gm.scenePanel.GetComponent<SpriteRenderer>().sprite = sceneSprites[0];
-            }
-            else
-            {
-                // New scene with no sprites - clear the panel
-                gm.scenePanel.GetComponent<SpriteRenderer>().sprite = null;
-            }
-
-            gm.framesCount = Mathf.Max(0, sceneSprites.Count - 1);
-
-            // Reset and populate frame list
-            RM_ImgAnimLayout.frames.Clear();
-            for (i = 1; i < sceneSprites.Count; i++)
-            {
-                RM_ImgAnimLayout.frames.Add(sceneSprites[i]);
-            }
-        }
+    public void ShowBaseImage()
+    {
+        int scene = StoryRoot.Session.EditorSceneIndex;
+        gm.scenePreview.sprite = scene == 0
+            ? StoryRoot.Session.LoadSprite(SpriteCache.TitleName, 320, 200)
+            : StoryRoot.Session.LoadSprite(SpriteCache.SceneFrameName(scene, 1));
     }
 
     public void OnIntroClick()
     {
-        Debug.Log("Intro button clicked");
+        if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
         SetLayouts(gm.introLayout, gm.introTextObj);
         UnsetLayouts(gm.mainLayout);
-        gm.introLayout.GetComponent<RM_IntroLayout>().titleInputField.text = gm.titleText;
+        gm.introLayout.GetComponent<RM_IntroLayout>().Bind();
     }
 
     public void OnImagesClick()
     {
-        Debug.Log("Images button clicked");
+        if (!gm.CanEdit) return;
         SetLayouts(gm.imagesLayout);
         UnsetLayouts(gm.mainLayout);
         gm.imagesLayout.GetComponent<RM_ImagesLayout>().SetActiveBtn();
@@ -117,197 +95,82 @@ public class RM_MainLayout : RM_Layout
 
     public void OnObjectsClick()
     {
-        Debug.Log("Objects button clicked");
+        if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
         SetLayouts(gm.introTextObj, gm.title, gm.objectsLayout);
         UnsetLayouts(gm.mainLayout);
     }
 
     public void OnTestClick()
     {
-        Debug.Log("Test button clicked");
-        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-        warningLayout.isTestMode = true;
-        warningLayout.targetScene = gm.currentScene;
-        warningLayout.messageText.text = "TU TESTES LA SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
-        UnsetLayouts(gm.mainLayout);
-        SetLayouts(gm.warningLayout);
+        if (!gm.CanEdit) return;
+        var session = StoryRoot.Session;
+        session.ActivateWorkspace();
+        session.CurrentSceneIndex = session.EditorSceneIndex;
+        StoryRoot.FlushWorkspace();
+        SceneManager.LoadScene(session.EditorSceneIndex == 0 ? AppScenes.Title : AppScenes.Game);
     }
 
     public void OnSaveClick()
     {
-        Debug.Log("Save button clicked");
-        // Commit the current scene edits into the session, then persist locally.
-        RM_SaveLoad.SaveGame(gm);
-        gm.Reset();
-        StartCoroutine(PersistStory());
-    }
-
-    IEnumerator PersistStory()
-    {
-        // Flash thumbnail to indicate save started
-        if (gm.currentScene < sceneThumbnails.Length)
-        {
-            var thumbnailImage = sceneThumbnails[gm.currentScene].GetComponent<Image>();
-            Color originalColor = thumbnailImage.color;
-            thumbnailImage.color = Color.white;
-            yield return new WaitForSeconds(0.1f);
-            thumbnailImage.color = originalColor;
-        }
-
-        var story = StoryRoot.Session.Current;
-        if (story == null)
-        {
-            ShowSaveStatus("Sauvegarde échouée!", 2f);
-            yield break;
-        }
-
-        ShowSaveStatus("Sauvegarde...", 3f);
-
-        // Persist to browser-backed local storage. The dirty flag clears only in
-        // the IndexedDB-flush success callback (async on WebGL).
-        StoryRoot.Store.SaveUser(story, error =>
-        {
-            if (error != null)
-            {
-                ShowSaveStatus($"Erreur: {error}", 3f);
-            }
-            else
-            {
-                StoryRoot.Session.MarkSaved(story.story.id + ".rody.json");
-                ShowSaveStatus("Sauvegardé !", 2f);
-            }
-        });
-    }
-
-    void ShowSaveStatus(string message, float duration)
-    {
-        if (saveStatusText != null)
-        {
-			if (hideSaveStatusCoroutine != null)
-				StopCoroutine(hideSaveStatusCoroutine);
-
-            saveStatusText.text = message;
-            saveStatusPanel.SetActive(true);
-			hideSaveStatusCoroutine = StartCoroutine(HideSaveStatusAfter(duration));
-        }
-    }
-
-    IEnumerator HideSaveStatusAfter(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-		hideSaveStatusCoroutine = null;
-        if (saveStatusText != null)
-            saveStatusPanel.SetActive(false);
+        if (!gm.CanEdit) return;
+        StoryRoot.SaveWorkspace();
     }
 
     public void OnRevertClick()
     {
-        Debug.Log("Revert button clicked");
-
-        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-        warningLayout.targetScene = gm.currentScene;
-        warningLayout.isRevertMode = true;
-        warningLayout.messageText.text = "TU ANNULES LES MODIFICATIONS\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
-
-        UnsetLayouts(gm.mainLayout);
-        SetLayouts(gm.warningLayout);
+        if (!gm.CanEdit) return;
+        StoryRoot.DiscardWorkspace(gm.Refresh);
     }
 
     public void OnSceneThumbnailClick(int scene)
     {
-        int scenesCount = StoryRoot.Session.SceneCount;
-        Debug.Log($"[RM_MainLayout] OnSceneThumbnailClick({scene}) - currentScene: {gm.currentScene}, scenesCount: {scenesCount}");
-        var warningLayout = gm.warningLayout.GetComponent<RM_WarningLayout>();
-
-        string strChangeScene = "TU CHANGES DE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
-        string strRemoveScene = "TU SUPPRIMES LA SCENE " + scene + "\nAttention Rody, cela va effacer définitivement la scène ! Es-tu sûr de vouloir continuer ?";
-        string strCancelScene = "TU ANNULES CETTE NOUVELLE SCENE\nAttention Rody, cela va effacer la scène ! Es-tu sûr de vouloir continuer ?";
-        string strNewScene = "TU AJOUTES UNE NOUVELLE SCENE\nAttention Rody, les modifications non sauvegardées seront perdues ! Es-tu sûr de vouloir continuer ?";
-
-        if (scene == gm.currentScene)
+        if (!gm.CanEdit || scene < 0 || scene >= sceneThumbnails.Length) return;
+        var session = StoryRoot.Session;
+        int count = session.Draft.scenes.Count;
+        if (scene > count + 1) return;
+        if (scene == session.EditorSceneIndex)
         {
-            // Clicking on current scene: >= 18 means delete/cancel, < 18 does nothing
-            if (scene >= 18)
+            // Preserve the existing later-scene deletion affordance.
+            if (scene < 18) return;
+            StoryRoot.Confirm("Supprimer la scène " + scene + " et ses images de cette histoire ?", () =>
             {
-                // Check if scene has sprites - empty scenes shouldn't trigger delete on click
-                var sceneSprites = RM_SaveLoad.LoadSceneSprites(scene);
-                bool hasContent = sceneSprites != null && sceneSprites.Count > 0;
-
-                if (scene > scenesCount)
-                {
-                    // Scene beyond scenesCount - cancel new scene creation
-                    warningLayout.isDeleteMode = true;
-                    Debug.Log($"[RM_MainLayout] Action: CANCEL new scene (scene {scene} > scenesCount {scenesCount})");
-                    warningLayout.messageText.text = strCancelScene;
-                }
-                else if (hasContent)
-                {
-                    // Scene with content - offer to delete
-                    warningLayout.isDeleteMode = true;
-                    Debug.Log($"[RM_MainLayout] Action: DELETE scene {scene} (scene <= scenesCount {scenesCount})");
-                    warningLayout.messageText.text = strRemoveScene;
-                }
-                else
-                {
-                    // Empty scene (no sprites) - just ignore the click
-                    Debug.Log($"[RM_MainLayout] Action: NONE (scene {scene} is empty, ignoring click)");
-                    return;
-                }
-            }
-            else
-            {
-                // Scenes 1-17 cannot be deleted by clicking
-                Debug.Log($"[RM_MainLayout] Action: NONE (clicking current scene {scene} < 18, returning)");
-                return;
-            }
+                session.DeleteScene(scene);
+                session.EditorSceneIndex = scene - 1;
+                StoryRoot.FlushWorkspace();
+                gm.Refresh();
+            });
+            return;
         }
-        else if (scene > scenesCount)
-        {
-            // Adding a new scene
-            Debug.Log($"[RM_MainLayout] Action: ADD new scene (scene {scene} > scenesCount {scenesCount})");
-            warningLayout.messageText.text = strNewScene;
-        }
-        else
-        {
-            // Changing to a different existing scene
-            Debug.Log($"[RM_MainLayout] Action: CHANGE to scene {scene}");
-            warningLayout.messageText.text = strChangeScene;
-        }
-
-        warningLayout.targetScene = scene;
-        Debug.Log($"[RM_MainLayout] Showing warning dialog, targetScene set to {scene}");
-        UnsetLayouts(gm.mainLayout);
-        SetLayouts(gm.warningLayout);
+        if (scene == count + 1) session.CreateNewScene(scene);
+        session.EditorSceneIndex = scene;
+        StoryRoot.FlushWorkspace();
+        gm.Refresh();
     }
 
     public void UpdateActiveThumbnail()
     {
-        for (int i = 0; i < 30; i++)
-        {
-            sceneThumbnails[i].GetComponent<Image>().color = inactiveSceneColor;
-        }
-        sceneThumbnails[gm.currentScene].GetComponent<Image>().color = activeSceneColor;
+        int selected = StoryRoot.Session.EditorSceneIndex;
+        for (int i = 0; i < sceneThumbnails.Length; i++)
+            sceneThumbnails[i].GetComponent<Image>().color = i == selected ? activeSceneColor : inactiveSceneColor;
         UpdateThumbnailPositions((int)thumbnailSlider.value);
     }
 
-    public void OnThumbnailSliderChanged() => UpdateThumbnailPositions((int)thumbnailSlider.value);
+    public void OnThumbnailSliderChanged()
+    {
+        if (gm.CanEdit) UpdateThumbnailPositions((int)thumbnailSlider.value);
+    }
 
     public void UpdateThumbnailPositions(int sliderValue)
     {
-        for (int i = 0; i < 5; ++i) // for each row
+        int last = StoryRoot.Session.HasWorkspace ? StoryRoot.Session.Draft.scenes.Count + 1 : 0;
+        for (int i = 0; i < sceneThumbnails.Length; i++)
         {
-            for (int j = 6 * i; j < 6 * i + 6; ++j) // 6 thumbnails per row
-            {
-                if (j < 6 * sliderValue || j > 6 * sliderValue + 17 || j > StoryRoot.Session.SceneCount + 1)
-                    sceneThumbnails[j].SetActive(false);
-                else
-                {
-                    if (j <= StoryRoot.Session.SceneCount + 1)
-                        sceneThumbnails[j].SetActive(true);
-                    Vector3 pos = sceneThumbnails[j].GetComponent<Transform>().localPosition;
-                    sceneThumbnails[j].GetComponent<Transform>().localPosition = new Vector3(pos.x, 22.5f - (i - sliderValue) * 22.0f, pos.z);
-                }
-            }
+            bool visible = i >= 6 * sliderValue && i <= 6 * sliderValue + 17 && i <= last;
+            sceneThumbnails[i].SetActive(visible);
+            if (!visible) continue;
+            var transform = sceneThumbnails[i].transform;
+            var position = transform.localPosition;
+            transform.localPosition = new Vector3(position.x, 22.5f - (i / 6 - sliderValue) * 22f, position.z);
         }
     }
 }

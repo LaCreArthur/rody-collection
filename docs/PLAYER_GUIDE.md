@@ -1,6 +1,6 @@
 # Rody Collection — Guide du joueur
 
-Guide de la version en préparation, relu le 9 septembre 2026. La version publiée
+Guide de la version en préparation, relu le 10 septembre 2026. La version publiée
 peut différer, notamment pour les voix et la création d'histoires.
 
 [Jouer dans le navigateur](https://lacrearthur.github.io/rody-collection/) ·
@@ -40,16 +40,16 @@ Ces deux recherches sont optionnelles ; ce ne sont ni des points à accumuler ni
 une obligation pour passer à la suite. Cliquer n'importe où ne passe pas tous les dialogues.
 
 Le livre du menu de l'histoire permet de revenir à la collection. Le pinceau donne
-accès à l'éditeur ; pour une première modification d'un original, utilisez plutôt
-**Dupliquer** dans la collection, puis suivez le tutoriel.
+accès à l'éditeur : un original est dupliqué dans **Mon histoire** avant modification.
+Le tutoriel explique les choix lorsqu'une histoire personnelle est déjà ouverte.
 
 ## Créer, conserver et partager
 
 Les actions de la collection permettent de créer une histoire, en importer une,
 dupliquer un original ou éditer une histoire personnelle.
 
-Le parcours complet, y compris **Enregistrer**, **Exporter** et leurs limites
-actuelles, est dans le [tutoriel Rody Maker](RODY_MAKER_TUTORIAL.md).
+Le parcours complet, y compris **Enregistrer**, **Annuler les modifications** et
+la reprise automatique, est dans le [tutoriel Rody Maker](RODY_MAKER_TUTORIAL.md).
 L'atelier **Voix** permet aussi d'essayer la voix rétro sans créer d'histoire.
 
 ## Bonus et secrets

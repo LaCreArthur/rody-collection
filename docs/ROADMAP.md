@@ -3,22 +3,24 @@
 ## TL;DR (Arthur)
 
 The finish line is a polished browser release for retro fans and creators.
-The original speech engine and French dialogue workbench are implemented locally.
-The simpler editor direction is accepted: originals plus one personal story.
-Save downloads a file; Discard restores; the browser remembers work automatically.
-The next priority is implementing that consistent editing experience.
-Then verify the complete browser experience and publish.
-The implementation plan is ready; the new behavior has not been implemented here.
+The single personal story and unified Save/Discard flow are implemented locally.
+Editor checks retained edits across scenes, Test, original play and return.
+The original artwork is retained; the preview now fits complete pictures.
+The voice engine and French workbench are also implemented locally.
+Next, build the browser candidate and verify downloads, recovery and full journeys.
+Preserve stories from the old browser library before publishing.
+No WebGL build or publication has run for this implementation.
 
 ---
 
 ## Technical body (executing agent)
 
-**Updated: 2026-09-09.** This is the owner of project status and priorities.
-Planning baseline: `89fdf46`, six local commits ahead of fetched `origin/master`
-at `4dc870d`. Those commits are not evidence of a deployed release.
-This pass inspected code, serialized references, embedded JSON, docs and history;
-it did not compile Unity, build a player or perform browser acceptance testing.
+**Updated: 2026-09-10.** This is the owner of project status and priorities.
+The single-workspace implementation is local, based on plan commit `d1d2fe8`.
+Fetched `origin/master` remains `4dc870d`; local changes are not evidence of a
+published release. Source, serialized assets and focused Editor runtime journeys
+were inspected. No standalone compile gate, player build or browser acceptance
+has run; the Unity skill still requires explicit build authorization.
 
 ### Intent and release sequence
 
@@ -28,37 +30,36 @@ This roadmap owns work priority and release status, not another copy of that des
 
 The requested sequence was authentic engine → Maker UX → integrated/standalone
 voice workbench → WebGL verification → publish. Engine and workbench implementation
-have progressed; returning to unfinished Maker UX is the next useful leg.
+have progressed; browser release acceptance is now the next boundary.
 
 ### Implementation status
 
 | Outcome | Current evidence | Remaining boundary |
 |---|---|---|
-| One story model, catalog and local save path | June 30 migration commits; current [architecture](unify/ARCHITECTURE.md) | Rework ownership and persistence for the accepted single workspace; [audit](unify/AUDIT.md) owns current failure evidence. |
-| Saved user stories listed beside seven built-ins | Catalog reads local story files; shared actions offer edit/duplicate, import, new, export | Replace the personal library with one slot and the separate Export with Save; preserve browser-only stories before public cutover. |
-| Simpler document editor accepted and planned | September 9 user proposal and explicit acceptance; [implementation plan](EDITOR_WORKSPACE_PLAN.md) contains mandate and cold review | Implement, then verify in the browser. No code/assets changed in the planning pass. |
+| One draft and independent whole-story restore point | Direct Maker bindings, unified entry paths and Editor journeys; [architecture](unify/ARCHITECTURE.md) owns mechanisms | Browser file Save/reimport and sprite/structure rollback; [audit](unify/AUDIT.md) owns remaining evidence. |
+| Originals plus one personal slot | Eight rendered cards; personal draft remains while an original is played; legacy library APIs/UI removed | Preserve any old browser-only stories before public cutover. |
+| One file Save and automatic workspace recovery | Explicit download error retains draft/checkpoint in Editor; local recovery record contains both versions; startup/writer code integrated | Actual WebGL picker/download, IDBFS, refresh, failure and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
 | One voice workbench in stories and standalone Voix | French input, word correction, full notation, selected playback, explicit apply/cancel | French conversion, clipboard and story round-trip in a player/browser. Evidence and limits belong to the speech reference. |
-| Editor help | Save and Intro tooltip components wired; first-run hint preference fixed | Align labels/tooltips with accepted Save/Discard and recovery behavior. |
+| Editor help and content views | Save/Discard labels, nonblocking status/retry, frame removal and complete aspect-fit preview; independent reference review | Browser display-size and real target-drag checks; current screenshots before publication. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
 
 ### Next work, in order
 
-1. **Implement the accepted editor contract.** Follow the
-   [workspace plan](EDITOR_WORKSPACE_PLAN.md): direct whole-story draft and restore,
-   one file Save, persistent browser recovery, one personal slot, and removal of
-   obsolete library/save paths. Its integrity fixes cover content already being
-   edited; they do not authorize expansion of scene/frame/target capacity.
-2. **Resolve remaining visible authoring limits.** Choose consistent scene
-   management and repair unsupported visible frame/target controls without silently
-   dropping data. These broader capacity/UX choices remain separate from the
-   accepted workspace contract. Use the [audit](unify/AUDIT.md) for source evidence.
-3. **Validate the release candidate in WebGL.** A fresh browser session must recover
-   the personal draft and its restore point, download/reimport a usable `.rody.json`,
-   and handle replacement, storage and clipboard failures honestly. Exercise French correction and
-   native-expression round-trips, original and Ibiza voices, pitch, title/ending
-   flow, resized object-zone interaction, and DOOMastico entry/return. Run an
-   independent release review at this stage; compilation alone is not acceptance.
+1. **Obtain the WebGL release candidate.** Implementation and focused Editor
+   inspection are complete. Build authorization remains opt-in; no CI push should
+   be used as a substitute for a local candidate. The [workspace plan](EDITOR_WORKSPACE_PLAN.md)
+   still owns the required browser acceptance journeys.
+2. **Validate the candidate in the browser.** Recover a dirty draft and its older
+   restore point, download/reimport a usable story, and exercise Save/Discard/Cancel,
+   slow/failing storage, failed hydration and delayed file handoff. Check real target
+   drawing (including leaving midway), all frame controls and full French speech
+   round-trips. Extend release QA to original/Ibiza voices, pitch, endings, clipboard,
+   fullscreen/resize and DOOMastico entry/return. Compilation alone is not acceptance.
+3. **Review release evidence and remaining authoring limits.** Independent source
+   and serialized reviews have completed for the implementation. The full release
+   review must include browser evidence. Scene-capacity/management changes remain
+   separate product scope; the user has settled one target pair per objective.
 4. **Publish after acceptance and an explicit publishing instruction.** Preserve
    any personal work that exists only in the old browser library before cutover. Refresh
    current tutorial screenshots, approve the local [itch copy](itch-pages/ITCH_RODY_COLLECTION.md),
@@ -70,9 +71,9 @@ have progressed; returning to unfinished Maker UX is the next useful leg.
   The shared action bar already replaced its layout; metadata editing remains a
   separate UX decision. Discoverable personal-story deletion retires with the
   accepted removal of the personal library; scene deletion is retained.
-- **Expanded scene/animation capacity and multiple targets:** only expansion is
-  parked. Agreeing the existing supported limits and fixing broken visible controls
-  belongs in the Maker UX leg above. Do not revive old "16–29 / six objects"
+- **Expanded scene/animation capacity:** parked; the current frame controls remain
+  and need browser acceptance. **Multiple targets are excluded by the explicit
+  one-target-per-objective decision.** Do not revive old “16–29 / six objects”
   advertising as an implementation requirement.
 - **Conversion skill distribution:** keep one repository-owned
   [French-to-Rody skill](../.claude/skills/french-to-rody-phonemes/SKILL.md), make it

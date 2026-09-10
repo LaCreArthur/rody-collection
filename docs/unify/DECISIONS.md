@@ -7,11 +7,13 @@ is not fresh approval to implement every clause. Current behavior is owned by
 
 On September 9 Arthur accepted a simpler document editor: one personal workspace,
 Save downloads the file, whole-story Discard, and automatic browser recovery of
-draft plus restore point. [Game design §9](../GAME_DESIGN.md#9-accepted-saving-and-editing-experience--not-yet-implemented)
+draft plus restore point. [Game design §9](../GAME_DESIGN.md#9-saving-and-editing)
 owns that accepted behavior; the [implementation plan](../EDITOR_WORKSPACE_PLAN.md)
 owns execution. It supersedes the June local-Save/separate-Export model, scene-only
 Reset, personal library and backup indicators below. Those remain historical
-evidence, not implementation requirements. Planning is not completed implementation.
+evidence, not implementation requirements. September 10 implementation and focused
+Editor checks are local; browser acceptance remains pending. Arthur explicitly
+settled “One dependable target area per objective, nothing change from the original DA here”.
 
 ## June 29 recorded product direction — superseded where noted above
 
@@ -37,7 +39,9 @@ evidence, not implementation requirements. Planning is not completed implementat
 The old plan proposed fresh internal ids and a visible ` (copie)` suffix, with no
 name prompt. Its earlier prose also said "no suffix"; that conflict was never a
 sound reason to silently change naming. Current behavior keeps the suffix but
-uses title-derived ids. Collision handling remains an implementation issue.
+uses title-derived ids in portable files. The fixed workspace and original-only
+catalog remove id-based replacement/precedence from runtime selection; no collision
+manager is required for the single-workspace design.
 
 The first-run editor hint was to remain a preference and show once. Voice-workbench
 and Zambla UI work were outside the storage migration; voice work subsequently

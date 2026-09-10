@@ -55,9 +55,7 @@ public class ClickHandler : MonoBehaviour {
 		}
 	}
 
-	public void DrawClick() {
-		SceneManager.LoadScene(AppScenes.Editor);
-	}
+	public void DrawClick() => StoryRoot.EditCurrentStory();
 
 	public void ngpClick() {
 		gm.objOver = true;

@@ -111,16 +111,16 @@ public class Scene : MonoBehaviour {
 			case 1: // obj
 				// Debug.Log(step);
 				gm.b_ngp.SetActive(true);
-				RM_SaveLoad.SetActiveZones(gm.objNear, gm.obj, false); 
+				HideZones(gm.objNear, gm.obj);
 				// gm.obj.SetActive(false);
 				break;
 			case 2: // ngp
 				gm.b_fsw.SetActive(true);
-				RM_SaveLoad.SetActiveZones(gm.ngpNear, gm.ngp, false);
+				HideZones(gm.ngpNear, gm.ngp);
 				// gm.ngp.SetActive(false);
 				break;
 			case 3: // fsw
-				RM_SaveLoad.SetActiveZones(gm.fswNear, gm.fsw, false);
+				HideZones(gm.fswNear, gm.fsw);
 				// gm.fsw.SetActive(false);
 				break;
 			default: break;
@@ -232,4 +232,9 @@ public class Scene : MonoBehaviour {
 	}
 
 
+    static void HideZones(List<GameObject> nearZones, List<GameObject> targets)
+    {
+        foreach (var zone in nearZones) zone.SetActive(false);
+        foreach (var target in targets) target.SetActive(false);
+    }
 }

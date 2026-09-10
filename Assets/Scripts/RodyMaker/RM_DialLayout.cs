@@ -1,140 +1,97 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System;
 
-public class RM_DialLayout : RM_Layout {
+public class RM_DialLayout : RM_Layout
+{
+    public GameObject isMasticoBtn;
+    public Button phonemsBtn, returnBtn;
+    public InputField textInputField;
+    public Sprite masticoUnmute, masticoMute;
 
-	public GameObject isMasticoBtn;
-	public Button phonemsBtn, returnBtn;
-	public InputField textInputField;
-	public Sprite masticoUnmute, masticoMute;
-	[HideInInspector]
-	public int activeDial = 1;
-	[HideInInspector]
-	public float pitch;
-	[System.NonSerialized]
-	public SpeechDocument phonems = SpeechDocument.FromNotation("");
-	public bool isDial = false, isMastico = false;
-	public void RM_ReturnClick(){
-		Debug.Log("DialReturn button clicked");
-		SetLayouts(gm.dialoguesLayout, gm.introTextObj);
-		UnsetLayouts(gm.dialLayout);
+    int activeDial = 1;
+    SpeechDocument Dialogue => activeDial == 1 ? gm.CurrentScene.dialogues.intro1
+        : activeDial == 2 ? gm.CurrentScene.dialogues.intro2 : gm.CurrentScene.dialogues.intro3;
+    float Pitch => activeDial == 1 ? gm.CurrentScene.voice.pitch1
+        : activeDial == 2 ? gm.CurrentScene.voice.pitch2 : gm.CurrentScene.voice.pitch3;
+    bool IsMastico => activeDial == 1 ? gm.CurrentScene.voice.isMastico1
+        : activeDial == 2 ? gm.CurrentScene.voice.isMastico2 : gm.CurrentScene.voice.isMastico3;
+    string DisplayText => activeDial == 1 ? gm.CurrentScene.texts.intro1
+        : activeDial == 2 ? gm.CurrentScene.texts.intro2 : gm.CurrentScene.texts.intro3;
 
-		// Write back pitch and phonems
-		switch (activeDial)
-        {
-            case 1:
-                gm.pitch1 = pitch;
-                gm.introDial1 = phonems;
-                break;
-            case 2:
-                gm.pitch2 = pitch;
-                gm.introDial2 = phonems;
-                break;
-            case 3:
-                gm.pitch3 = pitch;
-                gm.introDial3 = phonems;
-                break;
-            default: break;
-        }
+    protected override void Awake()
+    {
+        base.Awake();
+        textInputField.interactable = false;
+        textInputField.onValueChanged.AddListener(SetText);
+        textInputField.onEndEdit.AddListener(_ => StoryRoot.FlushWorkspace());
+    }
 
-		// Write back dialog display text to introText
-		SetDialText();
+    public void Bind(int dialogue)
+    {
+        activeDial = dialogue;
+        textInputField.SetTextWithoutNotify(DisplayText);
+        updateMasticoSprite();
+    }
 
-		Debug.Log("new pitch is : " + pitch);
-		Debug.Log("new introDial is : " + phonems);
-		isDial = false;
-		gm.dialoguesLayout.GetComponent<RM_DialoguesLayout>().SetDialButtons();
-	}
+    void SetText(string text)
+    {
+        if (!gm.CanEdit || DisplayText == text) return;
+        var texts = gm.CurrentScene.texts;
+        if (activeDial == 1) texts.intro1 = text;
+        else if (activeDial == 2) texts.intro2 = text;
+        else texts.intro3 = text;
+        StoryRoot.Session.NotifyEdited();
+        gm.RefreshText();
+    }
 
-	public void RM_PhonemesClick(){
-		phonemsBtn.interactable = false;
-		float voicePitch = isMastico ? (gm.isZambla ? 0.9f : 1f) : pitch;
-		SynthManager.Open(phonems, voicePitch, !isMastico, "INTRO · DIALOGUE " + activeDial,
-			(text, voice) => { phonems = text; if (!isMastico) pitch = voice; },
-			() => phonemsBtn.interactable = true);
-	}
+    public void RM_ReturnClick()
+    {
+        if (!gm.CanEdit) return;
+        SetLayouts(gm.dialoguesLayout, gm.introTextObj);
+        UnsetLayouts(gm.dialLayout);
+        gm.dialoguesLayout.GetComponent<RM_DialoguesLayout>().SetDialButtons();
+    }
 
-	public void RM_TextClick(){
-		Debug.Log("Text button clicked");
-		if (textInputField.interactable){
-			textInputField.interactable = false;
-			Debug.Log("inputField is now not interactable");
-			phonemsBtn.interactable = 
-			returnBtn.interactable = 
-			isMasticoBtn.GetComponent<Button>().interactable = true;
-		}
-		else {
-			textInputField.interactable = true;
-			Debug.Log("inputField is now interactable");
-			phonemsBtn.interactable = 
-			returnBtn.interactable = 
-			isMasticoBtn.GetComponent<Button>().interactable = false;
-		}
-	}
+    public void RM_PhonemesClick()
+    {
+        if (!gm.CanEdit) return;
+        phonemsBtn.interactable = false;
+        bool mastico = IsMastico;
+        float voicePitch = mastico ? (gm.CurrentScene.voice.isZambla ? 0.9f : 1f) : Pitch;
+        SynthManager.Open(Dialogue, voicePitch, !mastico, "INTRO · DIALOGUE " + activeDial,
+            (speech, pitch) =>
+            {
+                if (SameSpeech(Dialogue, speech) && (mastico || Pitch == pitch)) return;
+                var scene = gm.CurrentScene;
+                switch (activeDial)
+                {
+                    case 1: scene.dialogues.intro1 = speech; if (!mastico) scene.voice.pitch1 = pitch; break;
+                    case 2: scene.dialogues.intro2 = speech; if (!mastico) scene.voice.pitch2 = pitch; break;
+                    case 3: scene.dialogues.intro3 = speech; if (!mastico) scene.voice.pitch3 = pitch; break;
+                }
+                StoryRoot.Session.NotifyEdited();
+                StoryRoot.FlushWorkspace();
+            }, () => phonemsBtn.interactable = true);
+    }
 
-	public void RM_IsMasticoClick(){
-		Debug.Log("IsMastico button clicked");
-		
-		isMastico = (isMastico)? false : true;
-		updateMasticoSprite();
+    public void RM_TextClick()
+    {
+        if (!gm.CanEdit) return;
+        textInputField.interactable = !textInputField.interactable;
+        phonemsBtn.interactable = returnBtn.interactable = isMasticoBtn.GetComponent<Button>().interactable
+            = !textInputField.interactable;
+    }
 
-		switch (activeDial)
-        {
-            case 1:
-                gm.isMastico1 = isMastico;
-                break;
-            case 2:
-                gm.isMastico2 = isMastico;
-                break;
-            case 3:
-                gm.isMastico3 = isMastico;
-                break;
-            default: break;
-        }
-	}
+    public void RM_IsMasticoClick()
+    {
+        if (!gm.CanEdit) return;
+        var voice = gm.CurrentScene.voice;
+        if (activeDial == 1) voice.isMastico1 = !voice.isMastico1;
+        else if (activeDial == 2) voice.isMastico2 = !voice.isMastico2;
+        else voice.isMastico3 = !voice.isMastico3;
+        StoryRoot.Session.NotifyEdited();
+        updateMasticoSprite();
+    }
 
-	public void updateMasticoSprite(){
-		isMasticoBtn.GetComponent<Image>().sprite = (isMastico)? masticoUnmute : masticoMute;
-	}
-	
-	public void GetDialText() {
-		switch (activeDial)
-		{
-			case 1:
-				textInputField.text = gm.introText1 ?? "";
-				break;
-			case 2:
-				textInputField.text = gm.introText2 ?? "";
-				break;
-			case 3:
-				textInputField.text = gm.introText3 ?? "";
-				break;
-			default:
-				textInputField.text = "";
-				break;
-		}
-	}
-
-	/// <summary>
-	/// Writes back the dialog display text from textInputField to gm.introText1/2/3.
-	/// </summary>
-	private void SetDialText() {
-		switch (activeDial)
-		{
-			case 1:
-				gm.introText1 = textInputField.text;
-				break;
-			case 2:
-				gm.introText2 = textInputField.text;
-				break;
-			case 3:
-				gm.introText3 = textInputField.text;
-				break;
-		}
-		Debug.Log($"Saved introText{activeDial}: {textInputField.text}");
-	}
+    public void updateMasticoSprite() => isMasticoBtn.GetComponent<Image>().sprite = IsMastico ? masticoUnmute : masticoMute;
 }

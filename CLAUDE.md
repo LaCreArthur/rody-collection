@@ -10,7 +10,7 @@ memory index. Use `studio-repo-discipline` before edits or Git writes.
 |---|---|---|
 | Understand the product | [Game design](docs/GAME_DESIGN.md) | Collection, stories, Maker, voice, creative limits and accepted next UX; deliberately code-free |
 | Decide what to do next | [Roadmap](docs/ROADMAP.md) | Priorities, completed implementation, remaining release checks |
-| Implement the accepted editor UX | [Workspace plan](docs/EDITOR_WORKSPACE_PLAN.md) | One personal story, Save as download, complete restore and browser recovery; planned, not implemented |
+| Implement the accepted editor UX | [Workspace plan](docs/EDITOR_WORKSPACE_PLAN.md) | One personal story, Save as download, complete restore and browser recovery; implemented locally; browser acceptance pending |
 | Work on story storage / editor state | [Architecture](docs/unify/ARCHITECTURE.md) | Current owners, data flow, save/export and content format |
 | Fix a known editor/storage issue | [Audit](docs/unify/AUDIT.md) | Source evidence, uncertainty and the narrow check needed for each finding |
 | Check historical storage intent | [Decisions](docs/unify/DECISIONS.md) | Recorded direction versus old unapproved defaults |
@@ -36,7 +36,7 @@ local story files, but browser import/export wrappers are not desktop file picke
 - Build scene paths/order: [EditorBuildSettings.asset](ProjectSettings/EditorBuildSettings.asset).
 - Deployment: [GitHub Pages workflow](.github/workflows/deploy-pages.yml).
   A push to `master` triggers a build/deploy. Batch local work; publish only when asked.
-- Story runtime: `Assets/Scripts/Stories/`; `StoryRoot.Session` owns the selected story.
+- Story runtime: `Assets/Scripts/Stories/`; `StoryRoot.Session` owns the personal workspace independently from active original play.
   The removed provider/WorkingStory architecture is historical.
 - Maker: `Assets/Scripts/RodyMaker/`; collection: `Assets/Scripts/RodyAnthology/`.
 - Gameplay: `Assets/Scripts/GameManager.cs`; speech: `SoundManager.cs`,

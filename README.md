@@ -13,7 +13,8 @@ les fonctions présentes dans le code des vérifications et de la publication re
 
 **[Game Design & Product Specification](docs/GAME_DESIGN.md)** explique en un seul
 document la Collection, les histoires, Rody Maker et l'atelier vocal, sans référence
-au code. Il distingue le produit existant de la prochaine UX acceptée, encore à réaliser.
+au code. Il définit notamment le travail sur une histoire personnelle, son enregistrement
+et sa restauration ; le roadmap suit leur validation et leur publication.
 
 | Besoin | Document |
 |---|---|

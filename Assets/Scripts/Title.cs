@@ -75,6 +75,7 @@ public class Title : MonoBehaviour {
 	}
 
 	void Update() {
+		if (StoryRoot.IsBusy) return;
         if (Input.GetMouseButtonDown(0))
         {
 			click++;

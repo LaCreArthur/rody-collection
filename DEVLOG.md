@@ -3,6 +3,65 @@
 Dated historical evidence, not current instructions. Start with [the roadmap](docs/ROADMAP.md)
 and [game design](docs/GAME_DESIGN.md); old APIs, conclusions and screenshots can be superseded.
 
+## 2026-09-10: Single-story workspace implemented locally
+
+Implemented Arthur's accepted single-story editing plan after his execution
+instruction. One draft and independent restore snapshot now survive scene changes,
+Test and playing originals. File Save advances that snapshot only after download
+handoff; whole-story Discard restores it. New/Duplicate/Import share the replacement
+decision, with invalid/cancelled input preserving the existing workspace. Browser
+recovery stores the draft, older snapshot, dirty state and editor cursor together.
+
+- Ordinary Maker controls now write directly into the typed draft. The speech
+  workbench keeps its explicit audition/Apply/Cancel buffer and full speech document.
+  Collection projects seven originals and one personal slot; original play and the
+  personal editor have independent lifetimes and cursors.
+- Reused the existing file/IDBFS boundary, serializer and clone. Root owns startup,
+  Save/replacement locking and one coalesced recovery writer. Failed recovery keeps
+  work open, reports the error and offers a later retry. No dependency or second
+  save mode was added; old browser `Stories/` data is not deleted or auto-selected.
+- Reused existing art for one cross-scene choice dialog. Updated serialized actions,
+  Save/Discard help, failure-only retry and frame removal. The main preview now fits
+  complete pictures and reserves space for status; detailed editors retain their
+  drawing area. Existing 2× source images use logical sprite sizing without byte
+  conversion. Original artwork and encoded stories are unchanged.
+- Arthur settled the unsupported multiple-target UI explicitly: “One dependable
+  target area per objective, nothing change from the original DA here”. Near/target
+  redraw is one accepted edit; leaving before the target is completed retains the
+  previous pair.
+- Fresh source review found the missing recovery retry/error-aware Save message and
+  the partial target-pair commit. Both were corrected. Separate serialized/reference
+  review of the completed UI and supplied renders returned no material findings.
+- Updated design, architecture, audit, roadmap and French instructions to the
+  implementation. The plan remains the browser-acceptance owner until completion;
+  the audit records evidence and pending boundaries.
+
+Meaning removed in this leg:
+
+1. Multiple personal-library membership, sorting, deletion and same-id precedence;
+   one editable slot replaces these outcomes. Existing legacy files remain intact.
+2. Separate local Save/file Export, scene-only Reset, save prompts on scene changes,
+   Test and ordinary exits, and separate local-save/backup indicators.
+3. Save-time reconstruction from mirrored panel state, the authoritative animation
+   frame list, title rescaling/frame synthesis on Save, and stale trailing frame keys.
+4. Extra-target commands and marker ownership beyond the supported single pair per
+   objective, following Arthur's explicit decision. Scene deletion remains.
+5. Old warning/text-input/save-wrapper components, split bootstrap initialization,
+   duplicate feedback and clue-button components, and their orphaned serialized
+   fields/references. These were replaced at their existing consumers.
+6. Debug “glitch” text used as the new-scene template; new scenes now start blank.
+   The obsolete preview SpriteRenderer was replaced by the Canvas's native image;
+   this changes display ownership, not the image content or art direction.
+
+Validation: live Editor catalog reads for all seven originals; two-scene text edits,
+Test/paintbrush return, separate original play, Editor Save error, whole-story Discard,
+optional-objective text independence, local recovery envelope and clean restart.
+Inspected final renders, references and diff. No standalone compile gate, test suite,
+WebGL build, browser acceptance or publication. Real picker/download, dirty refresh,
+storage failure/ordering, target dragging and downloaded-file round-trip remain open
+in [the audit](docs/unify/AUDIT.md). A local browser candidate is the next required
+verification boundary; existing browser-only stories need preservation before release.
+
 ## 2026-09-09: Single-workspace editing accepted and planned
 
 Arthur proposed one editable/imported story, an initial restore point and one

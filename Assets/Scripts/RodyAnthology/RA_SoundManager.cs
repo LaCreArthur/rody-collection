@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class RA_SoundManager : MonoBehaviour {
 
-	public AudioClip feedbackEnableClip, feedbackDisableClip, slotSelectedClip, joyLeftClip, joyLeftUnlock, joyRightClip;
+	public AudioClip slotSelectedClip, joyLeftClip, joyLeftUnlock, joyRightClip;
 	public AudioSource audioSource;
 	int joyLeftClicks = 0;
 	public bool isRollPlaying = false;
@@ -15,18 +15,6 @@ public class RA_SoundManager : MonoBehaviour {
 
 	void Update() {
 
-	}
-
-	public void OnFeedbackEnabled(){
-		ResetDefaultValues();
-		audioSource.clip = feedbackEnableClip;
-		audioSource.Play();
-	}
-
-	public void OnFeedbackDisabled(){
-		ResetDefaultValues();
-		audioSource.clip = feedbackDisableClip;
-		audioSource.Play();
 	}
 
 	public void OnSlotSelection() {

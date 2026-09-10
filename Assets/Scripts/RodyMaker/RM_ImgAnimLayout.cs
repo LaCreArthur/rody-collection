@@ -1,59 +1,101 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
-public class RM_ImgAnimLayout : RM_Layout {
+public class RM_ImgAnimLayout : RM_Layout
+{
+    public int offset;
+    public Button[] frameBtn, removeFrameBtn;
 
-	public static List<Sprite> frames = new List<Sprite>();
-    public int offset = 0;
-    public Button[] frameBtn;
+    int previewedFrame = -1;
+    Canvas canvas;
 
-    int _pendingFrameIndex;
-
-    public void SetActiveBtn() {
-        Debug.Log("RM_ImgAnimLayout::SetButton : frameCount = " + frames.Count);
-        for (int i=0; i<3; i++) {
-            frameBtn[i].interactable = i + offset < frames.Count;
-        }
+    protected override void Awake()
+    {
+        base.Awake();
+        canvas = GetComponentInParent<Canvas>();
     }
 
-	public void ReturnClick(){
-		Debug.Log("Images return button clicked");
-		SetLayouts(gm.imagesLayout);
-		UnsetLayouts(gm.imgAnimLayout);
-	}
-
-	public void ImportClick(int i)
+    void Update()
     {
-        _pendingFrameIndex = i;
-        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", OnFrameImported);
-    }
-
-    void OnFrameImported(string dataUrl)
-    {
-        if (string.IsNullOrEmpty(dataUrl)) return;
-
-        var tex = WebGLFileBrowser.DataUrlToTexture(dataUrl);
-        if (tex == null) return;
-
-        // Unify with the main image path: Atari palette + pixelsPerUnit 1.
-        RM_TextureScale.Point(tex, 320, 130);
-        AtariPalette.ApplyPalette(tex);
-        var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
-
-        // Allow replacing an existing frame or appending the next sequential frame only.
-        int frameIndex = _pendingFrameIndex + offset;
-        if (frameIndex > frames.Count)
+        if (!gm.CanEdit) return;
+        for (int i = 0; i < frameBtn.Length; i++)
         {
-            Debug.LogWarning($"[RM_ImgAnimLayout] Ignoring frame import at missing index {frameIndex} (count={frames.Count})");
-            return;
+            bool focused = EventSystem.current.currentSelectedGameObject == frameBtn[i].gameObject;
+            bool hovered = RectTransformUtility.RectangleContainsScreenPoint(
+                frameBtn[i].GetComponent<RectTransform>(), Input.mousePosition, canvas.worldCamera);
+            if ((focused || hovered) && i != previewedFrame)
+            {
+                PreviewFrame(i);
+                return;
+            }
         }
+    }
 
-        if (frameIndex == frames.Count)
-            frames.Add(sprite);
-        else
-            frames[frameIndex] = sprite;
+    public void SetActiveBtn()
+    {
+        previewedFrame = -1;
+        int count = StoryRoot.Session.DraftFrameCount(StoryRoot.Session.EditorSceneIndex) - 1;
+        for (int i = 0; i < frameBtn.Length; i++)
+        {
+            frameBtn[i].interactable = i + offset <= count;
+            removeFrameBtn[i].interactable = i + offset < count;
+        }
+    }
 
+    public void ReturnClick()
+    {
+        if (!gm.CanEdit) return;
+        gm.mainLayout.GetComponent<RM_MainLayout>().ShowBaseImage();
+        SetLayouts(gm.imagesLayout);
+        UnsetLayouts(gm.imgAnimLayout);
+        gm.imagesLayout.GetComponent<RM_ImagesLayout>().SetActiveBtn();
+    }
+
+    public void PreviewFrame(int index)
+    {
+        if (!gm.CanEdit) return;
+        int scene = StoryRoot.Session.EditorSceneIndex;
+        int frame = index + offset + 2;
+        if (frame > StoryRoot.Session.DraftFrameCount(scene)) return;
+        previewedFrame = index;
+        gm.scenePreview.sprite = StoryRoot.Session.LoadSprite(SpriteCache.SceneFrameName(scene, frame));
+    }
+
+    public void RemoveFrame(int index)
+    {
+        if (!gm.CanEdit) return;
+        StoryRoot.Session.RemoveFrame(StoryRoot.Session.EditorSceneIndex, index + offset + 2);
+        StoryRoot.FlushWorkspace();
+        gm.mainLayout.GetComponent<RM_MainLayout>().LoadSprites();
         SetActiveBtn();
+    }
+
+    public void ImportClick(int index)
+    {
+        if (!gm.CanEdit) return;
+        int scene = StoryRoot.Session.EditorSceneIndex;
+        int frame = index + offset + 2;
+        if (index < 0 || index >= frameBtn.Length || frame > StoryRoot.Session.DraftFrameCount(scene) + 1) return;
+        WebGLFileBrowser.Instance.OpenImageAsBase64("image/png,image/jpeg", (data, error) =>
+        {
+            if (error != null) { StoryRoot.ShowMessage("L’image n’a pas pu être ouverte.\n" + error); return; }
+            if (data == null) return;
+            Texture2D texture = null;
+            try
+            {
+                texture = WebGLFileBrowser.DataUrlToTexture(data);
+                if (texture == null) throw new InvalidOperationException("Format d’image illisible.");
+                RM_TextureScale.Point(texture, 320, 130);
+                error = StoryRoot.Session.SaveSprite(SpriteCache.SceneFrameName(scene, frame), texture);
+                if (error != null) throw new InvalidOperationException(error);
+                StoryRoot.FlushWorkspace();
+                gm.scenePreview.sprite = StoryRoot.Session.LoadSprite(SpriteCache.SceneFrameName(scene, frame));
+                SetActiveBtn();
+            }
+            catch (Exception e) { StoryRoot.ShowMessage("L’image d’animation n’a pas été modifiée.\n" + e.Message); }
+            finally { if (texture != null) Destroy(texture); }
+        });
     }
 }

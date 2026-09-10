@@ -5,22 +5,22 @@ using TMPro;
 
 public class RA_ActionPanel : MonoBehaviour {
 	const string EditLabel = "Éditer";
-	const string ExportLabel = "Exporter";
+	const string SaveLabel = "Enregistrer";
 	const string ForkLabel = "Dupliquer";
 
 	public static event Action OnEditClicked;
-	public static event Action OnExportClicked;
+	public static event Action OnSaveClicked;
 	public static event Action OnImportClicked;
 	public static event Action OnNewClicked;
 
 	[SerializeField] Button editButton;
-	[SerializeField] Button exportButton;
+	[SerializeField] Button saveButton;
 	[SerializeField] Button importButton;
 	[SerializeField] Button newButton;
 	[SerializeField] Button voicesButton;
 
 	[SerializeField] TMP_Text editLabel;
-	[SerializeField] TMP_Text exportLabel;
+	[SerializeField] TMP_Text saveLabel;
 	[SerializeField] TMP_Text importLabel;
 	[SerializeField] TMP_Text newLabel;
 
@@ -30,7 +30,7 @@ public class RA_ActionPanel : MonoBehaviour {
 	void OnEnable()
 	{
 		editButton.onClick.AddListener(() => OnEditClicked?.Invoke());
-		exportButton.onClick.AddListener(() => OnExportClicked?.Invoke());
+		saveButton.onClick.AddListener(() => OnSaveClicked?.Invoke());
 		importButton.onClick.AddListener(() => OnImportClicked?.Invoke());
 		newButton.onClick.AddListener(() => OnNewClicked?.Invoke());
 		voicesButton.onClick.AddListener(() => UnityEngine.SceneManagement.SceneManager.LoadScene(AppScenes.Phonemes));
@@ -39,28 +39,23 @@ public class RA_ActionPanel : MonoBehaviour {
 	void OnDisable()
 	{
 		editButton.onClick.RemoveAllListeners();
-		exportButton.onClick.RemoveAllListeners();
+		saveButton.onClick.RemoveAllListeners();
 		importButton.onClick.RemoveAllListeners();
 		newButton.onClick.RemoveAllListeners();
 		voicesButton.onClick.RemoveAllListeners();
 	}
 
-	/// <summary>
-	/// Reflects the selected slot. The one place provenance is consulted: Export is
-	/// offered only for user stories, and Edit reads "Dupliquer" on a built-in.
-	/// </summary>
-	public void Show(bool isUser)
-	{
-		gameObject.SetActive(true);
-
-		SetButton(editButton, editLabel, true);       // always: fork (built-in) or edit (user)
-		SetButton(exportButton, exportLabel, isUser); // share only a user story
-		SetButton(importButton, importLabel, true);
-		SetButton(newButton, newLabel, true);
-
-		editLabel.text = isUser ? EditLabel : ForkLabel;
-		exportLabel.text = ExportLabel;
-	}
+    public void Show(bool isWorkspace, bool hasWorkspace, bool ready, bool busy)
+    {
+        gameObject.SetActive(true);
+        SetButton(editButton, editLabel, ready && !busy && (!isWorkspace || hasWorkspace));
+        SetButton(saveButton, saveLabel, ready && !busy && isWorkspace && hasWorkspace);
+        SetButton(importButton, importLabel, ready && !busy);
+        SetButton(newButton, newLabel, ready && !busy);
+        voicesButton.interactable = !busy;
+        editLabel.text = isWorkspace ? EditLabel : ForkLabel;
+        saveLabel.text = SaveLabel;
+    }
 
 	public void Hide() => gameObject.SetActive(false);
 

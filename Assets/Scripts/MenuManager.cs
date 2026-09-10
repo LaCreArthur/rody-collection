@@ -133,6 +133,7 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	public void OnNext() {
+		if (StoryRoot.IsBusy) return;
 		switch(actionToLoad) {
 			case 0: // Bouton scene
 				StoryRoot.Session.CurrentSceneIndex = sceneToLoad;
@@ -140,7 +141,7 @@ public class MenuManager : MonoBehaviour {
 				break;
 			case 1: // Bouton Draw (Edit)
 				StoryRoot.Session.CurrentSceneIndex = 0;
-				ForkAndEdit();
+				StoryRoot.EditCurrentStory();
 				break;
 			case 2: // Bouton intro (return to story selection)
 				StoryRoot.Session.CurrentSceneIndex = 0;
@@ -150,19 +151,4 @@ public class MenuManager : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Enters the editor on the loaded story. Editing a built-in transparently
-	/// produces an editable user copy; ForkForEditing no-ops for a user story.
-	/// </summary>
-	private void ForkAndEdit()
-	{
-		if (!StoryRoot.Session.IsLoaded)
-		{
-			Debug.LogError("[MenuManager] No story loaded");
-			return;
-		}
-
-		StoryRoot.Session.ForkForEditing();
-		SceneManager.LoadScene(AppScenes.Editor);
-	}
 }

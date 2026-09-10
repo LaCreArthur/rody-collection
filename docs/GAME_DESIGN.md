@@ -1,26 +1,25 @@
 # Rody Collection — Game Design & Product Specification
 
-**Updated: 9 September 2026.** A single product reference for Rody Collection,
+**Updated: 10 September 2026.** A single product reference for Rody Collection,
 Rody stories, and Rody Maker. It describes the experience, its rules, its creative
 possibilities and the intended relationship between its parts.
 
-**Reading the status:** Sections 1–8 describe the established product and current
-capabilities, including the older library/save controls that will be replaced.
-Section 9 owns the accepted editing direction from September 9; it has not been
-implemented yet. Where they differ, section 9 is the intended behavior. Section 10
-names the remaining product gaps. None of these sections certifies that a feature
-has been checked in the latest published browser version.
+**Reading the status:** This document defines the agreed product, including the
+single personal workspace accepted on September 9. Section 9 owns its saving and
+replacement rules; section 10 names remaining product decisions. Implementation
+and browser acceptance are tracked separately. This specification does not certify
+that the latest published version already provides every described behavior.
 
 ## At a glance
 
-- **Collection:** a library for playing originals, personal stories and bonuses.
+- **Collection:** the originals, one personal story and bonuses.
 - **Story:** a linear sequence of illustrated scenes, voices and object searches.
 - **Maker:** assemble those scenes and remix existing stories without programming.
 - **Voix:** write, listen to and correct deliberately robotic French speech.
-- **Accepted next UX:** originals plus one personal story; Save downloads; Discard restores; automatic browser recovery.
+- **Editing:** originals plus one personal story; Save downloads; Discard restores; automatic browser recovery.
 
 For product orientation, read sections 1–3; for story/creator rules, 4–8; for the
-accepted next UX and unresolved scope, 9–10. Bonuses and success criteria close the document.
+saving rules and unresolved scope, 9–10. Bonuses and success criteria close the document.
 
 ## 1. What Rody Collection is
 
@@ -33,7 +32,7 @@ It brings together three closely connected experiences:
 
 | Experience | The person’s goal | What they leave with |
 |---|---|---|
-| **Rody Collection** | Discover, choose and revisit adventures | A library of original and personal stories they can play |
+| **Rody Collection** | Discover, choose and revisit adventures | The original adventures and their one personal story to play |
 | **A Rody story** | Follow a small adventure and solve its visual searches | A completed sequence of scenes, with optional harder discoveries |
 | **Rody Maker** | Make or remix an adventure without programming | A playable personal story and a file they can share |
 
@@ -107,9 +106,8 @@ story, not an eighth adventure added to six numbered originals.
 | 6 | Rody et Mastico VI | Sixth original adventure |
 | 7 | Rody à Ibiza | Arthur's fan-made episode, after the originals |
 
-The current implementation lists several saved personal stories after the built-ins,
-newest saved last. This library is being replaced by the one personal workspace
-defined in section 9; it is not the target experience.
+One **Mon histoire** slot follows the originals. It shows the current personal
+story, or offers creation/import when empty. Replacing that story follows section 9.
 
 ### Browsing and actions
 
@@ -117,18 +115,17 @@ Stories appear as covers in a horizontal carousel. Selecting a cover focuses the
 story; clicking the focused cover launches it. The user can drag the carousel or
 move through it with left/right controls.
 
-The current shared action area changes with the selected story (section 9 replaces
-its personal-library and Export behavior):
+The shared action area changes with the selected story:
 
 - **Dupliquer** on a built-in opens a personal editable copy.
 - **Éditer** on a personal story opens that story in Maker.
-- **Exporter** on a personal story downloads its saved version for sharing.
-- **Importer** brings a received story into the library.
+- **Enregistrer** on the personal story downloads its complete current draft.
+- **Importer** opens a received story in the personal workspace.
 - **New story** asks for a title and optional cover, then opens a new adventure.
 - **Voix** opens the standalone voice workbench.
 
-User-story deletion currently exists through a keyboard action and confirmation.
-It retires with the personal library; scene deletion remains a separate authoring tool.
+There is no personal-library management or story-deletion shortcut. New, Duplicate
+and Import replace the personal workspace; scene deletion is a separate authoring tool.
 
 ### Built-in versus personal
 
@@ -212,8 +209,7 @@ Each objective associates its clue with two nested regions in the illustration:
 
 The surrounding region is a softer clue. It should guide someone toward the
 answer rather than make success depend on guessing an arbitrary invisible pixel.
-The current reliably saved authoring shape is one near region and one exact region
-for each of the three objectives.
+Each of the three objectives has one near region and one exact target region.
 
 ### Difficulty and optional play
 
@@ -275,9 +271,8 @@ the current Maker workflow.
 
 A creator can start a blank adventure, import a friend's story, duplicate a built-in
 from the collection, or enter editing from a story menu or the gameplay paintbrush.
-The conceptual experience is the same: edit a personal adventure while preserving
-the reference originals. The current paintbrush route still needs that protection
-made consistent with the other entry points.
+Every entry edits a personal adventure while preserving the reference originals
+and follows the same replacement rules.
 
 A new story begins with a title and one scene. It does not require sixteen scenes
 before it can exist. The creator supplies a cover if desired, then develops the
@@ -292,9 +287,8 @@ large preview, with tools grouped by the part of the scene being edited:
 - **IMG:** main illustration and character animation pictures.
 - **Objects:** clues and the clickable regions of the three searches.
 - **Test:** experience the scene as a player.
-- **Save:** keep the current work locally.
-- **Reset:** the earlier intended action was to abandon the current unsaved scene edit;
-  section 9 replaces it with an accepted story-wide Discard action.
+- **Save:** download the complete personal story and advance its restore point.
+- **Discard changes:** restore the whole story to its initial or latest saved version.
 
 The title image is a presentation screen; it does not have the ordinary scene's
 introductory dialogue and object-search tools. New scene creation and later-scene
@@ -310,8 +304,8 @@ story-authoring tool, not an in-app painting program.
 The main picture is the resting scene. Additional pictures create simple talking
 animation. A creator should be able to see exactly which picture they are replacing,
 preview the sequence, and keep or discard the change through the same saving rules
-as dialogue. Current frame-creation and save behaviour need refinement before all
-animation affordances can be considered dependable.
+as dialogue. Existing images and the next empty position can be imported; individual
+additional frames can be previewed and removed. Saving keeps the exact authored sequence.
 
 ### Editing dialogue and objectives
 
@@ -322,9 +316,9 @@ Mastico or the illustration animates.
 Each objective has its own visible clue, spoken clue and pair of regions. The
 creator draws the near region, then a smaller target within it. Different regions
 can make the optional challenges harder without changing the illustration.
-Multiple targets within one objective were advertised in older versions, but the
-current save behaviour does not safely preserve that promise. The present design
-must say one pair until a deliberate decision changes it.
+Each objective has exactly one near/target pair, as Arthur specified on September 9.
+A redraw is accepted when both regions are complete. Leaving halfway through keeps
+the previous pair; the original visual style remains unchanged.
 
 ## 8. The voice workbench
 
@@ -353,8 +347,8 @@ Original passages provide examples of that expression.
 ### Keeping a line
 
 When opened from a story, **Use dialogue** applies the chosen speech and delivery
-to that line; **Cancel** leaves the line as it was. Under the accepted direction
-in section 9, applying the line immediately keeps it in the story draft; Save downloads it with
+to that line; **Cancel** leaves the line as it was. Applying the line immediately
+keeps it in the story draft; Save downloads it with
 the whole story. A saved French-authored dialogue retains its French source,
 word corrections and chosen expression for later editing.
 
@@ -366,7 +360,7 @@ saved story, and a downloadable audio recording is not a current feature. Copyin
 a score is also not a substitute for saving the full French-authored dialogue in
 a story.
 
-## 9. Accepted saving and editing experience — not yet implemented
+## 9. Saving and editing
 
 Arthur accepted this direction on September 9: **a document-style editor, with the
 original collection always available and one personal “My story” workspace**.
@@ -416,7 +410,7 @@ scope. Cover and title image retain their distinct meanings.
 The browser automatically remembers this one workspace, including its draft and
 restore point, so a refresh can recover both. Recovery never turns draft changes
 into a Save or advances the restore point. If recovery storage fails, retain the
-open work, explain the failure and leave file Save available. A write interrupted
+open work, explain the failure, keep retry available and leave file Save available. A write interrupted
 by closing/crashing the browser may not recover its latest changes.
 
 Show **Modifications non enregistrées** beside the personal story when it contains
@@ -442,17 +436,15 @@ is part of this direction.
 
 These are gaps to resolve, not new features silently added to the release:
 
-- **Implement the accepted workspace:** complete story rollback, protected originals,
-  transactional replacement/import, truthful failures, draft Test and browser recovery.
-  Section 9 settles the direction; the controls still need implementation.
+- **Browser release acceptance:** demonstrate that the section 9 contract holds
+  through real downloads, replacement failures and browser refresh, alongside the
+  original stories and voice workbench.
 - **Existing personal work:** prepare preservation of stories that only exist in the
   older browser library before publicly replacing it. Do not silently erase them.
 - **Scene management:** choose a clear capacity and consistent add/delete rules;
   decide whether the sixteen-slot story menu should remain the intentional retro limit.
-- **Animation authoring:** make creating, replacing and removing all displayed frame
-  positions dependable, and preserve the exact chosen sequence when saving.
-- **Object count:** retain one target pair per objective unless there is a concrete
-  creative need to restore multiple targets without losing them.
+- **Expanded creative capacity:** additional animation positions or multiple targets
+  need a concrete creative use before expanding the existing controls and one-pair rule.
 - **Story presentation editing:** make changing a personal story's title, cover and
   credits understandable. The story can carry these, but the editor does not yet
   offer a complete, consistent management surface for them.

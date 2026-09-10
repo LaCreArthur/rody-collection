@@ -1,90 +1,116 @@
 # Story and editor audit
 
-Source and serialized-reference review: **2026-09-09**, commit `2d7555e`.
-No Unity compile, player build or browser playtest was run for this documentation
-pass. Findings below distinguish direct code behavior from risks requiring runtime
-reproduction. Current architecture is in [ARCHITECTURE.md](ARCHITECTURE.md);
-release sequencing is in [ROADMAP.md](../ROADMAP.md).
+Updated **2026-09-10** during the single-workspace implementation. This file owns
+unresolved defects and acceptance evidence; [architecture](ARCHITECTURE.md) owns
+the implemented mechanisms, [game design](../GAME_DESIGN.md) the product contract,
+and [roadmap](../ROADMAP.md) release status. Local code is not a deployed release.
 
-These findings describe the current multi-story implementation. Arthur subsequently
-accepted the [single-workspace direction](../GAME_DESIGN.md#9-accepted-saving-and-editing-experience--not-yet-implemented);
-the [plan](../EDITOR_WORKSPACE_PLAN.md) owns its remedies and acceptance criteria.
-Do not repair a library/export distinction that the accepted design removes.
+## Changes inspected; browser acceptance pending
 
-## Save and content integrity
+The previous audit covered commit `2d7555e` and the multiple-story/local-Save model.
+Its findings and exact prior evidence remain in Git at `d1d2fe8:docs/unify/AUDIT.md`.
+That model is replaced, so its old library/Export repairs are not separate work.
 
-| Finding | Evidence and consequence | Narrow verification for a fix |
+| Prior defect | Current source change | Evidence still required |
 |---|---|---|
-| **Reset is not a complete last-save rollback.** | `RM_WarningLayout` calls `RM_GameManager.Reset`, which reloads the in-memory session. `RM_ImagesLayout.ProcessImportedTexture` writes imported images to that session immediately. Reset therefore does not restore the previous persisted image. Draft text lives in panel/manager fields, so its lifetime differs. | Import an image and edit text, Reset, then compare both with the last successfully saved story. |
-| **Dirty state is not the complete editor draft.** | Dialogues/text/zone changes can remain in editor fields until `RM_SaveLoad.SaveGame`; `StorySession.IsDirty` is set by session mutation. The Escape warning checks only that session flag and user provenance. Its text still says "not exported" and "lost when closing", conflating save and export. | Edit only dialogue/text in a saved user story and leave without Save; check the warning and retained content. |
-| **Gameplay paintbrush bypasses the fork used by other entries.** | The `DrawClick` event in `3_StoryScene.unity` targets `ClickHandler.DrawClick`, which loads Maker directly. Collection and story-menu entry call `ForkForEditing`; `RM_GameManager.Start` does not. A built-in loaded through that paintbrush can reach Save still marked built-in. | Enter from all three places, edit/save, check original content and a distinct user copy after reload. |
-| **Story identity can collide.** | `StorySession.CreateNew`, `SetTitle` and `ForkForEditing` derive ids from titles. Import retains ids; `StoryStore.SaveUser` overwrites the same id's path; `StoryCatalog.Resolve` prefers an existing user file over a built-in. Fresh-id guarantees in the old plan were not implemented. | Same-title creations, repeated duplicates, repeated imports, and an import matching a built-in id must not silently replace unrelated work. |
-| **Import failure can retain the previous story.** | `StorySession.LoadFromJson` returns without clearing an existing session when validation/parsing fails. `RA_NewGame.OnImportComplete` checks only `IsLoaded`, so it can persist/report success for that previous story. | Import invalid JSON with a valid story already loaded and verify honest failure without altering that story. |
-| **Create/import/delete ignore storage errors.** | Their `SaveUser`/`DeleteUser` callbacks in `RA_NewGame` discard the error argument; editor Save handles it. A success message is not proof of a durable write. | Force a storage failure for each operation; success must not be shown and the original story must remain accessible. |
-| **Only one target pair per objective is saved.** | `SceneData.ObjectZones` contains one `ObjectZone` for each of `obj`, `ngp`, `fsw`. `RM_SaveLoad.GameObjectsToObjectZone` reads index 0 even though the drawing UI retains multi-zone machinery. | Draw multiple targets and save/reopen. Decide the product contract before exposing multiple targets; do not silently discard them. |
-| **Image save behavior diverges from the format's intended dimensions.** | `RM_SaveLoad.SaveSceneToSession` resizes the title to 320×240, while title creation/import/render expect 320×200. It also writes the main image into frames 1–4 before overlaying animation frames. Existing trailing keys are not pruned by that routine. | Compare title aspect and exact frame sequence before and after save/reopen. |
+| Reset retained imported images; dirty omitted panel edits | One typed draft plus deep whole-story restore snapshot; ordinary controls mutate the draft directly | Edit text, speech, images and structure across scenes, then Discard before/after Save |
+| Paintbrush bypassed original duplication; playing an original replaced personal work | All editor entries use the root replacement boundary; original play target is separate from the workspace | Enter from collection, menu and paintbrush; original content and personal editor cursor survive |
+| Same-id files took precedence over originals | Original-only catalog; one personal card projects the draft rather than resolving its id | Import the same title/id as an original and exercise both cards |
+| Invalid import could report success for the previous story | Candidate structure and images are checked before replacement; picker cancellation/error is explicit | Malformed JSON, missing content, invalid speech ranges, unreadable image, same-file reopening |
+| Save resized titles, synthesized frames and retained removed frames | Save serializes encoded content; image import owns conversion; frame removal compacts keys | Actual file download/reimport preserves title size and exact authored sequence |
+| Multiple target UI saved only its first target | User explicitly chose one target pair per objective; extra-target machinery removed | Draw all three objectives, Test and reimport; original art direction unchanged |
+| Unclear hydration and overwritten sync callbacks | Root initializes once; fixed draft/snapshot envelope; coalesced single writer | Browser refresh after completed writes; slow/failed flush and failed hydration |
+| Inconsistent Save/Export/error copy | Single file Save and whole-story Discard; shared modal and explicit unavailable platform errors | Reachable controls and feedback in the assembled scenes and browser |
 
-## Browser integration still needs evidence
+All seven built-ins were subsequently resolved through the live Editor catalog and
+read as format 2, with scene counts 24/18/16/17/14/17/17. This covers runtime parsing
+and the legacy upgrade, not full playthroughs or browser file import.
 
-- **Startup hydration wiring:** `Bootstrap.Start` requests `StoryRoot.InitStore`,
-  but the Bootstrap script GUID (`4052599b664f54fbd8faaeb1c5153e2e`) was not found in
-  the inspected `Assets` scenes, prefabs or serialized `.asset` files. The C# search
-  found no runtime Bootstrap construction. Lazy `StoryRoot` creation constructs
-  services but does not call store initialization. `RA_ScrollView.Start` builds
-  the catalog immediately, without subscribing to `Bootstrap.OnInitialized`.
-  This leaves the application's explicit hydrate-before-catalog contract unproven.
-  Unity's own player startup filesystem synchronization is a competing explanation
-  for saved files appearing anyway; a fresh browser reload must settle it.
-- **Overlapping saves:** `WebFs` has one pending callback per operation, overwritten
-  by the next request. `StoryStore` and `RodyWeb.jslib` do not queue requests.
-  Rapid saves or navigation during a save can therefore lose/misattribute completion
-  handling; the real browser callback order needs reproduction.
-- **No application page-hide backstop found** in `Assets/Scripts`,
-  `Assets/Plugins/WebGL` or `Assets/WebGLTemplates` (searched `visibilitychange`,
-  `pagehide`, `beforeunload`, and sync callers). The old decision was not implemented
-  in these surfaces. Do not infer that all browser/platform durability is absent.
-- **Historical export-state gap:** session state records dirty/last-save values;
-  export downloads without marking an export revision. The carousel paints title
-  and cover without the former dirty badge. A "saved" label cannot demonstrate the
-  former "backed up by export" state. September 9 retires that separate indicator;
-  it is no longer work to implement.
-- Browser file pickers deliberately report unavailable outside WebGL. Desktop
-  import/export parity promised by old guides is not the current implementation.
+## Focused Editor evidence — 2026-09-10
 
-## Editor usability and remaining duplication
+Used the running Unity Editor, actual serialized button callbacks and input change
+events. The following narrow journeys passed:
 
-- The saved scene contains two `RM_ButtonTooltip` components (Save and Intro).
-  Save's tooltip is still `Exporte l'histoire`; wider tooltip coverage and first-save
-  guidance remain unfinished. The first-run hint now sets its preference only if
-  the key is absent, so the old repeated-first-run bug is no longer a pending item.
-- New stories start with one scene. Thumbnail UI contains 30 slots, with asymmetric
-  add/delete rules (`i < 29`, deletion by re-click only at scene 18 or later).
-  The former "16 to 29 scenes" promise is not a reliable description of that UI.
-- Animation UI exposes two groups of three buttons, but enables only existing
-  frame indices; the importer can append the next index. Empty-frame creation
-  needs a real UI check before promising all six frames are authorable.
-- Object drawing maps screen coordinates with fixed 320×200 assumptions. Verify
-  zones against the rendered scene after browser resize/fullscreen changes.
-- Editor draft fields still mirror `SceneData` through manual copy-in/copy-out.
-  Music selection retains inverse switch mappings. These are maintenance costs,
-  not independent reasons for a new architecture project.
-- User catalog cards still deserialize complete saved stories. This path retires
-  with the personal library; do not optimize a path scheduled for deletion.
-- `isZambla` remains in voice data; its authoring affordance was deferred. Preserve
-  Ibiza character playback when changing editor or scene-entry behavior.
+- Startup rendered seven originals and one empty personal slot. Duplicating the
+  first original opened a clean 24-scene workspace.
+- Text entered in two scenes remained in the draft after navigation and marked it
+  changed. Test played the current title; after simulated gameplay cursor movement,
+  the actual paintbrush callback returned to the remembered editor scene.
+- Playing the first original through its collection callback used the original
+  text, separately from the changed personal draft. Returning to the personal story
+  kept its text and editor cursor.
+- The actual Save button reported download unavailable outside WebGL. Dirty state
+  and the older restore snapshot remained intact. Discard confirmation restored
+  both edited scenes and disabled Discard afterwards.
+- Editing the second objective's text preserved the first objective's text. The
+  detailed editor retained its 320×130 preview geometry.
+- The local recovery record contained the changed draft and older restore snapshot.
+  Restarting Play Mode after Discard recovered the clean workspace. Dirty browser
+  reload and IndexedDB persistence were not exercised.
 
-## Historical evidence and retired plans
+Inspected rendered collection and Maker views after correcting action-label spacing
+and the full-title preview. Final screenshots are outside Assets at
+`/tmp/rody-workspace-verification/workspace-collection-final.png` and
+`/tmp/rody-workspace-verification/workspace-title-final.png`; they are session evidence,
+not permanent tutorial assets. A native-pointer probe did not activate the Unity UI,
+so these callback checks do not establish pointer input or target dragging.
+Removed only the probe's newly created local workspace record and temporary images;
+the pre-existing story directory was untouched. Restored stopped Play Mode and the
+original clean `2_Menu` scene.
 
-The old pre-migration audit, architecture proposal and step-by-step migration are
-recoverable at `git show 2d7555e:docs/unify/<filename>.md`. Storage implementation
-landed on 2026-06-30: `88e248e` (store), `0b8cef7` (Save becomes local persistence),
-`38e4410` (catalog carousel), `0830497` (provider/shim removal), `6e9dacf` (desktop
-file-picker removal), `8611a4c` (cleanup). These commits establish code changes,
-not browser acceptance.
+## Independent implementation review
 
-Retired instructions: repeated provider/WorkingStory migration steps, per-file
-compile/build recipes, the unimplemented `WebShare` replacement type, and old
-line-count/effort inventories. June replaced the older download-only save-awareness
-proposal; September 9 now explicitly chooses one file Save again, within a single
-recoverable workspace. Honest feedback and button help survive; separate Export
-and backup indication retire. The dated [decisions](DECISIONS.md) preserve provenance.
+A fresh source-only review identified two material defects in the first draft:
+
+1. Continue after failed hydration left automatic recovery permanently disabled for
+   the session with no later retry; Save still claimed the browser remembered work.
+   The implementation now exposes a failure-only retry in Maker's existing status
+   area and adjusts Save feedback while recovery is unavailable. Exercise failed
+   hydration → Continue → edit → Retry → successful write and reload.
+2. Accepting the redrawn near region before its new target could persist an invalid
+   pair when leaving midway. The two view rectangles now form one pending geometry
+   edit and commit together only after a completed target drag. Exercise a smaller
+   near-region redraw → Escape/reopen, then a completed pair and gameplay hit test.
+
+Both corrections still need their failure/pointer runtime journeys. A separate
+fresh serialized-reference review inspected the assembled scenes and shared modal,
+including the final preview/spacing changes, with no material findings. It checked
+removed script GUID consumers across Assets/Packages, base references, prefab
+overrides and all 30 scene thumbnail indices. Supplied final renders were also
+inspected. This was a read-only review, not a browser interaction test.
+No standalone Unity compile gate, player build or test suite has run.
+
+## Release boundaries still open
+
+The [workspace plan's acceptance journeys](../EDITOR_WORKSPACE_PLAN.md#narrow-acceptance-evidence)
+own the required browser scenarios. In particular, Editor callbacks cannot prove:
+
+- Native picker cancellation/read failure and a real download handoff.
+- The temporary-file replacement and IDBFS flush on WebGL.
+- Refresh recovery of both a dirty draft and its older restore snapshot.
+- Single-writer ordering during slow/failing storage and Save/replacement locking
+  during delayed browser handoff.
+- Actual downloaded-file reimport, French corrections/expression and image geometry.
+
+The predecessor deployed branch contains per-story browser storage. Before public
+cutover, establish whether people have browser-only personal stories and export
+those through the previous version. No existing `Stories/` data is deleted, and
+this implementation does not add a permanent legacy-library recovery surface.
+
+## Deliberately retained limits
+
+- New stories start with one scene; the editor contains 30 thumbnail positions.
+  Later-scene deletion by re-click remains available only from scene 18 onward.
+  A coherent scene-management policy is separate scope; do not advertise an
+  unrestricted or former “16–29 scenes” promise.
+- The existing two groups of three animation controls remain. Only explicitly
+  authored frames are saved; preview/removal must be exercised in the assembled UI.
+- The target editor uses the existing 320×200 coordinate/layout contract. Verify
+  the rendered target after browser resize/fullscreen before claiming alignment.
+- The retro font's character coverage remains limited. No visual redesign is
+  authorized; new help must fit the existing art and legibility constraints.
+- Browser pickers/downloads report unavailable in the Editor and desktop player.
+  Desktop parity, simultaneous multi-tab editing and automatic legacy migration
+  are outside this implementation.
+- `isZambla` remains in voice data; its authoring control is deferred. Preserve
+  Ibiza playback. Speech-engine/timing evidence belongs to [SPEECH_ENGINE.md](../SPEECH_ENGINE.md).

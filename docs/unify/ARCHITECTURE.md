@@ -1,69 +1,98 @@
 # Story architecture
 
-Source review: 2026-09-09, local commit `2d7555e`. This describes the implementation;
-release status belongs to [ROADMAP.md](../ROADMAP.md), unresolved defects to
-[AUDIT.md](AUDIT.md), and product decisions to [DECISIONS.md](DECISIONS.md).
-The June migration is implemented, with integration gaps; it is not a future build plan.
-The accepted replacement is specified in the [workspace plan](../EDITOR_WORKSPACE_PLAN.md).
-Until it is implemented, the ownership and Save/Export paths below remain current facts.
+Implementation reference for the single workspace, updated **2026-09-10**.
+Code and serialized UI are integrated locally; focused Editor checks passed.
+Browser acceptance remains pending. [ROADMAP.md](../ROADMAP.md) owns release status,
+[AUDIT.md](AUDIT.md) owns remaining checks and limitations, and
+[GAME_DESIGN.md](../GAME_DESIGN.md) owns product behavior.
 
 ## Runtime ownership
 
 | Producer / owner | Responsibility | Consumers |
 |---|---|---|
-| `Assets/Scripts/Stories/Story.cs` | Portable story payload: metadata, scenes, credits, sprites | Session, store, export tooling |
-| `StoryJson.cs` | Story read/write/deep-copy boundary; upgrades old dialogue strings on input | Store, catalog, session, exporter |
-| `StorySession.cs` | One selected story, scene cursor, provenance, dirty state; scene and sprite edits | Gameplay and Rody Maker |
-| `StoryStore.cs` | User files under `Application.persistentDataPath/Stories`, built-in Resources reads, save/delete plus flush | Catalog, editor, collection actions |
-| `StoryCatalog.cs` | Catalog cards and fresh story materialization on selection | Collection carousel |
-| `SpriteCache.cs` | Base64 decoding, sprite naming, cache teardown | Session sprites and carousel covers use separate cache instances |
-| `StoryRoot.cs` | Cross-scene owner and browser sync callback receiver; lazy creation through its accessors | Runtime entry points |
-| `Assets/Scripts/WebGL/WebFs.cs` | IndexedDB flush/hydrate interop | Store |
-| `Assets/Scripts/WebGL/WebGLFileBrowser.cs` | Browser file upload/download | Story and image import, export |
+| `Assets/Scripts/Stories/Story.cs` | Portable payload: metadata, scenes, credits, encoded sprites | Session, file Save/import, resource export tools |
+| `StoryJson.cs` | One serialization/deep-copy path; structural validation and old dialogue-string reading | Store, catalog, session, exporter |
+| `StorySession.cs` | One `StoryWorkspace`: draft, independent restore snapshot, dirty flag and editor cursor; separate active play target and play cursor | Maker, gameplay, collection and recovery writer |
+| `StoryStore.cs` | One `workspace.json` recovery envelope; read-only built-in Resources | Root and catalog |
+| `StoryCatalog.cs` | Original manifest order/membership and fresh original materialization | Collection and original duplication |
+| `SpriteCache.cs` | Decode, cache and teardown; canonical image keys | Active play/editor image cache and independent carousel cover cache |
+| `StoryRoot.cs` | Cross-scene lifecycle, recovery readiness, replacement decision, file Save lock and one recovery writer | All entry points and shared dialog |
+| `Assets/Scripts/WebGL/WebFs.cs` | IndexedDB hydrate/flush callback boundary | Store |
+| `Assets/Scripts/WebGL/WebGLFileBrowser.cs` | One active picker/download operation; explicit cancellation/error/handoff result | Story/image import and file Save |
 
 Paths without a directory above are in `Assets/Scripts/Stories/`.
-`StorySession` owns the selected runtime story; editor panels also hold unsaved
-scene drafts. Do not confuse saving a panel, committing a scene to the session,
-writing the local story file, and downloading an export.
+`Current` projects the active gameplay story: an original or the editable draft.
+Loading an original does not replace the workspace. `EditorSceneIndex` and
+`CurrentSceneIndex` have different lifetimes; testing and gameplay progression
+never move the remembered editor scene.
 
-## Selection, editing, save and export
+## Editing and file Save
 
-1. The carousel reads cards from `StoryCatalog.Cards()`. Built-ins come from the
-   generated manifest; saved user stories follow in last-write-time order, newest last.
-2. Selection resolves JSON into a fresh `Story`, then loads the session with its source.
-   Gameplay reads from that session. Built-in scene bodies are loaded on selection;
-   user cards currently deserialize each saved user file to extract metadata and cover.
-3. Collection **Dupliquer** and the story-menu editor action call `ForkForEditing`:
-   deep copy, ` (copie)` title suffix, a title-derived id, user provenance. The direct
-   gameplay paintbrush follows a different entry path; see the audit before relying
-   on every editor entry to fork.
-4. Editor **Save** commits the current scene through `RM_SaveLoad.SaveGame`, writes
-   the story via `StoryStore.SaveUser`, and clears dirty state only after the flush
-   callback succeeds. It displays an error when that callback reports failure.
-5. New and imported stories also call `SaveUser`. Their UI callbacks currently ignore
-   the error argument. Import retains the incoming story id.
-6. Collection **Exporter** reloads the selected saved user story, serializes it and
-   requests a `.rody.json` browser download. It does not save current editor drafts
-   or record a persistent "exported" state. The download callback signals that the
-   browser download was triggered, not that a file reached durable storage.
+Maker binds ordinary accepted values directly to typed draft data. Text enters
+the draft as typed, music when selected, target geometry on a completed near/target pair, and
+images after successful conversion. The Maker preview is a native aspect-fit UI
+image; its main view reserves space for status without hiding picture content.
+Detailed editors retain the complete 320×130 coordinate area. Programmatic rebinds do not mark dirty.
+The speech workbench retains its explicit local audition buffer; Apply writes the
+full speech document and permitted pitch to the selected draft dialogue. Cancel
+does not write. No mirrored scene model or Save-time scene reconstruction remains.
 
-Browser file pickers are the current player path. Outside WebGL, the file-browser
-wrapper logs that the operation is unavailable; local filesystem storage still works
-in the Editor. Do not promise a complete current desktop import/export product.
+A workspace is installed with an independent deep restore snapshot and no edits
+since that snapshot. Save is always available when a workspace exists, including
+an unchanged import or duplicate. Save locks conflicting actions, captures the
+whole draft, stamps the outgoing file, and starts one `.rody.json` download.
+Successful browser handoff advances the restore snapshot to exactly that capture
+and clears dirty; an error changes neither. The lock releases after handoff and
+any accepted replacement, not after a disk write the browser API cannot observe.
 
-## Persistence boundary
+Whole-story Discard clones the restore snapshot into the draft, clears dirty,
+clamps the editor cursor and rebuilds images/views. It restores added/deleted
+scenes and every encoded sprite as well as dialogue and text.
 
-`StoryStore.SaveUser` writes the JSON file then calls `WebFs.Flush`.
-`Assets/Plugins/WebGL/RodyWeb.jslib` invokes `FS.syncfs(false, callback)` and sends
-success/error back to `StoryRoot`. `StoryStore.Init` requests the reverse sync before
-its ready callback. These are implemented mechanisms, not evidence that a browser
-reload has been tested successfully. Startup wiring and overlapping callbacks are
-open items in the audit.
+New, Duplicate and Import prepare a candidate before requesting replacement.
+Import parses required structure and decodes its images before showing the prompt.
+Changed work offers Save / Discard / Cancel; observed Save failure keeps the old
+workspace and replacement choice. The root owns the pending candidate so the
+originating scene cannot destroy the decision. Collection, story menu and gameplay
+paintbrush use this same entry boundary.
 
-There is an explicit Save button; the current jslib does not implement the proposed
-page-hide backstop. A filesystem flush alone cannot commit unsaved editor fields.
-Browser-local storage is a convenience copy. Export is the portable backup/sharing
-path; the user guide explains the distinction without promising cloud storage.
+The collection projects seven original cards from the manifest and one personal
+card from the live draft. Personal play/edit/Save never resolve a title/id to an old
+file. The former user-library membership, sorting, id precedence and deletion paths
+are removed; original ids cannot redirect to imported content.
+
+The shared feedback prefab reuses the collection's art and opens over any scene.
+Its callbacks hide the modal before acting. Maker controls and raw gameplay
+navigation respect pending file operations and modal decisions.
+
+## Browser recovery
+
+The root hydrates once before exposing personal-workspace actions, then reads the
+fixed recovery record. Originals may be browsed independently. The envelope stores
+`draft`, `restorePoint`, `isDirty` and `editorSceneIndex` together, using the same
+speech serializer as portable files. The old `Stories/` directory is untouched;
+there is no legacy library or automatic choice of an old personal file.
+
+Every accepted edit, cursor change, replacement, Save checkpoint and Discard
+requests a write. A short delay coalesces typing; completed edits/navigation request
+an immediate write. The root serializes the entire latest record, writes a temporary
+file and replaces `workspace.json`, then flushes IDBFS. Only one flush is active;
+changes during it leave a latest-record write pending. A cache callback never
+changes authored content, dirty state or the restore point.
+
+Hydration/read failure offers Retry or explicit Continue. An unhydrated filesystem
+cannot be flushed over unread IndexedDB content. Read failure after hydration can
+be replaced only after the explicit Continue choice. Write failure leaves the draft
+open and file Save usable; the dialog offers retry and Maker keeps a failure-only
+retry action available after the dialog closes. Save feedback reflects unavailable
+recovery. No page-close asynchronous
+flush is promised, and no background cache success is presented as file Save.
+
+The JavaScript boundary is `Assets/Plugins/WebGL/RodyWeb.jslib`: native file input,
+Blob download and `FS.syncfs`. Picker results distinguish cancellation, read failure
+and content. Download success means browser handoff, not proof of a file on disk.
+Outside WebGL, picker/download operations report unavailable instead of fake
+success. Desktop parity and multiple-tab conflict resolution are outside this leg.
 
 ## Content and file format
 
@@ -92,7 +121,10 @@ The speech document, notation and French authoring contract belong to
 | `{scene}.2.png` onward | Contiguous animation frames | 320 × 130 |
 
 These are stored keys, not filenames creators must manually assign when importing
-images. Current save-path deviations are recorded in the audit.
+images. Existing originals include 640×400 titles and 640×260 scene frames; these
+are 2× source images with the same logical dimensions. Sprite pixels-per-unit
+normalizes their display width without modifying encoded content. Save serializes these bytes without resizing or synthesizing frames. Image
+import owns palette/size conversion; removing an animation frame compacts its sequence.
 
 ## Authoring the built-in catalog
 

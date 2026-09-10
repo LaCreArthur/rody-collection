@@ -239,6 +239,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Update() {
+		if (StoryRoot.IsBusy) return;
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			SceneManager.LoadScene(AppScenes.Menu);
 		}

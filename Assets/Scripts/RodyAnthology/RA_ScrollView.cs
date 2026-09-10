@@ -15,7 +15,6 @@ public class RA_ScrollView : MonoBehaviour {
 	public GameObject content;
 	public Transform slotPrefab;
 	public RA_ActionPanel actionPanel;
-	[SerializeField] RA_FeedbackPanel feedbackPanel;
 
 	[Header("WebGL")]
 	public GameObject loadingUI;
@@ -50,7 +49,8 @@ public class RA_ScrollView : MonoBehaviour {
 	void OnEnable()
 	{
 		RA_ActionPanel.OnEditClicked += HandleEditClicked;
-		RA_ActionPanel.OnExportClicked += HandleExportClicked;
+		RA_ActionPanel.OnSaveClicked += HandleSaveClicked;
+		StoryRoot.StateChanged += RefreshWorkspace;
 		RA_ActionPanel.OnImportClicked += HandleImportClicked;
 		RA_ActionPanel.OnNewClicked += HandleNewClicked;
 	}
@@ -58,19 +58,21 @@ public class RA_ScrollView : MonoBehaviour {
 	void OnDisable()
 	{
 		RA_ActionPanel.OnEditClicked -= HandleEditClicked;
-		RA_ActionPanel.OnExportClicked -= HandleExportClicked;
+		RA_ActionPanel.OnSaveClicked -= HandleSaveClicked;
+		StoryRoot.StateChanged -= RefreshWorkspace;
 		RA_ActionPanel.OnImportClicked -= HandleImportClicked;
 		RA_ActionPanel.OnNewClicked -= HandleNewClicked;
 	}
 
 	/// <summary>
-	/// Builds one carousel slot per catalog card (built-in then user, in catalog order).
+	/// Builds the immutable originals plus the one personal workspace slot.
 	/// </summary>
 	void BuildSlots()
 	{
 		slots = new List<GameObject>();
 		slotTitles = new List<GameObject>();
-		cards = StoryRoot.Catalog.Cards();
+		cards = new List<StoryCard>(StoryRoot.Catalog.Cards());
+		cards.Add(WorkspaceCard());
 
 		foreach (var card in cards)
 		{
@@ -88,8 +90,8 @@ public class RA_ScrollView : MonoBehaviour {
 	{
 		var img = slot.transform.GetChild(0).GetComponent<Image>();
 		if (img == null) return;
-		var sprite = _covers.Get(card.id, card.cover, 320, 200);
-		if (sprite != null) img.sprite = sprite;
+		var sprite = _covers.Get(card.source == StorySource.User ? "workspace" : "builtin/" + card.id, card.cover, 320, 200);
+		img.sprite = sprite != null ? sprite : slotPrefab.GetChild(0).GetComponent<Image>().sprite;
 	}
 
 	void FinalizeSlots(int slotCount)
@@ -137,56 +139,48 @@ public class RA_ScrollView : MonoBehaviour {
 		return cards[selectedButton];
 	}
 
-	public void Reset() {
-		foreach (GameObject slot in slots) {
-			GameObject.Destroy(slot);
-		}
-		slots.Clear();
-		slotTitles.Clear();
-		slotImages.Clear();
-		slotButtons.Clear();
-		BuildSlots();
-	}
+    StoryCard WorkspaceCard()
+    {
+        var draft = StoryRoot.Session.Draft;
+        string cover = null;
+        draft?.sprites.TryGetValue(SpriteCache.CoverName, out cover);
+        return new StoryCard
+        {
+            id = "Mon histoire",
+            source = StorySource.User,
+            title = !StoryRoot.IsReady ? "Mon histoire · récupération…" : draft == null ? "Mon histoire · à créer" :
+                "Mon histoire · " + draft.story.title + (StoryRoot.Session.IsDirty ? "\nModifications non enregistrées" : ""),
+            cover = cover,
+            sceneCount = draft?.scenes.Count ?? 0
+        };
+    }
 
-	/// <summary>Rebuilds the carousel and scrolls to the given story id.</summary>
-	public void ResetAndSelectStory(string id)
-	{
-		Reset();
-		StartCoroutine(ScrollToSlotByName(id));
-	}
+    void RefreshWorkspace()
+    {
+        if (cards == null) return;
+        int index = cards.Count - 1;
+        var next = WorkspaceCard();
+        if (cards[index].cover != next.cover)
+        {
+            _covers.Evict("workspace");
+            PaintCover(slots[index], next);
+        }
+        cards[index] = next;
+        slotTitles[index].GetComponent<Text>().text = next.title;
+        UpdateActionPanel();
+    }
 
-	IEnumerator ScrollToSlotByName(string slotName)
-	{
-		yield return null;
-		Canvas.ForceUpdateCanvases();
-
-		int index = -1;
-		for (int i = 0; i < slots.Count; i++)
-		{
-			if (content.transform.GetChild(i).name == slotName)
-			{
-				index = i;
-				break;
-			}
-		}
-
-		if (index < 0)
-			yield break;
-
-		if (selectedButton == index)
-		{
-			float targetPos = (index * step) + (middleSlot - index) * 2f / 100f;
-			scrollRect.horizontalNormalizedPosition = targetPos;
-			updateSlotSprites(index);
-			yield break;
-		}
-
-		SetMoveToValues(index);
-	}
+    void OnDestroy() => _covers.Clear();
 
 	// Update is called once per frame
 	void Update () {
-		isScrollViewDisabled = feedbackPanel.gameObject.activeSelf || newGamePanel.activeSelf || sm.isRollPlaying;
+		if (scrollRect == null) return;
+        bool disabled = StoryRoot.IsBusy || newGamePanel.activeSelf || sm.isRollPlaying;
+        if (disabled != isScrollViewDisabled)
+        {
+            isScrollViewDisabled = disabled;
+            UpdateActionPanel();
+        }
 		if (isScrollViewDisabled) {
 			t = 1.0f; // reset the lerping properly
 			scrollRect.horizontal = false; // disable scroll by mouse
@@ -216,10 +210,6 @@ public class RA_ScrollView : MonoBehaviour {
 				SetMoveToValues(selectedButton + 1);
 			}
 
-			// Delete the selected story (user stories only).
-			if (Input.GetKeyUp(KeyCode.Delete)) {
-				OnSuppr(selectedButton);
-			}
 		}
 	}
 
@@ -266,7 +256,7 @@ public class RA_ScrollView : MonoBehaviour {
 	{
 		var card = SelectedCard();
 		if (card != null)
-			actionPanel.Show(card.source == StorySource.User);
+			actionPanel.Show(card.source == StorySource.User, StoryRoot.Session.HasWorkspace, StoryRoot.IsReady, isScrollViewDisabled);
 		else
 			actionPanel.Hide();
 	}
@@ -277,38 +267,29 @@ public class RA_ScrollView : MonoBehaviour {
 		var card = SelectedCard();
 		if (card == null) return;
 
-		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
-		// Editing a built-in transparently produces an editable user copy.
-		StoryRoot.Session.ForkForEditing();
-		StoryRoot.Session.CurrentSceneIndex = 0;
-		StartCoroutine(TransitionToEditor());
-	}
+        if (card.source == StorySource.User) StoryRoot.EditWorkspace();
+        else
+        {
+            try { StoryRoot.RequestWorkspace(StorySession.Duplicate(StoryRoot.Catalog.Resolve(card.id))); }
+            catch (System.Exception e) { StoryRoot.ShowMessage(e.Message); }
+        }
+    }
 
-	IEnumerator TransitionToEditor()
-	{
-		yield return StartCoroutine(menu.AnimateExitTransition());
-		SceneManager.LoadScene(AppScenes.Editor);
-	}
-
-	void HandleExportClicked()
-	{
-		if (isScrollViewDisabled) return;
-		var card = SelectedCard();
-		if (card == null || card.source != StorySource.User) return;
-
-		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
-		ngScript.OnExportClick();
-	}
+    void HandleSaveClicked()
+    {
+        if (isScrollViewDisabled || SelectedCard()?.source != StorySource.User) return;
+        StoryRoot.SaveWorkspace();
+    }
 
 	void HandleImportClicked()
 	{
 		if (isScrollViewDisabled) return;
-		ngScript.OnImportClick();
+		StoryRoot.ImportWorkspace();
 	}
 
 	void HandleNewClicked()
 	{
-		if (isScrollViewDisabled) return;
+		if (isScrollViewDisabled || !StoryRoot.IsReady) return;
 		newGamePanel.SetActive(true);
 	}
 
@@ -337,23 +318,23 @@ public class RA_ScrollView : MonoBehaviour {
 	IEnumerator PlaySelected(int index) {
 		if (index < 0 || index >= cards.Count) yield break;
 
-		var card = cards[index];
-		yield return StartCoroutine(menu.AnimateExitTransition());
-
-		StoryRoot.Session.Load(StoryRoot.Catalog.Resolve(card.id), card.source);
-		if (!StoryRoot.Session.IsLoaded) yield break;
-
-		SceneManager.LoadScene(AppScenes.Title);
-	}
-
-	/// <summary>Delete the selected story (user stories only).</summary>
-	public void OnSuppr(int index) {
-		if (index < 0 || index >= cards.Count) return;
-		var card = cards[index];
-		bool isDeletable = card.source == StorySource.User;
-		if (isDeletable)
-			ngScript.SG_onDelete(card.id);
-		else
-			ngScript.SG_onDelete(null);
-	}
+        var card = cards[index];
+        if (card.source == StorySource.User)
+        {
+            if (!StoryRoot.IsReady) yield break;
+            if (!StoryRoot.Session.HasWorkspace) { newGamePanel.SetActive(true); yield break; }
+            StoryRoot.Session.ActivateWorkspace();
+        }
+        else
+        {
+            Story story = null;
+            try { story = StoryRoot.Catalog.Resolve(card.id); }
+            catch (System.Exception e) { StoryRoot.ShowMessage(e.Message); }
+            if (story == null) yield break;
+            StoryRoot.Session.LoadBuiltin(story);
+        }
+        StoryRoot.Session.CurrentSceneIndex = 1;
+        yield return StartCoroutine(menu.AnimateExitTransition());
+        SceneManager.LoadScene(AppScenes.Title);
+    }
 }

@@ -7,13 +7,13 @@ New, Duplicate and Import replace “My story”, with Save / Discard / Cancel f
 Remove the personal library, separate Export action and scene-only Reset.
 First unify editing and saving, then add browser recovery and finish the simpler collection.
 Check the complete browser journey before release; preserve existing browser-only stories first.
-This is the implementation plan. The game has not been changed or built in this planning pass.
+Implementation and focused Editor checks are complete locally; browser acceptance and publication remain pending.
 
 ---
 
 ## Technical body (executing agent)
 
-**Status: planned, not implemented. Updated: 2026-09-09.** Source baseline `89fdf46`;
+**Status: implemented locally; browser acceptance pending. Updated: 2026-09-10.** Planning source baseline `89fdf46`;
 fetched `origin/master` is `4dc870d`. The existing local Unity asset/UserSettings
 changes are unrelated and must remain untouched. Do not push: `master` deploys.
 
@@ -31,9 +31,19 @@ The accepted recommendation added these explicit protections: the restore point
 advances after Save; all scenes form one draft; Test uses the draft; browsing or
 playing originals preserves the workspace; invalid/cancelled imports preserve it;
 the browser automatically remembers both draft and restore point. Only New,
-Duplicate and Import replace it. This authorizes planning that contract, not
-implementation or publishing. [GAME_DESIGN §9](GAME_DESIGN.md#9-accepted-saving-and-editing-experience--not-yet-implemented)
+Duplicate and Import replace it. The planning request authorized planning only. Arthur subsequently set this document
+as the execution goal and instructed “proceed”; implementation is now authorized.
+Publication still requires an explicit instruction. [GAME_DESIGN §9](GAME_DESIGN.md#9-saving-and-editing)
 owns the product behavior; this document owns the execution sequence and technical decisions.
+
+Arthur resolved the visible multiple-target mismatch during implementation:
+
+> One dependable target area per objective, nothing change from the original DA here
+
+Each objective therefore retains exactly one near/target pair. Remove misleading
+extra-target commands; keep the original art direction. A near/target redraw is
+one accepted edit: incomplete geometry remains a disposable preview, and leaving
+before completing the target preserves the previous pair.
 
 ### Minimum journey and non-goals
 
@@ -79,7 +89,7 @@ preview story or swap the draft out when playing a built-in.
 |---|---|
 | Open from New / Duplicate / Import | Prepare the complete candidate first. Install draft and independent initial restore snapshot together only after replacement is accepted. New keeps the existing title/optional-cover form; Duplicate keeps the current copy-title convention. |
 | Initial state | Initial content is the restore point and has no edits since that point. Save remains available even when unchanged, so a fresh duplicate or imported file can be downloaded. Dirty means edits since the restore point, not proof of a file on disk. |
-| Edit | Update the draft where a value is accepted. Text changes enter it as typed; a completed drag/image/frame edit updates the corresponding typed data. Programmatic UI refresh and opening/closing unchanged controls must not mark dirty. |
+| Edit | Update the draft where a value is accepted. Text changes enter it as typed; a completed target pair, image or frame edit updates the corresponding typed data. Programmatic UI refresh and opening/closing unchanged controls must not mark dirty. |
 | Voice workbench | Keep its explicit Apply/Cancel audition buffer. Apply writes the full `SpeechDocument` and voice settings into the draft immediately; Cancel changes nothing. This purposeful local audition buffer is not a second story draft. |
 | Change scene / Test / return / collection / standalone Voix | No save prompt. Retain draft, restore point and editor cursor. Test uses the selected draft scene, including title preview; returning resumes that editor scene even if play progressed. |
 | Save | Serialize an immutable capture of the full draft through `StoryJson`; stamp the outgoing file, not the live model during a read. Dispatch one `.rody.json` download from the user gesture. Once dispatch reports success, make exactly that captured content the restore point and clear dirty. Request a cache write; cache success never substitutes for file Save. |
@@ -199,7 +209,9 @@ not replace a newer workspace or clear newer unsaved edits. Do not rely on a fin
 page-close async flush; already completed background writes provide recovery.
 
 Cache errors leave current in-memory work available and Save usable, with one
-actionable recovery-error message and retry. Do not clear dirty or reset the restore
+actionable recovery-error message and retry. After choosing to work through a
+storage outage, the existing Maker status area keeps a failure-only retry action
+reachable; Save feedback must not promise available recovery during the outage. Do not clear dirty or reset the restore
 point. A failed hydration/read retains existing on-disk data and blocks cache writes
 until recovery succeeds or the user explicitly chooses to replace unrecoverable data.
 There is no promise of recovering an edit whose write was interrupted by refresh,
@@ -296,9 +308,43 @@ visual redesign and publication. Do not treat a parked scope as permission to
 delete existing content or a visible capability. Raise a bounded product decision
 if a demonstrated case cannot preserve it within the agreed one-workspace model.
 
-**Planning validation:** source/consumer and serialized evidence from the docs
+**Planning validation (historical):** source/consumer and serialized evidence from the docs
 audit, platform API prior-art check, documentation link/diff inspection and cold
 plan review. The cold reviewer identified a Save-and-replace race if editing stays
 enabled during a delayed handoff; the operation lock and delayed-handoff acceptance
 row above resolve the plan gap. No other material findings were returned. No C# or
 Unity assets changed; no build, runtime test or publication.
+
+### Implementation review findings — 2026-09-10
+
+A fresh source-only review found two material defects in the first implementation:
+
+- Continue after failed hydration left no later recovery retry and Save feedback
+  still promised automatic recovery. A failure-only retry action in the existing
+  Maker status area and error-aware Save copy address those boundaries.
+- Committing only the redrawn near region could persist a larger old target outside
+  it when the author left midway. The disposable zone views now preview a pair;
+  only completion of the target commits both rectangles together.
+
+Failure/retry and interrupted pointer-drawing journeys still need browser evidence.
+A separate independent serialized review subsequently checked the assembled UI,
+including final preview and spacing corrections, without material findings.
+No build or publication has run. Current evidence is in [the audit](unify/AUDIT.md).
+
+### Integration findings and scope accounting
+
+Live Editor inspection found original images at both 1× and 2× resolution. The old
+SpriteRenderer mapping treated each encoded pixel as one logical pixel, enlarging
+the 2× images. `SpriteCache` now derives pixels-per-unit from the declared logical
+width; encoded bytes are unchanged. Maker's preview now uses the existing Canvas's
+native `Image` with aspect preservation, reserving the status strip outside the
+picture on the main screen and restoring the full 320×130 area in detailed editors.
+This replaces the old preview SpriteRenderer, not the artwork. The collection's
+existing layout group has wider action spacing so the longer Enregistrer label fits.
+Unity's [Sprite.Create contract](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Sprite.Create.html)
+provides the pixel/world mapping; no image conversion on Save or rendering shim.
+
+These are integrity/layout corrections required by the visible result, beyond the
+literal one-workspace wording. Existing original images, editor capacity, voice
+content and the visual theme remain. Removed extra meaning: the old debug “glitch”
+content that was used as a new-scene template; new scenes start as ordinary blanks.

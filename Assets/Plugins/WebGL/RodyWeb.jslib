@@ -20,220 +20,95 @@ var StandaloneFileBrowserWebGLPlugin = {
             SendMessage(receiver, 'ClipboardPasted', text);
         }, function() { SendMessage(receiver, 'ClipboardFailed', ''); });
     },
-    // Open file and return actual file content as text (for JSON import).
-    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
-    // methodNamePtr: Callback method name on given GameObject.
-    // filter: Filter files (e.g., ".json")
-    // Returns: File content as text string via SendMessage
-    UploadFileContent: function(gameObjectNamePtr, methodNamePtr, filterPtr) {
+    // One native picker for text and image input. A new element permits reopening
+    // the same file; one JSON result distinguishes cancellation from empty content.
+    UploadFileContent: function(gameObjectNamePtr, methodNamePtr, filterPtr, asDataUrl) {
         var gameObjectName = UTF8ToString(gameObjectNamePtr);
         var methodName = UTF8ToString(methodNamePtr);
         var filter = UTF8ToString(filterPtr);
+        var fileInput = null;
+        var reader = null;
+        var completed = false;
 
-        // Delete if element exists (safe removal via parentNode)
-        var fileInput = document.getElementById(gameObjectName + '_content');
-        if (fileInput && fileInput.parentNode) {
-            fileInput.parentNode.removeChild(fileInput);
-        }
-
-        fileInput = document.createElement('input');
-        fileInput.setAttribute('id', gameObjectName + '_content');
-        fileInput.setAttribute('type', 'file');
-        fileInput.setAttribute('style', 'display:none;');
-        if (filter) {
-            fileInput.setAttribute('accept', filter);
-        }
-        fileInput.onclick = function(event) {
-            this.value = null;
-        };
-        fileInput.onchange = function(event) {
-            if (event.target.files.length === 0) {
-                SendMessage(gameObjectName, methodName, '');
-                return;
+        var finish = function(content, error) {
+            if (completed) return;
+            completed = true;
+            if (fileInput) {
+                fileInput.onchange = fileInput.oncancel = null;
+                fileInput.remove();
             }
-            var file = event.target.files[0];
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                SendMessage(gameObjectName, methodName, e.target.result);
-            };
-            reader.onerror = function(e) {
-                console.error('FileReader error:', e);
-                SendMessage(gameObjectName, methodName, '');
-            };
-            reader.readAsText(file);
-            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
+            if (reader) reader.onload = reader.onerror = reader.onabort = null;
+            SendMessage(gameObjectName, methodName, JSON.stringify({ content: content, error: error }));
         };
-        document.body.appendChild(fileInput);
 
-        // Try direct click first (works if user gesture context is preserved)
-        // Fall back to next mouseup if blocked by browser security
         try {
-            fileInput.click();
-        } catch (e) {
-            document.addEventListener('mouseup', function handler() {
-                fileInput.click();
-                document.removeEventListener('mouseup', handler);
-            }, { once: true });
+            fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.style.display = 'none';
+            fileInput.accept = filter;
+            fileInput.oncancel = function() { finish(null, null); };
+            fileInput.onchange = function() {
+                var file = fileInput.files[0];
+                if (!file) {
+                    finish(null, null);
+                    return;
+                }
+                fileInput.onchange = fileInput.oncancel = null;
+                fileInput.remove();
+                try {
+                    reader = new FileReader();
+                    reader.onload = function() { finish(reader.result, null); };
+                    reader.onerror = function() {
+                        finish(null, "Impossible de lire le fichier : " + (reader.error ? reader.error.message : "erreur de lecture."));
+                    };
+                    reader.onabort = function() { finish(null, "La lecture du fichier a été interrompue."); };
+                    if (asDataUrl) reader.readAsDataURL(file);
+                    else reader.readAsText(file);
+                } catch (error) {
+                    finish(null, "Impossible de lire le fichier : " + (error.message || String(error)));
+                }
+            };
+            document.body.appendChild(fileInput);
+            // Unlike click(), showPicker() reports missing user activation.
+            fileInput.showPicker();
+        } catch (error) {
+            finish(null, "Impossible d'ouvrir le choix de fichier : " + (error.message || String(error)));
         }
     },
 
-    // Open file and return content as base64 data URL (for image import)
-    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
-    // methodNamePtr: Callback method name on given GameObject.
-    // filter: Filter files (e.g., "image/png,image/jpeg")
-    // Returns: Data URL (e.g., "data:image/png;base64,iVBORw0...") via SendMessage
-    UploadFileAsBase64: function(gameObjectNamePtr, methodNamePtr, filterPtr) {
-        var gameObjectName = UTF8ToString(gameObjectNamePtr);
-        var methodName = UTF8ToString(methodNamePtr);
-        var filter = UTF8ToString(filterPtr);
-
-        // Delete if element exists (safe removal via parentNode)
-        var fileInput = document.getElementById(gameObjectName + '_base64');
-        if (fileInput && fileInput.parentNode) {
-            fileInput.parentNode.removeChild(fileInput);
-        }
-
-        fileInput = document.createElement('input');
-        fileInput.setAttribute('id', gameObjectName + '_base64');
-        fileInput.setAttribute('type', 'file');
-        fileInput.setAttribute('style', 'display:none;');
-        if (filter) {
-            fileInput.setAttribute('accept', filter);
-        }
-        fileInput.onclick = function(event) {
-            this.value = null;
-        };
-        fileInput.onchange = function(event) {
-            if (event.target.files.length === 0) {
-                SendMessage(gameObjectName, methodName, '');
-                return;
-            }
-            var file = event.target.files[0];
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                // Returns data URL: "data:image/png;base64,iVBORw0..."
-                SendMessage(gameObjectName, methodName, e.target.result);
-            };
-            reader.onerror = function(e) {
-                console.error('FileReader error:', e);
-                SendMessage(gameObjectName, methodName, '');
-            };
-            reader.readAsDataURL(file);
-            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
-        };
-        document.body.appendChild(fileInput);
-
-        // Try direct click first (works if user gesture context is preserved)
-        // Fall back to next mouseup if blocked by browser security
-        try {
-            fileInput.click();
-        } catch (e) {
-            document.addEventListener('mouseup', function handler() {
-                fileInput.click();
-                document.removeEventListener('mouseup', handler);
-            }, { once: true });
-        }
-    },
-
-    // Open file (legacy - returns blob URLs, not content).
-    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
-    // methodNamePtr: Callback method name on given GameObject.
-    // filter: Filter files. Example filters:
-    //     Match all image files: "image/*"
-    //     Match all video files: "video/*"
-    //     Match all audio files: "audio/*"
-    //     Custom: ".plist, .xml, .yaml"
-    // multiselect: Allows multiple file selection
-    UploadFile: function(gameObjectNamePtr, methodNamePtr, filterPtr, multiselect) {
-        var gameObjectName = UTF8ToString(gameObjectNamePtr);
-        var methodName = UTF8ToString(methodNamePtr);
-        var filter = UTF8ToString(filterPtr);
-
-        // Delete if element exists (safe removal via parentNode)
-        var fileInput = document.getElementById(gameObjectName)
-        if (fileInput && fileInput.parentNode) {
-            fileInput.parentNode.removeChild(fileInput);
-        }
-
-        fileInput = document.createElement('input');
-        fileInput.setAttribute('id', gameObjectName);
-        fileInput.setAttribute('type', 'file');
-        fileInput.setAttribute('style','display:none;');
-        fileInput.setAttribute('style','visibility:hidden;');
-        if (multiselect) {
-            fileInput.setAttribute('multiple', '');
-        }
-        if (filter) {
-            fileInput.setAttribute('accept', filter);
-        }
-        fileInput.onclick = function (event) {
-            // File dialog opened
-            this.value = null;
-        };
-        fileInput.onchange = function (event) {
-            // multiselect works
-            var urls = [];
-            for (var i = 0; i < event.target.files.length; i++) {
-                urls.push(URL.createObjectURL(event.target.files[i]));
-            }
-            // File selected
-            SendMessage(gameObjectName, methodName, urls.join());
-
-            // Remove after file selected (safe removal via parentNode)
-            if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
-        }
-        document.body.appendChild(fileInput);
-
-        // Try direct click first (works if user gesture context is preserved)
-        // Fall back to next mouseup if blocked by browser security
-        try {
-            fileInput.click();
-        } catch (e) {
-            document.addEventListener('mouseup', function handler() {
-                fileInput.click();
-                document.removeEventListener('mouseup', handler);
-            }, { once: true });
-        }
-    },
-
-    // Save file
-    // DownloadFile method does not open SaveFileDialog like standalone builds, its just allows user to download file
-    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
-    // methodNamePtr: Callback method name on given GameObject.
-    // filenamePtr: Filename with extension
-    // byteArray: byte[]
-    // byteArraySize: byte[].Length
+    // Success means the direct browser download request was dispatched. Whether
+    // the person keeps the file after that handoff is not observable by this API.
     DownloadFile: function(gameObjectNamePtr, methodNamePtr, filenamePtr, byteArray, byteArraySize) {
         var gameObjectName = UTF8ToString(gameObjectNamePtr);
         var methodName = UTF8ToString(methodNamePtr);
         var filename = UTF8ToString(filenamePtr);
-
-        var bytes = new Uint8Array(byteArraySize);
-        for (var i = 0; i < byteArraySize; i++) {
-            bytes[i] = HEAPU8[byteArray + i];
-        }
-
-        var downloader = window.document.createElement('a');
-        downloader.setAttribute('id', gameObjectName);
-        downloader.href = window.URL.createObjectURL(new Blob([bytes], { type: 'application/octet-stream' }));
-        downloader.download = filename;
-        document.body.appendChild(downloader);
-
-        // Try direct click first, fall back to mouseup
-        var doDownload = function() {
-            downloader.click();
-            if (downloader.parentNode) downloader.parentNode.removeChild(downloader);
-            SendMessage(gameObjectName, methodName);
-        };
+        var downloader = null;
+        var url = null;
+        var error = '';
 
         try {
-            doDownload();
-        } catch (e) {
-            document.addEventListener('mouseup', function handler() {
-                doDownload();
-                document.removeEventListener('mouseup', handler);
-            }, { once: true });
+            if (!navigator.userActivation.isActive)
+                throw new Error("Cliquez à nouveau sur Enregistrer pour lancer le téléchargement.");
+            var bytes = HEAPU8.slice(byteArray, byteArray + byteArraySize);
+            url = URL.createObjectURL(new Blob([bytes], { type: 'application/octet-stream' }));
+            downloader = document.createElement('a');
+            downloader.href = url;
+            downloader.download = filename;
+            downloader.style.display = 'none';
+            document.body.appendChild(downloader);
+            downloader.click();
+        } catch (failure) {
+            error = failure.message || String(failure);
+        } finally {
+            if (downloader) downloader.remove();
+            if (url) {
+                if (error) URL.revokeObjectURL(url);
+                // Keep the Blob alive long enough for the browser to consume the
+                // queued navigation, then release it even when no further action occurs.
+                else setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
+            }
         }
+        SendMessage(gameObjectName, methodName, error);
     },
 
     // Persist persistentDataPath (IDBFS virtual FS) to IndexedDB.

@@ -46,16 +46,6 @@ public class SpriteCache
         }
     }
 
-    /// <summary>Re-keys a cached sprite without re-decoding (used on scene reindex).</summary>
-    public void Rename(string oldKey, string newKey)
-    {
-        if (_cache.TryGetValue(oldKey, out var sprite))
-        {
-            _cache[newKey] = sprite;
-            _cache.Remove(oldKey);
-        }
-    }
-
     /// <summary>Destroys all cached sprites and clears the cache.</summary>
     public void Clear()
     {
@@ -80,9 +70,14 @@ public class SpriteCache
 
             byte[] bytes = Convert.FromBase64String(base64);
             var tex = new Texture2D(width, height, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
-            tex.LoadImage(bytes);
+            if (!tex.LoadImage(bytes))
+            {
+                UnityEngine.Object.Destroy(tex);
+                return null;
+            }
 
-            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f);
+            // Encoded originals include 1× and 2× images; both occupy the same logical scene width.
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), tex.width / (float)width);
         }
         catch (Exception e)
         {
