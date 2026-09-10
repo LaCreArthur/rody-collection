@@ -7,9 +7,9 @@ The single personal story and unified Save/Discard flow are implemented locally.
 Editor checks retained edits across scenes, Test, original play and return.
 The original artwork is retained; the preview now fits complete pictures.
 The voice engine and French workbench are also implemented locally.
-Next, build the browser candidate and verify downloads, recovery and full journeys.
+Core browser checks passed: download/reimport, refresh/Discard and target drawing.
 Preserve stories from the old browser library before publishing.
-No WebGL build or publication has run for this implementation.
+The local WebGL build passed; broader release checks and publication remain.
 
 ---
 
@@ -19,8 +19,9 @@ No WebGL build or publication has run for this implementation.
 The single-workspace implementation is local, based on plan commit `d1d2fe8`.
 Fetched `origin/master` remains `4dc870d`; local changes are not evidence of a
 published release. Source, serialized assets and focused Editor runtime journeys
-were inspected. No standalone compile gate, player build or browser acceptance
-has run; the Unity skill still requires explicit build authorization.
+were inspected. Arthur subsequently authorized a local WebGL build: it succeeded
+with zero errors, and the three core browser checks passed. [AUDIT.md](unify/AUDIT.md)
+owns exact evidence and remaining limits; this is not full release acceptance.
 
 ### Intent and release sequence
 
@@ -36,22 +37,20 @@ have progressed; browser release acceptance is now the next boundary.
 
 | Outcome | Current evidence | Remaining boundary |
 |---|---|---|
-| One draft and independent whole-story restore point | Direct Maker bindings, unified entry paths and Editor journeys; [architecture](unify/ARCHITECTURE.md) owns mechanisms | Browser file Save/reimport and sprite/structure rollback; [audit](unify/AUDIT.md) owns remaining evidence. |
+| One draft and independent whole-story restore point | Direct Maker bindings, unified entry paths and Editor journeys; [architecture](unify/ARCHITECTURE.md) owns mechanisms | Sprite/structure rollback after authoring; [audit](unify/AUDIT.md) owns remaining evidence. |
 | Originals plus one personal slot | Eight rendered cards; personal draft remains while an original is played; legacy library APIs/UI removed | Preserve any old browser-only stories before public cutover. |
-| One file Save and automatic workspace recovery | Explicit download error retains draft/checkpoint in Editor; local recovery record contains both versions; startup/writer code integrated | Actual WebGL picker/download, IDBFS, refresh, failure and delayed-handoff journeys. |
+| One file Save and automatic workspace recovery | Actual browser download/reimport and dirty refresh followed by whole-story Discard passed | Picker cancellation, storage failures and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
 | One voice workbench in stories and standalone Voix | French input, word correction, full notation, selected playback, explicit apply/cancel | French conversion, clipboard and story round-trip in a player/browser. Evidence and limits belong to the speech reference. |
-| Editor help and content views | Save/Discard labels, nonblocking status/retry, frame removal and complete aspect-fit preview; independent reference review | Browser display-size and real target-drag checks; current screenshots before publication. |
+| Editor help and content views | Save/Discard labels, nonblocking status/retry, frame removal and complete aspect-fit preview; independent reference review | Browser display-size, interrupted redraw and gameplay hit checks; completed pointer drawing passed. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
 
 ### Next work, in order
 
-1. **Obtain the WebGL release candidate.** Implementation and focused Editor
-   inspection are complete. Build authorization remains opt-in; no CI push should
-   be used as a substitute for a local candidate. The [workspace plan](EDITOR_WORKSPACE_PLAN.md)
-   still owns the required browser acceptance journeys.
-2. **Validate the candidate in the browser.** Recover a dirty draft and its older
-   restore point, download/reimport a usable story, and exercise Save/Discard/Cancel,
+1. **Local browser candidate obtained.** Build, download/reimport, dirty refresh
+   followed by Discard, and pointer target authoring passed. Reuse that evidence;
+   rebuild only after changes that require it. No CI push is needed for local QA.
+2. **Remaining release checks.** Exercise replacement Save/Discard/Cancel,
    slow/failing storage, failed hydration and delayed file handoff. Check real target
    drawing (including leaving midway), all frame controls and full French speech
    round-trips. Extend release QA to original/Ibiza voices, pitch, endings, clipboard,

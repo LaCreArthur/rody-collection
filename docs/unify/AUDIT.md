@@ -17,7 +17,7 @@ That model is replaced, so its old library/Export repairs are not separate work.
 | Paintbrush bypassed original duplication; playing an original replaced personal work | All editor entries use the root replacement boundary; original play target is separate from the workspace | Enter from collection, menu and paintbrush; original content and personal editor cursor survive |
 | Same-id files took precedence over originals | Original-only catalog; one personal card projects the draft rather than resolving its id | Import the same title/id as an original and exercise both cards |
 | Invalid import could report success for the previous story | Candidate structure and images are checked before replacement; picker cancellation/error is explicit | Malformed JSON, missing content, invalid speech ranges, unreadable image, same-file reopening |
-| Save resized titles, synthesized frames and retained removed frames | Save serializes encoded content; image import owns conversion; frame removal compacts keys | Actual file download/reimport preserves title size and exact authored sequence |
+| Save resized titles, synthesized frames and retained removed frames | Save serializes encoded content; image import owns conversion; frame removal compacts keys | Download/reimport preserved all encoded sprites; newly added/removed animation sequence still needs authoring evidence |
 | Multiple target UI saved only its first target | User explicitly chose one target pair per objective; extra-target machinery removed | Draw all three objectives, Test and reimport; original art direction unchanged |
 | Unclear hydration and overwritten sync callbacks | Root initializes once; fixed draft/snapshot envelope; coalesced single writer | Browser refresh after completed writes; slow/failed flush and failed hydration |
 | Inconsistent Save/Export/error copy | Single file Save and whole-story Discard; shared modal and explicit unavailable platform errors | Reachable controls and feedback in the assembled scenes and browser |
@@ -78,19 +78,49 @@ including the final preview/spacing changes, with no material findings. It check
 removed script GUID consumers across Assets/Packages, base references, prefab
 overrides and all 30 scene thumbnail indices. Supplied final renders were also
 inspected. This was a read-only review, not a browser interaction test.
-No standalone Unity compile gate, player build or test suite has run.
+That implementation checkpoint preceded the browser build below; no test suite ran.
+
+## Local browser evidence — 2026-09-10
+
+Arthur authorized the local build, then explicitly requested less ceremony and
+token expenditure. This pass covered the three agreed browser boundaries rather
+than expanding into the full release matrix.
+
+- Unity 6000.5.10f1 WebGL build succeeded: zero errors, 77,555,874 bytes, 455 seconds.
+  Four warnings concerned disabled player Pipeline control and large TMP generated
+  methods. Code revision `14d4c0d`; pre-existing local baked-asset changes were
+  preserved, so this is not a clean-checkout release candidate.
+- Chrome 152.0.7977.83, isolated profile, `http://127.0.0.1:8765/`: actual Save
+  downloaded a file. Native file selection reimported the later edited download;
+  its complete parsed content matched both the draft and restore point, with 24
+  scenes, 100 sprites and clean state.
+- Typed scene 9 title `RODY RECUPERE`; IndexedDB contained that dirty draft and
+  older `LA GROTTE` snapshot. Reload, personal-card Edit and the visible title
+  retained the edit. Actual Discard confirmation restored the entire snapshot;
+  the persisted draft matched it and dirty became false.
+- Real pointer drags drew a near region and inner target. Their positions/sizes
+  matched the rendered rectangles and persisted as one pair; the download/reimport
+  above preserved them. Interrupted redraw, resized/fullscreen alignment and actual
+  gameplay hit testing remain unverified.
+
+No runtime source change was needed. Early failed probes used wrong controls or
+did not establish an accepted edit; they are not product failures or passing tests.
+Browser logs also reported unavailable FSR upscaling and Unity's future persistent
+filesystem sync change; no application exception was captured in these journeys.
+Artifacts and screenshots: `/tmp/rody-workspace-verification/`. Nothing published.
 
 ## Release boundaries still open
 
 The [workspace plan's acceptance journeys](../EDITOR_WORKSPACE_PLAN.md#narrow-acceptance-evidence)
 own the required browser scenarios. In particular, Editor callbacks cannot prove:
 
-- Native picker cancellation/read failure and a real download handoff.
-- The temporary-file replacement and IDBFS flush on WebGL.
-- Refresh recovery of both a dirty draft and its older restore snapshot.
+- Native picker cancellation/read failure; normal import and download passed above.
+- Temporary-file replacement and IDBFS behavior during failures, beyond the normal
+  writes and refresh exercised above.
 - Single-writer ordering during slow/failing storage and Save/replacement locking
   during delayed browser handoff.
-- Actual downloaded-file reimport, French corrections/expression and image geometry.
+- Newly authored French corrections/expression, structural/image edits and frame
+  removal through browser round-trips; the intact downloaded story passed above.
 
 The predecessor deployed branch contains per-story browser storage. Before public
 cutover, establish whether people have browser-only personal stories and export
