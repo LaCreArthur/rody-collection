@@ -31,7 +31,6 @@ public class StoryRoot : MonoBehaviour
     public static StoryCatalog Catalog => I._catalog;
     public static bool IsReady => I._ready;
     public static bool IsBusy => I._saving || WebGLFileBrowser.IsBusy || (I._dialog != null && I._dialog.IsVisible);
-    public static string RecoveryError => I._recoveryError;
     public static event Action StateChanged;
     public static void Ensure() { _ = I; }
 
@@ -148,7 +147,7 @@ public class StoryRoot : MonoBehaviour
         }
     }
 
-    public static void RetryRecovery()
+    static void RetryRecovery()
     {
         var root = I;
         if (IsBusy || root._initializing || root._writeInFlight) return;

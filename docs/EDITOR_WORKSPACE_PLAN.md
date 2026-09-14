@@ -19,6 +19,11 @@ changes are unrelated and must remain untouched. Do not push: `master` deploys.
 
 ### Mandate and authority
 
+September 14 correction: Arthur rejected the unapproved permanent status strip.
+Its UI and preview resizing are removed; status-strip and persistent retry placement
+below are historical implementation choices, not approved requirements. No replacement
+UI is implemented. Current behavior is owned by the architecture reference.
+
 Arthur's exact design request:
 
 > hmm yeah i'm a bit lost and i want a simple UX. I think allowing only one edited / imported story at once simplifies the ux, so we can either create a story from scratch, duplicate or import one, and that's the only currently editable. if we import or duplicate another we are prompt that it will replace the previous, asked if we want to save the previous (if unsaved changes) or discard. then once a story is loaded for edition, we save one restore point, then every changes are in local/cache memory, then we can either save it for good (exporting the file) or discard the change. I think we should reduce the complexity and have a single save/export, not have both; wdyt ? I'ma bit lost here

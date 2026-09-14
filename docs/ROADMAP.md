@@ -42,7 +42,7 @@ have progressed; browser release acceptance is now the next boundary.
 | One file Save and automatic workspace recovery | Actual browser download/reimport and dirty refresh followed by whole-story Discard passed | Picker cancellation, storage failures and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
 | One voice workbench in stories and standalone Voix | French input, word correction, full notation, selected playback, explicit apply/cancel | French conversion, clipboard and story round-trip in a player/browser. Evidence and limits belong to the speech reference. |
-| Editor help and content views | Save/Discard labels, nonblocking status/retry, frame removal and complete aspect-fit preview; independent reference review | Browser display-size, interrupted redraw and gameplay hit checks; completed pointer drawing passed. |
+| Editor help and content views | Save/Discard labels, frame removal and complete aspect-fit preview; September 14 removed the unapproved status strip and its preview resizing (static review only) | Browser display-size, interrupted redraw and gameplay hit checks; completed pointer drawing passed. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
 
 ### Next work, in order

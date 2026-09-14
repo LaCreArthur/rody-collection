@@ -64,9 +64,9 @@ A fresh source-only review identified two material defects in the first draft:
 
 1. Continue after failed hydration left automatic recovery permanently disabled for
    the session with no later retry; Save still claimed the browser remembered work.
-   The implementation now exposes a failure-only retry in Maker's existing status
-   area and adjusts Save feedback while recovery is unavailable. Exercise failed
-   hydration → Continue → edit → Retry → successful write and reload.
+   Save feedback now reflects unavailable recovery. September 14 removed the
+   unapproved status strip and its separate retry action; error-dialog retry remains.
+   A retry route after dismissing that dialog is unresolved; no replacement was approved.
 2. Accepting the redrawn near region before its new target could persist an invalid
    pair when leaving midway. The two view rectangles now form one pending geometry
    edit and commit together only after a completed target drag. Exercise a smaller

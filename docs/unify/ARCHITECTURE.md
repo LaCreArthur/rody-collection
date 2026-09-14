@@ -31,8 +31,9 @@ never move the remembered editor scene.
 Maker binds ordinary accepted values directly to typed draft data. Text enters
 the draft as typed, music when selected, target geometry on a completed near/target pair, and
 images after successful conversion. The Maker preview is a native aspect-fit UI
-image; its main view reserves space for status without hiding picture content.
-Detailed editors retain the complete 320×130 coordinate area. Programmatic rebinds do not mark dirty.
+image; main and detailed views retain the complete 320×130 coordinate area.
+The unapproved status strip and its preview resizing were removed on September 14.
+Programmatic rebinds do not mark dirty.
 The speech workbench retains its explicit local audition buffer; Apply writes the
 full speech document and permitted pitch to the selected draft dialogue. Cancel
 does not write. No mirrored scene model or Save-time scene reconstruction remains.
@@ -83,8 +84,8 @@ changes authored content, dirty state or the restore point.
 Hydration/read failure offers Retry or explicit Continue. An unhydrated filesystem
 cannot be flushed over unread IndexedDB content. Read failure after hydration can
 be replaced only after the explicit Continue choice. Write failure leaves the draft
-open and file Save usable; the dialog offers retry and Maker keeps a failure-only
-retry action available after the dialog closes. Save feedback reflects unavailable
+open and file Save usable; the error dialog offers retry. The removed status strip
+no longer supplies a separate retry action after dismissal. Save feedback reflects unavailable
 recovery. No page-close asynchronous
 flush is promised, and no background cache success is presented as file Save.
 

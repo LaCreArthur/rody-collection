@@ -12,31 +12,14 @@ public class RM_MainLayout : RM_Layout
     public Button objectsButton;
     public Button introButton;
     public Button saveButton, discardButton;
-    public Button recoveryRetryButton;
-    public GameObject saveStatusPanel;
-    public Text saveStatusText;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        recoveryRetryButton.onClick.AddListener(StoryRoot.RetryRecovery);
-    }
 
     void OnEnable()
     {
         StoryRoot.StateChanged += UpdateButtonStates;
-        float statusHeight = saveStatusPanel.GetComponent<RectTransform>().rect.height;
-        gm.scenePreview.rectTransform.sizeDelta = new Vector2(320, 130 - statusHeight);
-        gm.scenePreview.rectTransform.anchoredPosition = new Vector2(0, -35 + statusHeight * .5f);
         UpdateButtonStates();
     }
 
-    void OnDisable()
-    {
-        StoryRoot.StateChanged -= UpdateButtonStates;
-        gm.scenePreview.rectTransform.sizeDelta = new Vector2(320, 130);
-        gm.scenePreview.rectTransform.anchoredPosition = new Vector2(0, -35);
-    }
+    void OnDisable() => StoryRoot.StateChanged -= UpdateButtonStates;
 
     public void UpdateButtonStates()
     {
@@ -44,14 +27,6 @@ public class RM_MainLayout : RM_Layout
         objectsButton.interactable = introButton.interactable = editable && StoryRoot.Session.EditorSceneIndex != 0;
         saveButton.interactable = editable;
         discardButton.interactable = editable && StoryRoot.Session.IsDirty;
-        saveStatusPanel.SetActive(StoryRoot.Session.HasWorkspace);
-        recoveryRetryButton.gameObject.SetActive(StoryRoot.RecoveryError != null);
-        recoveryRetryButton.interactable = editable;
-        if (StoryRoot.Session.HasWorkspace)
-            saveStatusText.text = "Mon histoire : " + StoryRoot.Session.Draft.story.title +
-                (StoryRoot.Session.IsDirty ? " — Modifications non enregistrées" : " — Aucune modification") +
-                "\n" + (StoryRoot.RecoveryError == null ? "Enregistrer télécharge l’histoire complète."
-                    : "Récupération automatique indisponible.");
     }
 
     public void LoadSprites()
