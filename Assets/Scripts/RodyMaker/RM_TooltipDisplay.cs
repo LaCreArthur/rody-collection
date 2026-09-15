@@ -57,6 +57,7 @@ public class RM_TooltipDisplay : MonoBehaviour
 
     public void Show(string message, RectTransform target)
     {
+        CancelInvoke(nameof(Hide));
         if (tooltipPanel == null || tooltipPanelText == null || target == null)
             return;
 
@@ -64,6 +65,13 @@ public class RM_TooltipDisplay : MonoBehaviour
         UpdateSize();
         UpdatePosition(target);
         tooltipPanel.SetActive(true);
+    }
+
+    public void ShowBrief(string message, RectTransform target)
+    {
+        Show(message, target);
+        CancelInvoke(nameof(Hide));
+        Invoke(nameof(Hide), 2.5f);
     }
 
     public void Hide()
@@ -109,7 +117,7 @@ public class RM_TooltipDisplay : MonoBehaviour
         else
             finalPosition.y = Mathf.Clamp(finalPosition.y, canvasBounds.yMin, canvasBounds.yMax - tooltipSize.y);
 
-        panelRect.anchoredPosition = finalPosition;
+        panelRect.anchoredPosition = new Vector2(Mathf.Round(finalPosition.x), Mathf.Round(finalPosition.y));
     }
 
     void UpdateSize()
@@ -120,11 +128,11 @@ public class RM_TooltipDisplay : MonoBehaviour
 
         TextGenerationSettings settings = tooltipPanelText.GetGenerationSettings(new Vector2(MaxInnerWidth, 0f));
         float preferredWidth = tooltipPanelText.cachedTextGeneratorForLayout.GetPreferredWidth(tooltipPanelText.text, settings) / tooltipPanelText.pixelsPerUnit;
-        float innerWidth = Mathf.Min(preferredWidth, MaxInnerWidth);
+        float innerWidth = Mathf.Ceil(Mathf.Min(preferredWidth, MaxInnerWidth) * .5f) * 2f;
 
         settings = tooltipPanelText.GetGenerationSettings(new Vector2(innerWidth, 0f));
         float innerHeight = tooltipPanelText.cachedTextGeneratorForLayout.GetPreferredHeight(tooltipPanelText.text, settings) / tooltipPanelText.pixelsPerUnit;
-        innerHeight = Mathf.Max(innerHeight, tooltipPanelText.fontSize);
+        innerHeight = Mathf.Ceil(Mathf.Max(innerHeight, tooltipPanelText.fontSize));
 
         textRect.sizeDelta = new Vector2(innerWidth, innerHeight);
         textRect.anchoredPosition = new Vector2(HorizontalPadding, -VerticalPadding);

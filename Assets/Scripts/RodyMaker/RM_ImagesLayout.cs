@@ -17,15 +17,13 @@ public class RM_ImagesLayout : RM_Layout
     {
         if (!gm.CanEdit) return;
         gm.mainLayout.GetComponent<RM_MainLayout>().ShowBaseImage();
-        SetLayouts(gm.mainLayout);
-        UnsetLayouts(gm.imagesLayout);
+        gm.ReturnHome();
     }
 
     public void ImgAnimClick(bool isSecond)
     {
         if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
-        SetLayouts(gm.imgAnimLayout);
-        UnsetLayouts(gm.imagesLayout);
+        gm.ShowPanel(RM_Panel.Frames);
         var animation = gm.imgAnimLayout.GetComponent<RM_ImgAnimLayout>();
         animation.offset = isSecond ? 3 : 0;
         animation.SetActiveBtn();
@@ -48,7 +46,7 @@ public class RM_ImagesLayout : RM_Layout
                 error = StoryRoot.Session.SaveSprite(scene == 0 ? SpriteCache.TitleName : SpriteCache.SceneFrameName(scene, 1), texture);
                 if (error != null) throw new InvalidOperationException(error);
                 StoryRoot.FlushWorkspace();
-                gm.mainLayout.GetComponent<RM_MainLayout>().LoadSprites();
+                gm.Refresh();
             }
             catch (Exception e) { StoryRoot.ShowMessage("L’image n’a pas été modifiée.\n" + e.Message); }
             finally { if (texture != null) Destroy(texture); }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum EditorPassage { Intro1, Intro2, Intro3, Objective, NewGamePlus, FromSoftware }
+
 /// <summary>Owns the one editable workspace independently from the story being played.</summary>
 public class StorySession
 {
@@ -34,6 +36,17 @@ public class StorySession
             int index = Mathf.Clamp(value, 0, Draft.scenes.Count);
             if (Workspace.editorSceneIndex == index) return;
             Workspace.editorSceneIndex = index;
+            WorkspaceChanged?.Invoke();
+        }
+    }
+
+    public EditorPassage EditorPassage
+    {
+        get => Workspace == null ? EditorPassage.Intro1 : Workspace.editorPassage;
+        set
+        {
+            if (!HasWorkspace || Workspace.editorPassage == value) return;
+            Workspace.editorPassage = (EditorPassage)Mathf.Clamp((int)value, 0, 5);
             WorkspaceChanged?.Invoke();
         }
     }
@@ -72,7 +85,10 @@ public class StorySession
     {
         Workspace = workspace;
         if (workspace != null)
+        {
             workspace.editorSceneIndex = Mathf.Clamp(workspace.editorSceneIndex, 0, workspace.draft.scenes.Count);
+            workspace.editorPassage = (EditorPassage)Mathf.Clamp((int)workspace.editorPassage, 0, 5);
+        }
         if (_playingWorkspace) _sprites.Clear();
         WorkspaceChanged?.Invoke();
     }
@@ -249,4 +265,5 @@ public class StoryWorkspace
     public Story restorePoint;
     public bool isDirty;
     public int editorSceneIndex;
+    public EditorPassage editorPassage;
 }

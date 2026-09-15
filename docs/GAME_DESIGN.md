@@ -232,7 +232,7 @@ or a countdown.
 ### Visual language
 
 The reference canvas is **320 × 200**, in a **16:10** proportion, commonly presented
-at three times that size. Story illustrations occupy **320 × 130**; title and cover
+at three times that size. This is a hard pixel budget: enlargement adds no design pixels. Story illustrations occupy **320 × 130**; title and cover
 art use **320 × 200**. A sixteen-colour palette, hard pixel edges and the recreated
 Rody lettering maintain the Atari character.
 
@@ -280,20 +280,23 @@ title image and the scenes.
 
 ### The main workspace
 
-Scene thumbnails provide navigation. The selected scene remains the focus of the
-large preview, with tools grouped by the part of the scene being edited:
+The scene title and introduction occupy the original game's text panel. All three
+introduction passages remain visible together; clicking one selects and edits it.
+The bottom selectors choose an introduction passage or objective, including empty
+positions. The selected objective shows its clue and target together. The native
+picture size, illustrated tool positions and pixel font remain unchanged.
 
-- **INTRO:** scene title, displayed introduction text, spoken lines and music.
-- **IMG:** main illustration and character animation pictures.
-- **Objects:** clues and the clickable regions of the three searches.
-- **Test:** experience the scene as a player.
+- **Scenes:** temporarily open image-only thumbnails, with titles in tooltips, a scrollbar and adjacent-scene arrows.
+- **Music:** choose the scene's introduction and loop tracks.
+- **Images:** import the illustration and talking animation pictures.
+- **Test:** play the current draft in the actual game, then return to the same scene and passage.
 - **Save:** download the complete personal story and advance its restore point.
-- **Discard changes:** restore the whole story to its initial or latest saved version.
+- **Restore:** restore the whole story to its initial or latest saved version, even after Test.
 
-The title image is a presentation screen; it does not have the ordinary scene's
-introductory dialogue and object-search tools. New scene creation and later-scene
-deletion exist, but the current controls have inconsistent limits. They should not
-be advertised as unrestricted scene management.
+The title image is a presentation screen without dialogue, objectives or scene music.
+Scene creation stops at29 narrative scenes; all existing imported scenes remain visible.
+Deletion is offered only on the selected scene from position18 onward, with confirmation.
+These retained authoring limits do not imply unrestricted scene management.
 
 ### Editing art
 
@@ -309,16 +312,25 @@ additional frames can be previewed and removed. Saving keeps the exact authored 
 
 ### Editing dialogue and objectives
 
-The introduction offers three sequential dialogue positions. For each, the creator
-edits the visible line, the spoken line, character pitch where available, and whether
-Mastico or the illustration animates.
+The introduction offers three sequential dialogue positions. Visible and spoken
+text remain independent. Each passage's voice tool retains its pronunciation,
+character pitch where available, and Mastico/illustration speaker choice.
+Click the title or a visible passage to edit it directly; the active passage is
+highlighted while its neighbours remain visible. Done, Return and Escape retain
+accepted typing. Voice changes keep their own explicit Apply/Cancel choice.
 
-Each objective has its own visible clue, spoken clue and pair of regions. The
-creator draws the near region, then a smaller target within it. Different regions
-can make the optional challenges harder without changing the illustration.
-Each objective has exactly one near/target pair, as Arthur specified on September 9.
-A redraw is accepted when both regions are complete. Leaving halfway through keeps
-the previous pair; the original visual style remains unchanged.
+Story text must fit the fixed text panel using the actual font, wrapping and line
+breaks. There is no scrolling or shrinking. An insertion or paste is automatically
+cropped to the prefix that fits, preserving the existing surrounding text and other
+passages. Opening an existing story never crops its stored text.
+
+Each objective has its own visible clue, spoken clue and exactly one near/target
+pair. Selecting it immediately arms drawing on the picture. Drag anywhere to
+replace the exact target; the near region follows with an adjustable pixel margin.
+The +/− controls change that margin; Validate accepts the complete pair, while
+Cancel or Escape keeps the previous pair. A plain click opens these controls
+without altering the rectangles. Existing free-form regions retain their shape
+until the creator accepts an edit. The picture never opens the image tools.
 
 ## 8. The voice workbench
 

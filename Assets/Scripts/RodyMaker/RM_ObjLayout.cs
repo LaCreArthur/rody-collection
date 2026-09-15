@@ -1,202 +1,284 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RM_ObjLayout : RM_Layout
+[RequireComponent(typeof(RectTransform))]
+public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler,
+    IDragHandler, IPointerUpHandler, IEndDragHandler
 {
-    public InputField objInputField;
-    public GameObject zoneHelper;
-    public Sprite nearSprite, objSprite, validSprite;
-    public Button returnBtn, phonemsBtn, zoneBtn, textBtn;
+    public RectTransform nearView, targetView;
+    public Text paddingLabel;
+    public Button plusButton, minusButton, acceptButton, cancelButton;
 
-    int activeObj = 1;
-    int drawState;
+    public Func<bool> CanInteract;
+    public Action OnBeginEdit, OnEndEdit;
+    public bool IsEditing { get; private set; }
+
+    const int DefaultPadding = 8;
+    const float Epsilon = .001f;
+    static readonly Rect Bounds = new Rect(-160, -65, 320, 130);
+
+    RectTransform surface;
+    ObjectZone model;
+    Rect target, near;
+    int? padding;
+    bool visible, pointerActive;
+    int pointerId;
     Vector2 dragStart;
-    RectTransform nearView, targetView;
+    Rect gestureTarget, gestureNear;
+    int? gesturePadding;
 
-    ObjectZone Zone => activeObj == 1 ? gm.CurrentScene.objects.obj
-        : activeObj == 2 ? gm.CurrentScene.objects.ngp : gm.CurrentScene.objects.fsw;
-    SpeechDocument Dialogue => activeObj == 1 ? gm.CurrentScene.dialogues.obj
-        : activeObj == 2 ? gm.CurrentScene.dialogues.ngp : gm.CurrentScene.dialogues.fsw;
-    string DisplayText => activeObj == 1 ? gm.CurrentScene.texts.obj
-        : activeObj == 2 ? gm.CurrentScene.texts.ngp : gm.CurrentScene.texts.fsw;
-
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
-        objInputField.interactable = false;
-        objInputField.onValueChanged.AddListener(SetText);
-        objInputField.onEndEdit.AddListener(_ => StoryRoot.FlushWorkspace());
+        surface = GetComponent<RectTransform>();
+        plusButton.onClick.AddListener(() => ChangePadding(1));
+        minusButton.onClick.AddListener(() => ChangePadding(-1));
+        acceptButton.onClick.AddListener(Accept);
+        cancelButton.onClick.AddListener(Cancel);
     }
 
-    public void Bind(int objective)
+    public void Bind(ObjectZone zone, bool show)
     {
-        activeObj = objective;
-        objInputField.SetTextWithoutNotify(DisplayText);
-        if (nearView == null)
+        if (IsEditing && ReferenceEquals(model, zone) && show)
         {
-            nearView = Instantiate(gm.objNearTemplate, gm.objNearTemplate.transform.parent).GetComponent<RectTransform>();
-            targetView = Instantiate(gm.objTemplate, nearView).GetComponent<RectTransform>();
-        }
-        RefreshZones();
-        StopDrawing();
-    }
-
-    void RefreshZones()
-    {
-        var zone = Zone;
-        nearView.localPosition = new Vector3(zone.nearX, zone.nearY, 0);
-        nearView.sizeDelta = new Vector2(zone.nearWidth, zone.nearHeight);
-        targetView.localPosition = new Vector3(zone.x, zone.y, 0);
-        targetView.sizeDelta = new Vector2(zone.width, zone.height);
-        nearView.gameObject.SetActive(true);
-        targetView.gameObject.SetActive(true);
-    }
-
-    void SetText(string text)
-    {
-        if (!gm.CanEdit || DisplayText == text) return;
-        var texts = gm.CurrentScene.texts;
-        if (activeObj == 1) texts.obj = text;
-        else if (activeObj == 2) texts.ngp = text;
-        else texts.fsw = text;
-        StoryRoot.Session.NotifyEdited();
-        gm.RefreshText();
-    }
-
-    public void RM_ReturnClick()
-    {
-        if (!gm.CanEdit) return;
-        SetLayouts(gm.objectsLayout, gm.introTextObj);
-        UnsetLayouts(gm.objLayout, gm.objTextObj);
-        StoryRoot.FlushWorkspace();
-    }
-
-    public void TextOnClick()
-    {
-        if (!gm.CanEdit) return;
-        objInputField.interactable = !objInputField.interactable;
-        returnBtn.interactable = phonemsBtn.interactable = zoneBtn.interactable = !objInputField.interactable;
-    }
-
-    public void ZoneOnClick()
-    {
-        if (!gm.CanEdit) return;
-        if (drawState == 0)
-        {
-            drawState = 1;
-            zoneHelper.SetActive(true);
-            zoneHelper.GetComponent<Text>().text = "Clique et fais glisser pour dessiner la zone proche (jaune).";
-            UnsetLayouts(objInputField.gameObject, gm.title);
-            returnBtn.interactable = phonemsBtn.interactable = textBtn.interactable = zoneBtn.interactable = false;
-            zoneBtn.GetComponent<Image>().sprite = objSprite;
-        }
-        else if (drawState == 3)
-        {
-            drawState = 4;
-            zoneHelper.GetComponent<Text>().text = "Dessine la cible (verte) à l’intérieur de la zone proche (jaune).";
-            targetView.gameObject.SetActive(true);
-            zoneBtn.GetComponent<Image>().sprite = validSprite;
-            zoneBtn.interactable = false;
-        }
-        else if (drawState == 6)
-        {
-            StopDrawing();
-            StoryRoot.FlushWorkspace();
-        }
-    }
-
-    void StopDrawing()
-    {
-        drawState = 0;
-        zoneHelper.SetActive(false);
-        zoneBtn.GetComponent<Image>().sprite = nearSprite;
-        returnBtn.interactable = phonemsBtn.interactable = textBtn.interactable = zoneBtn.interactable = true;
-        SetLayouts(objInputField.gameObject, gm.title);
-    }
-
-    void Update()
-    {
-        if (!gm.CanEdit || drawState == 0) return;
-        Vector2 point = new Vector2(Input.mousePosition.x * 320f / Screen.width,
-            Input.mousePosition.y * 200f / Screen.height) - new Vector2(160, 65);
-        bool drawing = drawState == 2 || drawState == 5;
-        bool near = drawState <= 3;
-        Rect bounds = near ? new Rect(-160, -65, 320, 130)
-            : new Rect(nearView.localPosition.x - nearView.sizeDelta.x * .5f,
-                nearView.localPosition.y - nearView.sizeDelta.y * .5f, nearView.sizeDelta.x, nearView.sizeDelta.y);
-
-        if (!drawing && Input.GetMouseButtonDown(0) && bounds.Contains(point))
-        {
-            dragStart = point;
-            drawState = near ? 2 : 5;
-            drawing = true;
-            zoneBtn.interactable = false;
-            if (near) targetView.gameObject.SetActive(false);
-        }
-        if (!drawing) return;
-
-        point = new Vector2(Mathf.Clamp(point.x, bounds.xMin, bounds.xMax), Mathf.Clamp(point.y, bounds.yMin, bounds.yMax));
-        RectTransform view = near ? nearView : targetView;
-        view.sizeDelta = Vector2.Max(dragStart, point) - Vector2.Min(dragStart, point);
-        Vector2 center = (dragStart + point) * .5f;
-        view.localPosition = near ? (Vector3)center : (Vector3)(center - (Vector2)nearView.localPosition);
-        if (!Input.GetMouseButtonUp(0)) return;
-        if (view.sizeDelta.x == 0 || view.sizeDelta.y == 0)
-        {
-            drawState = near ? 1 : 4;
+            RefreshViews();
             return;
         }
-        if (!near) CommitZones();
-        drawState = near ? 3 : 6;
-        zoneBtn.interactable = true;
-        zoneHelper.GetComponent<Text>().text = near
-            ? "Redessine la zone proche ou clique sur le bouton pour placer la cible."
-            : "Redessine la cible ou clique sur le bouton pour terminer.";
+        Cancel();
+        model = zone;
+        visible = show && zone != null;
+        ReadModel();
+        RefreshViews();
     }
 
-    // Near and target form one accepted edit. Leaving midway keeps the previous pair.
-    void CommitZones()
+    public void BeginEdit()
     {
-        var zone = Zone;
-        var nearPosition = nearView.localPosition;
-        var nearSize = nearView.sizeDelta;
-        var position = targetView.localPosition;
-        var size = targetView.sizeDelta;
-        if (zone.nearX == nearPosition.x && zone.nearY == nearPosition.y &&
-            zone.nearWidth == nearSize.x && zone.nearHeight == nearSize.y &&
-            zone.x == position.x && zone.y == position.y && zone.width == size.x && zone.height == size.y) return;
-        zone.nearX = nearPosition.x;
-        zone.nearY = nearPosition.y;
-        zone.nearWidth = nearSize.x;
-        zone.nearHeight = nearSize.y;
-        zone.x = position.x;
-        zone.y = position.y;
-        zone.width = size.x;
-        zone.height = size.y;
-        StoryRoot.Session.NotifyEdited();
-        StoryRoot.FlushWorkspace();
+        if (IsEditing || !visible || CanInteract?.Invoke() != true) return;
+        ReadModel();
+        IsEditing = true;
+        OnBeginEdit?.Invoke();
+        RefreshViews();
     }
 
-    public void RM_PhonemesClick()
+    public void Accept()
     {
-        if (!gm.CanEdit) return;
-        phonemsBtn.interactable = false;
-        SynthManager.Open(Dialogue, gm.CurrentScene.voice.isZambla ? 0.9f : 1f, false, "MASTICO · CONSIGNE",
-            (speech, _) =>
-            {
-                if (SameSpeech(Dialogue, speech)) return;
-                var dialogues = gm.CurrentScene.dialogues;
-                if (activeObj == 1) dialogues.obj = speech;
-                else if (activeObj == 2) dialogues.ngp = speech;
-                else dialogues.fsw = speech;
-                StoryRoot.Session.NotifyEdited();
-                StoryRoot.FlushWorkspace();
-            }, () => phonemsBtn.interactable = true);
+        if (!IsEditing || pointerActive || !HasArea(target) || CanInteract?.Invoke() != true) return;
+        Rect originalNear = NearRect(model);
+        Rect originalTarget = TargetRect(model);
+        if (!near.Equals(originalNear) || !target.Equals(originalTarget))
+        {
+            Vector2 nearCenter = near.center;
+            Vector2 relativeTarget = target.center - nearCenter;
+            model.nearX = nearCenter.x;
+            model.nearY = nearCenter.y;
+            model.nearWidth = near.width;
+            model.nearHeight = near.height;
+            model.x = relativeTarget.x;
+            model.y = relativeTarget.y;
+            model.width = target.width;
+            model.height = target.height;
+            StoryRoot.Session.NotifyEdited();
+            StoryRoot.FlushWorkspace();
+        }
+        IsEditing = false;
+        ReadModel();
+        RefreshViews();
+        OnEndEdit?.Invoke();
     }
 
-    void OnDisable()
+    public void Cancel()
     {
-        if (nearView != null) nearView.gameObject.SetActive(false);
-        drawState = 0;
+        if (!IsEditing) return;
+        pointerActive = false;
+        IsEditing = false;
+        ReadModel();
+        RefreshViews();
+        OnEndEdit?.Invoke();
     }
+
+    public void ChangePadding(int delta)
+    {
+        if (pointerActive || CanInteract?.Invoke() != true) return;
+        BeginEdit();
+        if (!IsEditing) return;
+        padding = Mathf.Clamp((padding ?? DefaultPadding) + delta, 0, MaxPadding(target));
+        if (HasArea(target)) near = Expand(target, padding.Value);
+        RefreshViews();
+    }
+
+    public void OnInitializePotentialDrag(PointerEventData eventData) => eventData.useDragThreshold = false;
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Left || pointerActive ||
+            !visible || CanInteract?.Invoke() != true || !TryPoint(eventData, out Vector2 point)) return;
+        BeginEdit();
+        if (!IsEditing) return;
+        pointerActive = true;
+        pointerId = eventData.pointerId;
+        dragStart = point;
+        gestureTarget = target;
+        gestureNear = near;
+        gesturePadding = padding;
+        RefreshViews();
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!pointerActive || eventData.pointerId != pointerId) return;
+        if (CanInteract?.Invoke() != true)
+        {
+            CancelGesture();
+            return;
+        }
+        PreviewGesture(eventData);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (!pointerActive || eventData.pointerId != pointerId) return;
+        if (CanInteract?.Invoke() != true)
+        {
+            CancelGesture();
+            return;
+        }
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch touch = Input.GetTouch(i);
+            if (touch.fingerId != pointerId || touch.phase != TouchPhase.Canceled) continue;
+            CancelGesture();
+            return;
+        }
+        PreviewGesture(eventData);
+        pointerActive = false;
+        RefreshViews();
+    }
+
+    // uGUI sends PointerUp before EndDrag on a normal release, even outside the image.
+    // An EndDrag without that release is an interrupted gesture, not an accepted preview.
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (pointerActive && eventData.pointerId == pointerId) CancelGesture();
+    }
+
+    void PreviewGesture(PointerEventData eventData)
+    {
+        if (!TryPoint(eventData, out Vector2 point))
+        {
+            CancelGesture();
+            return;
+        }
+        Vector2 min = Vector2.Min(dragStart, point);
+        Vector2 max = Vector2.Max(dragStart, point);
+        Rect candidate = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        if (!HasArea(candidate))
+        {
+            RestoreGesture();
+        }
+        else
+        {
+            target = candidate;
+            padding = Mathf.Min(gesturePadding ?? DefaultPadding, MaxPadding(target));
+            near = Expand(target, padding.Value);
+        }
+        RefreshViews();
+    }
+
+    bool TryPoint(PointerEventData eventData, out Vector2 point)
+    {
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(surface, eventData.position,
+                eventData.pressEventCamera, out point)) return false;
+        point.x = Mathf.Round(Mathf.Clamp(point.x, Bounds.xMin, Bounds.xMax));
+        point.y = Mathf.Round(Mathf.Clamp(point.y, Bounds.yMin, Bounds.yMax));
+        return true;
+    }
+
+    void CancelGesture()
+    {
+        if (!pointerActive) return;
+        RestoreGesture();
+        pointerActive = false;
+        RefreshViews();
+    }
+
+    void RestoreGesture()
+    {
+        target = gestureTarget;
+        near = gestureNear;
+        padding = gesturePadding;
+    }
+
+    void ReadModel()
+    {
+        target = model == null ? default : TargetRect(model);
+        near = model == null ? default : NearRect(model);
+        padding = ReadPadding(target, near);
+    }
+
+    void RefreshViews()
+    {
+        nearView.localPosition = near.center;
+        nearView.sizeDelta = near.size;
+        targetView.localPosition = target.center;
+        targetView.sizeDelta = target.size;
+        nearView.gameObject.SetActive(visible && HasArea(near));
+        targetView.gameObject.SetActive(visible && HasArea(target));
+        paddingLabel.text = padding.HasValue ? padding.Value.ToString() : "—";
+        bool editable = IsEditing && !pointerActive && CanInteract?.Invoke() == true;
+        int current = padding ?? DefaultPadding;
+        plusButton.interactable = editable && current < MaxPadding(target);
+        minusButton.interactable = editable && current > 0;
+        acceptButton.interactable = editable && HasArea(target);
+    }
+
+    static Rect NearRect(ObjectZone zone) => new Rect(
+        zone.nearX - zone.nearWidth * .5f, zone.nearY - zone.nearHeight * .5f,
+        zone.nearWidth, zone.nearHeight);
+
+    static Rect TargetRect(ObjectZone zone) => new Rect(
+        zone.nearX + zone.x - zone.width * .5f, zone.nearY + zone.y - zone.height * .5f,
+        zone.width, zone.height);
+
+    static bool HasArea(Rect rect) => rect.width > 0 && rect.height > 0;
+
+    static bool SameRect(Rect a, Rect b) => Mathf.Abs(a.x - b.x) <= Epsilon &&
+        Mathf.Abs(a.y - b.y) <= Epsilon && Mathf.Abs(a.width - b.width) <= Epsilon &&
+        Mathf.Abs(a.height - b.height) <= Epsilon;
+
+    static Rect Expand(Rect rect, int margin) => Rect.MinMaxRect(
+        Mathf.Clamp(rect.xMin - margin, Bounds.xMin, Bounds.xMax),
+        Mathf.Clamp(rect.yMin - margin, Bounds.yMin, Bounds.yMax),
+        Mathf.Clamp(rect.xMax + margin, Bounds.xMin, Bounds.xMax),
+        Mathf.Clamp(rect.yMax + margin, Bounds.yMin, Bounds.yMax));
+
+    static int MaxPadding(Rect rect)
+    {
+        if (!HasArea(rect)) return (int)Bounds.width;
+        float horizontal = Mathf.Max(rect.xMin - Bounds.xMin, Bounds.xMax - rect.xMax);
+        float vertical = Mathf.Max(rect.yMin - Bounds.yMin, Bounds.yMax - rect.yMax);
+        return Mathf.CeilToInt(Mathf.Max(0, Mathf.Max(horizontal, vertical)));
+    }
+
+    static int? ReadPadding(Rect rect, Rect proximity)
+    {
+        if (!HasArea(rect)) return DefaultPadding;
+        float horizontal = Mathf.Max(rect.xMin - proximity.xMin, proximity.xMax - rect.xMax);
+        float vertical = Mathf.Max(rect.yMin - proximity.yMin, proximity.yMax - rect.yMax);
+        int candidate = Mathf.CeilToInt(Mathf.Max(0, Mathf.Max(horizontal, vertical)) - Epsilon);
+        return candidate <= MaxPadding(rect) && SameRect(Expand(rect, candidate), proximity)
+            ? candidate : (int?)null;
+    }
+
+    void OnApplicationFocus(bool focused)
+    {
+        if (!focused) CancelGesture();
+    }
+
+    void OnApplicationPause(bool paused)
+    {
+        if (paused) CancelGesture();
+    }
+
+    void OnDisable() => Cancel();
 }

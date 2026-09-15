@@ -48,8 +48,7 @@ public class RM_ImgAnimLayout : RM_Layout
     {
         if (!gm.CanEdit) return;
         gm.mainLayout.GetComponent<RM_MainLayout>().ShowBaseImage();
-        SetLayouts(gm.imagesLayout);
-        UnsetLayouts(gm.imgAnimLayout);
+        gm.ShowPanel(RM_Panel.Images);
         gm.imagesLayout.GetComponent<RM_ImagesLayout>().SetActiveBtn();
     }
 
@@ -68,7 +67,7 @@ public class RM_ImgAnimLayout : RM_Layout
         if (!gm.CanEdit) return;
         StoryRoot.Session.RemoveFrame(StoryRoot.Session.EditorSceneIndex, index + offset + 2);
         StoryRoot.FlushWorkspace();
-        gm.mainLayout.GetComponent<RM_MainLayout>().LoadSprites();
+        gm.Refresh();
         SetActiveBtn();
     }
 

@@ -1,6 +1,6 @@
 # Rody Maker — Créer et partager une histoire
 
-Guide de la version en préparation, relu le **10 septembre 2026**. Les fonctions
+Guide de la version en préparation, relu le **14 septembre 2026**. Les fonctions
 récentes restent à vérifier dans une version navigateur publiée. Les anciennes
 vidéos et captures ne décrivent plus la sauvegarde ni le nouvel atelier vocal.
 Le [document de conception](GAME_DESIGN.md) explique le produit et distingue
@@ -24,22 +24,25 @@ pas, et le pinceau du jeu protège les originaux de la même manière que Dupliq
 
 ## Se repérer dans l'éditeur
 
-Les vignettes permettent de choisir une scène. L'image sélectionnée occupe
-l'aperçu principal, avec les outils à droite.
+Le titre et les textes occupent le panneau du jeu original. Cliquez directement
+sur le titre ou une réplique pour l’éditer. Les trois répliques d’introduction
+restent affichées ensemble ; celle que vous éditez est surlignée.
 
-| Outil | Usage actuel |
+| Outil | Usage |
 |---|---|
-| **INTRO** | Titre de scène, textes, dialogues et musique |
-| **IMG** | Image principale et images d'animation |
-| **Objets** | Indices et zones cliquables |
-| **Disquette / Enregistrer** | Télécharger l'histoire complète |
-| **Test** | Jouer le brouillon actuel sans l'enregistrer |
-| **Annuler les modifications** | Restaurer toute l'histoire à son point de reprise |
+| **Scènes** | Ouvrir les vignettes (titres en infobulle) ; les flèches choisissent la scène précédente/suivante |
+| **Musique** | Choisir et écouter les pistes de la scène |
+| **Images** | Image principale et images d’animation |
+| **INTRO 1 2 3** | Sélectionner une réplique, même encore vide |
+| **OBJETS 1 2 3** | Montrer ensemble l’indice et les zones de l’objectif |
+| **Disquette / Enregistrer** | Télécharger l’histoire complète |
+| **Test** | Jouer le brouillon actuel sans l’enregistrer |
+| **Rétablir** | Restaurer toute l’histoire à son point de reprise |
 
-L'image de titre est distincte de la couverture du menu. Elle n'a pas de dialogue
-ni d'objectif à éditer. Les vignettes proposent aussi l'ajout de scènes ; les
-règles d'ajout/suppression actuelles sont encore irrégulières. La promesse de
-l'ancien tutoriel « de 16 à 29 scènes » ne décrit pas une limite fiable aujourd'hui.
+L’image de titre est distincte de la couverture du menu. Elle n’a pas de dialogue,
+d’objectif ni de musique de scène. **+ Scène** permet d’ajouter jusqu’à29 scènes.
+La suppression reste réservée aux scènes à partir de la18e : sélectionnez la scène,
+rouvrez Scènes et utilisez sa croix, puis confirmez.
 
 ## Images
 
@@ -58,18 +61,17 @@ de copies de l'image principale.
 
 ## Introduction, texte et musique
 
-Dans **INTRO**, choisissez le titre, les dialogues ou la musique.
+Cliquez sur le titre ou une réplique pour écrire. Les sélecteurs **INTRO 1 2 3**
+donnent aussi accès aux passages vides. **Terminer**, **Retour** ou Échap gardent
+le texte saisi. **Voix** ouvre l’atelier vocal du passage sélectionné ; le bouton
+Mastico choisit si Mastico parle ou si les images du décor accompagnent la réplique.
+Il ne coupe pas le son.
 
-![Ancienne illustration du menu Intro](tutorial-screenshots/03-intro-menu.png)
-
-*Illustration historique : les pictogrammes aident à se repérer ; elle ne prouve
-pas le comportement de la version actuelle.*
-
-Les boutons **1**, **2**, **3** donnent accès aux trois répliques d'introduction.
-Pour chacune, éditez séparément le texte affiché et la voix. L'interrupteur Mastico
-choisit si Mastico s'anime ou si les images du décor accompagnent la réplique.
-La police rétro ne contient pas tous les caractères : regardez le texte dans son
-aperçu avant de finaliser la scène.
+Le texte doit tenir dans le panneau fixe, retours à la ligne compris. Si vous
+collez trop de texte, seule la partie qui tient est insérée ; les autres passages
+et le texte autour de votre sélection sont conservés. Un bref message explique
+la coupe. Aucun défilement ni réduction de police ne masque un débordement.
+La police rétro ne contient pas tous les caractères : relisez l’aperçu.
 
 Pour la musique, **L1** choisit l'ouverture et **L2** la musique répétée.
 Le bouton d'écoute permet de préécouter les pistes fournies.
@@ -102,20 +104,18 @@ La [référence vocale](SPEECH_ENGINE.md) détaille la notation pour les usages 
 
 ## Dessiner un objectif
 
-Dans **Objets**, choisissez l'objectif principal, **New Game Plus** ou **FromSoftware**.
-Chacun possède un texte d'indice, une voix et deux rectangles.
+Choisissez **OBJETS 1**, **2** ou **3** : objectif principal, New Game Plus ou
+FromSoftware. Son indice, sa voix et ses rectangles appartiennent à la même sélection.
 
-1. Éditez le texte et la voix de l'indice.
-2. Ouvrez le dessin des zones et faites glisser pour dessiner la zone proche.
-3. Utilisez le bouton de zone pour passer à la cible exacte.
-4. Dessinez cette cible à l'intérieur de la zone proche, puis terminez avec le bouton.
-5. Revenez aux outils de la scène pour continuer ou tester. Le brouillon garde la paire complète.
+1. Cliquez sur l’indice pour l’éditer et utilisez **Voix** pour sa phrase parlée.
+2. Glissez directement dans le décor pour dessiner la cible exacte. Le dessin est déjà actif.
+3. La zone proche l’entoure automatiquement. Réglez sa marge avec **+** et **−**.
+4. **Valider** garde les deux rectangles ; **Annuler** ou Échap abandonne le changement.
 
-![Ancienne illustration des régions proche et exacte](tutorial-screenshots/08-object-zones.png)
-
-Chaque objectif possède **une seule paire de zones**. Si vous quittez le dessin
-avant de terminer la cible, la paire précédente reste en place. Le clic droit
-n'ajoute pas de cible supplémentaire.
+Un clic sans glisser ouvre les réglages sans remplacer la cible. Chaque objectif
+garde une seule paire de zones. Les anciennes zones irrégulières restent intactes
+tant que vous ne validez pas de modification ; leur marge apparaît comme **—**.
+Cliquer dans le décor n’ouvre jamais le menu d’images.
 
 ## Enregistrer, tester et reprendre
 
@@ -123,11 +123,11 @@ Les textes saisis et les modifications acceptées restent dans le même brouillo
 même en changeant de scène, en testant ou en allant jouer un original. L'atelier
 vocal conserve son choix explicite **Utiliser ce dialogue / Annuler**.
 
-- **Test** joue le contenu actuel. Revenir à l'éditeur retrouve votre scène de travail,
+- **Test** joue le contenu actuel. Revenir à l'éditeur retrouve votre scène de travail et le passage sélectionné,
   même si vous avez progressé dans l'histoire pendant le test.
 - **Enregistrer** télécharge un fichier `.rody.json` contenant toute l'histoire :
   scènes, images, textes et voix. Il reste disponible même sans modifications.
-- **Annuler les modifications** demande confirmation puis restaure toute l'histoire,
+- **Rétablir** demande confirmation puis restaure toute l'histoire,
   y compris les images et les scènes ajoutées/supprimées, à sa version initiale ou
   au dernier Enregistrer. Le bouton est désactivé lorsqu'il n'y a pas de changements.
 

@@ -1,47 +1,30 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RM_MainLayout : RM_Layout
 {
-    public Color inactiveSceneColor;
-    public Color activeSceneColor;
-    public GameObject[] sceneThumbnails;
-    public Slider thumbnailSlider;
-    public Sprite addSceneSprite;
-    public Button objectsButton;
-    public Button introButton;
-    public Button saveButton, discardButton;
+    public Button musicButton, scenesButton, imagesButton, testButton, saveButton, discardButton;
 
-    void OnEnable()
+    protected override void Awake()
     {
-        StoryRoot.StateChanged += UpdateButtonStates;
-        UpdateButtonStates();
+        base.Awake();
+        musicButton.onClick.AddListener(() => gm.ShowPanel(RM_Panel.Music));
+        scenesButton.onClick.AddListener(() => gm.ShowPanel(RM_Panel.Scenes));
+        imagesButton.onClick.AddListener(() => gm.ShowPanel(RM_Panel.Images));
+        testButton.onClick.AddListener(OnTestClick);
+        saveButton.onClick.AddListener(OnSaveClick);
+        discardButton.onClick.AddListener(OnRevertClick);
     }
 
+    void OnEnable() => StoryRoot.StateChanged += UpdateButtonStates;
     void OnDisable() => StoryRoot.StateChanged -= UpdateButtonStates;
 
     public void UpdateButtonStates()
     {
         bool editable = gm.CanEdit;
-        objectsButton.interactable = introButton.interactable = editable && StoryRoot.Session.EditorSceneIndex != 0;
-        saveButton.interactable = editable;
+        musicButton.interactable = editable && StoryRoot.Session.EditorSceneIndex != 0;
+        scenesButton.interactable = imagesButton.interactable = testButton.interactable = saveButton.interactable = editable;
         discardButton.interactable = editable && StoryRoot.Session.IsDirty;
-    }
-
-    public void LoadSprites()
-    {
-        var session = StoryRoot.Session;
-        int count = session.Draft.scenes.Count;
-        for (int i = 0; i < sceneThumbnails.Length; i++)
-        {
-            var thumbnail = sceneThumbnails[i];
-            thumbnail.GetComponent<Button>().interactable = i <= count + 1;
-            thumbnail.GetComponent<Image>().sprite = i == 0 ? session.LoadSprite(SpriteCache.TitleName, 320, 200)
-                : i <= count ? session.LoadSprite(SpriteCache.SceneFrameName(i, 1))
-                : i == count + 1 ? addSceneSprite : null;
-        }
-        ShowBaseImage();
     }
 
     public void ShowBaseImage()
@@ -52,32 +35,10 @@ public class RM_MainLayout : RM_Layout
             : StoryRoot.Session.LoadSprite(SpriteCache.SceneFrameName(scene, 1));
     }
 
-    public void OnIntroClick()
-    {
-        if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
-        SetLayouts(gm.introLayout, gm.introTextObj);
-        UnsetLayouts(gm.mainLayout);
-        gm.introLayout.GetComponent<RM_IntroLayout>().Bind();
-    }
-
-    public void OnImagesClick()
-    {
-        if (!gm.CanEdit) return;
-        SetLayouts(gm.imagesLayout);
-        UnsetLayouts(gm.mainLayout);
-        gm.imagesLayout.GetComponent<RM_ImagesLayout>().SetActiveBtn();
-    }
-
-    public void OnObjectsClick()
-    {
-        if (!gm.CanEdit || StoryRoot.Session.EditorSceneIndex == 0) return;
-        SetLayouts(gm.introTextObj, gm.title, gm.objectsLayout);
-        UnsetLayouts(gm.mainLayout);
-    }
-
     public void OnTestClick()
     {
         if (!gm.CanEdit) return;
+        gm.workspace.FinishFocus();
         var session = StoryRoot.Session;
         session.ActivateWorkspace();
         session.CurrentSceneIndex = session.EditorSceneIndex;
@@ -88,6 +49,7 @@ public class RM_MainLayout : RM_Layout
     public void OnSaveClick()
     {
         if (!gm.CanEdit) return;
+        gm.workspace.FinishFocus();
         StoryRoot.SaveWorkspace();
     }
 
@@ -95,57 +57,5 @@ public class RM_MainLayout : RM_Layout
     {
         if (!gm.CanEdit) return;
         StoryRoot.DiscardWorkspace(gm.Refresh);
-    }
-
-    public void OnSceneThumbnailClick(int scene)
-    {
-        if (!gm.CanEdit || scene < 0 || scene >= sceneThumbnails.Length) return;
-        var session = StoryRoot.Session;
-        int count = session.Draft.scenes.Count;
-        if (scene > count + 1) return;
-        if (scene == session.EditorSceneIndex)
-        {
-            // Preserve the existing later-scene deletion affordance.
-            if (scene < 18) return;
-            StoryRoot.Confirm("Supprimer la scène " + scene + " et ses images de cette histoire ?", () =>
-            {
-                session.DeleteScene(scene);
-                session.EditorSceneIndex = scene - 1;
-                StoryRoot.FlushWorkspace();
-                gm.Refresh();
-            });
-            return;
-        }
-        if (scene == count + 1) session.CreateNewScene(scene);
-        session.EditorSceneIndex = scene;
-        StoryRoot.FlushWorkspace();
-        gm.Refresh();
-    }
-
-    public void UpdateActiveThumbnail()
-    {
-        int selected = StoryRoot.Session.EditorSceneIndex;
-        for (int i = 0; i < sceneThumbnails.Length; i++)
-            sceneThumbnails[i].GetComponent<Image>().color = i == selected ? activeSceneColor : inactiveSceneColor;
-        UpdateThumbnailPositions((int)thumbnailSlider.value);
-    }
-
-    public void OnThumbnailSliderChanged()
-    {
-        if (gm.CanEdit) UpdateThumbnailPositions((int)thumbnailSlider.value);
-    }
-
-    public void UpdateThumbnailPositions(int sliderValue)
-    {
-        int last = StoryRoot.Session.HasWorkspace ? StoryRoot.Session.Draft.scenes.Count + 1 : 0;
-        for (int i = 0; i < sceneThumbnails.Length; i++)
-        {
-            bool visible = i >= 6 * sliderValue && i <= 6 * sliderValue + 17 && i <= last;
-            sceneThumbnails[i].SetActive(visible);
-            if (!visible) continue;
-            var transform = sceneThumbnails[i].transform;
-            var position = transform.localPosition;
-            transform.localPosition = new Vector3(position.x, 22.5f - (i / 6 - sliderValue) * 22f, position.z);
-        }
     }
 }

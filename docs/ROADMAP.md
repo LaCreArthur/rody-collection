@@ -5,23 +5,28 @@
 The finish line is a polished browser release for retro fans and creators.
 The single personal story and unified Save/Discard flow are implemented locally.
 Editor checks retained edits across scenes, Test, original play and return.
-The original artwork is retained; the preview now fits complete pictures.
+The native Maker workspace is implemented: direct text and target editing, temporary scene navigation.
 The voice engine and French workbench are also implemented locally.
-Core browser checks passed: download/reimport, refresh/Discard and target drawing.
+Earlier browser checks passed; the new Maker UI still needs browser acceptance.
 Preserve stories from the old browser library before publishing.
-The local WebGL build passed; broader release checks and publication remain.
+The previous WebGL build passed; this UI has Editor checks only, with publication pending.
 
 ---
 
 ## Technical body (executing agent)
 
-**Updated: 2026-09-10.** This is the owner of project status and priorities.
+**Updated: 2026-09-15.** This is the owner of project status and priorities.
 The single-workspace implementation is local, based on plan commit `d1d2fe8`.
 Fetched `origin/master` remains `4dc870d`; local changes are not evidence of a
 published release. Source, serialized assets and focused Editor runtime journeys
 were inspected. Arthur subsequently authorized a local WebGL build: it succeeded
 with zero errors, and the three core browser checks passed. [AUDIT.md](unify/AUDIT.md)
 owns exact evidence and remaining limits; this is not full release acceptance.
+
+The native Maker UI is now implemented locally per [MAKER_UI_UX_PLAN.md](MAKER_UI_UX_PLAN.md).
+That plan owns the focused Editor evidence and limitations. September15 corrected
+sub-native font sizes and a compressed icon after Arthur's pixel-budget feedback;
+actual320×200 camera captures were inspected. No new build/browser run covers this UI.
 
 ### Intent and release sequence
 
@@ -42,12 +47,12 @@ have progressed; browser release acceptance is now the next boundary.
 | One file Save and automatic workspace recovery | Actual browser download/reimport and dirty refresh followed by whole-story Discard passed | Picker cancellation, storage failures and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
 | One voice workbench in stories and standalone Voix | French input, word correction, full notation, selected playback, explicit apply/cancel | French conversion, clipboard and story round-trip in a player/browser. Evidence and limits belong to the speech reference. |
-| Editor help and content views | Save/Discard labels, frame removal and complete aspect-fit preview; September 14 removed the unapproved status strip and its preview resizing (static review only) | Browser display-size, interrupted redraw and gameplay hit checks; completed pointer drawing passed. |
+| Native Maker workspace | Composed intro/direct text edits, insertion crop, shared objective text/target selection, transactional target drawing, temporary image-only scene browser, real Test/return; focused Editor probes and320×200 renders | New UI browser display, input and interrupted-drawing acceptance. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
 
 ### Next work, in order
 
-1. **Local browser candidate obtained.** Build, download/reimport, dirty refresh
+1. **Previous local browser candidate obtained.** It predates the native Maker UI. Build, download/reimport, dirty refresh
    followed by Discard, and pointer target authoring passed. Reuse that evidence;
    rebuild only after changes that require it. No CI push is needed for local QA.
 2. **Remaining release checks.** Exercise replacement Save/Discard/Cancel,

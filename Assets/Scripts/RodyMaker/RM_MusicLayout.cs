@@ -16,8 +16,7 @@ public class RM_MusicLayout : RM_Layout
     public void RM_ReturnClick()
     {
         if (!gm.CanEdit) return;
-        SetLayouts(gm.introLayout);
-        UnsetLayouts(gm.musicLayout, gm.title);
+        gm.ReturnHome();
     }
 
     public void ListenClick()
