@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
 public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler,
-    IDragHandler, IPointerUpHandler, IEndDragHandler
+    IDragHandler, IPointerUpHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public RectTransform nearView, targetView;
     public Text paddingLabel;
     public Button plusButton, minusButton, acceptButton, cancelButton;
+    public RM_EditorPointer pointer;
+    public RM_TooltipDisplay tooltip;
 
     public Func<bool> CanInteract;
     public Action OnBeginEdit, OnEndEdit;
@@ -23,7 +25,7 @@ public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePoten
     ObjectZone model;
     Rect target, near;
     int? padding;
-    bool visible, pointerActive;
+    bool visible, pointerActive, hovered;
     int pointerId;
     Vector2 dragStart;
     Rect gestureTarget, gestureNear;
@@ -109,12 +111,25 @@ public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePoten
 
     public void OnInitializePotentialDrag(PointerEventData eventData) => eventData.useDragThreshold = false;
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        hovered = true;
+        if (visible && CanInteract?.Invoke() == true) pointer.Show(this, RM_EditorPointer.Kind.Draw);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        hovered = false;
+        if (!pointerActive) pointer.Clear(this);
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left || pointerActive ||
             !visible || CanInteract?.Invoke() != true || !TryPoint(eventData, out Vector2 point)) return;
         BeginEdit();
         if (!IsEditing) return;
+        tooltip.Hide();
         pointerActive = true;
         pointerId = eventData.pointerId;
         dragStart = point;
@@ -224,7 +239,10 @@ public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePoten
         targetView.sizeDelta = target.size;
         nearView.gameObject.SetActive(visible && HasArea(near));
         targetView.gameObject.SetActive(visible && HasArea(target));
-        paddingLabel.text = padding.HasValue ? padding.Value.ToString() : "—";
+        paddingLabel.text = padding.HasValue ? "Proximité : " + padding.Value + " px" : "Proximité : libre";
+        if ((hovered || pointerActive) && visible && CanInteract?.Invoke() == true)
+            pointer.Show(this, RM_EditorPointer.Kind.Draw);
+        else pointer.Clear(this);
         bool editable = IsEditing && !pointerActive && CanInteract?.Invoke() == true;
         int current = padding ?? DefaultPadding;
         plusButton.interactable = editable && current < MaxPadding(target);
@@ -280,5 +298,11 @@ public class RM_ObjLayout : MonoBehaviour, IPointerDownHandler, IInitializePoten
         if (paused) CancelGesture();
     }
 
-    void OnDisable() => Cancel();
+    void OnDisable()
+    {
+        hovered = false;
+        pointerActive = false;
+        IsEditing = false;
+        pointer.Clear(this);
+    }
 }

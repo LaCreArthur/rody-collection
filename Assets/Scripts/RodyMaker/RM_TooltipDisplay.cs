@@ -17,6 +17,7 @@ public class RM_TooltipDisplay : MonoBehaviour
     Canvas rootCanvas;
     Camera uiCamera;
     RectTransform textRect;
+    RectTransform currentTarget;
 
     void Start()
     {
@@ -62,6 +63,7 @@ public class RM_TooltipDisplay : MonoBehaviour
             return;
 
         tooltipPanelText.text = message;
+        currentTarget = target;
         UpdateSize();
         UpdatePosition(target);
         tooltipPanel.SetActive(true);
@@ -76,8 +78,14 @@ public class RM_TooltipDisplay : MonoBehaviour
 
     public void Hide()
     {
+        currentTarget = null;
         if (tooltipPanel != null)
             tooltipPanel.SetActive(false);
+    }
+
+    public void HideFor(RectTransform target)
+    {
+        if (currentTarget == target) Hide();
     }
 
     void UpdatePosition(RectTransform target)

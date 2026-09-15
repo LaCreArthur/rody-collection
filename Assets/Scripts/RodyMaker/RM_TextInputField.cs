@@ -12,15 +12,51 @@ public class RM_TextInputField : InputField
     public Action OnCrop;
     public Action OnActivate;
     public Action OnEscape;
+    public Action<bool> OnHover;
+    public Image selectionMarker;
 
     int? requestedCaret;
+    bool hovered;
+
+    public void ShowSelection(bool selected)
+    {
+        selectionMarker.gameObject.SetActive(selected);
+        image.color = hovered && IsInteractable() ? new Color(1f, 1f, .7f, .18f) : Color.clear;
+        if (hovered) OnHover?.Invoke(IsInteractable());
+    }
+
+    public override void OnPointerEnter(PointerEventData eventData)
+    {
+        base.OnPointerEnter(eventData);
+        hovered = true;
+        if (!IsInteractable()) return;
+        image.color = new Color(1f, 1f, .7f, .18f);
+        OnHover?.Invoke(true);
+    }
+
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        base.OnPointerExit(eventData);
+        hovered = false;
+        image.color = Color.clear;
+        OnHover?.Invoke(false);
+    }
+
+    protected override void OnDisable()
+    {
+        hovered = false;
+        OnHover?.Invoke(false);
+        base.OnDisable();
+    }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left || !IsActive() || !IsInteractable()) return;
         bool hadFocus = isFocused;
+        OnHover?.Invoke(false);
         OnActivate?.Invoke();
         base.OnPointerDown(eventData);
+        OnHover?.Invoke(true);
         if (hadFocus || readOnly) return;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(textComponent.rectTransform,

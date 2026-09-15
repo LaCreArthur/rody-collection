@@ -26,7 +26,10 @@ owns exact evidence and remaining limits; this is not full release acceptance.
 The native Maker UI is now implemented locally per [MAKER_UI_UX_PLAN.md](MAKER_UI_UX_PLAN.md).
 That plan owns the focused Editor evidence and limitations. September15 corrected
 sub-native font sizes and a compressed icon after Arthur's pixel-budget feedback;
-actual320×200 camera captures were inspected. No new build/browser run covers this UI.
+actual320×200 camera captures were inspected. A subsequent accepted pass added native
+scene/navigation/proximity pictograms, text hover and selection affordances, contextual
+cursors and gesture help; focused Editor checks and independent wiring review completed.
+No new build/browser run covers this UI.
 
 ### Intent and release sequence
 

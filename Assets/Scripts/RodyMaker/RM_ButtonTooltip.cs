@@ -24,12 +24,12 @@ public class RM_ButtonTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExi
 	public void OnPointerExit(PointerEventData eventData)
 	{
 		if (tooltip != null)
-			tooltip.Hide();
+			tooltip.HideFor(transform as RectTransform);
 	}
 
 	void OnDisable()
 	{
 		if (tooltip != null)
-			tooltip.Hide();
+			tooltip.HideFor(transform as RectTransform);
 	}
 }

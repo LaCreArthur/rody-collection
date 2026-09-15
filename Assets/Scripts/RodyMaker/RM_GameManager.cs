@@ -17,6 +17,7 @@ public class RM_GameManager : MonoBehaviour
     public SoundManager sm;
     public CanvasGroup editorControls;
     public RM_TooltipDisplay tooltip;
+    public RM_EditorPointer pointer;
 
     bool ready;
     int escapeFrame = -1;
@@ -65,6 +66,7 @@ public class RM_GameManager : MonoBehaviour
     {
         if (!CanEdit) return;
         if (panel != Panel) workspace.FinishFocus();
+        pointer.Reset();
         Panel = panel;
         mainLayout.SetActive(panel == RM_Panel.Home);
         dialLayout.SetActive(panel == RM_Panel.Text || panel == RM_Panel.Title);
@@ -90,6 +92,8 @@ public class RM_GameManager : MonoBehaviour
         ShowPanel(edit || Panel == RM_Panel.Text ? RM_Panel.Text : RM_Panel.Home);
         RefreshText();
         if (Panel == RM_Panel.Text) workspace.FocusPassage();
+        if (IsObjective && Panel == RM_Panel.Home)
+            tooltip.ShowBrief("Glisse dans le décor pour dessiner la cible.", scenePreview.rectTransform);
     }
 
     public void SelectScene(int index)
@@ -150,6 +154,7 @@ public class RM_GameManager : MonoBehaviour
     {
         editorControls.interactable = CanEdit;
         editorControls.blocksRaycasts = CanEdit;
+        pointer.enabled = CanEdit;
         if (Input.GetKeyDown(KeyCode.Escape)) HandleEscape();
     }
 

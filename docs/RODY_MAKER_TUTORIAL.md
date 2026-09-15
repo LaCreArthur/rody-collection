@@ -25,7 +25,8 @@ pas, et le pinceau du jeu protège les originaux de la même manière que Dupliq
 ## Se repérer dans l'éditeur
 
 Le titre et les textes occupent le panneau du jeu original. Cliquez directement
-sur le titre ou une réplique pour l’éditer. Les trois répliques d’introduction
+sur le titre ou une réplique pour l’éditer. Le survol éclaire le texte et change
+le curseur ; un petit repère latéral indique le passage sélectionné. Les trois répliques d’introduction
 restent affichées ensemble ; celle que vous éditez est surlignée.
 
 | Outil | Usage |
@@ -166,3 +167,9 @@ Ce même fichier permet de partager l'histoire avec un ami.
 
 Pour signaler un problème ou proposer une histoire, utilisez la
 [page itch.io de la collection](https://lacrearthur.itch.io/rody-mastico-collection).
+
+
+Pendant le dessin d’une cible, les numéros de passage laissent place à
+**Proximité : … px**. Les deux boutons illustrés élargissent ou réduisent cette
+zone autour de la cible ; validez pour conserver le changement ou annulez pour
+retrouver la zone précédente.

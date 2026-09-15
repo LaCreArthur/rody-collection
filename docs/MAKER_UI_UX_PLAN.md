@@ -39,7 +39,7 @@ reference, not the Unity implementation or portable story format.
   Allocate title 12px, body 48px, selectors 8px and borders 2px within the 70px panel.
   Do not shrink the picture or add a status strip.
 - Intro displays all nonempty `intro1/2/3` in order with the same newline joining
-  as gameplay. A discreet background and edge marker identify the active passage.
+  as gameplay. A discreet side marker identifies the active passage; a light background is reserved for hover.
   Click a passage to select and edit in one gesture; other passages stay visible.
   Numbered selectors also reach empty slots without predecessor-text gating.
 - An objective selection owns its displayed clue, speech and near/target pair.
@@ -106,8 +106,9 @@ the Canvas event camera, not Screen.width scaling. Clamp and round new endpoints
 logical picture pixels; reverse drags work; dragging beyond the image continues bounded.
 
 Only local preview changes while drawing. A plain click/zero-area drag retains the
-previous pair and opens its settings. The left two tool cells form +/value/−; the right
-cells are Validate/Cancel. Passage/panel changes are blocked only during this context.
+previous pair and opens its settings. The left two tool cells are separate Expand/Contract proximity pictograms; the right
+cells are Validate/Cancel. During zone editing, the bottom passage selectors are
+replaced with `Proximité : N px` (or `Proximité : libre` for old asymmetric bounds). Passage/panel changes are blocked only during this context.
 Validate atomically writes both rectangles once; Cancel/Escape/forced context exit
 abandons the entire edit. Pointer interruption/focus loss abandons the current gesture,
 retaining any preceding local preview. Never commit at mouse-up.
@@ -188,3 +189,44 @@ tooltips/units/delete labels use Rody15, and +/− uses its integer2× size30. T
 bounds and position round to logical pixels. No OS keyboard/device touch test, new
 build or browser acceptance was run for this UI; older browser evidence does not
 cover these changes. No automatic build/push.
+
+
+### Native affordances — September15 follow-up
+
+Arthur accepted the proposal to give Scenes its own three-thumbnail pictogram,
+replace typographic navigation arrows with paper-button pixel art, split proximity
+into two native buttons, and teach direct text/drawing gestures. Five new28×32 PNGs
+are imported point-filtered, uncompressed, without mipmaps. Built-in image generation
+produced a3×2 paper-button atlas using ValiderScene/ResetScene as visual references;
+production preparation extracts the five cells, nearest-neighbor downsamples to28×32,
+and maps colors to the palette sampled from existing buttons. No generated large
+image is referenced at runtime. Prompt: native1988 Atari ST paper buttons; three
+landscape thumbnails, short left/right arrows, identical green target with wider/
+tighter dotted envelopes and +/−; exact28×32 logical cells, cream/ochre/brown paper,
+no antialiasing. Source-generation output remains in local generated-image storage;
+the five production sprites are owned by Assets/Sprites/RodyMaker/Maker*.png.
+
+Selection uses a1×6 side mark; hovering any editable passage adds a light background,
+I-beam and the existing tooltip. The picture uses a crosshair only when drawing is
+available. Selecting an objective shows a brief existing-panel instruction; leaving
+the selector does not dismiss it, and pointer-down drawing does. The existing initial
+welcome teaches the two gestures, retaining its manual/video buttons. No extra banner,
+new permanent button or reduced story text budget is introduced.
+
+Deleted: large typographic arrow children, +/− text children, the tall combined padding
+column and its unit label, and five Maker-only legacy animated cursor/EventTrigger
+pairs. The original adventure cursor remains unchanged. Maker has one cursor owner,
+with integer native-pixel scaling bounded by both viewport dimensions, released when
+the Maker is inactive. The shared tooltip tracks which target owns its displayed text
+so an unrelated pointer-exit cannot hide the brief drawing instruction.
+
+Focused evidence: inspected actual320×200 camera renders of Home, Scenes, zone tools
+and welcome; Editor pointer-enter/Escape probe retained the I-beam, and zone entry
+replaced selectors with the14px label. Independent source/serialized review checked
+scene-local references, all five text markers, cursor ownership and sprite imports.
+The EventSystem pointer-down probe also checked that the drawing hint survives leaving
+the selector, disappears on draw, and opens the zone context with the proximity label.
+Closing Play while a zone was pending exposed a teardown callback into a destroyed
+Maker. OnDisable now abandons local pending state without navigation or story access;
+the repeated pending-zone/Stop journey produced no new console errors.
+No build, player/browser run or physical device test was run for this follow-up.

@@ -15,7 +15,6 @@ public class RM_DialLayout : MonoBehaviour
     public Sprite masticoUnmute, masticoMute, targetSprite;
 
     const float HomeWidth = 224f, ContextWidth = 252.6f, BodyHeight = 48f;
-    static readonly Color PassageHighlight = new Color(1f, 1f, .7f, .18f);
     static readonly Color SelectorHighlight = new Color(1f, .78f, .35f, 1f);
     readonly TextGenerator composition = new TextGenerator();
     readonly TextGenerator measurement = new TextGenerator();
@@ -76,6 +75,19 @@ public class RM_DialLayout : MonoBehaviour
         field.Fits = fits;
         field.OnActivate = activate;
         field.OnEscape = gm.HandleEscape;
+        field.OnHover = entered =>
+        {
+            if (entered)
+            {
+                gm.pointer.Show(field, RM_EditorPointer.Kind.Text);
+                if (field.readOnly) gm.tooltip.Show("Modifier ce texte", (RectTransform)field.transform);
+            }
+            else
+            {
+                gm.pointer.Clear(field);
+                gm.tooltip.HideFor((RectTransform)field.transform);
+            }
+        };
         field.OnCrop = () => gm.tooltip.ShowBrief("La fin ajoutée a été coupée pour tenir dans le cadre.",
             (RectTransform)field.transform);
         field.onValueChanged.AddListener(changed);
@@ -106,7 +118,8 @@ public class RM_DialLayout : MonoBehaviour
 
         bool hasScene = gm.CurrentScene != null;
         body.gameObject.SetActive(hasScene);
-        passageButtons[0].transform.parent.gameObject.SetActive(hasScene);
+        passageButtons[0].transform.parent.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Zones);
+        gm.zones.paddingLabel.gameObject.SetActive(hasScene && gm.Panel == RM_Panel.Zones);
         titleInput.SetTextWithoutNotify(hasScene ? gm.CurrentScene.texts.title : "ECRAN TITRE");
         bool canSelect = hasScene && gm.CanEdit && gm.Panel != RM_Panel.Zones;
         SetFieldState(titleInput, canSelect, gm.Panel == RM_Panel.Title, gm.Panel == RM_Panel.Title);
@@ -191,7 +204,7 @@ public class RM_DialLayout : MonoBehaviour
     {
         field.interactable = canSelect;
         field.readOnly = !edit;
-        field.image.color = highlight ? PassageHighlight : Color.clear;
+        field.ShowSelection(highlight);
     }
 
     void ActivatePassage(int passage)

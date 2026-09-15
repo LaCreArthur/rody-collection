@@ -286,6 +286,15 @@ The bottom selectors choose an introduction passage or objective, including empt
 positions. The selected objective shows its clue and target together. The native
 picture size, illustrated tool positions and pixel font remain unchanged.
 
+
+The native Maker affordances distinguish selection from action: the active passage
+has a small side mark; hovering an editable passage highlights it and uses a writing
+cursor. Selecting an objective briefly explains dragging to draw its target, with a
+crosshair over the picture. During drawing, the selector row shows the proximity
+value; two illustrated buttons enlarge/reduce it. Scene navigation has distinct
+storyboard and paper-arrow pictograms. The initial help teaches both direct gestures.
+
+
 - **Scenes:** temporarily open image-only thumbnails, with titles in tooltips, a scrollbar and adjacent-scene arrows.
 - **Music:** choose the scene's introduction and loop tracks.
 - **Images:** import the illustration and talking animation pictures.
