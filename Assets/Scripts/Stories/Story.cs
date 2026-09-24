@@ -16,6 +16,8 @@ public class Story
     public StoryMeta story;                       // metadata (id, title, sceneCount)
     public string credits;
     public List<StoryScene> scenes;
+    // Story-wide pronunciation fixes: written word (lower case, no quotes) -> French respelling.
+    public Dictionary<string, string> respellings = new Dictionary<string, string>();
     public Dictionary<string, string> sprites;    // filename -> base64 data
 
     /// <summary>Deep copy via the one serializer.</summary>

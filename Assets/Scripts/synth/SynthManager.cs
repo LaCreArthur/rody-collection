@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,11 +11,8 @@ public class SynthManager : MonoBehaviour
     public SpeechInputField french, input;
     public Slider pitchSlider;
     public Dropdown sounds;
-    public Text context, status, guidance, pronunciationLabel, pickerHelp, pitchValue, playLabel, applyLabel, closeLabel;
-    public Button play, passage, copy, paste, pastePhonemes, automatic, insert, audition, reset, apply, close;
-    public Camera workbenchCamera;
-    public AudioListener workbenchListener;
-    public EventSystem workbenchEvents;
+    public Text status, guidance, pronunciationLabel, pickerHelp, pitchValue, playLabel;
+    public Button play, passage, paste, pastePhonemes, automatic, insert, audition, reset, apply, close;
 
     // Author-facing examples; synthesis and token validity belong to RodySpeechEngine.
     static readonly (string token, string example)[] SoundExamples =
@@ -42,10 +38,7 @@ public class SynthManager : MonoBehaviour
     string SelectedText => sounds.value < SoundExamples.Length ? SoundExamples[sounds.value].token :
         SoundManager.OriginalDialogue(OriginalExamples[sounds.value - SoundExamples.Length]);
 
-    Action<SpeechDocument, float> onApply;
-    Action onClose;
-    SpeechDocument document, original;
-    float originalPitch;
+    SpeechDocument document;
     int anchor, focus, frenchAnchor, frenchFocus, selectedWord;
     int conversionId;
     float convertAfter;
@@ -60,24 +53,6 @@ public class SynthManager : MonoBehaviour
     string EditedScore => string.Join("_", document.words.Select((word, i) => i == selectedWord ? input.text : word.score)
         .Where(score => !string.IsNullOrEmpty(score)));
 
-    public static void Open(SpeechDocument dialogue, float pitch, bool editablePitch, string heading,
-        Action<SpeechDocument, float> applyChanges, Action closed)
-    {
-        var operation = SceneManager.LoadSceneAsync(AppScenes.Phonemes, LoadSceneMode.Additive);
-        operation.completed += _ =>
-        {
-            var scene = SceneManager.GetSceneByBuildIndex(AppScenes.Phonemes);
-            var workbench = scene.GetRootGameObjects().Select(go => go.GetComponent<SynthManager>()).Single(s => s != null);
-            workbench.onApply = applyChanges;
-            workbench.onClose = closed;
-            workbench.workbenchCamera.enabled = false;
-            workbench.workbenchListener.enabled = false;
-            workbench.workbenchEvents.gameObject.SetActive(false);
-            SceneManager.SetActiveScene(scene);
-            workbench.Begin(dialogue, pitch, editablePitch, heading);
-        };
-    }
-
     void Awake()
     {
         gameObject.name = "SpeechWorkbench-" + GetEntityId();
@@ -87,14 +62,13 @@ public class SynthManager : MonoBehaviour
         sounds.onValueChanged.AddListener(_ => Refresh());
         play.onClick.AddListener(PlayAll);
         passage.onClick.AddListener(PlayPassage);
-        copy.onClick.AddListener(Copy);
         paste.onClick.AddListener(() => Paste(french, frenchAnchor, frenchFocus));
         pastePhonemes.onClick.AddListener(() => Paste(input, anchor, focus));
         automatic.onClick.AddListener(ResetPronunciation);
         insert.onClick.AddListener(InsertSound);
         audition.onClick.AddListener(() => sm.Speak(SelectedText, pitchSlider.value));
         reset.onClick.AddListener(Restore);
-        apply.onClick.AddListener(Apply);
+        apply.onClick.AddListener(Copy);
         close.onClick.AddListener(Close);
         french.characterLimit = FrenchPhonemizer.MaxCharacters;
         french.onValueChanged.AddListener(_ => SourceChanged());
@@ -105,20 +79,7 @@ public class SynthManager : MonoBehaviour
             pitchSlider.SetValueWithoutNotify(Mathf.Round(value * 100) / 100);
             Refresh();
         });
-        Begin(SpeechDocument.FromNotation(""), 1f, true, "Une voix de 1988. Tes propres répliques.");
-    }
-
-    void Begin(SpeechDocument dialogue, float pitch, bool editablePitch, string heading)
-    {
-        original = dialogue.Clone();
-        originalPitch = pitch;
-        context.text = heading;
-        pitchSlider.interactable = editablePitch;
-        pitchSlider.SetValueWithoutNotify(pitch);
-        copy.gameObject.SetActive(onApply != null);
-        applyLabel.text = onApply != null ? "UTILISER CE DIALOGUE" : "COPIER LES PHONÈMES";
-        closeLabel.text = onApply != null ? "ANNULER" : "RETOUR";
-        SetDocument(dialogue.Clone());
+        Restore();
     }
 
     void SetDocument(SpeechDocument value)
@@ -237,7 +198,6 @@ public class SynthManager : MonoBehaviour
         french.readOnly = Pasting;
         paste.interactable = !Pasting;
         pastePhonemes.interactable = insert.interactable = !Pasting && !waiting && selectedWord >= 0;
-        copy.interactable = valid && hasScore;
         automatic.interactable = valid && !Pasting && HasFrench && selectedWord >= 0 && document.words[selectedWord].corrected;
         pitchValue.text = pitchSlider.value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "×";
         status.color = valid || waiting ? new Color32(81, 94, 88, 255) : new Color32(171, 49, 42, 255);
@@ -253,8 +213,7 @@ public class SynthManager : MonoBehaviour
         bool originalSelected = sounds.value >= SoundExamples.Length;
         pickerHelp.text = originalSelected ? "UN ORIGINAL REMPLACE LA RÉPLIQUE ET GARDE SON EXPRESSION" : "UN SON À ESSAYER OU À INSÉRER";
         insert.GetComponentInChildren<Text>().text = originalSelected ? "REMPLACER" : "INSÉRER";
-        reset.interactable = !Pasting && (waiting || french.text != original.sourceText || score != original.Notation ||
-            !Mathf.Approximately(pitchSlider.value, originalPitch));
+        reset.interactable = !Pasting && (waiting || HasFrench || hasScore || !Mathf.Approximately(pitchSlider.value, 1f));
     }
 
     void Update()
@@ -357,19 +316,8 @@ public class SynthManager : MonoBehaviour
     void Restore()
     {
         sm.StopSpeech();
-        pitchSlider.SetValueWithoutNotify(originalPitch);
-        SetDocument(original.Clone());
-    }
-
-    void Apply()
-    {
-        if (!valid || Pasting || !CommitPronunciation()) return;
-        if (onApply == null) Copy();
-        else
-        {
-            onApply(document.Clone(), pitchSlider.value);
-            Close();
-        }
+        pitchSlider.SetValueWithoutNotify(1f);
+        SetDocument(SpeechDocument.FromNotation(""));
     }
 
     void Close()
@@ -377,13 +325,7 @@ public class SynthManager : MonoBehaviour
         if (closing) return;
         closing = true;
         sm.StopSpeech();
-        if (onApply != null)
-        {
-            var operation = SceneManager.UnloadSceneAsync(gameObject.scene);
-            var closed = onClose;
-            operation.completed += _ => closed();
-        }
-        else SceneManager.LoadScene(AppScenes.Selection);
+        SceneManager.LoadScene(AppScenes.Selection);
     }
 
 #if UNITY_WEBGL && !UNITY_EDITOR

@@ -64,51 +64,54 @@ de copies de l'image principale.
 
 Cliquez sur le titre ou une réplique pour écrire. Les sélecteurs **INTRO 1 2 3**
 donnent aussi accès aux passages vides. **Terminer**, **Retour** ou Échap gardent
-le texte saisi. **Voix** ouvre l’atelier vocal du passage sélectionné ; le bouton
-Mastico choisit si Mastico parle ou si les images du décor accompagnent la réplique.
-Il ne coupe pas le son.
+le texte saisi. La voix suit le texte : chaque modification refait la voix de la
+réplique. Le bouton du personnage passe de Mastico à cinq hauteurs de voix d’un
+personnage du décor, puis revient à Mastico, et fait écouter la réplique.
 
 Le texte doit tenir dans le panneau fixe, retours à la ligne compris. Si vous
 collez trop de texte, seule la partie qui tient est insérée ; les autres passages
 et le texte autour de votre sélection sont conservés. Un bref message explique
 la coupe. Aucun défilement ni réduction de police ne masque un débordement.
-La police rétro ne contient pas tous les caractères : relisez l’aperçu.
+La police rétro contient les lettres françaises et la ponctuation courante ;
+relisez l’aperçu si vous utilisez un signe rare.
 
 Pour la musique, **L1** choisit l'ouverture et **L2** la musique répétée.
 Le bouton d'écoute permet de préécouter les pistes fournies.
 
-## Écrire une voix
+## Corriger la prononciation
 
-Ouvrez l'outil vocal depuis une réplique ou un indice. Le bouton **Voix** de la
-collection ouvre le même atelier pour une utilisation indépendante.
+La voix est créée à partir du texte français. Si un mot sonne mal :
 
-1. Écrivez la phrase en français et écoutez sa proposition de prononciation.
-2. Sélectionnez un mot qui sonne mal et ajustez sa prononciation dans le champ prévu.
-3. Réécoutez le mot ou le passage dans son contexte. Les exemples de sons servent
-   à essayer et insérer les sons de la voix rétro.
-4. Réglez la hauteur de voix lorsqu'elle est disponible. Les indices restent dits
-   par Mastico ; leur hauteur est fixe.
-5. Choisissez **Utiliser ce dialogue** pour l'appliquer, ou **Annuler** pour revenir
-   sans modifier la réplique. Le dialogue appliqué est immédiatement dans le
-   brouillon ; Enregistrer le téléchargera avec toute l'histoire.
+1. Pendant l’édition d’une réplique ou d’un indice, cliquez sur le bouton d’écoute :
+   la réplique est dite.
+2. Cliquez sur le mot qui sonne mal : il est dit seul et un petit panneau s’ouvre.
+3. Dans **ÉCRIS « mot » COMME TU LE DIS**, écrivez le mot comme il se prononce,
+   par exemple « badeudon » pour « Badedon ». Le bouton d’écoute du panneau dit
+   le mot ; celui du haut dit toute la réplique.
+4. **Valider** garde la correction ; **Retour** ou Échap l’abandonne.
+
+Une correction vaut pour ce mot dans toute l’histoire, y compris dans les répliques
+écrites ensuite. Les mots corrigés sont soulignés. Videz le champ pour retirer une
+correction. Une correction reste un seul mot.
 
 Les virgules créent une pause courte ; les points et la ponctuation de fin de phrase
 une pause longue. Les espaces séparent les mots sans imposer une pause.
-Les mots inventés peuvent nécessiter une correction. La conversion peut afficher
-une erreur : écoutez et corrigez avant de valider.
+La conversion peut afficher une erreur : écoutez et corrigez avant de valider.
 
-Les phrases françaises enregistrées conservent leurs corrections pour la reprise.
-Les anciennes répliques écrites directement en phonèmes restent éditables sans
-inventer leur texte français. En mode indépendant, **Copier les phonèmes** copie
-la partition sonore, pas un fichier audio ni l'ensemble du texte et des corrections.
-La [référence vocale](SPEECH_ENGINE.md) détaille la notation pour les usages avancés.
+Les répliques originales de 1988 gardent leur voix d’origine : le bouton d’écoute
+la fait entendre. Modifier leur texte la remplace par une voix créée à partir du texte.
+
+Le bouton **Voix** de la collection ouvre l’atelier vocal indépendant, qui montre la
+partition sonore complète pour les usages avancés. **Copier les phonèmes** copie
+cette partition, pas un fichier audio. La [référence vocale](SPEECH_ENGINE.md)
+détaille la notation.
 
 ## Dessiner un objectif
 
 Choisissez **OBJETS 1**, **2** ou **3** : objectif principal, New Game Plus ou
 FromSoftware. Son indice, sa voix et ses rectangles appartiennent à la même sélection.
 
-1. Cliquez sur l’indice pour l’éditer et utilisez **Voix** pour sa phrase parlée.
+1. Cliquez sur l’indice pour l’éditer ; sa voix suit le texte.
 2. Glissez directement dans le décor pour dessiner la cible exacte. Le dessin est déjà actif.
 3. La zone proche l’entoure automatiquement. Réglez sa marge avec **+** et **−**.
 4. **Valider** garde les deux rectangles ; **Annuler** ou Échap abandonne le changement.
@@ -152,7 +155,8 @@ Ce même fichier permet de partager l'histoire avec un ami.
 ## Ressources et anciens supports
 
 - [Palette PNG](bonus/paletteRody.png) et [palette ACT](bonus/paletteRody.ACT) pour votre outil de dessin.
-- [Police Rody](bonus/Rody.ttf), recréée pixel par pixel, avec une couverture de caractères limitée.
+- [Police Rody](bonus/Rody.ttf), recréée pixel par pixel : lettres françaises (majuscules accentuées comprises),
+  guillemets « » et ponctuation courante.
 - [Ancienne vidéo](https://www.youtube.com/watch?v=1vx8D2irVLI) : repère visuel historique,
   pas une procédure actuelle pour importer, enregistrer ou écrire une voix.
 - [Ancien menu de scènes](tutorial-screenshots/01-hub-scenes.png),

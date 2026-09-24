@@ -166,16 +166,17 @@ The menu is not currently a complete paginated chapter browser.
 | Optional animation pictures | Bring a speaking character in the illustration to life |
 | Up to three introduction lines | Set up the situation, exchange or punchline in sequence |
 | Displayed text | What the player reads |
-| Spoken dialogue | What the character actually says, with its chosen delivery |
+| Spoken dialogue | The displayed line in the robotic voice, with its speaker and pitch |
 | Introduction music | Establishes the scene's opening |
 | Scene music | Repeats around the scene's ongoing interaction |
 | Main objective | The first object search |
 | New Game Plus objective | An optional harder search after the main objective |
 | FromSoftware objective | A further optional search, deliberately more obscure |
 
-Displayed writing and spoken delivery are distinct authoring choices. They may
-say the same thing, but a creator can intentionally use a difference for timing,
-pronunciation or humour. Editing one must not silently rewrite the other.
+The voice follows the displayed writing: editing a line regenerates its speech.
+A mispronounced word is corrected by writing how it is said, once for the whole
+story. Original 1988 lines keep their authentic voice until their text is edited.
+Deliberately different writing and speech is left to the standalone Voix workbench.
 
 Stories use a linear scene sequence. The core creation model is an illustrated
 search adventure, not a branching conversation, inventory-combination or quest
@@ -321,12 +322,12 @@ additional frames can be previewed and removed. Saving keeps the exact authored 
 
 ### Editing dialogue and objectives
 
-The introduction offers three sequential dialogue positions. Visible and spoken
-text remain independent. Each passage's voice tool retains its pronunciation,
-character pitch where available, and Mastico/illustration speaker choice.
+The introduction offers three sequential dialogue positions. Each is spoken by
+Mastico or by a character in the illustration at one of five pitches; the speaker
+button steps through Mastico and the pitches and plays the line.
 Click the title or a visible passage to edit it directly; the active passage is
 highlighted while its neighbours remain visible. Done, Return and Escape retain
-accepted typing. Voice changes keep their own explicit Apply/Cancel choice.
+accepted typing. Pronunciation fixes keep their own OK/Cancel choice (section 8).
 
 Story text must fit the fixed text panel using the actual font, wrapping and line
 breaks. There is no scrolling or shrinking. An insertion or paste is automatically
@@ -341,14 +342,11 @@ Cancel or Escape keeps the previous pair. A plain click opens these controls
 without altering the rectangles. Existing free-form regions retain their shape
 until the creator accepts an edit. The picture never opens the image tools.
 
-## 8. The voice workbench
+## 8. Voice
 
-The workbench serves two connected uses: prepare a line for a story, or play with
-the retro voice independently through **Voix**.
+### Fixing pronunciation in the Maker
 
-### The authoring loop
-
-**Write French → listen → select a word → correct its pronunciation → listen again.**
+**Write French → listen → click a mispronounced word → write how it is said → listen → OK.**
 
 French entry proposes a pronunciation for the whole sentence. Unknown words and
 invented names receive a guess that the author can correct. The important result
@@ -360,26 +358,27 @@ Commas create short pauses and sentence-ending punctuation creates longer pauses
 Ordinary spaces separate words without forcing a silence. This keeps speech from
 becoming a series of disconnected word recordings.
 
-The creator can edit the phonetic score directly, use sound examples, insert sounds,
-change permitted pitch, and audition a selected passage. Experienced authors can
-shape duration, emphasis, volume and pauses while keeping the same voice character.
-Original passages provide examples of that expression.
+The listen button of an edited line opens the fix mode in place: the line stays in
+the text panel and the scene stays visible. Clicking a word plays it and opens one
+small panel, **ÉCRIS « mot » COMME TU LE DIS**, with a field and a button to hear
+the word; the main listen button plays the whole line. Validate keeps the fixes and
+Return or Escape discards them. Fixed words are underlined. Emptying the field
+removes a fix. A fix is one word and applies to that written word everywhere in the
+story, including lines written later. Phonetic scores stay hidden in the Maker.
 
-### Keeping a line
+Original 1988 lines have no French source to fix. Their listen button plays the
+authentic voice and explains that editing the text replaces it.
 
-When opened from a story, **Use dialogue** applies the chosen speech and delivery
-to that line; **Cancel** leaves the line as it was. Applying the line immediately
-keeps it in the story draft; Save downloads it with
-the whole story. A saved French-authored dialogue retains its French source,
-word corrections and chosen expression for later editing.
+### Standalone Voix
 
-Already-authored phonetic dialogue remains editable even when its original French
-text is unavailable. The workbench should not invent a supposed source sentence.
+**Voix** is the expert workbench, separate from stories. It shows the full phonetic
+score: edit it directly, use sound examples, insert sounds, change pitch and
+audition a selected passage. Experienced authors can shape duration, emphasis,
+volume and pauses while keeping the same voice character. Original passages
+provide examples of that expression.
 
-Standalone Voix can play and copy a score for reuse. It does not itself create a
-saved story, and a downloadable audio recording is not a current feature. Copying
-a score is also not a substitute for saving the full French-authored dialogue in
-a story.
+Voix can play and copy a score for reuse. It does not create or change a story,
+and a downloadable audio recording is not a current feature.
 
 ## 9. Saving and editing
 

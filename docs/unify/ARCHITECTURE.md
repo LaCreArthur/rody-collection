@@ -10,7 +10,7 @@ Browser acceptance remains pending. [ROADMAP.md](../ROADMAP.md) owns release sta
 
 | Producer / owner | Responsibility | Consumers |
 |---|---|---|
-| `Assets/Scripts/Stories/Story.cs` | Portable payload: metadata, scenes, credits, encoded sprites | Session, file Save/import, resource export tools |
+| `Assets/Scripts/Stories/Story.cs` | Portable payload: metadata, scenes, credits, story-wide pronunciation respellings, encoded sprites | Session, file Save/import, resource export tools |
 | `StoryJson.cs` | One serialization/deep-copy path; structural validation and old dialogue-string reading | Store, catalog, session, exporter |
 | `StorySession.cs` | One `StoryWorkspace`: draft, independent restore snapshot, dirty flag and editor cursor; separate active play target and play cursor | Maker, gameplay, collection and recovery writer |
 | `StoryStore.cs` | One `workspace.json` recovery envelope; read-only built-in Resources | Root and catalog |
@@ -34,9 +34,12 @@ images after successful conversion. The Maker preview is a native aspect-fit UI
 image; main and detailed views retain the complete 320×130 coordinate area.
 The unapproved status strip and its preview resizing were removed on September 14.
 Programmatic rebinds do not mark dirty.
-The speech workbench retains its explicit local audition buffer; Apply writes the
-full speech document and permitted pitch to the selected draft dialogue. Cancel
-does not write. No mirrored scene model or Save-time scene reconstruction remains.
+Each accepted dialogue edit also regenerates that line's speech document from its
+French text and the story's respellings; a result for superseded text or another
+draft is dropped. The pronunciation-fix mode edits the respellings with explicit
+Validate/Cancel; Validate resyncs every affected line. The speaker button writes
+speaker and pitch directly. No mirrored scene model or Save-time scene
+reconstruction remains.
 
 A workspace is installed with an independent deep restore snapshot and no edits
 since that snapshot. Save is always available when a workspace exists, including
@@ -104,7 +107,8 @@ Each card contains `id`, `title`, `sceneCount`, base64 `cover`, and `source`.
 Runtime order comes from this manifest. The export tool owns the generation order.
 
 The story envelope is `formatVersion`, `exportedAt`, `story` (`id`, `title`,
-`sceneCount`), `credits`, `scenes` and `sprites`. Each scene entry is
+`sceneCount`), `credits`, `scenes`, `respellings` and `sprites`. `respellings` maps a
+lower-case written word to its one-word French respelling; a file without it has none. Each scene entry is
 `{ "index": 1, "data": { ... } }`; data is described by
 [`SceneData.cs`](../../Assets/Scripts/Models/SceneData.cs).
 Do not use the former flat `intro1` / `objectZones` sample as a schema.

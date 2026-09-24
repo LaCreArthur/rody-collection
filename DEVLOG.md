@@ -3,6 +3,28 @@
 Dated historical evidence, not current instructions. Start with [the roadmap](docs/ROADMAP.md)
 and [game design](docs/GAME_DESIGN.md); old APIs, conclusions and screenshots can be superseded.
 
+## 2026-09-25: Maker voice follows the text; Rody font completed
+
+Arthur chose automatic voice in the Maker: write French, the voice is generated;
+fix only mispronounced words, with phonemes hidden. From three Codex mockups he kept
+the simplest ("le full text, on peut select un mot, champ : écris comme tu le dis,
+écouter la phrase & le mot, ok ou annuler") built from existing Maker UI parts.
+
+- Implemented as an in-place mode of text editing: click a word, respell it in one
+  small panel, Validate/Return. Fixes are story-wide (`Story.respellings`) and
+  resync every affected line. The speaker button cycles Mastico and five pitches.
+- Removed from the Maker: the embedded workbench, per-line phoneme editing, the
+  pitch slider and the "Utiliser ce dialogue" return path. Standalone Voix lost its
+  duplicate Copy button (its main button copies). Editing an original line replaces
+  its 1988 score. Maker scores no longer merge earlier scores: merging made a
+  removed fix leave a mixed pronunciation.
+- Rody.ttf gained 43 glyphs inside the original 5×7 pixel box (French capitals
+  with accents, Œ œ, « », curly quotes, …, ·, dashes, missing ASCII signs).
+  Accented capitals drop one pixel like the existing é. Arthur: "franchement nickel
+  les caractères". The docs bonus copy now matches.
+- Removed 5 `RodyStoryRoot` objects that edit-mode checks had saved into
+  6_RM_Main in 0daecbd.
+
 ## 2026-09-10: Single-story workspace implemented locally
 
 Implemented Arthur's accepted single-story editing plan after his execution

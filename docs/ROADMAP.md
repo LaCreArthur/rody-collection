@@ -6,7 +6,8 @@ The finish line is a polished browser release for retro fans and creators.
 The single personal story and unified Save/Discard flow are implemented locally.
 Editor checks retained edits across scenes, Test, original play and return.
 The native Maker workspace is implemented: direct text and target editing, temporary scene navigation.
-The voice engine and French workbench are also implemented locally.
+The voice engine is implemented locally. In the Maker the voice follows the text,
+with story-wide word fixes; the Voix workbench stays standalone.
 Earlier browser checks passed; the new Maker UI still needs browser acceptance.
 Preserve stories from the old browser library before publishing.
 The previous WebGL build passed; this UI has Editor checks only, with publication pending.
@@ -49,7 +50,7 @@ have progressed; browser release acceptance is now the next boundary.
 | Originals plus one personal slot | Eight rendered cards; personal draft remains while an original is played; legacy library APIs/UI removed | Preserve any old browser-only stories before public cutover. |
 | One file Save and automatic workspace recovery | Actual browser download/reimport and dirty refresh followed by whole-story Discard passed | Picker cancellation, storage failures and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
-| One voice workbench in stories and standalone Voix | French input, word correction, full notation, selected playback, explicit apply/cancel | French conversion, clipboard and story round-trip in a player/browser. Evidence and limits belong to the speech reference. |
+| Maker voice follows the text; standalone Voix workbench | Conversion on each edit, in-place word-fix mode with story-wide respellings, speaker/pitch cycle; Editor play-mode checks on 2026-09-25 (fix, story-wide apply, reset, cancel, save round-trip). Workbench: French input, full notation, clipboard | Browser conversion path and listening; workbench clipboard in a browser. Evidence and limits belong to the speech reference. |
 | Native Maker workspace | Composed intro/direct text edits, insertion crop, shared objective text/target selection, transactional target drawing, temporary image-only scene browser, real Test/return; focused Editor probes and320×200 renders | New UI browser display, input and interrupted-drawing acceptance. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
 

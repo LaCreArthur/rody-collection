@@ -19,21 +19,70 @@ public static class FrenchSpeechDraft
         { "a", "a" }, { "ɑ", "a" }, { "ɐ", "a" }, { "æ", "a" }, { "ʌ", "a" },
         { "i", "i" }, { "ɪ", "i" }, { "y", "u" }, { "ʏ", "u" },
         { "u", "ou" }, { "ʊ", "ou" }, { "w", "ou" }, { "ɥ", "u" },
-        { "o", "o" }, { "ɔ", "oh" }, { "e", "et" }, { "ɛ", "ai" },
+        { "o", "o" }, { "ɔ", "oh" }, { "ɒ", "oh" }, { "e", "et" }, { "ɛ", "ai" },
         { "ə", "e" }, { "ø", "e" }, { "œ", "eu" }, { "ɜ", "eu" },
         { "ɚ", "e_r" }, { "ɝ", "eu_r" },
         { "ɑ̃", "an" }, { "ã", "an" }, { "ɔ̃", "on[1,1,0]" }, { "õ", "on[1,1,0]" },
         { "ɛ̃", "in" }, { "œ̃", "un" },
         { "p", "p" }, { "b", "b" }, { "t", "t" }, { "d", "d" },
         { "k", "c" }, { "ɡ", "g" }, { "g", "g" }, { "m", "m" }, { "n", "n" },
-        { "ɲ", "gn" }, { "ŋ", "gn" }, { "l", "l" }, { "ɫ", "l" },
+        { "ɲ", "gn" }, { "ŋ", "gn" }, { "l", "l" }, { "ɫ", "l" }, { "ɬ", "l" },
         { "ʁ", "r" }, { "r", "r" }, { "ɹ", "r" }, { "ɾ", "r" }, { "ʀ", "r" },
         { "s", "s" }, { "z", "z" }, { "f", "f" }, { "v", "v" },
         { "ʃ", "ch" }, { "ʒ", "j" }, { "j", "y" }, { "θ", "s" }, { "ð", "z" },
         { "x", "r" }, { "χ", "r" }, { "h", "" }, { "ʔ", "" }
     };
 
+    // Quotes around a word belong to the text, not to its pronunciation.
+    static readonly char[] Quotes = { '"', '\'', '’', '«', '»', '“', '”', '(', ')' };
+
+    /// <summary>A written word without the quotes around it.</summary>
+    public static string WordCore(string text, SpeechWord word) => text.Substring(word.start, word.length).Trim(Quotes);
+
+    /// <summary>The story-wide identity of a written word.</summary>
+    public static string WordKey(string text, SpeechWord word) => WordCore(text, word).ToLowerInvariant();
+
+    /// <summary>
+    /// The line as the converter reads it: each respelled word is replaced in place,
+    /// so it keeps its sentence context and maps back to the same written word.
+    /// </summary>
+    public static string Spoken(string text, IReadOnlyDictionary<string, string> respellings)
+    {
+        var spoken = new StringBuilder();
+        int copied = 0;
+        foreach (var word in SourceWords(text))
+        {
+            if (PauseAt(text, word.start) != '\0' || !respellings.TryGetValue(WordKey(text, word), out string respelling)) continue;
+            string written = text.Substring(word.start, word.length);
+            int start = word.start + written.Length - written.TrimStart(Quotes).Length;
+            spoken.Append(text, copied, start - copied).Append(respelling);
+            copied = start + written.Trim(Quotes).Length;
+        }
+        return spoken.Append(text, copied, text.Length - copied).ToString();
+    }
+
+    /// <summary>
+    /// The Maker's voice: a function of the text and its respellings only, never of
+    /// earlier scores. `spoken` is `text` with its respellings (see Spoken).
+    /// </summary>
+    public static SpeechDocument Convert(string text, string spoken, FrenchPhonemizer.Result result)
+    {
+        var converted = Convert(spoken, result);
+        var written = SourceWords(text);
+        if (written.Count != converted.words.Count) throw new ArgumentException("Une prononciation corrigée doit rester un seul mot.");
+        for (int i = 0; i < written.Count; i++) written[i].score = converted.words[i].score;
+        return new SpeechDocument { sourceText = text, words = written };
+    }
+
+    /// <summary>The workbench's voice: hand edits of unchanged words survive a text edit.</summary>
     public static SpeechDocument Convert(string text, FrenchPhonemizer.Result result, SpeechDocument previous)
+    {
+        var document = Convert(text, result);
+        PreserveEdits(previous, document);
+        return document;
+    }
+
+    static SpeechDocument Convert(string text, FrenchPhonemizer.Result result)
     {
         if (!string.IsNullOrEmpty(result.error)) throw new ArgumentException(result.error);
         var document = new SpeechDocument { sourceText = text, words = SourceWords(text) };
@@ -58,11 +107,9 @@ public static class FrenchSpeechDraft
             // The native short pause is only 151 samples. Its native repetition
             // field gives a useful ~116 ms comma; a period is ~323 ms. Existing
             // authored scores keep their own exact pause instructions.
-            string spelling = text.Substring(word.start, word.length).Trim('"', '«', '»', '“', '”', '(', ')');
             word.score = pause == ',' ? ",[9,0,0]" : pause == '.' ? ".[0,0,0]" :
-                Pronunciations.TryGetValue(spelling, out string pronunciation) ? pronunciation : ToScore(ipaByWord[i].ToString());
+                Pronunciations.TryGetValue(WordKey(text, word), out string pronunciation) ? pronunciation : ToScore(ipaByWord[i].ToString());
         }
-        PreserveEdits(previous, document);
         return document;
     }
 
@@ -124,10 +171,12 @@ public static class FrenchSpeechDraft
                 if (token.Length != 0) score.Add(token);
                 continue;
             }
-            // IPA stress, length, liaison hyphens, separators and diacritics are
-            // not Rody sound effects or source punctuation. The source owns pauses.
-            if (char.IsWhiteSpace(ipa[i]) || "ˈˌːˑ-.,!?;:|‖".IndexOf(ipa[i]) >= 0 ||
-                char.GetUnicodeCategory(ipa[i]) == System.Globalization.UnicodeCategory.NonSpacingMark) continue;
+            // IPA stress, length and other modifier letters, liaison hyphens, separators
+            // and diacritics are not Rody sounds or source punctuation. The source owns pauses.
+            var category = char.GetUnicodeCategory(ipa[i]);
+            if (char.IsWhiteSpace(ipa[i]) || "-.,!?;:|‖".IndexOf(ipa[i]) >= 0 ||
+                category == System.Globalization.UnicodeCategory.NonSpacingMark ||
+                category == System.Globalization.UnicodeCategory.ModifierLetter) continue;
             throw new ArgumentException("Le son « " + sound + " » n’a pas encore d’équivalent dans la voix de Rody.");
         }
         return string.Join("_", score);

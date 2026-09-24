@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,6 +17,8 @@ public class RM_DialLayout : MonoBehaviour
 
     const float HomeWidth = 224f, ContextWidth = 252.6f, BodyHeight = 48f;
     static readonly Color SelectorHighlight = new Color(.25f, .12f, .04f, 1f), SelectorHighlightText = new Color(1f, .91f, .58f, 1f);
+    // The character button cycles Mastico, then these voices from low to high.
+    static readonly float[] CharacterPitches = { .8f, .9f, 1.1f, 1.2f, 1.3f };
     readonly TextGenerator composition = new TextGenerator();
     readonly TextGenerator measurement = new TextGenerator();
     readonly int[] starts = new int[3];
@@ -24,7 +27,6 @@ public class RM_DialLayout : MonoBehaviour
     RM_GameManager gm;
     RectTransform workspaceRect;
     float left;
-    bool voiceOpen;
 
     public void Initialize(RM_GameManager manager)
     {
@@ -62,7 +64,7 @@ public class RM_DialLayout : MonoBehaviour
                     gm.tooltip.ShowBrief("Plus de place dans le cadre.", (RectTransform)passageButtons[passage].transform);
             });
         }
-        voiceButton.onClick.AddListener(EditVoice);
+        voiceButton.onClick.AddListener(OpenVoice);
         speakerButton.onClick.AddListener(ChangeSpeakerOrTarget);
         doneButton.onClick.AddListener(gm.ReturnHome);
         returnButton.onClick.AddListener(gm.ReturnHome);
@@ -128,7 +130,7 @@ public class RM_DialLayout : MonoBehaviour
         passageButtons[0].transform.parent.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Zones);
         gm.zones.paddingLabel.gameObject.SetActive(hasScene && gm.Panel == RM_Panel.Zones);
         titleInput.SetTextWithoutNotify(hasScene ? gm.CurrentScene.texts.title : "ECRAN TITRE");
-        bool canSelect = hasScene && gm.CanEdit && gm.Panel != RM_Panel.Zones;
+        bool canSelect = hasScene && gm.CanEdit && gm.Panel != RM_Panel.Zones && gm.Panel != RM_Panel.Voice;
         SetFieldState(titleInput, canSelect, gm.Panel == RM_Panel.Title, true);
         voiceButton.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Title);
         speakerButton.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Title);
@@ -154,16 +156,21 @@ public class RM_DialLayout : MonoBehaviour
             objectiveInput.gameObject.SetActive(false);
             LayoutIntroduction(width, canSelect);
         }
-        voiceButton.interactable = gm.CanEdit && !voiceOpen;
-        speakerButton.interactable = gm.CanEdit && !voiceOpen;
-        speakerButton.image.sprite = gm.IsObjective ? targetSprite
-            : IsMastico(gm.CurrentScene.voice, (int)gm.Passage) ? masticoUnmute : masticoMute;
+        var scene = gm.CurrentScene;
+        int passage = (int)gm.Passage;
+        bool mastico = gm.IsObjective || IsMastico(scene.voice, passage);
+        voiceButton.interactable = gm.CanEdit && ReadText(scene, passage).Length > 0;
+        speakerButton.interactable = gm.CanEdit;
+        speakerButton.image.sprite = gm.IsObjective ? targetSprite : mastico ? masticoUnmute : masticoMute;
         speakerButton.GetComponent<RM_ButtonTooltip>().SetText(gm.IsObjective ? "Dessiner la cible"
-            : IsMastico(gm.CurrentScene.voice, (int)gm.Passage) ? "Parole de Mastico · changer de personnage"
-            : "Parole du personnage · faire parler Mastico");
-        voiceButton.GetComponent<RM_ButtonTooltip>().SetText(gm.IsObjective ? "Modifier la voix de cet objectif"
-            : "Modifier la voix de la réplique " + ((int)gm.Passage + 1));
+            : mastico ? "Mastico parle · clic : voix d’un personnage"
+            : "Personnage, voix " + VoiceName(ReadPitch(scene.voice, passage)) + " · clic : voix suivante");
+        voiceButton.GetComponent<RM_ButtonTooltip>().SetText(RM_Speech.IsOriginal(ReadSpeech(scene, passage))
+            ? "Écouter la voix de 1988" : "Écouter et corriger la prononciation");
     }
+
+    static string VoiceName(float pitch) => pitch < .85f ? "très grave" : pitch < .95f ? "grave" : pitch < 1.05f ? "normale"
+        : pitch < 1.15f ? "aiguë" : pitch < 1.25f ? "très aiguë" : "suraiguë";
 
     void LayoutIntroduction(float width, bool canSelect)
     {
@@ -181,7 +188,8 @@ public class RM_DialLayout : MonoBehaviour
             bool selected = i == (int)gm.Passage;
             field.gameObject.SetActive(value.Length > 0 || selected);
             field.SetTextWithoutNotify(value);
-            SetFieldState(field, canSelect, gm.Panel == RM_Panel.Text && selected, selected || gm.Panel != RM_Panel.Text);
+            SetFieldState(field, canSelect, gm.Panel == RM_Panel.Text && selected,
+                selected || (gm.Panel != RM_Panel.Text && gm.Panel != RM_Panel.Voice));
             if (value.Length == 0)
             {
                 // An empty passage takes no space in the game frame. Put its caret
@@ -230,6 +238,8 @@ public class RM_DialLayout : MonoBehaviour
         var field = gm.IsObjective ? objectiveInput : introInputs[(int)gm.Passage];
         field.FocusAt(field.text.Length);
     }
+
+    public RM_TextInputField PassageField(int passage) => passage < 3 ? introInputs[passage] : objectiveInput;
 
     public void FocusTitle() => titleInput.FocusAt(titleInput.text.Length);
 
@@ -286,10 +296,32 @@ public class RM_DialLayout : MonoBehaviour
             case 5: texts.fsw = value; break;
         }
         StoryRoot.Session.NotifyEdited();
+        if (passage >= 0) SyncSpeech(gm.CurrentScene, passage);
         gm.RefreshText();
     }
 
-    static string ReadText(SceneData scene, int passage) => (passage switch
+    // The voice follows the text: each edit reconverts the line with the story's
+    // respellings. Only lines never edited keep their 1988 score.
+    public void SyncSpeech(SceneData scene, int passage, Action synced = null)
+    {
+        string text = ReadText(scene, passage);
+        var story = StoryRoot.Session.Draft;
+        gm.Speech.Convert(text, story.respellings, (speech, error) =>
+        {
+            if (StoryRoot.Session.Draft != story || ReadText(scene, passage) != text) return;
+            if (speech == null)
+            {
+                Debug.LogWarning("[Maker] " + error);
+                if (synced != null) gm.tooltip.ShowBrief(error, workspaceRect);
+                return;
+            }
+            WriteSpeech(scene, passage, speech);
+            StoryRoot.Session.NotifyEdited();
+            synced?.Invoke();
+        });
+    }
+
+    public static string ReadText(SceneData scene, int passage) => (passage switch
     {
         -1 => scene.texts.title,
         0 => scene.texts.intro1,
@@ -305,48 +337,44 @@ public class RM_DialLayout : MonoBehaviour
         if (!gm.CanEdit || gm.CurrentScene == null) return;
         FinishFocus();
         if (gm.IsObjective) { gm.zones.BeginEdit(); return; }
-        var voice = gm.CurrentScene.voice;
-        switch ((int)gm.Passage)
+        var scene = gm.CurrentScene;
+        int passage = (int)gm.Passage;
+        float pitch = IsMastico(scene.voice, passage) ? CharacterPitches[0]
+            : CharacterPitches.FirstOrDefault(p => p > ReadPitch(scene.voice, passage) + .001f);
+        bool mastico = pitch == 0;
+        switch (passage)
         {
-            case 0: voice.isMastico1 = !voice.isMastico1; break;
-            case 1: voice.isMastico2 = !voice.isMastico2; break;
-            case 2: voice.isMastico3 = !voice.isMastico3; break;
+            case 0: scene.voice.isMastico1 = mastico; if (!mastico) scene.voice.pitch1 = pitch; break;
+            case 1: scene.voice.isMastico2 = mastico; if (!mastico) scene.voice.pitch2 = pitch; break;
+            case 2: scene.voice.isMastico3 = mastico; if (!mastico) scene.voice.pitch3 = pitch; break;
         }
         StoryRoot.Session.NotifyEdited();
         StoryRoot.FlushWorkspace();
         Refresh();
+        gm.sm.Speak(ReadSpeech(scene, passage), SpokenPitch(scene, passage));
     }
 
-    void EditVoice()
+    void OpenVoice()
     {
-        if (!gm.CanEdit || gm.CurrentScene == null || voiceOpen) return;
+        if (!gm.CanEdit || gm.CurrentScene == null) return;
         FinishFocus();
         var scene = gm.CurrentScene;
         int passage = (int)gm.Passage;
-        bool mastico = passage >= 3 || IsMastico(scene.voice, passage);
-        float pitch = mastico ? scene.voice.isZambla ? .9f : 1f : ReadPitch(scene.voice, passage);
-        voiceOpen = true;
-        voiceButton.interactable = false;
-        SynthManager.Open(ReadSpeech(scene, passage), pitch, !mastico,
-            passage >= 3 ? "MASTICO · CONSIGNE" : "INTRO · DIALOGUE " + (passage + 1),
-            (speech, editedPitch) =>
-            {
-                if (SameSpeech(ReadSpeech(scene, passage), speech) && (mastico || ReadPitch(scene.voice, passage) == editedPitch)) return;
-                switch (passage)
-                {
-                    case 0: scene.dialogues.intro1 = speech; if (!mastico) scene.voice.pitch1 = editedPitch; break;
-                    case 1: scene.dialogues.intro2 = speech; if (!mastico) scene.voice.pitch2 = editedPitch; break;
-                    case 2: scene.dialogues.intro3 = speech; if (!mastico) scene.voice.pitch3 = editedPitch; break;
-                    case 3: scene.dialogues.obj = speech; break;
-                    case 4: scene.dialogues.ngp = speech; break;
-                    case 5: scene.dialogues.fsw = speech; break;
-                }
-                StoryRoot.Session.NotifyEdited();
-                StoryRoot.FlushWorkspace();
-            }, () => { voiceOpen = false; Refresh(); });
+        var speech = ReadSpeech(scene, passage);
+        if (RM_Speech.IsOriginal(speech))
+        {
+            gm.sm.Speak(speech, SpokenPitch(scene, passage));
+            gm.tooltip.ShowBrief("Voix originale de 1988. Modifie le texte pour la refaire.", workspaceRect);
+            return;
+        }
+        if (speech.sourceText == ReadText(scene, passage)) { gm.voice.Open(scene, passage); return; }
+        SyncSpeech(scene, passage, () =>
+        {
+            if (gm.Panel == RM_Panel.Text && gm.CurrentScene == scene && (int)gm.Passage == passage) gm.voice.Open(scene, passage);
+        });
     }
 
-    static SpeechDocument ReadSpeech(SceneData scene, int passage) => passage switch
+    public static SpeechDocument ReadSpeech(SceneData scene, int passage) => passage switch
     {
         0 => scene.dialogues.intro1,
         1 => scene.dialogues.intro2,
@@ -356,22 +384,27 @@ public class RM_DialLayout : MonoBehaviour
         _ => scene.dialogues.fsw
     };
 
+    static void WriteSpeech(SceneData scene, int passage, SpeechDocument speech)
+    {
+        switch (passage)
+        {
+            case 0: scene.dialogues.intro1 = speech; break;
+            case 1: scene.dialogues.intro2 = speech; break;
+            case 2: scene.dialogues.intro3 = speech; break;
+            case 3: scene.dialogues.obj = speech; break;
+            case 4: scene.dialogues.ngp = speech; break;
+            case 5: scene.dialogues.fsw = speech; break;
+        }
+    }
+
+    /// <summary>The pitch the game plays this line with.</summary>
+    public static float SpokenPitch(SceneData scene, int passage) => passage >= 3 || IsMastico(scene.voice, passage)
+        ? scene.voice.isZambla ? .9f : 1f : ReadPitch(scene.voice, passage);
+
     static bool IsMastico(VoiceSettings voice, int passage) => passage == 0 ? voice.isMastico1
         : passage == 1 ? voice.isMastico2 : voice.isMastico3;
     static float ReadPitch(VoiceSettings voice, int passage) => passage == 0 ? voice.pitch1
         : passage == 1 ? voice.pitch2 : voice.pitch3;
-
-    static bool SameSpeech(SpeechDocument left, SpeechDocument right)
-    {
-        if (left.sourceText != right.sourceText || left.words.Count != right.words.Count) return false;
-        for (int i = 0; i < left.words.Count; i++)
-        {
-            var a = left.words[i];
-            var b = right.words[i];
-            if (a.start != b.start || a.length != b.length || a.score != b.score || a.corrected != b.corrected) return false;
-        }
-        return true;
-    }
 
     void OnDestroy()
     {

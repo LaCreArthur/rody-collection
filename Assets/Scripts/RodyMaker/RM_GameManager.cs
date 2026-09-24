@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum RM_Panel { Home, Text, Title, Zones, Scenes, Images, Frames, Music }
+public enum RM_Panel { Home, Text, Title, Zones, Scenes, Images, Frames, Music, Voice }
 
 public class RM_GameManager : MonoBehaviour
 {
@@ -12,12 +12,14 @@ public class RM_GameManager : MonoBehaviour
     public GameObject welcomePanel;
     public RM_DialLayout workspace;
     public RM_ObjLayout zones;
+    public RM_VoiceLayout voice;
     public RM_SceneBrowser sceneBrowser;
     public Image scenePreview;
     public SoundManager sm;
     public CanvasGroup editorControls;
     public RM_TooltipDisplay tooltip;
     public RM_EditorPointer pointer;
+    public RM_Speech Speech { get; private set; }
 
     bool ready;
     int escapeFrame = -1;
@@ -27,7 +29,8 @@ public class RM_GameManager : MonoBehaviour
     public EditorPassage Passage => StoryRoot.Session.EditorPassage;
     public bool IsObjective => (int)Passage >= 3;
     public bool CanEdit => ready && !StoryRoot.IsBusy && SceneManager.GetActiveScene() == gameObject.scene;
-    public bool IsWorkspaceVisible => Panel == RM_Panel.Home || Panel == RM_Panel.Text || Panel == RM_Panel.Title || Panel == RM_Panel.Zones;
+    public bool IsWorkspaceVisible => Panel == RM_Panel.Home || Panel == RM_Panel.Text || Panel == RM_Panel.Title
+        || Panel == RM_Panel.Voice || Panel == RM_Panel.Zones;
     ObjectZone SelectedZone => !IsObjective || CurrentScene == null ? null
         : Passage == EditorPassage.Objective ? CurrentScene.objects.obj
         : Passage == EditorPassage.NewGamePlus ? CurrentScene.objects.ngp : CurrentScene.objects.fsw;
@@ -49,7 +52,9 @@ public class RM_GameManager : MonoBehaviour
             yield break;
         }
         StoryRoot.Session.ActivateWorkspace();
+        Speech = RM_Speech.Create();
         workspace.Initialize(this);
+        voice.Initialize(this);
         sceneBrowser.Initialize(this);
         zones.CanInteract = () => CanEdit && IsObjective && CurrentScene != null &&
             (Panel == RM_Panel.Home || Panel == RM_Panel.Text || Panel == RM_Panel.Zones);
@@ -70,6 +75,7 @@ public class RM_GameManager : MonoBehaviour
         Panel = panel;
         mainLayout.SetActive(panel == RM_Panel.Home);
         dialLayout.SetActive(panel == RM_Panel.Text || panel == RM_Panel.Title);
+        voice.gameObject.SetActive(panel == RM_Panel.Voice);
         objLayout.SetActive(panel == RM_Panel.Zones);
         scenesLayout.SetActive(panel == RM_Panel.Scenes);
         imagesLayout.SetActive(panel == RM_Panel.Images);
@@ -143,6 +149,7 @@ public class RM_GameManager : MonoBehaviour
         escapeFrame = Time.frameCount;
         if (welcomePanel.activeSelf) { OnWelcomePanelExit(); return; }
         if (zones.IsEditing) { zones.Cancel(); return; }
+        if (Panel == RM_Panel.Voice) { voice.Cancel(); return; }
         if (Panel == RM_Panel.Frames) { imgAnimLayout.GetComponent<RM_ImgAnimLayout>().ReturnClick(); return; }
         if (Panel != RM_Panel.Home) { ReturnHome(); return; }
         workspace.FinishFocus();

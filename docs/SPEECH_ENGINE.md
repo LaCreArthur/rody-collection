@@ -15,7 +15,9 @@ French-authored dialogue, imported notation and original-expression templates.
 | Producer / artifact | Owns | Consumers |
 |---|---|---|
 | `Assets/Scripts/Models/SpeechDocument.cs` | French source, word spans, accepted lossless scores, pronunciation-correction flags; aggregate notation is computed | Workbench, story serialization and gameplay |
-| `Assets/Scripts/synth/FrenchSpeechDraft.cs` | Source punctuation, IPA-to-native mapping, authored-name overrides and preservation of word corrections/expression | Workbench conversion |
+| `Assets/Scripts/synth/FrenchSpeechDraft.cs` | Source punctuation, IPA-to-native mapping, authored-name overrides, story respellings (`Spoken`) and the workbench's preservation of word corrections/expression | Maker and workbench conversion |
+| `Assets/Scripts/RodyMaker/RM_Speech.cs` | Maker conversion requests and the browser receiver object `RodyMakerSpeech` | Maker dialogue sync and fix preview |
+| `Assets/Scripts/RodyMaker/RM_VoiceLayout.cs` | Maker pronunciation-fix mode: word picking, respelling preview, story-wide apply | Maker text editing |
 | `Assets/Scripts/synth/FrenchPhonemizer.cs` | Local dependency invocation and source alignment | French draft conversion |
 | [French dependency README](../tools/french-converter/README.md) | Pinned upstream source, licenses, checksums, macOS rebuild and browser/native ABI | Dependency maintenance; do not duplicate its setup here |
 | `Assets/Scripts/RodySpeechEngine.cs` | Notation parsing, native preprocessing, PCM rendering and full-context passage selection | Game, workbench and offline CLI |
@@ -41,11 +43,21 @@ effects; speech cleanup never destroys effects or music assets.
 
 ## French authoring
 
-The collection's **Voix** button opens the workbench standalone (scene 7). Intro
-and object editors open the same scene additively. **Utiliser ce dialogue** returns
-the edited document and pitch to the caller; **Annuler** leaves the caller's
-dialogue unchanged. The story editor still owns scene save and export. Standalone
-**Copier les phonèmes** copies the score only, not French source or word corrections.
+The Maker converts every accepted dialogue edit (`RM_DialLayout.SyncSpeech` →
+`RM_Speech` → `FrenchSpeechDraft.Convert(text, spoken, result)`). Its score is a
+function of the French text and `Story.respellings` only (lower-case written word
+without quotes → one-word French respelling); earlier scores are never merged.
+`Spoken` replaces each respelled word in place, so the whole utterance keeps its
+liaison context and maps 1:1 back to the written words; a respelling that splits
+into several words is rejected. The fix mode previews with a session copy of the
+respellings; Validate stores it on the draft and resyncs every non-original
+dialogue containing a changed word. Source-less original scores are never
+reconverted until their text changes. Browser results arrive by `SendMessage` to
+`RodyMakerSpeech`, a runtime object active for the whole Maker scene.
+
+The collection's **Voix** button opens the workbench standalone (scene 7); the
+Maker no longer opens it. **Copier les phonèmes** copies the score only, not French
+source or word corrections. The rest of this section describes the workbench.
 
 The French field accepts up to 2,000 characters. Conversion uses the whole
 utterance for liaison/context, while the lower field edits the selected word's
@@ -67,7 +79,8 @@ audio or a neural voice. Native conversion supports macOS arm64/x64; WebGL has a
 packaged ES module and jslib bridge. Windows/Linux native conversion is not
 supplied. English pronunciation guesses remain enabled for some foreign words.
 The case-insensitive authored-name dictionary contains Rody → `r_o_d_i`;
-per-dialogue corrections take precedence. Unknown words/typos receive a
+story respellings replace the word before this lookup, and workbench
+per-word corrections take precedence. Unknown words/typos receive a
 pronunciation attempt; unsupported IPA produces a visible conversion error.
 The native bank approximates French distinctions, including a complete
 `on[1,1,0]` for the nasal vowel, rather than promising perfect phonetics.
@@ -75,7 +88,8 @@ The native bank approximates French distinctions, including a complete
 `SpeechDocument` holds source text and word fragments containing the one accepted
 score plus correction status. `StoryJson` reads legacy dialogue strings once as
 source-less documents without altering their notation. Format 2 saves document
-objects; source-less imported/original scores remain directly editable. Opening,
+objects; source-less imported/original scores stay editable in the workbench and play
+unchanged in the Maker until their text is edited. Opening,
 playing or cloning a document never reconverts it. Official story assets were
 not rewritten by the French-entry implementation.
 
@@ -98,14 +112,15 @@ as a French pause.
 
 Unknown/invalid score tokens appear before playback and disable Apply. Stop stays
 available during playback even after an invalid edit. Rody/other introductory
-characters use per-line pitch; Mastico uses 1.0 and Zambla 0.9, with fixed preview
-sliders. All three non-Mastico introductory lines set their speaking flag.
+characters use per-line pitch; Mastico uses 1.0 and Zambla 0.9. The Maker speaker
+button cycles Mastico → 0.8, 0.9, 1.1, 1.2, 1.3 → Mastico; other stored pitches stay
+until clicked. All three non-Mastico introductory lines set their speaking flag.
 Mastico retains its speaking/processing animation sequence.
 
 Browser paste freezes its target and range until the clipboard callback arrives;
 copy failure cannot cancel a pending paste. Each workbench has a unique receiver
 name. `SpeechInputField` applies carets after uGUI's deferred activation. Escape
-closes on key release; Maker ignores input while the additive scene is active.
+closes on key release.
 
 ## Lossless notation
 
