@@ -243,6 +243,9 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.Escape)){
 			SceneManager.LoadScene(AppScenes.Menu);
 		}
+		// Hidden test shortcut: intro music, jingles and voice share one AudioSource; ending the current
+		// sound lets the sequence waiting on it move on.
+		if (Input.GetKeyDown(KeyCode.S)) sm.StopSpeech();
 	}
 
 	/// <summary>

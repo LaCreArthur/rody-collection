@@ -90,7 +90,7 @@ public class Title : MonoBehaviour {
 				Cursor.visible = true;
 				SceneManager.LoadScene(AppScenes.Selection);
 			}
-			else if (Input.GetKeyDown(KeyCode.Return)) {
+			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.S)) {
 				skipCredit();
 			}
 			else if (Input.GetKeyDown(konamiCode[konamiIndex])) {
