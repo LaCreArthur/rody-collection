@@ -13,14 +13,13 @@ public class RM_TextInputField : InputField
     public Action OnActivate;
     public Action OnEscape;
     public Action<bool> OnHover;
-    public Image selectionMarker;
 
     int? requestedCaret;
     bool hovered;
 
     public void ShowSelection(bool selected)
     {
-        selectionMarker.gameObject.SetActive(selected);
+        textComponent.color = new Color(textComponent.color.r, textComponent.color.g, textComponent.color.b, selected ? 1f : .4f);
         image.color = hovered && IsInteractable() ? new Color(1f, 1f, .7f, .18f) : Color.clear;
         if (hovered) OnHover?.Invoke(IsInteractable());
     }

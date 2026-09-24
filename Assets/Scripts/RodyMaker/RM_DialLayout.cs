@@ -15,11 +15,12 @@ public class RM_DialLayout : MonoBehaviour
     public Sprite masticoUnmute, masticoMute, targetSprite;
 
     const float HomeWidth = 224f, ContextWidth = 252.6f, BodyHeight = 48f;
-    static readonly Color SelectorHighlight = new Color(1f, .78f, .35f, 1f);
+    static readonly Color SelectorHighlight = new Color(.25f, .12f, .04f, 1f), SelectorHighlightText = new Color(1f, .91f, .58f, 1f);
     readonly TextGenerator composition = new TextGenerator();
     readonly TextGenerator measurement = new TextGenerator();
     readonly int[] starts = new int[3];
     readonly Color[] selectorColors = new Color[6];
+    Color selectorTextColor;
     RM_GameManager gm;
     RectTransform workspaceRect;
     float left;
@@ -51,9 +52,15 @@ public class RM_DialLayout : MonoBehaviour
         {
             int passage = i;
             selectorColors[i] = passageButtons[i].image.color;
+            selectorTextColor = passageButtons[i].GetComponentInChildren<Text>().color;
             passageButtons[i].transition = Selectable.Transition.None;
             passageButtons[i].onClick.AddListener(() =>
-                gm.SelectPassage(passage, ReadText(gm.CurrentScene, passage).Length == 0));
+            {
+                bool empty = ReadText(gm.CurrentScene, passage).Length == 0;
+                gm.SelectPassage(passage, empty);
+                if (empty && passage < 3 && !FitsBody(ComposeIntro(passage, "A")))
+                    gm.tooltip.ShowBrief("Plus de place dans le cadre.", (RectTransform)passageButtons[passage].transform);
+            });
         }
         voiceButton.onClick.AddListener(EditVoice);
         speakerButton.onClick.AddListener(ChangeSpeakerOrTarget);
@@ -80,12 +87,12 @@ public class RM_DialLayout : MonoBehaviour
             if (entered)
             {
                 gm.pointer.Show(field, RM_EditorPointer.Kind.Text);
-                if (field.readOnly) gm.tooltip.Show("Modifier ce texte", (RectTransform)field.transform);
+                if (field.readOnly) gm.tooltip.Show("Modifier ce texte", workspaceRect);
             }
             else
             {
                 gm.pointer.Clear(field);
-                gm.tooltip.HideFor((RectTransform)field.transform);
+                gm.tooltip.HideFor(workspaceRect);
             }
         };
         field.OnCrop = () => gm.tooltip.ShowBrief("La fin ajoutée a été coupée pour tenir dans le cadre.",
@@ -122,7 +129,7 @@ public class RM_DialLayout : MonoBehaviour
         gm.zones.paddingLabel.gameObject.SetActive(hasScene && gm.Panel == RM_Panel.Zones);
         titleInput.SetTextWithoutNotify(hasScene ? gm.CurrentScene.texts.title : "ECRAN TITRE");
         bool canSelect = hasScene && gm.CanEdit && gm.Panel != RM_Panel.Zones;
-        SetFieldState(titleInput, canSelect, gm.Panel == RM_Panel.Title, gm.Panel == RM_Panel.Title);
+        SetFieldState(titleInput, canSelect, gm.Panel == RM_Panel.Title, true);
         voiceButton.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Title);
         speakerButton.gameObject.SetActive(hasScene && gm.Panel != RM_Panel.Title);
         if (!hasScene) return;
@@ -130,7 +137,9 @@ public class RM_DialLayout : MonoBehaviour
         for (int i = 0; i < passageButtons.Length; i++)
         {
             passageButtons[i].interactable = canSelect;
-            passageButtons[i].image.color = i == (int)gm.Passage ? SelectorHighlight : selectorColors[i];
+            bool selected = i == (int)gm.Passage;
+            passageButtons[i].image.color = selected ? SelectorHighlight : selectorColors[i];
+            passageButtons[i].GetComponentInChildren<Text>().color = selected ? SelectorHighlightText : selectorTextColor;
         }
         if (gm.IsObjective)
         {
@@ -172,12 +181,15 @@ public class RM_DialLayout : MonoBehaviour
             bool selected = i == (int)gm.Passage;
             field.gameObject.SetActive(value.Length > 0 || selected);
             field.SetTextWithoutNotify(value);
-            SetFieldState(field, canSelect, gm.Panel == RM_Panel.Text && selected, selected);
+            SetFieldState(field, canSelect, gm.Panel == RM_Panel.Text && selected, selected || gm.Panel != RM_Panel.Text);
             if (value.Length == 0)
             {
-                // The numbered selector owns an empty passage. Focus it without
-                // adding a blank line or taking space from the composed text.
-                SetRect((RectTransform)field.transform, Vector2.zero, new Vector2(width, 0));
+                // An empty passage takes no space in the game frame. Put its caret
+                // where its first line would start: just below the composed text.
+                float lineHeight = measurement.GetPreferredHeight("A", settings) / reference.pixelsPerUnit;
+                float caretY = combined.Length == 0 ? 0 : (composition.lines[composition.lineCount - 1].topY
+                    - composition.lines[composition.lineCount - 1].height) / reference.pixelsPerUnit - lineHeight * .5f;
+                SetRect((RectTransform)field.transform, new Vector2(0, caretY), new Vector2(width, selected ? lineHeight : 0));
                 continue;
             }
             int line = 0;
