@@ -42,6 +42,7 @@ public class RM_SceneBrowser : MonoBehaviour
             delete.onClick.AddListener(() => DeleteScene(scene));
             cards.Add(card);
         }
+        addButton.transform.SetAsLastSibling();
         previousButton.interactable = selected > 0;
         nextButton.interactable = selected < session.Draft.scenes.Count;
         addButton.interactable = session.Draft.scenes.Count < 29;
