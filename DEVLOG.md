@@ -31,6 +31,10 @@ room, the TV with a bottom control strip, then a slimmer frame for "more game vi
   Independent review before release: no defect in mouse mapping, fullscreen, sound
   message timing or code stripping; fixed the room not covering 1920x640 (credits line)
   and a 1 px uncovered left edge (cover slack). Layout re-measured at 16 sizes.
+- Live 2026-10-06 (`704a1b4`, deploy took 41 min), Chromium at 1440x790: new page and
+  build served, game 780 px, no scroll, no console errors. The sound button set the music
+  gain to 0 and back to 0.2; the same probe on the old build logged "SendMessage: object
+  WebPage not found!" and changed no gain.
 
 ## 2026-09-25: Maker voice follows the text; Rody font completed
 
