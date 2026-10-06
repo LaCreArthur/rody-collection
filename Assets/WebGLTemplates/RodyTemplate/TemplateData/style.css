@@ -1,492 +1,208 @@
-/* Rody Collection - WebGL Page Styles
-   Theme: Atari ST CRT Monitor */
+/* Rody Collection: the game on a 1988 TV in a painted 80s bedroom.
+   Elements with .art are placed in TV art pixels (tv.webp at 1x = 1062x805) from --f (CSS px per art px)
+   and --tx/--ty (art origin in CSS px), which index.html sets for the current game scale.
+   Fonts: Rody pixel font (16 px per em); Gochi Hand, Copyright (c) 2011 Huerta Tipografica, SIL Open Font License 1.1. */
 
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@font-face { font-family: Rody; src: url(rody.woff2) format("woff2"); font-display: block; }
+@font-face { font-family: "Gochi Hand"; src: url(gochi-hand.woff2) format("woff2"); font-display: swap; }
 
 :root {
-    /* Rody Collection color palette - matching WebGL build */
-    --bg-dark: #1a1a1e;
-    --monitor-bezel: #8a8a8e;
-    --monitor-bezel-light: #a8a8ac;
-    --monitor-bezel-dark: #5a5a5e;
-    --monitor-inner: #3a3a3e;
-    --accent-blue: #4a90d9;
-    --accent-orange: #d97020;
-    --accent-pink: #ff6b9d;
-    --text: #f0e8e0;
-    --text-muted: #9a9a9a;
-    /* New colors matching WebGL build */
-    --beige: #e8dcc8;
-    --beige-light: #f5efe5;
-    --salmon: #e8a090;
-    --salmon-dark: #d08878;
-    --title-blue: #5088c8;
+    --bg: #0b0c16;
+    --osd: #1b2bc0;
+    --ink: #22306e;
+    --muted: #8a90b4;
+    --link: #a9c6ff;
+    --focus: #ffd34d;
 }
 
-body {
-    font-family: 'VT323', monospace;
-    background: linear-gradient(180deg, #2a2a2e 0%, #1a1a1e 100%);
-    min-height: 100vh;
-    color: var(--text);
-    overflow-x: hidden;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+/* One screen, no scrolling and no elastic bounce at the page edges. */
+html { overscroll-behavior: none; }
+body { background: var(--bg); color: var(--muted); }
 
-/* Header */
-header {
-    text-align: center;
-    padding: 15px 0 10px;
-}
+.stage { position: fixed; inset: 0; overflow: hidden; }
 
-header h1 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.4rem;
-    font-weight: 400;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-    display: inline-block;
-    padding: 8px 25px;
-    background: #1a1a2e;
-    /* Beveled 3D border: blue on left/top, salmon on right/bottom */
-    border-style: solid;
-    border-width: 3px;
-    border-left-color: #4080c0;
-    border-top-color: #4080c0;
-    border-right-color: #d08070;
-    border-bottom-color: #d08070;
-}
-
-header h1 span {
-    /* Gradient: blue→white, sharp brown, salmon→light */
-    background: linear-gradient(180deg, 
-        #4080c0 0%, 
-        #4080c0 25%, 
-        #c8d8e8 55%, 
-        #805040 56%, 
-        #e8a090 80%, 
-        #f0d0c0 90%,
-        #f0d0c0 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-header .subtitle {
-    font-size: 1.3rem;
-    color: var(--beige);
-    margin-top: 10px;
-    letter-spacing: 1px;
-}
-
-/* Main content */
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-/* ====== ATARI ST CRT MONITOR FRAME ====== */
-.game-wrapper {
-    /* Outer monitor bezel */
-    background: linear-gradient(180deg, 
-        var(--monitor-bezel-light) 0%, 
-        var(--monitor-bezel) 10%, 
-        var(--monitor-bezel-dark) 90%,
-        #4a4a4e 100%
-    );
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow:
-        inset 0 2px 4px rgba(255,255,255,0.2),
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        0 8px 30px rgba(0,0,0,0.5);
-    position: relative;
-}
-
-/* Monitor inner black border */
-.game-wrapper::before {
-    content: '';
+.art {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    background: var(--monitor-inner);
-    border-radius: 8px;
-    box-shadow: 
-        inset 0 2px 8px rgba(0,0,0,0.5),
-        inset 0 0 20px rgba(0,0,0,0.3);
-    z-index: 0;
+    left: calc((var(--tx) + var(--x) * var(--f)) * 1px);
+    top: calc((var(--ty) + var(--y) * var(--f)) * 1px);
+    width: calc(var(--w) * var(--f) * 1px);
+    height: calc(var(--h) * var(--f) * 1px);
 }
 
-#unity-container {
-    width: 960px;
-    height: 600px;
-    position: relative;
-    background: #000;
-    border-radius: 6px;
-    overflow: hidden;
-    z-index: 1;
-    /* CRT screen glow */
-    box-shadow: 
-        0 0 2px rgba(74, 144, 217, 0.3),
-        0 0 20px rgba(0,0,0,0.8) inset;
-}
+.room { --x: -726.85; --y: -422.46; --w: 2525.56; --h: 1683.71; pointer-events: none; }
+.tv { --x: 0; --y: 0; --w: 1062; --h: 805; pointer-events: none; }
 
-/* Blue accent line at top of screen (like in-game) */
-#unity-container::before {
-    content: '';
+.vignette {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-blue);
-    z-index: 10;
-    opacity: 0.7;
+    inset: 0;
+    background: linear-gradient(transparent calc(100% - 110px), rgba(5, 6, 12, 0.8)),
+        radial-gradient(ellipse 70% 75% at 50% 45%, transparent 50%, rgba(5, 6, 12, 0.7));
+    pointer-events: none;
 }
 
-/* Orange accent line at bottom of screen */
-#unity-container::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-orange);
-    z-index: 10;
-    opacity: 0.7;
+.tv-shadow {
+    --x: 2.5; --y: 2.5; --w: 1057; --h: 800;
+    border-radius: calc(22px * var(--f));
+    box-shadow: 0 calc(28px * var(--f)) calc(110px * var(--f)) calc(12px * var(--f)) rgba(0, 0, 0, 0.6);
 }
 
-#unity-container.unity-mobile {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16/10;
-}
-
-/* Fullscreen mode */
-#unity-container.unity-fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-#unity-container.unity-fullscreen::before,
-#unity-container.unity-fullscreen::after {
-    display: none;
-}
-
-#unity-container.unity-fullscreen #unity-canvas {
-    max-width: 100vw;
-    max-height: 100vh;
-    aspect-ratio: 16/10;
-}
-
-@media (min-aspect-ratio: 16/10) {
-    #unity-container.unity-fullscreen #unity-canvas {
-        height: 100vh;
-        width: calc(100vh * 16 / 10);
-    }
-}
-
-@media (max-aspect-ratio: 16/10) {
-    #unity-container.unity-fullscreen #unity-canvas {
-        width: 100vw;
-        height: calc(100vw * 10 / 16);
-    }
-}
+/* Black glass: holds the game picture; this is the fullscreen element. */
+.screen { position: absolute; background: #000; overflow: hidden; }
+.picture { position: absolute; }
 
 #unity-canvas {
-    width: 100%;
-    height: 100%;
-    background: #1a1a1e;
     display: block;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-}
-
-/* Loading bar */
-#unity-loading-bar {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-    text-align: center;
-    z-index: 5;
-}
-
-#unity-logo {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 15px;
-    background: url('unity-logo-dark.png') no-repeat center;
-    background-size: contain;
-    opacity: 0.6;
-}
-
-#unity-progress-bar-empty {
-    width: 200px;
-    height: 12px;
-    background: #1a1a1e;
-    border: 2px solid var(--accent-blue);
-    overflow: hidden;
-}
-
-#unity-progress-bar-full {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
-    transition: width 0.2s;
-}
-
-#unity-warning {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    text-align: center;
-    font-family: 'VT323', monospace;
-    z-index: 5;
-}
-
-/* Controls */
-.controls {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.55rem;
-    color: #2a2a2e;
-    background: #a0a0a0;
-    /* 3D bevel: light top/left, dark bottom/right - thicker bottom for keyboard look */
-    border-style: solid;
-    border-top-width: 2px;
-    border-left-width: 2px;
-    border-right-width: 3px;
-    border-bottom-width: 6px;
-    border-top-color: #c8c8c8;
-    border-left-color: #c8c8c8;
-    border-bottom-color: #505050;
-    border-right-color: #505050;
-    cursor: pointer;
-    transition: all 0.1s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 4px;
-}
-
-.btn:hover {
-    background: #b8b8b8;
-}
-
-.btn:active {
-    /* Invert bevel when pressed */
-    border-top-color: #505050;
-    border-left-color: #505050;
-    border-bottom-color: #c8c8c8;
-    border-right-color: #c8c8c8;
-    transform: translateY(1px);
-}
-
-.btn .icon {
-    font-size: 0.9rem;
-}
-
-.btn.muted {
-    opacity: 0.6;
-}
-
-/* Info box */
-.info-box {
-    background: var(--monitor-inner);
-    /* Beveled 3D border: blue on left/top, salmon on right/bottom */
-    border-style: solid;
-    border-width: 3px;
-    border-left-color: #4080c0;
-    border-top-color: #4080c0;
-    border-right-color: #d08070;
-    border-bottom-color: #d08070;
-    border-radius: 6px;
-    padding: 15px 25px;
-    max-width: 600px;
     width: 100%;
-    position: relative;
+    height: 100%;
+    background: #000;
+    outline: none;
 }
 
-
-
-.info-box h2 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
-    color: var(--accent-orange);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.glass {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), transparent 38%);
+    box-shadow: inset 0 0 calc(10px * var(--f)) calc(2px * var(--f)) rgba(0, 0, 0, 0.75);
+    pointer-events: none;
 }
+.screen:fullscreen .glass { display: none; }
+.screen:-webkit-full-screen .glass { display: none; }
 
-.info-box ul {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-.info-box li {
-    font-size: 1.2rem;
-    color: var(--text-muted);
+/* TV on-screen display (loading, no signal): sizes in game pixels, --p = CSS px per game px. */
+.osd, .nosignal {
+    position: absolute;
+    inset: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: calc(var(--p) * 10px);
+    background: var(--osd);
+    color: #fff;
+    font: calc(var(--p) * 16px) / 1 Rody, monospace;
+    -webkit-font-smoothing: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.osd { pointer-events: none; animation: crt-on 0.5s ease-out both; }
+.osd h1, .nosignal h1 { font-size: 2em; font-weight: normal; }
+.osd-bar { display: flex; gap: calc(var(--p) * 2px); }
+.osd-bar i { width: calc(var(--p) * 6px); height: calc(var(--p) * 8px); background: rgba(255, 255, 255, 0.25); }
+.osd-bar i.on { background: #fff; }
+.osd::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    animation: flash-out 0.5s ease-out;
+}
+.stage[data-state="ready"] .osd { animation: crt-off 0.45s ease-in forwards; }
+.stage[data-state="ready"] .osd::after { animation: flash-in 0.45s forwards; }
+
+.nosignal { display: none; }
+.stage[data-state="error"] .nosignal { display: flex; }
+.stage[data-state="error"] .osd { display: none; }
+.nosignal button {
+    margin-top: calc(var(--p) * 6px);
+    padding: calc(var(--p) * 4px) calc(var(--p) * 8px);
+    border: calc(var(--p) * 1px) solid #fff;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+.nosignal button:hover, .nosignal button:focus-visible { background: #fff; color: var(--osd); outline: none; }
+
+@keyframes crt-on { from { transform: scale(1, 0.006); } 40% { transform: scale(1, 0.006); } to { transform: none; } }
+@keyframes flash-out { from, 40% { opacity: 0.95; } to { opacity: 0; } }
+@keyframes crt-off { 55% { transform: scale(1, 0.006); opacity: 1; } to { transform: scale(0, 0.006); opacity: 0; } }
+@keyframes flash-in { 55%, to { opacity: 0.95; } }
+
+/* Power LED: blinks while the game loads. */
+.led {
+    --x: 993.5; --y: 711.36; --w: 24; --h: 24;
+    border-radius: 50%;
+    box-shadow: 0 0 calc(14px * var(--f)) calc(3px * var(--f)) rgba(255, 60, 40, 0.6);
+    opacity: 0;
+    pointer-events: none;
+}
+.stage[data-state="loading"] .led { animation: blink 1.1s steps(1) infinite; }
+.stage[data-state="ready"] .led { opacity: 1; }
+@keyframes blink { 50% { opacity: 1; } }
+
+/* The two painted TV buttons. */
+.tv-btn {
+    border: 0;
+    border-radius: calc(6px * var(--f));
+    background: transparent;
+    color: #cfc9bd;
+    font: 700 max(8px, calc(15px * var(--f))) / 1 "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+}
+.tv-btn:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
+.tv-btn:active { background: rgba(0, 0, 0, 0.3); box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6); }
+.tv-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+#btn-full { --x: 635.5; --y: 687.36; --w: 158; --h: 74; }
+#btn-sound { --x: 813.5; --y: 687.36; --w: 154; --h: 74; }
+#btn-sound::before {
+    content: "";
+    display: inline-block;
+    width: max(4px, calc(9px * var(--f)));
+    height: max(4px, calc(9px * var(--f)));
+    margin-right: 0.5em;
+    border-radius: 50%;
+    vertical-align: 0.1em;
+    background: #3a3a3a;
+}
+#btn-sound[aria-pressed="true"]::before { background: #5ef07c; box-shadow: 0 0 calc(8px * var(--f)) #5ef07c; }
+
+/* Sticky note on the speaker grille. */
+.note {
+    --x: 176; --y: 656; --w: 280; --h: 122;
+    padding: calc(12px * var(--f)) calc(16px * var(--f));
+    background: linear-gradient(170deg, #fff3a6, #f2d863);
+    color: var(--ink);
+    font: calc(26px * var(--f)) / 1.08 "Gochi Hand", "Comic Sans MS", cursive;
+    transform: rotate(-3deg);
+    box-shadow: 0 calc(6px * var(--f)) calc(12px * var(--f)) rgba(0, 0, 0, 0.45);
+}
+.note::before {
+    content: "";
+    position: absolute;
+    top: calc(-10px * var(--f));
+    left: 35%;
+    width: 30%;
+    height: calc(22px * var(--f));
+    background: rgba(255, 255, 255, 0.45);
+    transform: rotate(4deg);
 }
 
-.info-box li strong {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.5rem;
-    color: var(--accent-blue);
-    background: #1a1a1e;
-    padding: 3px 6px;
-    border: 1px solid var(--accent-blue);
-    min-width: 45px;
+/* Credits along the bottom of the room. index.html keeps the TV above them, or hides them when it cannot. */
+.credits {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 12px 10px;
     text-align: center;
-    border-radius: 2px;
+    font: 32px / 20px Rody, monospace;
+    text-shadow: 2px 2px #000;
+    -webkit-font-smoothing: none;
 }
+.credits a { color: var(--link); text-decoration: none; }
+.credits a:hover, .credits a:focus-visible { text-decoration: underline; outline: none; }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 20px 0 10px;
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-footer a {
-    color: var(--accent-blue);
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-footer a:hover {
-    color: var(--accent-orange);
-}
-
-/* Responsive */
-@media (max-width: 1020px) {
-    #unity-container {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16/10;
-    }
-
-    .game-wrapper {
-        width: 100%;
-        max-width: 100%;
-        padding: 15px;
-    }
-
-    .game-wrapper::before {
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-    }
-
-    header h1 {
-        font-size: 1rem;
-        padding: 6px 18px;
-    }
-
-    .info-box ul {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 8px;
-    }
-
-    header {
-        padding: 8px 0;
-    }
-
-    header h1 {
-        font-size: 0.65rem;
-        padding: 5px 12px;
-    }
-
-    header .subtitle {
-        font-size: 1rem;
-    }
-
-    .game-wrapper {
-        padding: 10px;
-        border-radius: 8px;
-    }
-
-    .game-wrapper::before {
-        top: 6px;
-        left: 6px;
-        right: 6px;
-        bottom: 6px;
-        border-radius: 6px;
-    }
-
-    .controls {
-        width: 100%;
-    }
-
-    .btn {
-        flex: 1;
-        justify-content: center;
-        font-size: 0.45rem;
-        padding: 8px 10px;
-    }
-
-    .btn .icon {
-        font-size: 0.7rem;
-    }
-
-    .info-box {
-        padding: 12px 15px;
-    }
-
-    .info-box li strong {
-        font-size: 0.4rem;
-        min-width: 35px;
-    }
+@media (prefers-reduced-motion: reduce) {
+    .osd, .osd::after, .stage[data-state="loading"] .led { animation: none; }
+    .stage[data-state="loading"] .led { opacity: 1; }
 }

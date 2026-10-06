@@ -4,84 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{{ PRODUCT_NAME }}} - Play Online</title>
+    <link rel="preload" href="TemplateData/rody.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="icon" type="image/x-icon" href="TemplateData/favicon.ico">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><span>Rody Et Mastico</span></h1>
-            <p class="subtitle">La Collection Complète</p>
-        </header>
-
-        <main>
-            <div class="game-wrapper">
-                <div id="unity-container" class="unity-desktop">
-                    <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
-                    <div id="unity-loading-bar">
-                        <div id="unity-logo"></div>
-                        <div id="unity-progress-bar-empty">
-                            <div id="unity-progress-bar-full"></div>
-                        </div>
-                    </div>
-                    <div id="unity-warning"></div>
+    <main class="stage" id="stage" data-state="loading">
+        <img class="art room" src="TemplateData/room.webp" alt="">
+        <div class="vignette"></div>
+        <div class="art tv-shadow"></div>
+        <footer class="credits" id="credits">
+            Rody &amp; Mastico : Lankhor · DOOM : id Software · Hommage non commercial par LaCreArthur ·
+            <a href="https://github.com/LaCreArthur/rody-collection" target="_blank" rel="noopener">Code source</a>
+        </footer>
+        <div class="screen" id="screen">
+            <div class="picture" id="picture">
+                <canvas id="unity-canvas" tabindex="-1"></canvas>
+                <div class="osd" id="osd">
+                    <h1>{{{ PRODUCT_NAME }}}</h1>
+                    <div class="osd-bar" id="osd-bar"></div>
+                    <p id="osd-status" role="status">Chargement 0 %</p>
+                </div>
+                <div class="nosignal" role="alert">
+                    <h1>Pas de signal</h1>
+                    <p>Le jeu n'a pas pu se charger</p>
+                    <button id="retry">Réessayer</button>
                 </div>
             </div>
-
-            <div class="controls">
-                <button id="fullscreen-btn" class="btn" title="Plein écran">
-                    <span class="icon">⛶</span> Plein écran
-                </button>
-                <button id="mute-btn" class="btn" title="Couper le son">
-                    <span class="icon">🔊</span> Son
-                </button>
-            </div>
-
-            <div class="info-box">
-                <h2>Comment jouer</h2>
-                <ul>
-                    <li><strong>Souris</strong> - Cliquer pour interagir</li>
-                    <li><strong>←/→</strong> - Naviguer dans les menus</li>
-                    <li><strong>Entrée</strong> - Valider</li>
-                    <li><strong>Échap</strong> - Retour au menu</li>
-                    <li><strong>Z/S</strong> - Avancer/Reculer (DOOM)</li>
-                    <li><strong>Q/D</strong> - Gauche/Droite (DOOM)</li>
-                </ul>
-            </div>
-        </main>
-
-        <footer>
-            <p>
-                <a href="https://github.com/LaCreArthur/rody-collection" target="_blank">Code source</a>
-                •
-                <span>Fait avec Unity par LaCreArthur</span>
-            </p>
-        </footer>
-    </div>
+            <div class="glass"></div>
+        </div>
+        <img class="art tv" src="TemplateData/tv.webp" alt="">
+        <span class="art led"></span>
+        <button class="art tv-btn" id="btn-full" title="Plein écran">Plein écran</button>
+        <button class="art tv-btn" id="btn-sound" aria-pressed="true" title="Couper le son">Son</button>
+        <aside class="art note" aria-label="Commandes">
+            <p>Clique pour jouer !</p>
+            <p>Échap : menu</p>
+            <p>DOOM : ZQSD + souris</p>
+        </aside>
+    </main>
 
     <script>
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        var fullscreenButton = document.querySelector("#fullscreen-btn");
-        var muteButton = document.querySelector("#mute-btn");
-        var warningBanner = document.querySelector("#unity-warning");
+        var stage = document.getElementById("stage");
+        var credits = document.getElementById("credits");
+        var tvScreen = document.getElementById("screen");
+        var picture = document.getElementById("picture");
+        var canvas = document.getElementById("unity-canvas");
+        var osd = document.getElementById("osd");
+        var osdStatus = document.getElementById("osd-status");
+        var fullButton = document.getElementById("btn-full");
+        var soundButton = document.getElementById("btn-sound");
 
-        // Show warning banner if needed
-        function unityShowBanner(msg, type) {
-            var div = document.createElement('div');
-            div.innerHTML = msg;
-            warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: #ff4444; padding: 10px;';
-            else if (type == 'warning') div.style = 'background: #ffcc00; padding: 10px;';
-            setTimeout(function() {
-                warningBanner.removeChild(div);
-            }, 5000);
+        // tv.webp geometry in art pixels at 1x (1062x805).
+        var PICTURE = [80.5, 62.44, 901, 563.12]; // game area, centred in the glass
+        var BODY = [2.5, 2.5, 1057, 800];          // whole TV
+        var CONTROLS = [967.5, 761.36];            // bottom-right corner of the TV buttons
+        var GLASS = [13, 14.44];                   // black glass around the game, 4 art px under the bezel
+        var ROOM_REACH = [1257.85, 824.96];        // room.webp reaches this far left and up of the TV centre
+        var MARGIN = 12;
+        var GAME_WIDTH = 780;                      // CSS px: a bigger window shows more room, not a bigger TV
+
+        function isFullscreen() {
+            return (document.fullscreenElement || document.webkitFullscreenElement) === tvScreen;
         }
 
+        function place(element, left, top, width, height) {
+            element.style.left = left + "px";
+            element.style.top = top + "px";
+            element.style.width = width + "px";
+            element.style.height = height + "px";
+        }
+
+        // The page is one screen and never scrolls. The TV resizes smoothly with the window. The game
+        // is GAME_WIDTH wide where the TV fits above the credits line; smaller windows shrink the TV
+        // to fit, and windows wider than the room grow it until the room covers them, hiding the
+        // credits if needed. The game never drops under 640x400 CSS while the window can show that:
+        // the window edges then cut the TV border, not the game.
+        function layout() {
+            var dpr = window.devicePixelRatio || 1;
+            var snap = function (v) { return Math.round(v * dpr) / dpr; };
+            // The buffer is the next whole multiple of 320x200 at or above the shown size, and the
+            // browser shrinks it smoothly by less than one step: every game pixel keeps the same width.
+            var size = function (width) {
+                var d = Math.floor(width * dpr), k = Math.ceil(d / 320 - 1e-6);
+                if (canvas.width !== 320 * k) { canvas.width = 320 * k; canvas.height = 200 * k; }
+                picture.style.setProperty("--p", Math.max(1, Math.floor(d / 320)) / dpr);
+                return [d / dpr, Math.round(d * 0.625) / dpr];
+            };
+            var s;
+            if (isFullscreen()) {
+                var sw = tvScreen.clientWidth, sh = tvScreen.clientHeight;
+                s = size(Math.min(sw, sh * 1.6));
+                place(picture, snap((sw - s[0]) / 2), snap((sh - s[1]) / 2), s[0], s[1]);
+            } else {
+                var vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+                var above = vh - credits.offsetHeight;
+                var fit = function (height) {
+                    return Math.min((vw - 2 * MARGIN) / BODY[2], (height - 2 * MARGIN) / BODY[3]) * PICTURE[2];
+                };
+                // 2 px of slack keeps the room over the window edge after rounding.
+                var cover = Math.max((vw / 2 + 2) / ROOM_REACH[0], vh / 2 / ROOM_REACH[1]) * PICTURE[2];
+                var minGame = Math.min(640, vw - 2 * MARGIN, (vh - 2 * MARGIN) * 1.6);
+                s = size(Math.max(minGame, Math.min(fit(vh), Math.max(Math.min(GAME_WIDTH, fit(above)), cover))));
+                var f = s[0] / PICTURE[2];
+                // The credits show when the whole TV fits above them; otherwise the TV takes the window.
+                var shown = BODY[3] * f <= above - 2 * MARGIN + 1;
+                credits.style.visibility = shown ? "" : "hidden";
+                var space = shown ? above : vh;
+                // Centre the TV; keep the game, then the TV buttons, inside that space.
+                var left = snap(Math.max(MARGIN, Math.min(vw / 2 - (BODY[0] + BODY[2] / 2 - PICTURE[0]) * f,
+                    vw - MARGIN - (CONTROLS[0] - PICTURE[0]) * f)));
+                var top = snap(Math.max(MARGIN, Math.min(space / 2 - (BODY[1] + BODY[3] / 2 - PICTURE[1]) * f,
+                    space - MARGIN - (CONTROLS[1] - PICTURE[1]) * f)));
+                var gx = snap(GLASS[0] * f), gy = snap(GLASS[1] * f);
+                place(tvScreen, left - gx, top - gy, s[0] + 2 * gx, s[1] + 2 * gy);
+                place(picture, gx, gy, s[0], s[1]);
+                stage.style.setProperty("--f", f);
+                stage.style.setProperty("--tx", left - PICTURE[0] * f);
+                stage.style.setProperty("--ty", top - PICTURE[1] * f);
+            }
+        }
+
+        var pending = 0;
+        function relayout() {
+            cancelAnimationFrame(pending);
+            pending = requestAnimationFrame(layout);
+        }
+        function watchPixelRatio() {
+            matchMedia("(resolution: " + (window.devicePixelRatio || 1) + "dppx)")
+                .addEventListener("change", function () { relayout(); watchPixelRatio(); }, { once: true });
+        }
+        addEventListener("resize", relayout);
+        document.addEventListener("fullscreenchange", relayout);
+        document.addEventListener("webkitfullscreenchange", relayout);
+        watchPixelRatio();
+        layout();
+        // The credits get taller when their line wraps or before the pixel font loads.
+        new ResizeObserver(relayout).observe(credits);
+
+        // Keyboard keeps going to the game after a mouse click on a TV button.
+        function backToGame(event) {
+            if (event.detail) canvas.focus();
+        }
+
+        var requestFullscreen = tvScreen.requestFullscreen || tvScreen.webkitRequestFullscreen;
+        if (!requestFullscreen || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)) fullButton.hidden = true;
+        fullButton.onclick = function (event) {
+            requestFullscreen.call(tvScreen);
+            backToGame(event);
+        };
+
+        var unityInstance = null;
+        var soundOn = true;
+        try { soundOn = localStorage.getItem("rody-sound") !== "off"; } catch (e) { }
+        function showSound() {
+            soundButton.setAttribute("aria-pressed", soundOn);
+            soundButton.title = soundOn ? "Couper le son" : "Remettre le son";
+        }
+        function sendVolume() {
+            if (unityInstance) unityInstance.SendMessage("WebPage", "SetVolume", soundOn ? 1 : 0);
+        }
+        soundButton.onclick = function (event) {
+            soundOn = !soundOn;
+            try { localStorage.setItem("rody-sound", soundOn ? "on" : "off"); } catch (e) { }
+            showSound();
+            sendVolume();
+            backToGame(event);
+        };
+        showSound();
+
+        var cells = document.getElementById("osd-bar");
+        cells.innerHTML = new Array(21).join("<i></i>");
+        cells = cells.children;
+        function showProgress(progress) {
+            var percent = Math.min(100, Math.round(progress / 0.9 * 100));
+            for (var i = 0; i < cells.length; i++) cells[i].classList.toggle("on", i < Math.round(percent / 5));
+            osdStatus.textContent = progress >= 0.9 ? "Initialisation…" : "Chargement " + percent + " %";
+        }
+
+        function noSignal(message) {
+            console.error(message);
+            stage.dataset.state = "error";
+        }
+        document.getElementById("retry").onclick = function () { location.reload(); };
+
         var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
         var config = {
             dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
             frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
@@ -93,88 +200,30 @@
             symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
 #endif
             streamingAssetsUrl: "StreamingAssets",
+            matchWebGLToCanvasSize: false, // layout() sets the buffer size
             companyName: "{{{ COMPANY_NAME }}}",
             productName: "{{{ PRODUCT_NAME }}}",
             productVersion: "{{{ PRODUCT_VERSION }}}",
-            showBanner: unityShowBanner,
+            showBanner: function (message, type) {
+                if (type === "error") noSignal(message); else console.warn(message);
+            },
         };
 
-        // Adjust canvas size based on device
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            container.className = "unity-mobile";
-            config.devicePixelRatio = 1;
-        }
-
-        loadingBar.style.display = "block";
-
-        var myGameInstance = null;
         var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                myGameInstance = unityInstance;
-                loadingBar.style.display = "none";
-                fullscreenButton.style.display = "inline-flex";
-            }).catch((message) => {
-                alert("Erreur de chargement: " + message);
-            });
+        script.src = buildUrl + "/{{{ LOADER_FILENAME }}}";
+        script.onerror = function () { noSignal("Cannot load " + script.src); };
+        script.onload = function () {
+            createUnityInstance(canvas, config, showProgress).then(function (instance) {
+                unityInstance = instance;
+                if (!soundOn) sendVolume();
+                stage.dataset.state = "ready";
+                if (matchMedia("(prefers-reduced-motion: reduce)").matches) osd.remove();
+                else osd.addEventListener("animationend", function (event) {
+                    if (event.animationName === "crt-off") osd.remove();
+                });
+            }).catch(noSignal);
         };
         document.body.appendChild(script);
-
-        // Custom fullscreen with aspect ratio preservation
-        var isFullscreen = false;
-
-        fullscreenButton.onclick = () => {
-            isFullscreen = !isFullscreen;
-
-            if (isFullscreen) {
-                // Request browser fullscreen on container
-                if (container.requestFullscreen) {
-                    container.requestFullscreen();
-                } else if (container.webkitRequestFullscreen) {
-                    container.webkitRequestFullscreen();
-                } else if (container.msRequestFullscreen) {
-                    container.msRequestFullscreen();
-                }
-                container.classList.add('unity-fullscreen');
-                fullscreenButton.querySelector('.icon').textContent = '⛶';
-                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Quitter';
-            } else {
-                // Exit fullscreen
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-                container.classList.remove('unity-fullscreen');
-                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Plein écran';
-            }
-        };
-
-        // Handle ESC key or browser fullscreen exit
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                isFullscreen = false;
-                container.classList.remove('unity-fullscreen');
-                fullscreenButton.innerHTML = '<span class="icon">⛶</span> Plein écran';
-            }
-        });
-
-        // Mute button
-        var isMuted = false;
-        muteButton.onclick = () => {
-            isMuted = !isMuted;
-            if (myGameInstance) {
-                // Unity WebGL doesn't have a direct mute API, but we can try
-                // For now, just toggle the button appearance
-            }
-            muteButton.querySelector('.icon').textContent = isMuted ? '🔇' : '🔊';
-            muteButton.classList.toggle('muted', isMuted);
-        };
     </script>
 </body>
 </html>

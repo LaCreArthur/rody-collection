@@ -3,23 +3,24 @@
 ## TL;DR (Arthur)
 
 The finish line is a polished browser release for retro fans and creators.
-The single personal story and unified Save/Discard flow are implemented locally.
+The single personal story and unified Save/Discard flow are implemented.
 Editor checks retained edits across scenes, Test, original play and return.
 The native Maker workspace is implemented: direct text and target editing, temporary scene navigation.
-The voice engine is implemented locally. In the Maker the voice follows the text,
+The voice engine is implemented. In the Maker the voice follows the text,
 with story-wide word fixes; the Voix workbench stays standalone.
 Earlier browser checks passed; the Maker voice fix passed a local browser build; the rest of the new Maker UI still needs browser acceptance.
-Preserve stories from the old browser library before publishing.
-The previous WebGL build passed; this UI has Editor checks only, with publication pending.
+Every push to master deploys the site: the new Maker has been live since the September pushes,
+before full browser acceptance. Saving old browser-library stories before that switch is overtaken.
+The web page shows the game on an 80s TV in a painted room: one screen, smooth resizing.
 
 ---
 
 ## Technical body (executing agent)
 
 **Updated: 2026-09-15.** This is the owner of project status and priorities.
-The single-workspace implementation is local, based on plan commit `d1d2fe8`.
-Fetched `origin/master` remains `4dc870d`; local changes are not evidence of a
-published release. Source, serialized assets and focused Editor runtime journeys
+The single-workspace implementation is based on plan commit `d1d2fe8`. It is all on
+`origin/master`, and every push to `master` deploys GitHub Pages (deploy of `49d961b`
+succeeded 2026-09-24), so the live site runs it without full browser acceptance. Source, serialized assets and focused Editor runtime journeys
 were inspected. Arthur subsequently authorized a local WebGL build: it succeeded
 with zero errors, and the three core browser checks passed. [AUDIT.md](unify/AUDIT.md)
 owns exact evidence and remaining limits; this is not full release acceptance.
@@ -47,12 +48,13 @@ have progressed; browser release acceptance is now the next boundary.
 | Outcome | Current evidence | Remaining boundary |
 |---|---|---|
 | One draft and independent whole-story restore point | Direct Maker bindings, unified entry paths and Editor journeys; [architecture](unify/ARCHITECTURE.md) owns mechanisms | Sprite/structure rollback after authoring; [audit](unify/AUDIT.md) owns remaining evidence. |
-| Originals plus one personal slot | Eight rendered cards; personal draft remains while an original is played; legacy library APIs/UI removed | Preserve any old browser-only stories before public cutover. |
+| Originals plus one personal slot | Eight rendered cards; personal draft remains while an original is played; legacy library APIs/UI removed | Old browser-only stories: the cutover is already live; recover only if Arthur needs some. |
 | One file Save and automatic workspace recovery | Actual browser download/reimport and dirty refresh followed by whole-story Discard passed | Picker cancellation, storage failures and delayed-handoff journeys. |
 | Original 1988 engine replaces recorded-clip concatenation | C# port and native-oracle evidence in [SPEECH_ENGINE.md](SPEECH_ENGINE.md) | Full in-game/browser listening and performance; hardware timing/output remain approximate. |
 | Maker voice follows the text; standalone Voix workbench | Conversion on each edit, in-place word-fix mode with story-wide respellings, speaker/pitch cycle; Editor play-mode checks on 2026-09-25 (fix, story-wide apply, reset, cancel, save round-trip). Local WebGL build 2026-09-25, real mouse and keyboard: async conversion on edit, word pick, one-word refusal greys Validate, fix applied to the edited and another line, removal restores the fresh score (checked in the downloaded file), no console errors. Workbench: French input, full notation, clipboard | Listening by ear in a browser; workbench clipboard in a browser. Evidence and limits belong to the speech reference. |
 | Native Maker workspace | Composed intro/direct text edits, insertion crop, shared objective text/target selection, transactional target drawing, temporary image-only scene browser, real Test/return; focused Editor probes and320×200 renders | New UI browser display, input and interrupted-drawing acceptance. |
 | Unity upgrade | Project version setting and September 6 upgrade commit | Current dependency/version values belong to project config, not copied tables. |
+| Web page: the game on an 80s TV in a painted room | WebGL template plus the `WebPage` sound receiver; layout rules live in the template comments, decisions in the [development log](../DEVLOG.md) (2026-10-05). Local preview against the live build, Chromium, 10 window sizes | Sound button on the deployed build; Safari and Firefox. Phones are not a target. |
 
 ### Next work, in order
 
@@ -68,12 +70,21 @@ have progressed; browser release acceptance is now the next boundary.
    and serialized reviews have completed for the implementation. The full release
    review must include browser evidence. Scene-capacity/management changes remain
    separate product scope; the user has settled one target pair per objective.
-4. **Publish after acceptance and an explicit publishing instruction.** Preserve
-   any personal work that exists only in the old browser library before cutover. Refresh
-   current tutorial screenshots, approve the local [itch copy](itch-pages/ITCH_RODY_COLLECTION.md),
-   then deploy the validated build. GitHub Pages CI runs on pushes to `master`.
+4. **Publish after acceptance and an explicit publishing instruction.** GitHub
+   Pages already serves every push to `master`, including the old browser library cutover.
+   Refresh current tutorial screenshots and approve the local
+   [itch copy](itch-pages/ITCH_RODY_COLLECTION.md).
+
+### Asked, not started
+
+- **Voix workbench redesign:** Arthur asked (2026-10-05) to redesign the Atelier des
+  voix "like the Maker". Start from the Maker's native UI; he judges every image.
 
 ### Parked, not silently cancelled
+
+- **Wider room painting for the web page:** wide windows cannot show a smaller TV
+  because the painting must cover the window. A wider, sharper painting would allow it;
+  offered 2026-10-05, Arthur has not decided.
 
 - **Story title/cover editing:** the old floating-slot plan proposed these outcomes.
   The shared action bar already replaced its layout; metadata editing remains a

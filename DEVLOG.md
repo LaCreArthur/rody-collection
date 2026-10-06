@@ -3,6 +3,35 @@
 Dated historical evidence, not current instructions. Start with [the roadmap](docs/ROADMAP.md)
 and [game design](docs/GAME_DESIGN.md); old APIs, conclusions and screenshots can be superseded.
 
+## 2026-10-05: Web page: the game on an 80s TV in a painted room
+
+Arthur asked for a page "10x better" on a Rody & Mastico theme: a 1980s gaming room
+with the game on an old TV. He judged every Codex image; he chose the painted-cover
+room, the TV with a bottom control strip, then a slimmer frame for "more game view room".
+
+- Layout rules from his feedback: TV centred and whole when it fits; game never under
+  640x400 CSS while the window can show it; smooth resizing, no scale jumps (sharp
+  bilinear: buffer is the next 320x200 multiple, `matchWebGLToCanvasSize: false`);
+  game 780 CSS wide where the TV fits (his tuning at 90% zoom), growing only until the
+  room covers wide windows; one screen, no scrolling ("why scrolling at all"); credits
+  line under the TV, hidden (TV centred in the whole window) when the minimum game or the
+  room cover needs its height.
+- TV buttons: fullscreen puts the glass element fullscreen; sound calls
+  `WebPage.SetVolume` through `SendMessage` and is remembered in localStorage.
+  Loading and "Pas de signal" screens are TV on-screen displays.
+- Limits: wide screens cannot show a smaller TV than the room painting allows (a wider
+  painting would); windows shorter than about 0.32 x width + 25 px (2560x800) show dark
+  side bands because the TV stays whole; 1366x650 shows the game at 671 px to fit the
+  credits line; phones are not a target (portrait room shorter than the screen,
+  landscape cuts the TV). Keyboard users cannot Tab to the TV buttons once Unity has the
+  keyboard; `WebGLInput.captureAllKeyboardInput = false` would fix it but lets keys
+  reach the browser (Firefox quick find on an apostrophe typed in the Maker), so not done.
+- Checked locally against the live build in Chromium at 10 window sizes: exact buffer
+  sizes, a VOIX click at a non-integer scale, no scroll on wheel or End, no page errors.
+  Independent review before release: no defect in mouse mapping, fullscreen, sound
+  message timing or code stripping; fixed the room not covering 1920x640 (credits line)
+  and a 1 px uncovered left edge (cover slack). Layout re-measured at 16 sizes.
+
 ## 2026-09-25: Maker voice follows the text; Rody font completed
 
 Arthur chose automatic voice in the Maker: write French, the voice is generated;
